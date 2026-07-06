@@ -1,0 +1,321 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .org-breadcrumb { display:flex; align-items:center; gap:8px; margin-bottom:16px; font-size:13px; color:#6b7280; }
+    .org-breadcrumb a { color:#2d5a8e; text-decoration:none; }
+    .org-breadcrumb a:hover { text-decoration:underline; }
+    .org-breadcrumb .sep { color:#9ca3af; }
+    .org-toolbar { display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    .org-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; text-decoration:none; color:#fff; transition:all 0.2s; }
+    .org-btn-primary { background:#2d5a8e; }
+    .org-btn-primary:hover { background:#1e3a5f; color:#fff; }
+    .org-btn-success { background:#059669; }
+    .org-btn-success:hover { background:#047857; color:#fff; }
+    .org-btn-secondary { background:#6b7280; }
+    .org-btn-secondary:hover { background:#4b5563; color:#fff; }
+    .org-btn-orange { background:#d97706; }
+    .org-btn-orange:hover { background:#b45309; color:#fff; }
+    .org-btn-save { background:#2563eb; }
+    .org-btn-save:hover { background:#1d4ed8; color:#fff; }
+    .org-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin:16px 0 24px; }
+    .org-card { background:#fff; border:2px solid #e5e7eb; border-radius:8px; padding:14px 16px; text-decoration:none; color:#1a1a2e; transition:all 0.2s; display:flex; align-items:center; gap:12px; }
+    .org-card:hover { border-color:#2d5a8e; box-shadow:0 2px 8px rgba(45,90,142,0.15); color:#1a1a2e; }
+    .org-card-icon { width:40px; height:40px; background:#eef2f7; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; color:#2d5a8e; flex-shrink:0; }
+    .org-card-info { flex:1; min-width:0; }
+    .org-card-info h3 { margin:0 0 2px; font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .org-card-info p { margin:0; font-size:12px; color:#6b7280; }
+    .org-card-count { background:#2d5a8e; color:#fff; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; flex-shrink:0; }
+    .org-section-title { font-size:15px; font-weight:700; color:#1a1a2e; margin:24px 0 8px; padding-bottom:6px; border-bottom:2px solid #e5e7eb; display:flex; align-items:center; gap:8px; }
+    .org-table { width:100%; border-collapse:collapse; margin:8px 0 16px; background:#fff; border-radius:8px; overflow:hidden; border:1px solid #e5e7eb; }
+    .org-table th { background:#f3f4f6; padding:10px 12px; text-align:left; font-size:12px; font-weight:600; color:#374151; border-bottom:1px solid #e5e7eb; }
+    .org-table td { padding:10px 12px; font-size:13px; border-bottom:1px solid #f3f4f6; vertical-align:middle; }
+    .org-table tr:hover td { background:#f9fafb; }
+    .tipo-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; color:#fff; }
+    .cat-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; background:#e5e7eb; color:#374151; }
+    .org-empty { color:#9ca3af; font-style:italic; padding:20px; text-align:center; background:#f9fafb; border-radius:8px; margin:8px 0; }
+    .org-form-inline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .org-form-inline input[type="text"], .org-form-inline select { padding:7px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; }
+    .org-form-inline input[type="text"] { min-width:220px; }
+    .org-form-inline select { min-width:180px; }
+    .org-move-bar { background:#eef2f7; padding:12px 16px; border-radius:8px; margin:8px 0 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .org-move-bar label { font-size:13px; font-weight:600; color:#374151; }
+    .org-search-box { background:#fffbeb; border:2px solid #fbbf24; border-radius:8px; padding:16px; margin:16px 0; }
+    .org-search-box h3 { margin:0 0 10px; font-size:14px; font-weight:700; color:#92400e; }
+    .org-search-results { background:#fff; border:1px solid #e5e7eb; border-radius:8px; margin-top:12px; max-height:400px; overflow-y:auto; }
+    .org-alert { padding:10px 16px; border-radius:6px; margin-bottom:16px; font-size:13px; }
+    .org-alert-success { background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; }
+    .org-check { width:16px; height:16px; cursor:pointer; }
+    .org-criar-box { background:#f0fdf4; border:2px solid #86efac; border-radius:8px; padding:16px; margin:16px 0; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+    .org-criar-box p { margin:0; font-size:13px; color:#166534; flex:1; }
+    .ordem-input { width:50px; padding:4px 6px; border:1px solid #d1d5db; border-radius:4px; font-size:13px; text-align:center; }
+    .ordem-input:focus { border-color:#2d5a8e; outline:none; box-shadow:0 0 0 2px rgba(45,90,142,0.2); }
+    .save-ordem-bar { background:#dbeafe; padding:10px 16px; border-radius:8px; margin:8px 0 4px; display:flex; align-items:center; gap:12px; }
+    .save-ordem-bar p { margin:0; font-size:13px; color:#1e40af; }
+    .busca-filtro { margin-top:10px; padding:6px 10px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; width:100%; max-width:400px; }
+    .busca-filtro:focus { border-color:#d97706; outline:none; box-shadow:0 0 0 2px rgba(217,119,6,0.2); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+<div class="org-alert org-alert-success">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+{% if not categoria %}
+{# ═══ PÁGINA PRINCIPAL ═══ #}
+<p style="color:#4a5568; margin-bottom:16px; font-size:14px;">
+    Clique em uma área para ver suas subcategorias, criar novas e organizar os conteúdos.
+</p>
+<div class="org-grid">
+    {% for item in categorias %}
+    <a href="?cat={{ item.cat.pk }}" class="org-card">
+        <div class="org-card-icon"><i class="{{ item.cat.icone|default:'fas fa-folder' }}"></i></div>
+        <div class="org-card-info">
+            <h3>{{ item.cat.nome }}</h3>
+            <p>{{ item.sub_count }} subcategoria{{ item.sub_count|pluralize:"s" }} · {{ item.total }} conteúdo{{ item.total|pluralize:"s" }}</p>
+        </div>
+        <span class="org-card-count">{{ item.total }}</span>
+    </a>
+    {% endfor %}
+</div>
+
+{% else %}
+{# ═══ PÁGINA DE UMA CATEGORIA ═══ #}
+<div class="org-breadcrumb">
+    <a href="/admin/organizar/"><i class="fas fa-home"></i> Organizador</a>
+    {% if categoria.categoria_pai %}
+    <span class="sep">›</span>
+    <a href="?cat={{ categoria.categoria_pai.pk }}">{{ categoria.categoria_pai.nome }}</a>
+    {% endif %}
+    <span class="sep">›</span>
+    <strong>{{ categoria.nome }}</strong>
+</div>
+
+<div class="org-toolbar">
+    {% if categoria.categoria_pai %}
+    <a href="?cat={{ categoria.categoria_pai.pk }}" class="org-btn org-btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+    {% else %}
+    <a href="/admin/organizar/" class="org-btn org-btn-secondary"><i class="fas fa-arrow-left"></i> Voltar</a>
+    {% endif %}
+    <a href="/admin/conteudo/categoria/{{ categoria.pk }}/change/" class="org-btn org-btn-primary"><i class="fas fa-pen"></i> Editar categoria</a>
+    <a href="/admin/conteudo/conteudo/add/" class="org-btn org-btn-success"><i class="fas fa-plus"></i> Criar conteúdo novo</a>
+</div>
+
+{# ── Subcategorias ── #}
+{% if subcategorias or not categoria.categoria_pai %}
+<div class="org-section-title"><i class="fas fa-sitemap"></i> Subcategorias de "{{ categoria.nome }}"</div>
+{% if subcategorias %}
+<div class="org-grid">
+    {% for item in subcategorias %}
+    <a href="?cat={{ item.cat.pk }}" class="org-card">
+        <div class="org-card-icon"><i class="{{ item.cat.icone|default:'fas fa-folder' }}"></i></div>
+        <div class="org-card-info">
+            <h3>{{ item.cat.nome }}</h3>
+            <p>{{ item.count }} conteúdo{{ item.count|pluralize:"s" }}</p>
+        </div>
+        <span class="org-card-count">{{ item.count }}</span>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="org-empty" style="margin-bottom:12px;">Nenhuma subcategoria criada ainda.</div>
+{% endif %}
+<form method="post" class="org-form-inline" style="margin-bottom:24px;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="criar_subcategoria">
+    <input type="hidden" name="categoria_pai_id" value="{{ categoria.pk }}">
+    <input type="text" name="nome" placeholder="Nome da nova subcategoria..." required>
+    <input type="text" name="icone" placeholder="Ícone (ex: fas fa-book)" value="fas fa-folder" style="min-width:160px;">
+    <button type="submit" class="org-btn org-btn-success"><i class="fas fa-plus"></i> Criar subcategoria</button>
+</form>
+{% endif %}
+
+{# ── Conteúdos nesta categoria (com ordem editável) ── #}
+<div class="org-section-title"><i class="fas fa-file-alt"></i> Conteúdos em "{{ categoria.nome }}" ({{ conteudos|length }})</div>
+
+{% if conteudos %}
+<form method="post" id="formOrdem">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="salvar_ordem">
+    <input type="hidden" name="origem_cat" value="{{ categoria.pk }}">
+
+    <div class="save-ordem-bar">
+        <p><i class="fas fa-sort-numeric-down"></i> Altere os números de ordem e clique em <strong>Salvar ordem</strong>. Números menores aparecem primeiro (1 = primeiro, 2 = segundo...). Ordem 0 = sem posição definida (aparece no final).</p>
+        <button type="submit" class="org-btn org-btn-save"><i class="fas fa-save"></i> Salvar ordem</button>
+    </div>
+
+    <table class="org-table">
+        <thead>
+            <tr>
+                <th style="width:60px;">Ordem</th>
+                <th>Título</th>
+                <th style="width:80px;">Tipo</th>
+                <th style="width:110px;">Status</th>
+                <th style="width:60px;">Editar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in conteudos %}
+            <tr>
+                <td><input type="number" name="ordem_{{ item.pk }}" value="{{ item.ordem }}" class="ordem-input" min="0"></td>
+                <td>
+                    <strong>{{ item.titulo }}</strong>
+                    {% if item.resumo %}<br><span style="font-size:11px; color:#6b7280;">{{ item.resumo|truncatewords:12 }}</span>{% endif %}
+                </td>
+                <td>
+                    {% if item.tipo == 'documento' %}<span class="tipo-badge" style="background:#2563eb;">Doc</span>
+                    {% elif item.tipo == 'video' %}<span class="tipo-badge" style="background:#dc2626;">Vídeo</span>
+                    {% elif item.tipo == 'post' %}<span class="tipo-badge" style="background:#059669;">Post</span>
+                    {% elif item.tipo == 'link' %}<span class="tipo-badge" style="background:#7c3aed;">Link</span>
+                    {% elif item.tipo == 'pagina' %}<span class="tipo-badge" style="background:#d97706;">Página</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.status == 'publicado' %}<span class="tipo-badge" style="background:#10b981;">Publicado</span>
+                    {% elif item.status == 'rascunho' %}<span class="tipo-badge" style="background:#f59e0b;">Rascunho</span>
+                    {% else %}<span class="tipo-badge" style="background:#6b7280;">Arquivado</span>
+                    {% endif %}
+                </td>
+                <td><a href="/admin/conteudo/conteudo/{{ item.pk }}/change/" style="color:#2d5a8e;" title="Editar"><i class="fas fa-pen"></i></a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+{# ── Mover conteúdos ── #}
+<form method="post" id="formMover">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="mover">
+    <input type="hidden" name="origem_cat" value="{{ categoria.pk }}">
+    <div class="org-move-bar">
+        <label><input type="checkbox" id="selectAll" class="org-check" onclick="toggleAll(this)"> Selecionar</label>
+        <span style="color:#9ca3af;">|</span>
+        <label>Mover selecionados para:</label>
+        <select name="destino_id" required>
+            <option value="">— Escolha o destino —</option>
+            {% if categoria.categoria_pai %}
+            <optgroup label="Categoria pai">
+                <option value="{{ categoria.categoria_pai.pk }}">↩ {{ categoria.categoria_pai.nome }}</option>
+            </optgroup>
+            {% endif %}
+            {% if todas_subcategorias %}
+            <optgroup label="Subcategorias">
+                {% for sub in todas_subcategorias %}
+                <option value="{{ sub.pk }}">{{ sub.nome }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endif %}
+            {% if destinos %}
+            <optgroup label="Outras áreas">
+                {% for dest in destinos %}
+                <option value="{{ dest.pk }}">{{ dest.nome }}</option>
+                {% endfor %}
+            </optgroup>
+            {% endif %}
+        </select>
+        <button type="submit" class="org-btn org-btn-primary"><i class="fas fa-arrows-alt"></i> Mover</button>
+    </div>
+    <table class="org-table">
+        <thead><tr><th style="width:30px;"></th><th>Título</th><th style="width:80px;">Tipo</th></tr></thead>
+        <tbody>
+            {% for item in conteudos %}
+            <tr>
+                <td><input type="checkbox" name="conteudo_ids" value="{{ item.pk }}" class="org-check item-check"></td>
+                <td><strong>{{ item.titulo }}</strong></td>
+                <td>
+                    {% if item.tipo == 'documento' %}<span class="tipo-badge" style="background:#2563eb;">Doc</span>
+                    {% elif item.tipo == 'video' %}<span class="tipo-badge" style="background:#dc2626;">Vídeo</span>
+                    {% elif item.tipo == 'post' %}<span class="tipo-badge" style="background:#059669;">Post</span>
+                    {% elif item.tipo == 'link' %}<span class="tipo-badge" style="background:#7c3aed;">Link</span>
+                    {% elif item.tipo == 'pagina' %}<span class="tipo-badge" style="background:#d97706;">Página</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+{% else %}
+<div class="org-empty"><i class="fas fa-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i> Nenhum conteúdo nesta categoria.</div>
+{% endif %}
+
+{# ── Buscar / adicionar conteúdos existentes ── #}
+<div class="org-search-box">
+    <h3><i class="fas fa-search"></i> Todos os conteúdos do site — adicionar a "{{ categoria.nome }}"</h3>
+    <form method="get" class="org-form-inline">
+        <input type="hidden" name="cat" value="{{ categoria.pk }}">
+        <input type="text" name="busca" placeholder="Filtrar por título..." value="{{ busca }}" style="min-width:300px;">
+        <button type="submit" class="org-btn org-btn-orange"><i class="fas fa-filter"></i> Filtrar</button>
+        {% if busca %}
+        <a href="?cat={{ categoria.pk }}" class="org-btn org-btn-secondary"><i class="fas fa-times"></i> Limpar</a>
+        {% endif %}
+    </form>
+
+    {% if todos_conteudos %}
+    <p style="font-size:12px; color:#92400e; margin:8px 0 4px;">{{ todos_conteudos|length }} conteúdo{{ todos_conteudos|length|pluralize:"s" }} encontrado{{ todos_conteudos|length|pluralize:"s" }}. Marque e clique "Adicionar".</p>
+    <div class="org-search-results">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="adicionar_aqui">
+            <input type="hidden" name="cat_destino" value="{{ categoria.pk }}">
+            <div class="org-move-bar" style="background:#fef3c7; border-radius:8px 8px 0 0; margin:0; position:sticky; top:0; z-index:1;">
+                <label><input type="checkbox" id="selectAllBusca" class="org-check" onclick="toggleAllBusca(this)"> Todos</label>
+                <button type="submit" class="org-btn org-btn-success"><i class="fas fa-plus-circle"></i> Adicionar selecionados a "{{ categoria.nome }}"</button>
+            </div>
+            <div style="max-height:400px; overflow-y:auto;">
+            <table class="org-table" style="margin:0; border-top:none; border-radius:0 0 8px 8px;">
+                <thead><tr><th style="width:30px;"></th><th>Título</th><th style="width:80px;">Tipo</th><th>Está em</th></tr></thead>
+                <tbody id="tabelaBusca">
+                    {% for item in todos_conteudos %}
+                    <tr>
+                        <td><input type="checkbox" name="conteudo_ids" value="{{ item.pk }}" class="org-check busca-check"></td>
+                        <td><strong>{{ item.titulo }}</strong></td>
+                        <td>
+                            {% if item.tipo == 'documento' %}<span class="tipo-badge" style="background:#2563eb;">Doc</span>
+                            {% elif item.tipo == 'video' %}<span class="tipo-badge" style="background:#dc2626;">Vídeo</span>
+                            {% elif item.tipo == 'post' %}<span class="tipo-badge" style="background:#059669;">Post</span>
+                            {% elif item.tipo == 'link' %}<span class="tipo-badge" style="background:#7c3aed;">Link</span>
+                            {% elif item.tipo == 'pagina' %}<span class="tipo-badge" style="background:#d97706;">Página</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.categoria %}<span class="cat-badge">{{ item.categoria.nome }}</span>
+                            {% else %}<span style="color:#9ca3af;">— sem —</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </form>
+    </div>
+    {% elif busca %}
+    <div class="org-empty">Nenhum conteúdo encontrado para "{{ busca }}".</div>
+    {% endif %}
+</div>
+
+{# ── Criar conteúdo novo ── #}
+<div class="org-criar-box">
+    <div><i class="fas fa-file-circle-plus" style="font-size:24px; color:#16a34a;"></i></div>
+    <p>Não encontrou? Crie um conteúdo novo — texto, link, PDF, vídeo — e volte aqui para organizá-lo.</p>
+    <a href="/admin/conteudo/conteudo/add/" class="org-btn org-btn-success"><i class="fas fa-plus"></i> Criar conteúdo novo</a>
+</div>
+
+{% endif %}
+
+<script>
+function toggleAll(source) { document.querySelectorAll('.item-check').forEach(function(cb) { cb.checked = source.checked; }); }
+function toggleAllBusca(source) { document.querySelectorAll('.busca-check').forEach(function(cb) { cb.checked = source.checked; }); }
+</script>
+{% endblock %}

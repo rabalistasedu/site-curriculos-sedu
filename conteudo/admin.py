@@ -1,8 +1,9 @@
+from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Count
-from .models import Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz
+from .models import Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz, Anexo
 from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
 
 
@@ -10,6 +11,42 @@ from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, Confi
 admin.site.site_header = 'Currículo SEDU — Painel Administrativo'
 admin.site.site_title = 'Currículo SEDU Admin'
 admin.site.index_title = 'Gerenciar conteúdo do site'
+
+
+# ── Inline de Anexos (definidos antes dos ModelAdmin que os usam) ─────
+ACCEPT_FILES = (
+    '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,'
+    '.mp4,.avi,.mov,.mkv,.webm,'
+    '.jpg,.jpeg,.png,.gif,.webp,'
+    '.zip,.rar,.txt,.csv,.odt,.ods,.odp'
+)
+
+class AnexoConteudoInline(admin.TabularInline):
+    model = Anexo
+    extra = 3
+    fields = ['arquivo', 'nome', 'ordem']
+    fk_name = 'conteudo'
+    verbose_name = 'Anexo'
+    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo...)'
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'arquivo':
+            kwargs['widget'] = forms.FileInput(attrs={'accept': ACCEPT_FILES})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+class AnexoCategoriaInline(admin.TabularInline):
+    model = Anexo
+    extra = 3
+    fields = ['arquivo', 'nome', 'ordem']
+    fk_name = 'categoria'
+    verbose_name = 'Anexo'
+    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo...)'
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'arquivo':
+            kwargs['widget'] = forms.FileInput(attrs={'accept': ACCEPT_FILES})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 # ── Categoria ─────────────────────────────────────────────────────────
@@ -21,6 +58,8 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_editable = ['ordem', 'ativa']
     search_fields = ['nome']
     prepopulated_fields = {'slug': ('nome',)}
+    actions = ['ativar_selecionadas', 'desativar_selecionadas', 'delete_selected']
+    inlines = [AnexoCategoriaInline]
 
     fieldsets = (
         (None, {
@@ -35,6 +74,7 @@ class CategoriaAdmin(admin.ModelAdmin):
         }),
         ('Aparência', {
             'fields': ('icone', 'imagem', 'ordem', 'ativa'),
+            'description': '⚠️ "Imagem de capa" aceita apenas imagens (JPG, PNG, GIF). Para anexar PDF, Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.',
         }),
     )
 
@@ -43,14 +83,31 @@ class CategoriaAdmin(admin.ModelAdmin):
         return count
     total_conteudos.short_description = 'Publicados'
 
+    @admin.action(description='✅ Ativar categorias selecionadas')
+    def ativar_selecionadas(self, request, queryset):
+        count = queryset.update(ativa=True)
+        self.message_user(request, f'{count} categoria(s) ativada(s).')
+
+    @admin.action(description='❌ Desativar categorias selecionadas')
+    def desativar_selecionadas(self, request, queryset):
+        count = queryset.update(ativa=False)
+        self.message_user(request, f'{count} categoria(s) desativada(s).')
+
+    def delete_selected(self, request, queryset):
+        count = queryset.count()
+        queryset.delete()
+        self.message_user(request, f'{count} categoria(s) removida(s) permanentemente.')
+    delete_selected.short_description = '🗑️ Remover categorias selecionadas'
+
 
 # ── Conteúdo ──────────────────────────────────────────────────────────
 @admin.register(Conteudo)
 class ConteudoAdmin(admin.ModelAdmin):
     form = ConteudoAdminForm
-    list_display = ['titulo', 'tipo_badge', 'area_destino', 'status_badge', 'destaque', 'recente', 'data_publicacao']
+    inlines = [AnexoConteudoInline]
+    list_display = ['titulo', 'tipo_badge', 'area_destino', 'status_badge', 'destaque', 'recente', 'ordem', 'data_publicacao']
     list_filter = ['tipo', 'status', 'destaque', 'recente', 'categoria__categoria_pai', 'categoria']
-    list_editable = ['destaque', 'recente']
+    list_editable = ['destaque', 'recente', 'ordem']
     search_fields = ['titulo', 'resumo', 'corpo']
     date_hierarchy = 'data_publicacao'
     prepopulated_fields = {'slug': ('titulo',)}
@@ -61,7 +118,14 @@ class ConteudoAdmin(admin.ModelAdmin):
             'description': (
                 'Escolha em qual área do site este conteúdo vai aparecer. '
                 'As opções mostram a categoria pai → subcategoria (ex: Documentos Curriculares → Currículo Atual). '
-                'Para aparecer direto em uma categoria principal, selecione apenas ela.'
+                'Para aparecer direto em uma categoria principal, selecione apenas ela. '
+                '<br><br>'
+                '<a href="/admin/conteudo/categoria/add/" target="_blank" '
+                'style="display:inline-flex;align-items:center;gap:6px;'
+                'background:#059669;color:#fff;padding:6px 14px;border-radius:6px;'
+                'font-size:12px;font-weight:600;text-decoration:none;">'
+                '<span style="font-size:14px;">＋</span> Criar nova categoria/subcategoria (abre em nova aba)'
+                '</a>'
             ),
         }),
         ('📝 Informações básicas', {
@@ -161,15 +225,24 @@ class ConteudoAdmin(admin.ModelAdmin):
     status_badge.short_description = 'Status'
     status_badge.admin_order_field = 'status'
 
-    actions = ['publicar_selecionados', 'arquivar_selecionados']
+    actions = ['publicar_selecionados', 'arquivar_selecionados', 'delete_selected']
 
     @admin.action(description='✅ Publicar selecionados')
     def publicar_selecionados(self, request, queryset):
-        queryset.update(status='publicado')
+        count = queryset.update(status='publicado')
+        self.message_user(request, f'{count} conteúdo(s) publicado(s).')
 
     @admin.action(description='📦 Arquivar selecionados')
     def arquivar_selecionados(self, request, queryset):
-        queryset.update(status='arquivado')
+        count = queryset.update(status='arquivado')
+        self.message_user(request, f'{count} conteúdo(s) arquivado(s).')
+
+    def delete_selected(self, request, queryset):
+        """Ação padrão do Django com mensagem customizada"""
+        count = queryset.count()
+        queryset.delete()
+        self.message_user(request, f'{count} conteúdo(s) removido(s) permanentemente.')
+    delete_selected.short_description = '🗑️ Remover conteúdos selecionados'
 
 
 # ── Banner ────────────────────────────────────────────────────────────
@@ -178,6 +251,7 @@ class BannerAdmin(admin.ModelAdmin):
     form = BannerAdminForm
     list_display = ['titulo', 'area_banner', 'preview_imagem', 'ordem', 'ativo']
     list_editable = ['ordem', 'ativo']
+    actions = ['ativar_selecionados', 'desativar_selecionados', 'delete_selected']
 
     fieldsets = (
         ('📍 Onde este banner vai aparecer', {
@@ -228,6 +302,22 @@ class BannerAdmin(admin.ModelAdmin):
             )
         return '—'
     preview_imagem.short_description = 'Preview'
+
+    @admin.action(description='✅ Ativar banners selecionados')
+    def ativar_selecionados(self, request, queryset):
+        count = queryset.update(ativo=True)
+        self.message_user(request, f'{count} banner(s) ativado(s).')
+
+    @admin.action(description='❌ Desativar banners selecionados')
+    def desativar_selecionados(self, request, queryset):
+        count = queryset.update(ativo=False)
+        self.message_user(request, f'{count} banner(s) desativado(s).')
+
+    def delete_selected(self, request, queryset):
+        count = queryset.count()
+        queryset.delete()
+        self.message_user(request, f'{count} banner(s) removido(s) permanentemente.')
+    delete_selected.short_description = '🗑️ Remover banners selecionados'
 
 
 # ── Comentários ───────────────────────────────────────────────────────
@@ -293,6 +383,7 @@ class CartazAdmin(admin.ModelAdmin):
     list_display = ['titulo', 'lado_badge', 'preview_imagem', 'ordem', 'ativo']
     list_filter = ['lado', 'ativo']
     list_editable = ['ordem', 'ativo']
+    actions = ['ativar_selecionados', 'desativar_selecionados', 'delete_selected']
 
     fieldsets = (
         ('🖼️ Cartaz do evento', {
@@ -327,6 +418,49 @@ class CartazAdmin(admin.ModelAdmin):
             )
         return '—'
     preview_imagem.short_description = 'Preview'
+
+    @admin.action(description='✅ Ativar cartazes selecionados')
+    def ativar_selecionados(self, request, queryset):
+        count = queryset.update(ativo=True)
+        self.message_user(request, f'{count} cartaz(es) ativado(s).')
+
+    @admin.action(description='❌ Desativar cartazes selecionados')
+    def desativar_selecionados(self, request, queryset):
+        count = queryset.update(ativo=False)
+        self.message_user(request, f'{count} cartaz(es) desativado(s).')
+
+    def delete_selected(self, request, queryset):
+        count = queryset.count()
+        queryset.delete()
+        self.message_user(request, f'{count} cartaz(es) removido(s) permanentemente.')
+    delete_selected.short_description = '🗑️ Remover cartazes selecionados'
+
+
+# ── Anexos ───────────────────────────────────────────────────────────
+@admin.register(Anexo)
+class AnexoAdmin(admin.ModelAdmin):
+    list_display = ['nome_exibicao', 'extensao', 'conteudo', 'ordem']
+    list_filter = ['conteudo__categoria']
+    search_fields = ['nome', 'arquivo', 'conteudo__titulo']
+    list_editable = ['ordem']
+
+    def nome_exibicao(self, obj):
+        return obj.nome_exibicao
+    nome_exibicao.short_description = 'Nome'
+
+    def extensao(self, obj):
+        ext = obj.extensao
+        cores = {
+            'PDF': '#dc2626', 'DOCX': '#2563eb', 'DOC': '#2563eb',
+            'XLSX': '#059669', 'XLS': '#059669', 'PPTX': '#d97706',
+            'MP4': '#7c3aed', 'AVI': '#7c3aed', 'MOV': '#7c3aed',
+        }
+        cor = cores.get(ext, '#6b7280')
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;">{}</span>',
+            cor, ext
+        )
+    extensao.short_description = 'Tipo'
 
 
 # ── Configuração do site ──────────────────────────────────────────────

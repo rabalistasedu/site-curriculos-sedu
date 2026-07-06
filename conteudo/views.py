@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q
+from django.db.models import Q, Case, When, Value, IntegerField, F
 from django.contrib import messages
-from .models import Categoria, Conteudo, Banner, Comentario, Cartaz
+from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo
 
 
 def home(request):
@@ -51,8 +51,13 @@ def categoria_detalhe(request, slug):
         })
 
     # Conteúdos desta categoria e das subcategorias
+    # ordem=0 significa "sem posição definida" → vai para o final (9999)
+    # ordem=1,2,3... aparece primeiro, nessa sequência
     conteudos = Conteudo.objects.publicados().filter(
         categoria__in=[categoria] + list(subcategorias)
+    ).order_by(
+        Case(When(ordem=0, then=Value(9999)), default=F('ordem'), output_field=IntegerField()),
+        '-data_publicacao'
     )
 
     # Filtro por tipo
@@ -63,12 +68,15 @@ def categoria_detalhe(request, slug):
     # Banners específicos desta categoria
     banners_cat = Banner.objects.filter(ativo=True, categoria=categoria)
 
+    anexos_categoria = categoria.anexos.all().order_by('ordem', 'nome')
+
     return render(request, 'categoria.html', {
         'categoria': categoria,
         'subcategorias': subcategorias,
         'conteudos': conteudos,
         'tipo_filtro': tipo,
         'banners': banners_cat,
+        'anexos_categoria': anexos_categoria,
     })
 
 

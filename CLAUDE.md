@@ -20,14 +20,15 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 ```
 curriculo_sedu/          # Projeto Django (settings, urls, wsgi)
 conteudo/                # App principal
-  models.py              # Categoria, Conteudo, Banner, Comentario, Cartaz, ConfiguracaoSite
-  views.py               # home, categoria_detalhe, conteudo_detalhe, busca
-  admin.py               # Admin customizado com badges, widgets visuais, moderação
+  models.py              # Categoria, Conteudo, Banner, Comentario, Cartaz, ConfiguracaoSite, Anexo
+  views.py               # home, categoria_detalhe, conteudo_detalhe, busca (com anexos_categoria no context)
+  admin.py               # Admin customizado com badges, widgets visuais, moderação, inlines de Anexo
+  admin_views.py         # View customizada organizar_view (/admin/organizar/) para gerenciar conteúdos
   forms.py               # ConteudoAdminForm, BannerAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
-  widgets.py             # CategoriaPicker, IconPicker (grade de ícones) e RichTextWidget (editor com formatação)
+  widgets.py             # CategoriaPicker (3 níveis), IconPicker (grade de ícones) e RichTextWidget (editor com formatação)
   urls.py                # app_name='conteudo'
   context_processors.py  # site_config (config + menu_categorias global)
-  migrations/            # 0001 inicial → 0008 (config_home_texto)
+  migrations/            # 0001 inicial → 0011_anexo_categoria (Anexo com FK dual)
   management/commands/
     popular_categorias.py   # Seed de categorias e subcategorias
     popular_descricoes.py   # Textos introdutórios das categorias (HTML)
@@ -43,9 +44,12 @@ conteudo/                # App principal
 templates/
   base.html              # Layout base (header, nav dinâmica, footer, ícone discreto de admin)
   home.html              # Home: hero/banners, "Conteúdos recentes" (esquerda) + "Navegue por área" (direita)
-  categoria.html         # Lista de conteúdos com filtros, banners de categoria, índice geral (55 botões)
+  categoria.html         # Lista de conteúdos com filtros, banners de categoria, índice geral (55 botões), seção de anexos
   conteudo_detalhe.html  # Detalhe de conteúdo + seção de comentários (com moderação)
   busca.html             # Resultados de busca
+  admin/
+    index.html           # Dashboard customizado do admin (estende admin/base_site.html) com botão "Abrir Organizador"
+    organizar.html       # Interface visual do Organizador — breadcrumb, subcategorias, conteúdos, busca, ordem inline
 static/
   css/style.css          # Design system completo
   css/admin_picker.css   # Estilos dos widgets visuais do admin (CategoriaPicker, IconPicker)
@@ -96,15 +100,27 @@ Cartazes de eventos na home. Campos: `titulo`, `imagem` (upload_to `cartazes/`),
 Singleton (pk=1). `nome_site`, `descricao`, `email_contato`, `telefone`, `endereco`, `logo`, `favicon`.
 - `home_titulo` e `home_texto` — título e texto que aparecem na home, logo abaixo do banner/hero. Editáveis no admin em "Configuração do site" → seção "📝 Texto da página inicial", com um editor de texto simples (`RichTextWidget`) com negrito, itálico, sublinhado, alinhamento e lista — sem depender de bibliotecas externas (usa `contenteditable` + `document.execCommand`, salva HTML no campo).
 
+### Anexo
+Modelo para anexar múltiplos arquivos (PDF, Word, Excel, PowerPoint, vídeo, imagem, etc.) a **Conteudo** ou **Categoria**.
+- FKs duais (mutualmente exclusivos): `conteudo` (nullable) ou `categoria` (nullable) — um anexo pertence a exatamente um ou outro
+- `arquivo` (FileField, upload_to `'anexos/%Y/%m/'`) — PDF, Word, Excel, PowerPoint, vídeo, imagem, ZIP, etc.
+- `nome` (CharField, opcional) — nome exibido no site; se vazio, usa o nome do arquivo
+- `ordem` (PositiveIntegerField) — ordena anexos pela sequência definida no admin
+- Propriedades: `extensao` (retorna ex: "PDF"), `nome_exibicao` (nome ou nome do arquivo)
+- Tabular inline no admin (ambas as classes, 3 campos editáveis: arquivo, nome, ordem)
+- No site, aparece em seção visual na página de categoria com cards em lista vertical, ícones coloridos por tipo
+
 ## URLs
 
 ```
-/                          → home
-/admin/                    → Django Admin
-/busca/?q=termo            → busca textual
-/categoria/<slug>/         → lista de conteúdos com filtros
-/categoria/<slug>/?tipo=X  → filtro por tipo (documento, video, post, link)
-/conteudo/<slug>/          → detalhe de conteúdo
+/                             → home
+/admin/                       → Django Admin (com botão "Abrir Organizador")
+/admin/organizar/             → Organizador de Conteúdo (painel visual para gerenciar categorias e conteúdos)
+/admin/organizar/?cat=<id>    → Organizador filtrando uma categoria específica
+/busca/?q=termo               → busca textual
+/categoria/<slug>/            → lista de conteúdos com filtros (inclui anexos da categoria)
+/categoria/<slug>/?tipo=X     → filtro por tipo (documento, video, post, link)
+/conteudo/<slug>/             → detalhe de conteúdo
 ```
 
 ## Categorias atuais (10 principais + subcategorias)
@@ -140,6 +156,10 @@ Componentes: `.content-card`, `.category-card`, `.content-list .list-item`, `.fi
 3. **Cards da home** usam `|striptags|truncatewords:10` para descrições limpas
 4. **Conteúdo migrado** via web scraping do WordPress — 102 itens com links para PDFs e Google Drive
 5. **16 categorias** têm textos introdutórios em HTML (populados via `popular_descricoes.py`)
+6. **Anexos em lista vertical** — não em grid responsivo — porque arquivos anexados a categorias (especialmente em Itinerários, IFA, RPE) são geralmente 3-5 itens específicos, não uma coleção grande; layout vertical é mais legível
+7. **FK dual (mutualmente exclusivo) no Anexo** — `conteudo` OU `categoria`, não ambos — simplifica a constraint (CHECK na migração) e a lógica admin; se um anexo virar comum entre ambos no futuro, usar ManyToMany ou GenericForeignKey
+8. **Organizador como view customizada no admin** — não como app separado — mantém integração total com Django admin (permissões, autenticação, interface) e acesso via `/admin/organizar/` visualmente alinhado
+9. **CategoriaPicker com 3 níveis (netos)** — renderiza botões aninhados em subgrupos visuais — era necessário para categorias como "Ensino Médio" (neto de "Currículo Atual" → "Documentos Curriculares")
 
 ## Deploy (PythonAnywhere)
 
@@ -242,6 +262,24 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
 - [x] Barra inferior do rodapé reduzida ao mínimo (18px de altura, fonte 11px), fundo azul médio `#3b6fa8` com texto branco, tudo em uma única linha (© + ícone admin lado a lado). Antes tinha padding grande e opacidade baixa
 - [x] Scrollbar interna adicionada às seções "Conteúdos recentes" (esquerda) e "Navegue por área" (direita) da home — `max-height: 600px; overflow-y: auto` com scrollbar estilizada em azul. Necessário porque essas seções tendem a crescer muito com adição de novos conteúdos/categorias
 - [x] Botão flutuante "Eventos" (cartazes mobile) só aparece agora em telas ≤900px (antes ≤1400px, o que fazia ele aparecer atrás/sobreposto a elementos do desktop pequeno)
+- [x] Modelo `Anexo` criado — permite anexar múltiplos arquivos (PDF, Word, Excel, PowerPoint, vídeo, imagem, ZIP, etc.) a Conteudo ou Categoria — FK dual (mutualmente exclusivo) + campo `ordem` para sequência
+- [x] Tabular inline `AnexoConteudoInline` no admin de Conteudo e `AnexoCategoriaInline` no admin de Categoria — 3 campos editáveis direto (arquivo, nome, ordem), 3 extras vazios por padrão
+- [x] Campo `ordem` (PositiveIntegerField) adicionado a Conteudo para permitir ordenação manual — editável inline na tabela do admin (`list_editable`)
+- [x] Organizador de Conteúdo (`/admin/organizar/`) — painel visual dentro do admin para:
+  - Navegar por categoria/subcategoria e visualizar seus conteúdos em ordem
+  - Criar novas subcategorias dentro de uma categoria selecionada (abre em nova aba)
+  - Mover conteúdos entre categorias via formulário de busca de todo o site
+  - Editar ordem inline (campo texto) e salvar alterações
+  - Buscar conteúdos do site para adicionar/mover para a categoria atual
+  - Visualização precisa: mostra exatamente o que aparece no site (subcategorias e conteúdos corretos)
+- [x] CategoriaPicker widget atualizado para suportar 3 níveis de hierarquia (categoria → subcategoria → neto) — exibe categorias filhas com seus netos em subgrupos visuais, cada um com sua própria linha de botões
+- [x] Seção de anexos nas páginas de categoria — exibe arquivos anexados à categoria em cards verticais bonitos:
+  - Cada arquivo é um card com: ícone colorido por tipo (PDF vermelho, Word azul, Excel verde, PPT laranja, vídeo roxo)
+  - Nome do arquivo em destaque + "Clique para abrir ou baixar" em cinza
+  - Badge colorido com extensão (ex: "PDF" em fundo vermelho claro)
+  - Ícone de download discreto no canto direito (aparece em hover)
+  - Borda azul à esquerda (visual alinhado com cards de conteúdo do site)
+  - Layout responsivo em lista vertical, gap entre cards, fundo cinza suave
 
 ## O que falta / próximos passos possíveis
 
@@ -258,9 +296,26 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
 - Os conteúdos tipo `link` e `documento` apontam para URLs externas (Google Drive, SEDU, etc.) — os arquivos PDF não estão armazenados localmente.
 - O site original em WordPress está em: `curriculo.sedu.es.gov.br/curriculo/`
 - O usuário não tem conhecimento de programação — sempre forneça comandos prontos para copiar e colar.
+- **Anexos**: No admin, ao editar uma Categoria ou Conteudo, existe uma seção "📎 Arquivos anexados" com tabela inline para adicionar até 3 arquivos por vez (clique "Adicionar mais linhas" para expandir). Formatos suportados: PDF, Word (.doc, .docx), Excel (.xls, .xlsx), PowerPoint (.ppt, .pptx), vídeo (.mp4, .avi, .mov, .mkv, .webm), imagem (.jpg, .jpeg, .png, .gif, .webp), ZIP, TXT, CSV, OpenDocument, etc. No site, anexos de categoria aparecem em seção visual acima dos conteúdos, cada arquivo é um card com ícone colorido, nome, extensão e link para download. Ordem editável no admin.
+- **Organizador de Conteúdo** (`/admin/organizar/`): Painel visual dentro do admin (acessível via botão "Abrir Organizador" no dashboard ou via URL direta) para gerenciar categorias e conteúdos:
+  - Navegue pela hierarquia clicando em categorias/subcategorias (breadcrumb no topo)
+  - Veja todos os conteúdos da categoria selecionada + suas subcategorias em lista com ordem inline (campo texto)
+  - Crie novas subcategorias dentro da categoria atual (botão "Criar nova subcategoria" abre em nova aba)
+  - Mova conteúdos de outras categorias para a atual via busca (busca todos os conteúdos do site)
+  - Reordene itens editando o campo `ordem` direto na tabela e clicando "Salvar ordem"
+  - A precisão é crítica: mostra exatamente o que aparece no site (não mostra conteúdos das subcategorias do mesmo nível, só da categoria selecionada + suas filhas)
 - Widgets visuais do admin (`CategoriaPicker`, `IconPicker`) carregam o Font Awesome via CDN na própria `Media` da classe, pois o admin do Django não inclui o CDN usado no site público (`templates/base.html`).
 - O CSS dos widgets (`admin_picker.css`) usa `!important` em vários pontos porque o CSS padrão do Django Admin estiliza `<label>` genericamente (largura fixa, `display: block`), o que sobrescreveria a grade de botões sem isso.
 - **Cartazes**: no admin, ao criar/editar um cartaz, escolha o tamanho na seção "Posição e exibição" — a imagem nunca será distorcida. Em desktop (>1400px), aparecem nas laterais **dentro da área branca de conteúdo** (são filhos da seção `.home-conteudo`, presos por `position: sticky` — nunca invadem o banner, a faixa azul do texto nem o rodapé, em nenhuma posição de rolagem); em mobile/tablet (≤1400px), um botão flutuante "Eventos" abre um painel deslizante com todos os cartazes ativos em grade. O botão só aparece se houver pelo menos um cartaz com "Ativo" marcado. **Importante**: se um dia forem adicionadas outras seções brancas entre o banner e a seção `.home-conteudo` (ex.: "Destaques"), os cartazes continuarão presos só à `.home-conteudo` — para cobrir mais áreas, mover as colunas `.cartazes-lateral` para um contêiner `position: relative` que envolva toda a região branca desejada.
+- **Anexos — Visual refinado**: arquivos anexados a categorias aparecem em seção visual bonita com:
+  - Cards individuais em lista vertical (não inline)
+  - Borda azul à esquerda (5px) para alinhamento com design do site
+  - Ícone colorido por tipo (PDF #dc2626 vermelho, Word #2563eb azul, Excel #059669 verde, PPT #d97706 laranja, Vídeo #7c3aed roxo, Imagem #0891b2 ciano, Padrão #6b7280 cinza)
+  - Nome do arquivo em destaque (font-weight: 600) + "Clique para abrir ou baixar" em cinza abaixo
+  - Badge colorido com extensão (fundo suave + cor correspondente ao ícone, border-radius: 20px)
+  - Ícone de download discreto à direita, opacity 0.6 em repouso, opacity 1 em hover
+  - Efeito hover suave: borda ativa, shadow maior, slide 3px à direita
+  - Container `.anexos-section`: fundo cinza, border, border-radius, padding — visual similar a card
 - **Cache do navegador ao testar mudanças de CSS**: depois de publicar uma alteração visual (deploy no PythonAnywhere ou até localmente), se a mudança não aparecer, force um recarregamento sem cache (Ctrl+Shift+R no Windows/Linux, Cmd+Shift+R no Mac) antes de concluir que há um bug — várias vezes durante o desenvolvimento o código já estava correto mas o navegador ainda mostrava o CSS antigo salvo em cache.
 - **Fluxo de trabalho obrigatório**: toda alteração de código feita nesta pasta local também precisa ser enviada ao GitHub (`git add`, `git commit`, `git push origin main`) para não ficar dessincronizada — o site publicado no PythonAnywhere só recebe as mudanças fazendo `git pull` de lá. Sempre que uma sessão terminar com alterações no código, confirme que o `git push` foi feito.
 - **Migração das páginas do WordPress concluída em 2026-07-06**: dos 41 itens que ainda apontavam para `curriculo.sedu.es.gov.br/curriculo/...`, a maioria foi convertida para páginas nativas (`tipo='pagina'`, com HTML extraído da página original e comentários moderados no admin Django). 3 itens não puderam ser migrados com segurança e precisam de decisão do Dan:

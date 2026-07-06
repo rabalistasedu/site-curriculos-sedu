@@ -59,17 +59,42 @@ class CategoriaPicker(forms.Widget):
             )
 
             for sub in subs:
-                is_sel = (value_str == str(sub.pk))
-                sel_cls = ' cp-selected' if is_sel else ''
-                chk = 'checked' if is_sel else ''
-                icone = sub.icone_display
-                parts.append(
-                    f'<label class="cp-btn{sel_cls}">'
-                    f'<input type="radio" name="{name}" value="{sub.pk}" {chk}>'
-                    f'<span class="cp-icon"><i class="{icone}"></i></span>'
-                    f'<span class="cp-label">{sub.nome}</span>'
-                    f'</label>'
-                )
+                netos = sub.subcategorias.filter(ativa=True).order_by('nome')
+                if netos.exists():
+                    # Mostra sub como cabeçalho e seus filhos como botões
+                    sub_icone = sub.icone_display
+                    parts.append(
+                        f'<div class="cp-subgroup">'
+                        f'<div class="cp-subgroup-label">'
+                        f'<i class="{sub_icone}"></i> {sub.nome}'
+                        f'</div>'
+                    )
+                    for neto in netos:
+                        is_sel = (value_str == str(neto.pk))
+                        sel_cls = ' cp-selected' if is_sel else ''
+                        chk = 'checked' if is_sel else ''
+                        icone = neto.icone_display
+                        parts.append(
+                            f'<label class="cp-btn{sel_cls}">'
+                            f'<input type="radio" name="{name}" value="{neto.pk}" {chk}>'
+                            f'<span class="cp-icon"><i class="{icone}"></i></span>'
+                            f'<span class="cp-label">{neto.nome}</span>'
+                            f'</label>'
+                        )
+                    parts.append('</div>')
+                else:
+                    # Sub sem filhos — botão direto
+                    is_sel = (value_str == str(sub.pk))
+                    sel_cls = ' cp-selected' if is_sel else ''
+                    chk = 'checked' if is_sel else ''
+                    icone = sub.icone_display
+                    parts.append(
+                        f'<label class="cp-btn{sel_cls}">'
+                        f'<input type="radio" name="{name}" value="{sub.pk}" {chk}>'
+                        f'<span class="cp-icon"><i class="{icone}"></i></span>'
+                        f'<span class="cp-label">{sub.nome}</span>'
+                        f'</label>'
+                    )
 
             parts.append('</div></div>')
 

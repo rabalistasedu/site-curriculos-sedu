@@ -2,8 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from conteudo.admin_views import organizar_view
 
 urlpatterns = [
+    path('admin/organizar/', admin.site.admin_view(organizar_view), name='admin_organizar'),
     path('admin/', admin.site.urls),
     path('', include('conteudo.urls')),
 ]

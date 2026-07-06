@@ -1,0 +1,101 @@
+{% extends "admin/base_site.html" %}
+{% load i18n log %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+{% endblock %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block content_title %}
+<h1>{{ title }}</h1>
+{% endblock %}
+
+{% block content %}
+<!-- Banner do Organizador de Conteúdo -->
+<div style="background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-sitemap" style="margin-right: 8px;"></i>
+            Organizador de Conteúdo
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #e0e7ef;">
+            Crie subcategorias, mova conteúdos entre áreas e organize todo o site visualmente.
+        </p>
+    </div>
+    <a href="{% url 'admin_organizar' %}" style="background: #fff; color: #1e5fae; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-folder-tree"></i> Abrir Organizador
+    </a>
+</div>
+
+<!-- Lista de apps padrão do admin -->
+{% if app_list %}
+{% for app in app_list %}
+<div class="app-{{ app.app_label }} module{% if app.app_url in request.path|default:'' %} current-app{% endif %}">
+    <table>
+        <caption>
+            <a href="{{ app.app_url }}" class="section" title="{% blocktranslate with name=app.name %}Models in the {{ name }} application{% endblocktranslate %}">{{ app.name }}</a>
+        </caption>
+        {% for model in app.models %}
+        <tr class="model-{{ model.object_name|lower }}">
+            {% if model.admin_url %}
+            <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
+            {% else %}
+            <th scope="row">{{ model.name }}</th>
+            {% endif %}
+            {% if model.add_url %}
+            <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
+            {% else %}
+            <td>&nbsp;</td>
+            {% endif %}
+            {% if model.admin_url and show_changelinks %}
+            {% if model.view_only %}
+            <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
+            {% else %}
+            <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
+            {% endif %}
+            {% elif show_changelinks %}
+            <td>&nbsp;</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endfor %}
+{% else %}
+<p>{% translate "You don't have permission to view or edit anything." %}</p>
+{% endif %}
+{% endblock %}
+
+{% block sidebar %}
+{% get_admin_log 10 as admin_log for_user user %}
+{% if not is_popup %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>{% translate 'Recent actions' %}</h2>
+        {% if admin_log %}
+        <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type }}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet">{% translate 'Unknown content' %}</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>{% translate 'None available' %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

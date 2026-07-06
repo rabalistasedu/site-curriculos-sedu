@@ -143,7 +143,7 @@ class Conteudo(models.Model):
     # Arquivo (para documentos PDF, Word, Excel)
     arquivo = models.FileField(
         'Arquivo', upload_to='documentos/%Y/%m/', blank=True, null=True,
-        help_text='PDF, Word (.docx), Excel (.xlsx) ou outro arquivo'
+        help_text='Formatos aceitos: PDF, Word (.doc/.docx), Excel (.xls/.xlsx), PowerPoint (.ppt/.pptx), vídeo (.mp4/.avi), imagem (.jpg/.png) e outros.'
     )
 
     # Vídeo
@@ -259,6 +259,45 @@ class Conteudo(models.Model):
             video_id = url.split('vimeo.com/')[1].split('?')[0]
             return f'https://player.vimeo.com/video/{video_id}'
         return url
+
+
+class Anexo(models.Model):
+    """Arquivos anexados a um conteúdo ou categoria — PDF, Word, Excel, vídeo, etc."""
+    conteudo = models.ForeignKey(
+        Conteudo, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='anexos', verbose_name='Conteúdo'
+    )
+    categoria = models.ForeignKey(
+        Categoria, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='anexos', verbose_name='Categoria'
+    )
+    arquivo = models.FileField(
+        'Arquivo', upload_to='anexos/%Y/%m/',
+        help_text='PDF, Word, Excel, PowerPoint, vídeo, imagem ou outro arquivo.'
+    )
+    nome = models.CharField(
+        'Nome do arquivo', max_length=200, blank=True,
+        help_text='Nome exibido no site. Se vazio, usa o nome do arquivo.'
+    )
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Anexo'
+        verbose_name_plural = 'Anexos'
+        ordering = ['ordem', 'nome']
+
+    def __str__(self):
+        return self.nome or self.arquivo.name.split('/')[-1]
+
+    @property
+    def extensao(self):
+        if self.arquivo:
+            return self.arquivo.name.split('.')[-1].upper()
+        return ''
+
+    @property
+    def nome_exibicao(self):
+        return self.nome or self.arquivo.name.split('/')[-1]
 
 
 class Banner(models.Model):
