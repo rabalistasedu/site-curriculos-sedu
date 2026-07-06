@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:curriculo.sedu.es.gov.br)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(ls -la \"/Users/ridan/Downloads/stitch_sedu_curriculum_design_system/\" 2>/dev/null)",
+      "Bash(cp \"/Users/ridan/Downloads/stitch_sedu_curriculum_design_system/imagemcentral.png\" \"/Users/ridan/Claude/Projects/Site Curriculos SEDU/static/img/hero-ilustracao.png\" && ls -la \"/Users/ridan/Claude/Projects/Site Curriculos SEDU/static/img/\" | grep hero)",
+      "Bash(curl -s http://localhost:8000/static/css/style.css)",
+      "Bash(curl -sI http://localhost:8000/static/css/style.css)",
+      "Bash(git rm *)",
+      "mcp__visualize__read_me",
+      "Bash(curl -s \"https://curriculo.sedu.es.gov.br/curriculo/documentos/\" -o /private/tmp/claude-501/-Users-ridan-Claude-Projects-Site-Curriculos-SEDU/813eb7b0-ea13-4ce2-8281-a3ed0cfabbce/scratchpad/doc_atual.html)",
+      "Bash(python3)",
+      "Bash(grep -rl \"Caro\\(a\\) Professor\\\\|curriculo-atual\\\\|Currículo Atual\\\\|Vol-01-Educacao\\\\|Curriculo EM\" conteudo/management/commands/)",
+      "Bash(grep -rln \"Curriculo-ES-2020-Vol-01\\\\|Educacao-Infantil-REV2026\\\\|Caro\\(a\\) Professor\" conteudo/)",
+      "Bash(ls -la doc_atual.html)",
+      "Bash(curl -s \"https://curriculo.sedu.es.gov.br/curriculo/documentos/\" -o doc_atual.html)",
+      "Bash(curl -s \"https://curriculo.sedu.es.gov.br/curriculo/projetointegrador/\" -o /private/tmp/claude-501/-Users-ridan-Claude-Projects-Site-Curriculos-SEDU/813eb7b0-ea13-4ce2-8281-a3ed0cfabbce/scratchpad/proj_integrador.html)",
+      "Bash(curl -s \"https://curriculo.sedu.es.gov.br/curriculo/rpe/\" -o /private/tmp/claude-501/-Users-ridan-Claude-Projects-Site-Curriculos-SEDU/813eb7b0-ea13-4ce2-8281-a3ed0cfabbce/scratchpad/rpe.html)",
+      "Bash(curl -s \"https://curriculo.sedu.es.gov.br/curriculo/olimpiadas/\" -o /private/tmp/claude-501/-Users-ridan-Claude-Projects-Site-Curriculos-SEDU/813eb7b0-ea13-4ce2-8281-a3ed0cfabbce/scratchpad/olimpiadas.html)",
+      "Bash(git check-ignore *)",
+      "Bash(grep -n \"Migração \\\\`0009_conteudo_recente\\\\`\" CLAUDE.md)",
+      "Bash(cd \"/Users/ridan/Claude/Projects/Site Curriculos SEDU\" && git status --short | head -5 && echo \"---\" && ls venv/bin/python 2>/dev/null && echo \"venv OK\")"
+    ]
+  }
+}

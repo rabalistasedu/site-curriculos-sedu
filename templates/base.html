@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ config.nome_site }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ config.descricao }}{% endblock %}">
+
+    <!-- Favicon -->
+    {% if config.favicon %}
+    <link rel="icon" href="{{ config.favicon.url }}">
+    {% endif %}
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome (ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- CSS do site -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+    <div class="container header-inner">
+        <img src="{% static 'img/logogov.png' %}" alt="Governo do ES" class="header-brasao">
+
+        <a href="{% url 'conteudo:home' %}" class="logo">
+            <div class="logo-text">
+                <span class="logo-title">Currículo</span>
+                <span class="logo-subtitle">Espírito Santo</span>
+            </div>
+        </a>
+
+        <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('open')" aria-label="Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <nav class="nav">
+            {% for cat in menu_categorias %}
+            <a href="{% url 'conteudo:categoria' cat.slug %}" class="nav-link">
+                {% if cat.icone %}<i class="{{ cat.icone }}"></i>{% endif %}
+                {{ cat.nome }}
+            </a>
+            {% endfor %}
+        </nav>
+
+        <form action="{% url 'conteudo:busca' %}" class="search-form">
+            <input type="text" name="q" placeholder="Buscar..." value="{{ query|default:'' }}" class="search-input">
+            <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+        </form>
+
+        <img src="{% static 'img/gerenciaok.png' %}" alt="GECEB" class="header-geceb">
+    </div>
+</header>
+
+<!-- ── Conteúdo principal ─────────────────────────────────────── -->
+<main class="main">
+    {% block content %}{% endblock %}
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-info">
+            <h3>GERÊNCIA DE CURRÍCULO DA EDUCAÇÃO BÁSICA (GECEB)</h3>
+            <p><i class="fas fa-envelope"></i> {{ config.email_contato }}</p>
+            <p><i class="fas fa-phone"></i> {{ config.telefone }}</p>
+        </div>
+        <div class="footer-info">
+            <h3>SECRETARIA DA EDUCAÇÃO (SEDU)</h3>
+            <p><i class="fas fa-map-marker-alt"></i> {{ config.endereco|linebreaksbr }}</p>
+        </div>
+        <div class="footer-links">
+            <h3>Navegação</h3>
+            {% for cat in menu_categorias %}
+            <a href="{% url 'conteudo:categoria' cat.slug %}">{{ cat.nome }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <div class="container footer-bottom-inner">
+            <p>&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo</p>
+            <a href="/admin/" class="admin-access-btn" title="Área administrativa">
+                <i class="fas fa-lock"></i>
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

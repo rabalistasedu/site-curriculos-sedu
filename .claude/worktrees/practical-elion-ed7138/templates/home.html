@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- ── Banner / Hero ──────────────────────────────────────────── -->
+<section class="hero">
+    {% if banners %}
+    <div class="hero-slider" id="heroSlider">
+        {% for banner in banners %}
+        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem.url }}')">
+            <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}">
+            <div class="hero-overlay">
+                <h1>{{ banner.titulo }}</h1>
+                {% if banner.subtitulo %}<p>{{ banner.subtitulo }}</p>{% endif %}
+                {% if banner.link %}<a href="{{ banner.link }}" class="btn btn-primary">Saiba mais</a>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="hero-default">
+        <img src="{% static 'img/hero-bg.png' %}"
+             alt="" class="hero-illustration">
+    </div>
+    {% endif %}
+</section>
+
+<!-- ── Texto da home (editável no admin, abaixo do banner) ─────── -->
+{% if config.home_titulo or config.home_texto %}
+<section class="home-intro">
+    <div class="container">
+        {% if config.home_titulo %}<h1>{{ config.home_titulo }}</h1>{% endif %}
+        {% if config.home_texto %}<div class="home-intro-texto">{{ config.home_texto|safe }}</div>{% endif %}
+    </div>
+</section>
+{% endif %}
+
+<!-- ── Destaques ──────────────────────────────────────────────── -->
+{% if destaques %}
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">Destaques</h2>
+        <div class="content-grid">
+            {% for item in destaques %}
+            <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="content-card">
+                {% if item.imagem_destaque %}
+                <div class="card-image">
+                    <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
+                </div>
+                {% else %}
+                <div class="card-image card-image-placeholder">
+                    <i class="{{ item.icone_criativo }}"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h3>{{ item.titulo }}</h3>
+                    {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
+                    {% if item.categoria %}<span class="card-category">{{ item.categoria.nome }}</span>{% endif %}
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ── Recentes (esquerda) + Navegue por área (direita) ───────── -->
+<section class="section">
+    <div class="container">
+        <div class="home-split">
+
+            <!-- Esquerda: Conteúdos recentes -->
+            <div class="home-recentes">
+                <h2 class="section-title">
+                    <span class="title-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
+                    Conteúdos recentes
+                </h2>
+                {% if recentes %}
+                <div class="content-list">
+                    {% for item in recentes %}
+                    <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="list-item">
+                        <div class="list-icon">
+                            <i class="{{ item.icone_criativo }}"></i>
+                        </div>
+                        <div class="list-info">
+                            <h3>{{ item.titulo }}</h3>
+                            <div class="list-meta">
+                                {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}
+                                <span>{{ item.data_publicacao|date:"d/m/Y" }}</span>
+                                {% if item.extensao_arquivo %}<span class="file-ext">{{ item.extensao_arquivo }}</span>{% endif %}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right list-arrow"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhum conteúdo recente.</p>
+                {% endif %}
+            </div>
+
+            <!-- Direita: Navegue por área -->
+            <aside class="home-areas">
+                <h2 class="section-title">Navegue por área</h2>
+                <div class="areas-list">
+                    {% for cat in categorias %}
+                    <a href="{% url 'conteudo:categoria' cat.slug %}" class="area-card">
+                        <div class="category-icon">
+                            <i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>
+                        </div>
+                        <div class="area-text">
+                            <h3>{{ cat.nome }}</h3>
+                            {% if cat.descricao %}<p>{{ cat.descricao|striptags|truncatewords:8 }}</p>{% endif %}
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── Cartazes laterais (eventos) ─────────────────────────────── -->
+{% if cartazes_esq or cartazes_dir %}
+<!-- Cartazes laterais (desktop: fixos nas laterais) -->
+{% if cartazes_esq %}
+<div class="cartazes-lateral cartazes-esq">
+    {% for c in cartazes_esq %}
+    <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">
+        <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+{% if cartazes_dir %}
+<div class="cartazes-lateral cartazes-dir">
+    {% for c in cartazes_dir %}
+    <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">
+        <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+    </a>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Cartazes mobile/tablet: botão + painel -->
+<button class="cartazes-mobile-btn" onclick="document.getElementById('cartazesPainel').classList.toggle('aberto')" aria-label="Ver eventos">
+    <i class="fas fa-calendar-star"></i>
+    <span>Eventos</span>
+</button>
+<div class="cartazes-painel" id="cartazesPainel">
+    <div class="cartazes-painel-header">
+        <h3><i class="fas fa-calendar-alt"></i> Eventos</h3>
+        <button onclick="document.getElementById('cartazesPainel').classList.remove('aberto')" aria-label="Fechar">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="cartazes-painel-grid">
+        {% for c in cartazes_esq %}
+        <a href="{{ c.link }}" class="cartaz-painel-item" target="_blank" rel="noopener">
+            <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+            <span>{{ c.titulo }}</span>
+        </a>
+        {% endfor %}
+        {% for c in cartazes_dir %}
+        <a href="{{ c.link }}" class="cartaz-painel-item" target="_blank" rel="noopener">
+            <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+            <span>{{ c.titulo }}</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

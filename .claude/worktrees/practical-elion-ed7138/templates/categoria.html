@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ categoria.nome }} — {{ config.nome_site }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'conteudo:home' %}">Início</a>
+            {% if categoria.categoria_pai %}
+            <span>/</span>
+            <a href="{% url 'conteudo:categoria' categoria.categoria_pai.slug %}">{{ categoria.categoria_pai.nome }}</a>
+            {% endif %}
+            <span>/</span>
+            <span>{{ categoria.nome }}</span>
+        </nav>
+        <h1>{{ categoria.nome }}</h1>
+    </div>
+</section>
+
+{% if banners %}
+<section class="cat-banners">
+    <div class="container">
+        <div class="cat-banner-slider">
+            {% for b in banners %}
+            {% if b.link %}
+            <a href="{{ b.link }}" class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem.url }}')" target="_blank" rel="noopener">
+            {% else %}
+            <div class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem.url }}')">
+            {% endif %}
+                <img src="{{ b.imagem.url }}" alt="{{ b.titulo }}">
+                {% if b.titulo or b.subtitulo %}
+                <div class="cat-banner-overlay">
+                    {% if b.titulo %}<h3>{{ b.titulo }}</h3>{% endif %}
+                    {% if b.subtitulo %}<p>{{ b.subtitulo }}</p>{% endif %}
+                </div>
+                {% endif %}
+            {% if b.link %}</a>{% else %}</div>{% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="section">
+    <div class="container">
+
+    {% if pagina_indice %}
+        <!-- Índice geral: todos os temas do site, como no site antigo -->
+        {% if categoria.descricao %}
+        <div class="page-intro-body">{{ categoria.descricao|safe }}</div>
+        {% endif %}
+        <div class="topic-grid">
+            {% for botao in botoes %}
+            <a href="{% url 'conteudo:categoria' botao.slug %}" class="topic-btn">
+                <span class="topic-icon"><i class="{{ botao.icone_display }}"></i></span>
+                <span class="topic-label">{{ botao.nome }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    {% else %}
+
+        <!-- Subcategorias -->
+        {% if subcategorias %}
+        <div class="subcategories">
+            {% for sub in subcategorias %}
+            <a href="{% url 'conteudo:categoria' sub.slug %}" class="subcategory-chip">
+                {% if sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
+                {{ sub.nome }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Filtros por tipo -->
+        <div class="filters">
+            <a href="{% url 'conteudo:categoria' categoria.slug %}" class="filter-chip {% if not tipo_filtro %}active{% endif %}">Todos</a>
+            <a href="?tipo=documento" class="filter-chip {% if tipo_filtro == 'documento' %}active{% endif %}"><i class="fas fa-file-pdf"></i> Documentos</a>
+            <a href="?tipo=video" class="filter-chip {% if tipo_filtro == 'video' %}active{% endif %}"><i class="fas fa-play-circle"></i> Vídeos</a>
+            <a href="?tipo=post" class="filter-chip {% if tipo_filtro == 'post' %}active{% endif %}"><i class="fas fa-newspaper"></i> Posts</a>
+            <a href="?tipo=link" class="filter-chip {% if tipo_filtro == 'link' %}active{% endif %}"><i class="fas fa-external-link-alt"></i> Links</a>
+        </div>
+
+        <!-- Texto introdutório -->
+        {% if categoria.descricao %}
+        <div class="page-intro-body">{{ categoria.descricao|safe }}</div>
+        {% endif %}
+
+        <!-- Lista de conteúdos -->
+        {% if conteudos %}
+        <div class="content-grid">
+            {% for item in conteudos %}
+            <a href="{% if item.tipo == 'link' and item.url_externa %}{{ item.url_externa }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
+               class="content-card"
+               {% if item.tipo == 'link' %}target="_blank" rel="noopener"{% endif %}>
+                {% if item.imagem_destaque %}
+                <div class="card-image">
+                    <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
+                </div>
+                {% else %}
+                <div class="card-image card-image-placeholder">
+                    <i class="{{ item.icone_criativo }}"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h3>{{ item.titulo }}</h3>
+                    {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
+                    <div class="card-footer">
+                        <span class="card-date">{{ item.data_publicacao|date:"d/m/Y" }}</span>
+                        {% if item.extensao_arquivo %}<span class="file-ext">{{ item.extensao_arquivo }}</span>{% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhum conteúdo nesta categoria ainda.</p>
+        </div>
+        {% endif %}
+
+    {% endif %}
+    </div>
+</section>
+{% endblock %}

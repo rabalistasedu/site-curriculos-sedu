@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ conteudo.titulo }} — {{ config.nome_site }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="{% url 'conteudo:home' %}">Início</a>
+            {% if conteudo.categoria %}
+            <span>/</span>
+            <a href="{% url 'conteudo:categoria' conteudo.categoria.slug %}">{{ conteudo.categoria.nome }}</a>
+            {% endif %}
+            <span>/</span>
+            <span>{{ conteudo.titulo|truncatewords:8 }}</span>
+        </nav>
+        <span class="badge badge-{{ conteudo.tipo }}">{{ conteudo.get_tipo_display }}</span>
+        <h1>{{ conteudo.titulo }}</h1>
+        <div class="page-meta">
+            {% if conteudo.autor %}<span><i class="fas fa-user"></i> {{ conteudo.autor }}</span>{% endif %}
+            <span><i class="fas fa-calendar"></i> {{ conteudo.data_publicacao|date:"d/m/Y" }}</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container content-layout">
+        <article class="article">
+
+            {% if conteudo.imagem_destaque %}
+            <img src="{{ conteudo.imagem_destaque.url }}" alt="{{ conteudo.titulo }}" class="article-image">
+            {% endif %}
+
+            {% if conteudo.resumo %}
+            <div class="article-summary">{{ conteudo.resumo }}</div>
+            {% endif %}
+
+            <!-- Vídeo embutido -->
+            {% if conteudo.url_video %}
+            <div class="video-container">
+                <iframe src="{{ conteudo.get_video_embed_url }}"
+                        frameborder="0" allowfullscreen
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                </iframe>
+            </div>
+            {% endif %}
+
+            <!-- Conteúdo textual -->
+            {% if conteudo.corpo %}
+            <div class="article-body">{{ conteudo.corpo|safe }}</div>
+            {% endif %}
+
+            <!-- Download de arquivo -->
+            {% if conteudo.arquivo %}
+            <div class="download-box">
+                <i class="{{ conteudo.tipo_icone }} download-icon"></i>
+                <div class="download-info">
+                    <h4>{{ conteudo.titulo }}</h4>
+                    <p>Arquivo {{ conteudo.extensao_arquivo }}</p>
+                </div>
+                <a href="{{ conteudo.arquivo.url }}" class="btn btn-primary" download>
+                    <i class="fas fa-download"></i> Baixar
+                </a>
+            </div>
+            {% endif %}
+
+            <!-- Link externo -->
+            {% if conteudo.url_externa %}
+            <div class="external-link-box">
+                <a href="{{ conteudo.url_externa }}" target="_blank" rel="noopener" class="btn btn-primary">
+                    <i class="fas fa-external-link-alt"></i> Acessar site externo
+                </a>
+            </div>
+            {% endif %}
+
+        </article>
+
+        <!-- Sidebar: conteúdos relacionados -->
+        {% if relacionados %}
+        <aside class="sidebar">
+            <h3>Relacionados</h3>
+            {% for item in relacionados %}
+            <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="sidebar-item">
+                <i class="{{ item.icone_criativo }}"></i>
+                <span>{{ item.titulo|truncatewords:10 }}</span>
+            </a>
+            {% endfor %}
+        </aside>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ── Comentários ─────────────────────────────────────────────── -->
+<section class="section section-alt">
+    <div class="container" style="max-width:760px;">
+
+        <h2 class="section-title">
+            <span class="title-icon"><i class="fas fa-comments"></i></span>
+            Comentários
+        </h2>
+
+        <!-- Mensagens de feedback -->
+        {% for msg in messages %}
+        <div class="comment-alert comment-alert-{{ msg.tags }}">
+            <i class="fas fa-{% if msg.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            {{ msg }}
+        </div>
+        {% endfor %}
+
+        <!-- Lista de comentários aprovados -->
+        {% if comentarios %}
+        <div class="comment-list">
+            {% for c in comentarios %}
+            <div class="comment-item">
+                <div class="comment-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <strong>{{ c.nome }}</strong>
+                        <span class="comment-date">{{ c.data_criacao|date:"d/m/Y \à\s H:i" }}</span>
+                    </div>
+                    <p>{{ c.texto|linebreaksbr }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="comment-empty">Seja o primeiro a comentar!</p>
+        {% endif %}
+
+        <!-- Formulário de novo comentário -->
+        <div class="comment-form-box">
+            <h3><i class="fas fa-pen-to-square"></i> Deixe seu comentário</h3>
+            <p class="comment-notice">
+                <i class="fas fa-info-circle"></i>
+                Seu comentário será publicado após aprovação.
+            </p>
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome <span class="required">*</span></label>
+                        <input type="text" id="nome" name="nome" required maxlength="100"
+                               placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail <span style="color:#9ca3af; font-size:12px;">(opcional)</span></label>
+                        <input type="email" id="email" name="email" maxlength="200"
+                               placeholder="seu@email.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="texto">Comentário <span class="required">*</span></label>
+                    <textarea id="texto" name="texto" rows="4" required
+                              placeholder="Escreva seu comentário aqui..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Enviar comentário
+                </button>
+            </form>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

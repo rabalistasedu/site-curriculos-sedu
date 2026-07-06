@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Busca: {{ query }} — {{ config.nome_site }}{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1>Resultados da busca</h1>
+        <form action="{% url 'conteudo:busca' %}" class="search-form search-form-large">
+            <input type="text" name="q" value="{{ query }}" placeholder="O que você procura?" class="search-input" autofocus>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+        </form>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if query %}
+            {% if resultados %}
+            <p class="results-count">{{ resultados|length }} resultado{{ resultados|pluralize }} para "{{ query }}"</p>
+            <div class="content-list">
+                {% for item in resultados %}
+                <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="list-item">
+                    <div class="list-icon"><i class="{{ item.icone_criativo }}"></i></div>
+                    <div class="list-info">
+                        <h3>{{ item.titulo }}</h3>
+                        {% if item.resumo %}<p>{{ item.resumo|truncatewords:25 }}</p>{% endif %}
+                        <div class="list-meta">
+                            {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}
+                            <span>{{ item.data_publicacao|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Nenhum resultado encontrado para "{{ query }}".</p>
+                <p>Tente buscar com outras palavras.</p>
+            </div>
+            {% endif %}
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <p>Digite algo para buscar.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
