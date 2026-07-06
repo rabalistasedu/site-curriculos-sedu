@@ -28,7 +28,9 @@
       "Bash(PYTHONIOENCODING=utf-8 C:/Users/RABALI~1/AppData/Local/Temp/site-curriculos-venv/Scripts/python.exe manage.py check)",
       "PowerShell(netstat -ano)",
       "PowerShell(taskkill /PID 9212 /F)",
-      "PowerShell(taskkill /PID 9312 /F)"
+      "PowerShell(taskkill /PID 9312 /F)",
+      "Bash(ls \"C:\\\\Users\\\\ridan\\\\Desktop/\" | head -5)",
+      "PowerShell([Environment]::GetFolderPath\\('Desktop'\\))"
     ]
   }
 }
