@@ -30,7 +30,9 @@
       "PowerShell(taskkill /PID 9212 /F)",
       "PowerShell(taskkill /PID 9312 /F)",
       "Bash(ls \"C:\\\\Users\\\\ridan\\\\Desktop/\" | head -5)",
-      "PowerShell([Environment]::GetFolderPath\\('Desktop'\\))"
+      "PowerShell([Environment]::GetFolderPath\\('Desktop'\\))",
+      "Bash(curl -s http://localhost:50823/)",
+      "Bash(curl -v http://localhost:50823/)"
     ]
   }
 }
