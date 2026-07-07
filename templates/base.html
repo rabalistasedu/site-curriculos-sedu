@@ -31,7 +31,7 @@
     <div class="container header-inner">
         <img src="{% static 'img/logogov.png' %}" alt="Governo do ES" class="header-brasao">
 
-        <a href="{% url 'conteudo:home' %}" class="logo">
+        <a href="{% url 'conteudo:home' %}" class="logo {% block logo_class %}{% endblock %}">
             <div class="logo-text">
                 <span class="logo-title">Currículo</span>
                 <span class="logo-subtitle">Espírito Santo</span>

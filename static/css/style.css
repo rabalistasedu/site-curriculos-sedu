@@ -72,11 +72,65 @@ img { max-width: 100%; height: auto; display: block; }
     flex-shrink: 0;
 }
 
-.logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; transition: all 0.3s ease; }
 .logo img { height: 48px; }
 .logo-text { display: flex; flex-direction: column; line-height: 1.2; }
 .logo-title { font-size: 20px; font-weight: 700; }
 .logo-subtitle { font-size: 12px; opacity: 0.8; }
+
+/* Efeito pulsante no logo (páginas internas — convida a voltar à home) */
+.logo.logo-pulse {
+    animation: logoPulse 2s ease-in-out infinite;
+    border-radius: 10px;
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.35);
+    position: relative;
+    cursor: pointer;
+}
+.logo.logo-pulse::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.6);
+    animation: logoPulseRing 2s ease-out infinite;
+    pointer-events: none;
+}
+.logo.logo-pulse:hover {
+    animation: none;
+    background: rgba(255,255,255,0.25);
+    border-color: #fff;
+    transform: scale(1.06);
+    box-shadow: 0 0 24px rgba(255,255,255,0.5);
+}
+.logo.logo-pulse:hover::before {
+    animation: none;
+    opacity: 0;
+}
+@keyframes logoPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(255,255,255,0.5);
+        background: rgba(255,255,255,0.12);
+    }
+    50% {
+        box-shadow: 0 0 20px 6px rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.2);
+    }
+}
+@keyframes logoPulseRing {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+}
 
 .nav {
     display: flex;
@@ -341,6 +395,10 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%);
     border-color: transparent;
     box-shadow: 0 3px 10px rgba(15,45,92,0.35);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 14px 10px;
 }
 .area-card-featured .category-icon {
     background: rgba(255,255,255,0.15);
@@ -348,9 +406,22 @@ img { max-width: 100%; height: auto; display: block; }
     width: 36px;
     height: 36px;
     font-size: 16px;
+    margin: 0;
 }
 .area-card-featured:hover .category-icon { background: rgba(255,255,255,0.25); color: #fff; }
-.area-card-featured .area-text h3 { color: #fff; font-size: 13.5px; }
+.area-card-featured .area-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.area-card-featured .area-text h3 {
+    color: #fff;
+    font-size: 14px;
+    text-align: center;
+    margin: 0;
+}
 .area-card-featured:hover { box-shadow: 0 5px 16px rgba(15,45,92,0.45); }
 
 @media (max-width: 860px) {

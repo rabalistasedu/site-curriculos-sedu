@@ -160,6 +160,9 @@ Componentes: `.content-card`, `.category-card`, `.content-list .list-item`, `.fi
 7. **FK dual (mutualmente exclusivo) no Anexo** — `conteudo` OU `categoria`, não ambos — simplifica a constraint (CHECK na migração) e a lógica admin; se um anexo virar comum entre ambos no futuro, usar ManyToMany ou GenericForeignKey
 8. **Organizador como view customizada no admin** — não como app separado — mantém integração total com Django admin (permissões, autenticação, interface) e acesso via `/admin/organizar/` visualmente alinhado
 9. **CategoriaPicker com 3 níveis (netos)** — renderiza botões aninhados em subgrupos visuais — era necessário para categorias como "Ensino Médio" (neto de "Currículo Atual" → "Documentos Curriculares")
+10. **Logo pulsante em páginas internas** — convida o usuário a voltar à home com um efeito suave de ondulação + crescimento ao hover; só aparece fora da home para não distrair na página inicial
+11. **Ícones em títulos de seções** — "Conteúdos recentes" tem ícone de varinha mágica (`fas fa-wand-magic-sparkles`), "Navegue por área" tem ícone de bússola (`fas fa-compass`) — reforça a navegação visual
+12. **Centralização do "Currículo Atual"** — botão destaque em gradê azul com ícone + texto perfeitamente centrados — visualmente mais importante e diferenciado dos outros cards
 
 ## Deploy (PythonAnywhere)
 
@@ -196,6 +199,11 @@ python manage.py runserver
 Acesse: http://127.0.0.1:8000/
 
 Admin: http://127.0.0.1:8000/admin/ (criar superuser com `python manage.py createsuperuser`)
+
+**Importante ao testar CSS**: sempre force recarregamento sem cache após fazer alterações CSS:
+- **Windows/Linux**: Ctrl+Shift+R
+- **Mac**: Cmd+Shift+R
+- Sem isso, o navegador mostra a versão antiga do CSS em cache
 
 ## Management commands disponíveis
 
@@ -280,6 +288,18 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
   - Ícone de download discreto no canto direito (aparece em hover)
   - Borda azul à esquerda (visual alinhado com cards de conteúdo do site)
   - Layout responsivo em lista vertical, gap entre cards, fundo cinza suave
+- [x] Logo "Currículo Espírito Santo" com efeito pulsante em páginas internas (categoria, conteúdo, busca) — convida o usuário a retornar à home:
+  - Borda branca translúcida + fundo branco translúcido em torno do logo
+  - Anel externo se expandindo continuamente (efeito de ondulação radiante)
+  - Pulso no shadow + fundo alternando a cada 2s
+  - Ao passar mouse: cresce 6%, brilho branco de 24px, borda fica sólida branca, pulso para
+  - Na home, o logo fica normal (sem pulso)
+- [x] Ícone de navegação adicionado ao título "Navegue por área" na home — usa a classe `fas fa-compass` (bússola) antes do texto, alinhado com o ícone "Conteúdos recentes"
+- [x] Botão "Currículo Atual" totalmente centralizado — ícone + texto alinhados no centro do botão azul degradê:
+  - `.area-card-featured` com `justify-content: center` + `align-items: center`
+  - `.area-text` transformado em flex column com `align-items: center` + `justify-content: center`
+  - Texto (`h3`) com `text-align: center` e `margin: 0`
+  - Ícone com `margin: 0` para não desalinhar
 
 ## O que falta / próximos passos possíveis
 
@@ -317,7 +337,22 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
   - Efeito hover suave: borda ativa, shadow maior, slide 3px à direita
   - Container `.anexos-section`: fundo cinza, border, border-radius, padding — visual similar a card
 - **Cache do navegador ao testar mudanças de CSS**: depois de publicar uma alteração visual (deploy no PythonAnywhere ou até localmente), se a mudança não aparecer, force um recarregamento sem cache (Ctrl+Shift+R no Windows/Linux, Cmd+Shift+R no Mac) antes de concluir que há um bug — várias vezes durante o desenvolvimento o código já estava correto mas o navegador ainda mostrava o CSS antigo salvo em cache.
-- **Fluxo de trabalho obrigatório**: toda alteração de código feita nesta pasta local também precisa ser enviada ao GitHub (`git add`, `git commit`, `git push origin main`) para não ficar dessincronizada — o site publicado no PythonAnywhere só recebe as mudanças fazendo `git pull` de lá. Sempre que uma sessão terminar com alterações no código, confirme que o `git push` foi feito.
+- **Logo pulsante em páginas internas**: o logo "Currículo Espírito Santo" tem um efeito de pulso suave (anel externo expandindo, brilho alternando) em todas as páginas EXCETO na home. Implementado via:
+  - Template: `base.html` tem `{% block logo_class %}{% endblock %}`
+  - Páginas internas (`categoria.html`, `conteudo_detalhe.html`, `busca.html`) definem `{% block logo_class %}logo-pulse{% endblock %}`
+  - CSS: `.logo.logo-pulse` com animação `logoPulse` (2s) + `:hover` que para o pulso e cresce o logo
+  - Propósito: convida o usuário a retornar à home com microrinteração sutil ao mudar de página
+- **Fluxo de trabalho com Git**: toda alteração de código feita localmente precisa ser sincronizada com o GitHub:
+  1. **Commit e push locais**: clique 2x no `.bat` "Subir GitHub SEDU" na sua área de trabalho (Desktop) — ele faz `git add -A`, `git commit` com mensagem customizável, e `git push origin main` automaticamente
+  2. **Sincronizar com PythonAnywhere**: acesse o terminal bash do PythonAnywhere e execute:
+     ```bash
+     cd ~/site-curriculos-sedu
+     git pull origin main
+     python manage.py migrate
+     python manage.py collectstatic --noinput
+     ```
+  3. **Reload no PythonAnywhere**: na aba **Web** do painel PythonAnywhere, clique em **Reload** para aplicar as mudanças
+  - **Importante**: o site publicado em PythonAnywhere só recebe mudanças via `git pull` — as alterações locais não aparecem lá automaticamente. Sempre complete os 3 passos acima.
 - **Migração das páginas do WordPress concluída em 2026-07-06**: dos 41 itens que ainda apontavam para `curriculo.sedu.es.gov.br/curriculo/...`, a maioria foi convertida para páginas nativas (`tipo='pagina'`, com HTML extraído da página original e comentários moderados no admin Django). 3 itens não puderam ser migrados com segurança e precisam de decisão do Dan:
   - **pk 58 "GEEPEI — Espaços Potencialmente Educativos e Inovadores"**: a URL antiga (`/geepei/`) hoje mostra o conteúdo de outro item ("Mitigação de Desigualdades..."). O conteúdo original do GEEPEI não foi encontrado nessa URL nem em nenhuma outra do site antigo.
   - **pk 20 "Orientações Curriculares 2024"** e **pk 21 "Orientações Curriculares 2023"**: ambos apontavam para a mesma URL (`/orientacoescurriculares/`), que hoje só exibe a versão **2026** — as versões de 2023 e 2024 não existem mais nesse endereço.
