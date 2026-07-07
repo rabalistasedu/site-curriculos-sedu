@@ -186,7 +186,20 @@ Depois, na aba **Web** do PythonAnywhere, clicar em **Reload**.
 - `staticfiles/` foi removido do controle de versão do Git (`git rm -r --cached staticfiles` + adicionado ao `.gitignore`). Antes, essa pasta estava versionada, e como o `collectstatic` MODIFICA os arquivos dela no servidor, o `git pull` seguinte falhava com *"Your local changes would be overwritten by merge"* — travando toda a atualização (o site continuava mostrando a versão antiga). Sintoma clássico: "subi pro GitHub mas o PythonAnywhere não muda".
 - `git reset --hard origin/main` força o servidor a ficar idêntico ao GitHub, descartando qualquer modificação local (inclusive dos staticfiles gerados). É **seguro** porque `db.sqlite3` (banco) e `media/` (uploads) são gitignored / untracked — o reset não os toca.
 - `collectstatic --noinput --clear` apaga a pasta `staticfiles` antiga antes de recopiar, garantindo que CSS/JS antigos sumam de vez.
-- **Cache-busting do CSS**: `templates/base.html` carrega o CSS com `?v=AAAAMMDD-N` (ex.: `?v=20260707-3`). Ao mudar o CSS, incrementar esse número força o navegador a baixar a versão nova (senão ele usa a cacheada). É a linha `<link rel="stylesheet" href="{% static 'css/style.css' %}?v=...">`.
+- **Cache-busting do CSS**: `templates/base.html` carrega o CSS com `?v=AAAAMMDD-N` (ex.: `?v=20260707-4`). Ao mudar o CSS, incrementar esse número força o navegador a baixar a versão nova (senão ele usa a cacheada). É a linha `<link rel="stylesheet" href="{% static 'css/style.css' %}?v=...">`.
+
+**Armadilha adicional já resolvida (2026-07-07): mapeamento de Static files desatualizado na aba Web** — mesmo com o Git e o `collectstatic` 100% corretos, o site continuava mostrando CSS/HTML antigos. Causa: na aba **Web → Static files**, o campo Directory do `/static/` apontava para `/home/rabalista/staticfiles` (pasta solta, de uma configuração antiga), em vez de `/home/rabalista/site-curriculos-sedu/staticfiles` (onde o `collectstatic` realmente escreve). Já foi corrigido manualmente na aba Web. **Se o problema voltar a acontecer no futuro** (site sempre desatualizado mesmo com deploy correto), primeiro confira essa tabela na aba Web:
+
+| URL | Directory correto |
+|---|---|
+| `/static/` | `/home/rabalista/site-curriculos-sedu/staticfiles` |
+| `/media/` | `/home/rabalista/site-curriculos-sedu/media` |
+
+Para diagnosticar isso rapidamente no Bash do PythonAnywhere sem depender do navegador (que pode estar com cache), rodar:
+```bash
+curl -s https://rabalista.pythonanywhere.com/static/css/style.css | grep -c logoPulse
+```
+Se o número vier `0` mesmo depois do deploy, é o mapeamento de Static files que está errado (não o Git).
 
 ## Como rodar
 
