@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto
+# Site Currículos SEDU — Contexto do Projeto (v2)
 
 ## O que é este projeto
 
@@ -117,6 +117,7 @@ Modelo para anexar múltiplos arquivos (PDF, Word, Excel, PowerPoint, vídeo, im
 /admin/                       → Django Admin (com botão "Abrir Organizador")
 /admin/organizar/             → Organizador de Conteúdo (painel visual para gerenciar categorias e conteúdos)
 /admin/organizar/?cat=<id>    → Organizador filtrando uma categoria específica
+/admin/adicionar-arquivos/    → Painel de Adicionar Arquivos (escolher categoria + criar grupo + subir arquivos)
 /busca/?q=termo               → busca textual
 /categoria/<slug>/            → lista de conteúdos com filtros (inclui anexos da categoria)
 /categoria/<slug>/?tipo=X     → filtro por tipo (documento, video, post, link)
@@ -440,6 +441,13 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
   - `.area-text` transformado em flex column com `align-items: center` + `justify-content: center`
   - Texto (`h3`) com `text-align: center` e `margin: 0`
   - Ícone com `margin: 0` para não desalinhar
+- [x] Painel "Adicionar Arquivos" (`/admin/adicionar-arquivos/`) — ferramenta visual no admin para subir arquivos em lote a uma categoria do site, em 3 passos:
+  - **Passo 1**: Escolher categoria usando CategoriaPicker (mesmos botões visuais do admin de Conteúdo)
+  - **Passo 2**: Dar um nome ao grupo (cria ou reutiliza uma subcategoria — ex: "Material de Apoio")
+  - **Passo 3**: Subir arquivos separadamente (PDF, Word, Excel, PowerPoint, vídeo, imagem) com nome opcional cada
+  - Linhas de upload dinâmicas (botão "Adicionar mais arquivo" / botão "x" para remover)
+  - Botão verde "Abrir Painel de Arquivos" no dashboard do admin (ao lado do Organizador)
+  - No site, os arquivos aparecem na página da subcategoria como cards na seção "Arquivos para download" (visual já existente)
 
 ## O que falta / próximos passos possíveis
 
@@ -482,6 +490,12 @@ de duplicar. Usam slugs FIXOS para nunca criar subcategorias duplicadas.
   - Páginas internas (`categoria.html`, `conteudo_detalhe.html`, `busca.html`) definem `{% block logo_class %}logo-pulse{% endblock %}`
   - CSS: `.logo.logo-pulse` com animação `logoPulse` (2s) + `:hover` que para o pulso e cresce o logo
   - Propósito: convida o usuário a retornar à home com microrinteração sutil ao mudar de página
+- **Painel "Adicionar Arquivos"** (`/admin/adicionar-arquivos/`): Ferramenta visual no admin para subir arquivos em lote. Acessível via botão verde "Abrir Painel de Arquivos" no dashboard do admin. Fluxo em 3 passos:
+  1. Escolha a categoria usando CategoriaPicker (mesmos botões visuais)
+  2. Dê um nome ao grupo — cria automaticamente uma subcategoria com esse nome (ou reutiliza se já existir)
+  3. Suba os arquivos — cada um com nome opcional; aceita PDF, Word, Excel, PowerPoint, vídeo, imagem, ZIP, etc.
+  - No site, clicar na subcategoria criada mostra os arquivos na seção "Arquivos para download" (cards com ícone colorido por tipo)
+  - Implementação: view `adicionar_arquivos_view` em `admin_views.py`, template `admin/adicionar_arquivos.html`, URL em `curriculo_sedu/urls.py`
 - **Fluxo de trabalho com Git**: toda alteração de código feita localmente precisa ser sincronizada com o GitHub:
   1. **Commit e push locais**: clique 2x no `.bat` "Subir GitHub SEDU" na sua área de trabalho (Desktop) — ele faz `git add -A`, `git commit` com mensagem customizável, e `git push origin main` automaticamente
   2. **Sincronizar com PythonAnywhere**: acesse o terminal bash do PythonAnywhere e execute:

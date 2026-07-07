@@ -29,6 +29,22 @@
     </a>
 </div>
 
+<!-- Banner do Adicionar Arquivos -->
+<div style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-cloud-arrow-up" style="margin-right: 8px;"></i>
+            Adicionar Arquivos
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #e0f2e9;">
+            Escolha uma categoria, crie um grupo e suba PDF, Word, Excel, vídeo ou imagem de uma vez.
+        </p>
+    </div>
+    <a href="{% url 'admin_adicionar_arquivos' %}" style="background: #fff; color: #059669; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-file-circle-plus"></i> Abrir Painel de Arquivos
+    </a>
+</div>
+
 <!-- Lista de apps padrão do admin -->
 {% if app_list %}
 {% for app in app_list %}

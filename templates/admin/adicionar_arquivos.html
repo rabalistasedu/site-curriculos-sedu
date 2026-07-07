@@ -1,0 +1,801 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Adicionar Arquivos | {{ site_title }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/admin_picker.css' %}">
+<style>
+.aa-container { max-width: 960px; margin: 0 auto; }
+
+.aa-section {
+    background: #fff;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+.aa-section h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.aa-section .aa-hint {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0 0 16px;
+}
+
+.aa-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    border: 2px solid #dfe3e8;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color .2s;
+}
+.aa-input:focus { border-color: #2d5a8e; }
+
+/* Chips de subcategoria existente */
+.aa-subcats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.aa-subcat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e3a5f;
+    background: #eff6ff;
+    border: 2px solid #93c5fd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all .2s;
+}
+.aa-subcat-chip:hover {
+    background: #dbeafe;
+    border-color: #2d5a8e;
+}
+.aa-subcat-chip.selected {
+    background: #2d5a8e;
+    color: #fff;
+    border-color: #2d5a8e;
+}
+.aa-subcat-chip .aa-chip-count {
+    background: rgba(0,0,0,.12);
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+.aa-subcat-chip.selected .aa-chip-count {
+    background: rgba(255,255,255,.25);
+}
+.aa-no-subcats {
+    font-size: 13px;
+    color: #9ca3af;
+    font-style: italic;
+    padding: 4px 0;
+}
+.aa-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+}
+.aa-divider::before, .aa-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+/* Lista de itens existentes */
+.aa-items-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+}
+.aa-items-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.aa-items-title .aa-badge {
+    background: #2d5a8e;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+}
+.aa-item-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    transition: border-color .2s;
+}
+.aa-item-row:hover { border-color: #93c5fd; }
+.aa-item-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+}
+.aa-item-icon.pdf { background: #dc2626; }
+.aa-item-icon.doc, .aa-item-icon.docx { background: #2563eb; }
+.aa-item-icon.xls, .aa-item-icon.xlsx { background: #059669; }
+.aa-item-icon.ppt, .aa-item-icon.pptx { background: #d97706; }
+.aa-item-icon.video { background: #7c3aed; }
+.aa-item-icon.img { background: #0891b2; }
+.aa-item-icon.link { background: #7c3aed; }
+.aa-item-icon.default { background: #6b7280; }
+.aa-item-info {
+    flex: 1;
+    min-width: 0;
+}
+.aa-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e3a5f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.aa-item-detail {
+    font-size: 11px;
+    color: #9ca3af;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.aa-item-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+.aa-item-actions a, .aa-item-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: background .2s;
+    white-space: nowrap;
+}
+.aa-action-label { font-size: 12px; }
+.aa-btn-edit {
+    background: #eff6ff;
+    color: #2d5a8e;
+    text-decoration: none;
+    border: 1px solid #bfdbfe;
+}
+.aa-btn-edit:hover { background: #dbeafe; }
+.aa-btn-delete {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+.aa-btn-delete:hover { background: #fee2e2; }
+.aa-items-empty {
+    text-align: center;
+    padding: 20px;
+    color: #9ca3af;
+    font-size: 13px;
+    font-style: italic;
+}
+.aa-items-loading {
+    text-align: center;
+    padding: 16px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* Tabela de arquivos */
+.aa-file-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.aa-file-table th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    padding: 0 8px 8px;
+}
+.aa-file-table td { padding: 6px 8px; vertical-align: top; }
+.aa-file-table tr { border-bottom: 1px solid #f0f0f0; }
+
+.aa-file-table input[type="file"] {
+    font-size: 13px;
+    max-width: 240px;
+}
+.aa-file-table input[type="text"],
+.aa-file-table input[type="url"] {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 13px;
+    border: 1px solid #dfe3e8;
+    border-radius: 4px;
+    outline: none;
+}
+.aa-file-table input[type="text"]:focus,
+.aa-file-table input[type="url"]:focus { border-color: #2d5a8e; }
+
+.aa-ou {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #9ca3af;
+    padding: 2px 0;
+}
+.aa-url-input {
+    border-color: #7c3aed !important;
+}
+.aa-url-input:focus {
+    border-color: #5b21b6 !important;
+    box-shadow: 0 0 0 2px rgba(124,58,237,.15);
+}
+.aa-nome-hint {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 4px;
+    line-height: 1.3;
+}
+
+.aa-remove-btn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    opacity: .5;
+    transition: opacity .2s;
+}
+.aa-remove-btn:hover { opacity: 1; background: #fee2e2; }
+
+.aa-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d5a8e;
+    background: #eff6ff;
+    border: 1px dashed #93c5fd;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background .2s;
+}
+.aa-add-btn:hover { background: #dbeafe; }
+
+/* Botões de ação */
+.aa-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+.aa-submit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity .2s;
+}
+.aa-submit:hover { opacity: .9; }
+
+.aa-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #6b7280;
+    background: #f3f4f6;
+    border: 1px solid #dfe3e8;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background .2s;
+}
+.aa-back:hover { background: #e5e7eb; color: #374151; }
+
+/* Mensagens */
+.aa-msg {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.aa-msg.success { background: #dcfce7; color: #065f46; border: 1px solid #86efac; }
+.aa-msg.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+.aa-msg.info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.aa-msg.warning { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+
+/* Formatos aceitos */
+.aa-formats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+}
+.aa-format-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.aa-format-tag.pdf { background: #fee2e2; color: #dc2626; }
+.aa-format-tag.doc { background: #dbeafe; color: #2563eb; }
+.aa-format-tag.xls { background: #dcfce7; color: #059669; }
+.aa-format-tag.ppt { background: #fef3c7; color: #d97706; }
+.aa-format-tag.vid { background: #f3e8ff; color: #7c3aed; }
+.aa-format-tag.img { background: #e0f2fe; color: #0891b2; }
+
+/* Número de step */
+.aa-step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    background: #2d5a8e;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="aa-container">
+
+    {% for msg in messages %}
+    <div class="aa-msg {{ msg.tags }}">
+        <i class="fas fa-{% if msg.tags == 'success' %}check-circle{% elif msg.tags == 'error' %}times-circle{% elif msg.tags == 'info' %}info-circle{% else %}exclamation-triangle{% endif %}"></i>
+        {{ msg }}
+    </div>
+    {% endfor %}
+
+    <form method="post" enctype="multipart/form-data" id="mainForm">
+        {% csrf_token %}
+        <input type="hidden" name="subcategoria_id" id="subcategoriaIdInput" value="">
+
+        <!-- PASSO 1: Escolher categoria -->
+        <div class="aa-section">
+            <h2><span class="aa-step">1</span> Escolha a categoria do site</h2>
+            <p class="aa-hint">
+                Clique no botão da categoria onde os itens vão aparecer.
+            </p>
+            {{ picker_html }}
+        </div>
+
+        <!-- PASSO 2: Escolher ou criar grupo -->
+        <div class="aa-section" id="step2Section">
+            <h2><span class="aa-step">2</span> Escolha um grupo existente ou crie um novo</h2>
+            <p class="aa-hint">
+                Se o grupo (botão) já existe, clique nele para adicionar mais itens dentro.
+                Se quer criar um novo, digite o nome abaixo.
+            </p>
+
+            <div id="subcatsContainer">
+                <div class="aa-no-subcats">
+                    <i class="fas fa-arrow-up"></i> Primeiro, selecione uma categoria no passo 1
+                </div>
+            </div>
+
+            <div class="aa-divider">ou criar novo</div>
+
+            <input type="text" name="nome_grupo" id="nomeGrupoInput" class="aa-input"
+                   placeholder="Ex: Material de Apoio, Documentos 2026">
+        </div>
+
+        <!-- LISTA DE ITENS DO GRUPO SELECIONADO (seção própria) -->
+        <div id="itemsContainer" style="display:none;"></div>
+
+        <!-- PASSO 3: Arquivos e Links -->
+        <div class="aa-section">
+            <h2><span class="aa-step">3</span> Adicionar arquivos e/ou links</h2>
+            <p class="aa-hint">
+                Para cada item, escolha <strong>uma</strong> das opções: subir um arquivo do seu computador
+                <strong>OU</strong> colar um link externo (Google Drive, site, YouTube, etc.).
+            </p>
+
+            <table class="aa-file-table" id="fileTable">
+                <thead>
+                    <tr>
+                        <th style="width:35%">Arquivo ou Link</th>
+                        <th style="width:35%">Nome amigável</th>
+                        <th style="width:40px"></th>
+                    </tr>
+                </thead>
+                <tbody id="fileRows">
+                    <tr>
+                        <td>
+                            <input type="file" name="arquivo_0"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.avi,.mov,.mkv,.webm,.jpg,.jpeg,.png,.gif,.webp,.zip,.txt,.csv">
+                            <div class="aa-ou">— OU —</div>
+                            <input type="url" name="url_0" class="aa-url-input"
+                                placeholder="Cole o link aqui">
+                        </td>
+                        <td>
+                            <input type="text" name="nome_0" placeholder="Ex: Currículo de Linguagens 2026">
+                            <div class="aa-nome-hint">Nome que aparece no site (obrigatório para links)</div>
+                        </td>
+                        <td><button type="button" class="aa-remove-btn" onclick="removeRow(this)" title="Remover"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="file" name="arquivo_1"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.avi,.mov,.mkv,.webm,.jpg,.jpeg,.png,.gif,.webp,.zip,.txt,.csv">
+                            <div class="aa-ou">— OU —</div>
+                            <input type="url" name="url_1" class="aa-url-input"
+                                placeholder="Cole o link aqui">
+                        </td>
+                        <td>
+                            <input type="text" name="nome_1" placeholder="Ex: Currículo de Linguagens 2026">
+                            <div class="aa-nome-hint">Nome que aparece no site (obrigatório para links)</div>
+                        </td>
+                        <td><button type="button" class="aa-remove-btn" onclick="removeRow(this)" title="Remover"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="file" name="arquivo_2"
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.avi,.mov,.mkv,.webm,.jpg,.jpeg,.png,.gif,.webp,.zip,.txt,.csv">
+                            <div class="aa-ou">— OU —</div>
+                            <input type="url" name="url_2" class="aa-url-input"
+                                placeholder="Cole o link aqui">
+                        </td>
+                        <td>
+                            <input type="text" name="nome_2" placeholder="Ex: Currículo de Linguagens 2026">
+                            <div class="aa-nome-hint">Nome que aparece no site (obrigatório para links)</div>
+                        </td>
+                        <td><button type="button" class="aa-remove-btn" onclick="removeRow(this)" title="Remover"><i class="fas fa-times"></i></button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="aa-add-btn" onclick="addRow()">
+                <i class="fas fa-plus"></i> Adicionar mais item
+            </button>
+
+            <div class="aa-formats">
+                <span class="aa-format-tag pdf"><i class="fas fa-file-pdf"></i> PDF</span>
+                <span class="aa-format-tag doc"><i class="fas fa-file-word"></i> Word</span>
+                <span class="aa-format-tag xls"><i class="fas fa-file-excel"></i> Excel</span>
+                <span class="aa-format-tag ppt"><i class="fas fa-file-powerpoint"></i> PowerPoint</span>
+                <span class="aa-format-tag vid"><i class="fas fa-file-video"></i> Vídeo</span>
+                <span class="aa-format-tag img"><i class="fas fa-file-image"></i> Imagem</span>
+                <span class="aa-format-tag" style="background:#f3e8ff;color:#7c3aed;"><i class="fas fa-link"></i> Link externo</span>
+            </div>
+        </div>
+
+        <!-- Botões de ação -->
+        <div class="aa-actions">
+            <button type="submit" class="aa-submit">
+                <i class="fas fa-cloud-arrow-up"></i> Salvar itens
+            </button>
+            <a href="{% url 'admin:index' %}" class="aa-back">
+                <i class="fas fa-arrow-left"></i> Voltar ao painel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+var rowCount = 3;
+var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+var selectedSubcatId = null;
+var subcatsData = [];
+
+// Quando uma categoria é selecionada no CategoriaPicker, buscar subcategorias
+document.addEventListener('change', function(e) {
+    if (e.target.name === 'categoria') {
+        loadSubcategorias(e.target.value);
+        clearSubcatSelection();
+    }
+});
+
+function loadSubcategorias(catId) {
+    var container = document.getElementById('subcatsContainer');
+    container.innerHTML = '<div class="aa-items-loading"><i class="fas fa-spinner fa-spin"></i> Carregando grupos...</div>';
+
+    fetch('/admin/api/subcategorias/?cat_id=' + catId)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            subcatsData = data.subcategorias;
+            renderSubcats();
+        })
+        .catch(function() {
+            container.innerHTML = '<div class="aa-no-subcats">Erro ao carregar. Tente novamente.</div>';
+        });
+}
+
+function renderSubcats() {
+    var container = document.getElementById('subcatsContainer');
+
+    if (subcatsData.length === 0) {
+        container.innerHTML = '<div class="aa-no-subcats">Nenhum grupo existente nesta categoria. Crie um novo abaixo.</div>';
+        return;
+    }
+
+    var html = '<div class="aa-subcats">';
+    for (var i = 0; i < subcatsData.length; i++) {
+        var sub = subcatsData[i];
+        var sel = (selectedSubcatId == sub.id) ? ' selected' : '';
+        html += '<button type="button" class="aa-subcat-chip' + sel + '" data-id="' + sub.id + '" onclick="selectSubcat(' + sub.id + ')">';
+        html += '<i class="fas fa-folder-open"></i> ' + escapeHtml(sub.nome);
+        html += ' <span class="aa-chip-count">' + sub.count + '</span>';
+        html += '</button>';
+    }
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function selectSubcat(id) {
+    if (selectedSubcatId === id) {
+        clearSubcatSelection();
+        return;
+    }
+
+    selectedSubcatId = id;
+    document.getElementById('subcategoriaIdInput').value = id;
+    document.getElementById('nomeGrupoInput').value = '';
+    document.getElementById('nomeGrupoInput').removeAttribute('required');
+
+    renderSubcats();
+    loadItems(id);
+}
+
+function clearSubcatSelection() {
+    selectedSubcatId = null;
+    document.getElementById('subcategoriaIdInput').value = '';
+    document.getElementById('itemsContainer').style.display = 'none';
+    document.getElementById('itemsContainer').innerHTML = '';
+    renderSubcats();
+}
+
+function loadItems(subcatId) {
+    var sub = null;
+    for (var i = 0; i < subcatsData.length; i++) {
+        if (subcatsData[i].id === subcatId) {
+            sub = subcatsData[i];
+            break;
+        }
+    }
+
+    var container = document.getElementById('itemsContainer');
+
+    if (!sub || sub.items.length === 0) {
+        container.style.display = 'block';
+        container.innerHTML =
+            '<div class="aa-section" style="border:2px solid #93c5fd; background:#f0f7ff;">' +
+            '<h2 style="margin-bottom:12px;"><span class="aa-step" style="background:#f59e0b;"><i class="fas fa-list" style="font-size:13px;"></i></span> Itens em "' + escapeHtml(sub ? sub.nome : '') + '"</h2>' +
+            '<div class="aa-items-empty"><i class="fas fa-inbox"></i> Nenhum item ainda. Adicione no passo 3 abaixo.</div>' +
+            '</div>';
+        container.scrollIntoView({behavior: 'smooth', block: 'center'});
+        return;
+    }
+
+    var html = '<div class="aa-section" style="border:2px solid #93c5fd; background:#f0f7ff;">';
+    html += '<h2 style="margin-bottom:4px;"><span class="aa-step" style="background:#f59e0b;"><i class="fas fa-list" style="font-size:13px;"></i></span> Itens em "' + escapeHtml(sub.nome) + '" <span class="aa-badge" style="background:#2d5a8e;color:#fff;padding:2px 10px;border-radius:10px;font-size:12px;margin-left:4px;">' + sub.items.length + '</span></h2>';
+    html += '<p class="aa-hint">Veja, edite ou exclua os itens que já estão dentro deste grupo.</p>';
+
+    for (var j = 0; j < sub.items.length; j++) {
+        var item = sub.items[j];
+        var iconClass = getItemIconClass(item);
+        var iconHtml = getItemIconHtml(item);
+        var detail = '';
+
+        if (item.tipo_item === 'anexo') {
+            detail = item.extensao || 'Arquivo';
+        } else if (item.tipo === 'link') {
+            detail = item.url;
+        } else {
+            detail = item.tipo;
+        }
+
+        html += '<div class="aa-item-row" id="item-' + item.tipo_item + '-' + item.id + '">';
+        html += '<div class="aa-item-icon ' + iconClass + '">' + iconHtml + '</div>';
+        html += '<div class="aa-item-info">';
+        html += '<div class="aa-item-name">' + escapeHtml(item.nome) + '</div>';
+        html += '<div class="aa-item-detail">' + escapeHtml(detail) + '</div>';
+        html += '</div>';
+        html += '<div class="aa-item-actions">';
+
+        if (item.tipo_item === 'conteudo' && item.edit_url) {
+            html += '<a href="' + item.edit_url + '" target="_blank" class="aa-btn-edit" title="Editar no admin">';
+            html += '<i class="fas fa-pen"></i> <span class="aa-action-label">Editar</span></a>';
+        } else if (item.tipo_item === 'anexo') {
+            html += '<a href="/admin/conteudo/categoria/' + subcatId + '/change/" target="_blank" class="aa-btn-edit" title="Editar na categoria">';
+            html += '<i class="fas fa-pen"></i> <span class="aa-action-label">Editar</span></a>';
+        }
+
+        html += '<button type="button" class="aa-btn-delete" title="Excluir este item" onclick="deleteItem(\'' + item.tipo_item + '\', ' + item.id + ')">';
+        html += '<i class="fas fa-trash"></i> <span class="aa-action-label">Excluir</span></button>';
+        html += '</div></div>';
+    }
+
+    html += '</div>';
+    container.style.display = 'block';
+    container.innerHTML = html;
+    container.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+function deleteItem(tipoItem, id) {
+    if (!confirm('Tem certeza que deseja excluir este item?')) return;
+
+    var action = (tipoItem === 'anexo') ? 'delete_anexo' : 'delete_conteudo';
+
+    fetch('/admin/api/subcategorias/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: action, id: id })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            var el = document.getElementById('item-' + tipoItem + '-' + id);
+            if (el) {
+                el.style.transition = 'opacity .3s, transform .3s';
+                el.style.opacity = '0';
+                el.style.transform = 'translateX(20px)';
+                setTimeout(function() { el.remove(); updateItemCount(); }, 300);
+            }
+            // Atualizar dados locais
+            for (var i = 0; i < subcatsData.length; i++) {
+                if (subcatsData[i].id === selectedSubcatId) {
+                    subcatsData[i].items = subcatsData[i].items.filter(function(it) {
+                        return !(it.tipo_item === tipoItem && it.id === id);
+                    });
+                    subcatsData[i].count = subcatsData[i].items.length;
+                    break;
+                }
+            }
+            renderSubcats();
+        }
+    })
+    .catch(function() {
+        alert('Erro ao excluir. Tente novamente.');
+    });
+}
+
+function updateItemCount() {
+    var container = document.getElementById('itemsContainer');
+    var rows = container.querySelectorAll('.aa-item-row');
+    var badge = container.querySelector('.aa-badge');
+    if (badge) badge.textContent = rows.length;
+    if (rows.length === 0) {
+        var section = container.querySelector('.aa-items-section');
+        if (section) {
+            var title = section.querySelector('.aa-items-title');
+            section.innerHTML = '';
+            if (title) section.appendChild(title);
+            section.innerHTML += '<div class="aa-items-empty"><i class="fas fa-inbox"></i> Nenhum item. Adicione no passo 3 abaixo.</div>';
+        }
+    }
+}
+
+function getItemIconClass(item) {
+    if (item.tipo_item === 'conteudo' && item.tipo === 'link') return 'link';
+    if (item.tipo_item === 'conteudo') return 'default';
+    var ext = (item.extensao || '').toLowerCase();
+    if (ext === 'pdf') return 'pdf';
+    if (ext === 'doc' || ext === 'docx') return 'doc';
+    if (ext === 'xls' || ext === 'xlsx') return 'xls';
+    if (ext === 'ppt' || ext === 'pptx') return 'ppt';
+    if (['mp4','avi','mov','mkv','webm'].indexOf(ext) >= 0) return 'video';
+    if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) return 'img';
+    return 'default';
+}
+
+function getItemIconHtml(item) {
+    if (item.tipo_item === 'conteudo' && item.tipo === 'link') return '<i class="fas fa-link"></i>';
+    if (item.tipo_item === 'conteudo') return '<i class="fas fa-file-alt"></i>';
+    var ext = (item.extensao || '').toLowerCase();
+    if (ext === 'pdf') return '<i class="fas fa-file-pdf"></i>';
+    if (ext === 'doc' || ext === 'docx') return '<i class="fas fa-file-word"></i>';
+    if (ext === 'xls' || ext === 'xlsx') return '<i class="fas fa-file-excel"></i>';
+    if (ext === 'ppt' || ext === 'pptx') return '<i class="fas fa-file-powerpoint"></i>';
+    if (['mp4','avi','mov','mkv','webm'].indexOf(ext) >= 0) return '<i class="fas fa-file-video"></i>';
+    if (['jpg','jpeg','png','gif','webp'].indexOf(ext) >= 0) return '<i class="fas fa-file-image"></i>';
+    return '<i class="fas fa-file"></i>';
+}
+
+function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function addRow() {
+    var tbody = document.getElementById('fileRows');
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+        '<td>' +
+        '<input type="file" name="arquivo_' + rowCount + '" ' +
+        'accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.avi,.mov,.mkv,.webm,.jpg,.jpeg,.png,.gif,.webp,.zip,.txt,.csv">' +
+        '<div class="aa-ou">— OU —</div>' +
+        '<input type="url" name="url_' + rowCount + '" class="aa-url-input" ' +
+        'placeholder="Cole o link aqui">' +
+        '</td>' +
+        '<td><input type="text" name="nome_' + rowCount + '" placeholder="Ex: Currículo de Linguagens 2026">' +
+        '<div class="aa-nome-hint">Nome que aparece no site (obrigatório para links)</div></td>' +
+        '<td><button type="button" class="aa-remove-btn" onclick="removeRow(this)" title="Remover"><i class="fas fa-times"></i></button></td>';
+    tbody.appendChild(tr);
+    rowCount++;
+}
+
+function removeRow(btn) {
+    var tbody = document.getElementById('fileRows');
+    if (tbody.rows.length > 1) {
+        btn.closest('tr').remove();
+    }
+}
+
+// Validação: exige subcategoria_id OU nome_grupo
+document.getElementById('mainForm').addEventListener('submit', function(e) {
+    var subId = document.getElementById('subcategoriaIdInput').value;
+    var nome = document.getElementById('nomeGrupoInput').value.trim();
+    if (!subId && !nome) {
+        e.preventDefault();
+        alert('Selecione um grupo existente OU digite o nome de um novo grupo no passo 2.');
+    }
+});
+</script>
+{% endblock %}

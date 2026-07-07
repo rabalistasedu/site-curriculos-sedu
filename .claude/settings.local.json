@@ -33,7 +33,11 @@
       "PowerShell([Environment]::GetFolderPath\\('Desktop'\\))",
       "Bash(curl -s http://localhost:50823/)",
       "Bash(curl -v http://localhost:50823/)",
-      "Bash(python manage.py migrar_antigos_ifa)"
+      "Bash(python manage.py migrar_antigos_ifa)",
+      "Bash(python -c \"import django; import os; os.environ['DJANGO_SETTINGS_MODULE']='curriculo_sedu.settings'; django.setup\\(\\); from django.contrib.auth.models import User; print\\([\\(u.username, u.is_superuser\\) for u in User.objects.all\\(\\)]\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(set PYTHONIOENCODING=utf-8)",
+      "Bash('C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\site-curriculos-venv\\\\Scripts\\\\python.exe' -c ' *)"
     ]
   }
 }
