@@ -174,18 +174,19 @@ O site está publicado para teste em **https://rabalista.pythonanywhere.com** (v
 - **Static files** (aba Web → Static files): URL `/static/` → Directory `/home/rabalista/site-curriculos-sedu/staticfiles`
 - **Media files** (uploads): URL `/media/` → Directory `/home/rabalista/site-curriculos-sedu/media`
 
-Fluxo para publicar mudanças feitas localmente:
+Fluxo para publicar mudanças feitas localmente (script único, copiar e colar no Bash do PythonAnywhere):
 
 ```bash
-# No terminal Bash do PythonAnywhere
-cd ~/site-curriculos-sedu
-git pull origin main
-source venv/bin/activate
-python manage.py migrate
-python manage.py collectstatic --noinput
+cd ~/site-curriculos-sedu && git fetch origin main && git reset --hard origin/main && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic --noinput --clear && echo "==== PRONTO! Va na aba Web e clique em Reload ===="
 ```
 
 Depois, na aba **Web** do PythonAnywhere, clicar em **Reload**.
+
+**Por que `git reset --hard origin/main` em vez de `git pull`** (correção 2026-07-07):
+- `staticfiles/` foi removido do controle de versão do Git (`git rm -r --cached staticfiles` + adicionado ao `.gitignore`). Antes, essa pasta estava versionada, e como o `collectstatic` MODIFICA os arquivos dela no servidor, o `git pull` seguinte falhava com *"Your local changes would be overwritten by merge"* — travando toda a atualização (o site continuava mostrando a versão antiga). Sintoma clássico: "subi pro GitHub mas o PythonAnywhere não muda".
+- `git reset --hard origin/main` força o servidor a ficar idêntico ao GitHub, descartando qualquer modificação local (inclusive dos staticfiles gerados). É **seguro** porque `db.sqlite3` (banco) e `media/` (uploads) são gitignored / untracked — o reset não os toca.
+- `collectstatic --noinput --clear` apaga a pasta `staticfiles` antiga antes de recopiar, garantindo que CSS/JS antigos sumam de vez.
+- **Cache-busting do CSS**: `templates/base.html` carrega o CSS com `?v=AAAAMMDD-N` (ex.: `?v=20260707-3`). Ao mudar o CSS, incrementar esse número força o navegador a baixar a versão nova (senão ele usa a cacheada). É a linha `<link rel="stylesheet" href="{% static 'css/style.css' %}?v=...">`.
 
 ## Como rodar
 

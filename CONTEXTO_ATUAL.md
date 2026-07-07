@@ -31,8 +31,9 @@
    - Clique 2x em **"Subir GitHub SEDU.bat"** na área de trabalho
    - Digite a mensagem do commit e aperte Enter
 4. Para publicar no PythonAnywhere:
-   - Terminal bash PythonAnywhere: `cd ~/site-curriculos-sedu && git pull origin main && python manage.py migrate && python manage.py collectstatic --noinput`
+   - Terminal bash PythonAnywhere: `cd ~/site-curriculos-sedu && git fetch origin main && git reset --hard origin/main && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic --noinput --clear && echo "==== PRONTO! Va na aba Web e clique em Reload ===="`
    - Painel Web do PythonAnywhere: clique **Reload**
+   - Teste em aba anônima: **Ctrl+Shift+N** → https://rabalista.pythonanywhere.com
 
 ## Stack técnico
 - Django 5.2 + Python 3.13 (local) / 3.11 (PythonAnywhere)

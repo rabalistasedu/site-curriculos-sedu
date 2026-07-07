@@ -61,6 +61,11 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Arquivos estáticos gerados por collectstatic — NUNCA versionar.
+# São regenerados no servidor com "python manage.py collectstatic".
+# Versionar essa pasta faz o "git pull" travar no PythonAnywhere.
+staticfiles/
+
 # Flask stuff:
 instance/
 .webassets-cache
