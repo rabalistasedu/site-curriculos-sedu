@@ -395,17 +395,19 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%);
     border-color: transparent;
     box-shadow: 0 3px 10px rgba(15,45,92,0.35);
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 14px 10px;
+    padding: 16px 10px;
+    gap: 6px;
 }
 .area-card-featured .category-icon {
     background: rgba(255,255,255,0.15);
     color: #fff;
-    width: 36px;
-    height: 36px;
-    font-size: 16px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
     margin: 0;
 }
 .area-card-featured:hover .category-icon { background: rgba(255,255,255,0.25); color: #fff; }
@@ -418,7 +420,8 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .area-card-featured .area-text h3 {
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 600;
     text-align: center;
     margin: 0;
 }
