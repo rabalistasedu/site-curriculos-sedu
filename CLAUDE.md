@@ -201,6 +201,132 @@ curl -s https://rabalista.pythonanywhere.com/static/css/style.css | grep -c logo
 ```
 Se o número vier `0` mesmo depois do deploy, é o mapeamento de Static files que está errado (não o Git).
 
+### Migração de WordPress para Django (Produção em `curriculo.sedu.es.gov.br`)
+
+**Situação:** O novo Django vai ser publicado em `curriculo.sedu.es.gov.br` (onde hoje está o WordPress). Todos os ~1000 arquivos migrados têm links que apontam para `/curriculo/wp-content/uploads/...` — remover o WordPress quebraria todos esses links.
+
+**Solução:** Manter o WordPress rodando em um **subdomínio** (`wordpress.curriculo.sedu.es.gov.br`) e usar **reescrita Apache** para redirecionar automaticamente as requisições `/wp-content/` para lá. Sem duplicar arquivos e sem alterar nenhum link no banco de dados.
+
+**Documentação completa:**
+- 📘 [MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md](MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md) — Estratégia completa, cronograma e decisões
+- 🔧 [EXEMPLOS_HTACCESS.md](EXEMPLOS_HTACCESS.md) — Códigos prontos para copiar/colar (Opção 1: subdomínio; Opção 2: pasta local)
+- 🧪 [TESTE_MANUAL_URLS.md](TESTE_MANUAL_URLS.md) — Comandos `curl` para validar que os links funcionam após migração
+
+**Resumo rápido:**
+1. Criar subdomínio `wordpress.curriculo.sedu.es.gov.br` (ou pasta `/wp-backup/`)
+2. Copiar WordPress completo para lá
+3. Configurar reescrita no `.htaccess` do domínio principal
+4. Publicar novo Django em `curriculo.sedu.es.gov.br`
+5. Testar com comandos no documento de testes
+
+### Sincronização de Dados Entre Local e SEDU (Banco de Dados)
+
+**Importante:** O arquivo `db.sqlite3` NÃO é versionado no Git (está em `.gitignore`). Isso significa:
+- Cada ambiente (seu PC local, servidor SEDU) tem seu próprio banco de dados separado
+- Dados adicionados via admin local **NÃO aparecem automaticamente em SEDU**
+- Código Python (models, views, migrations) sobe para GitHub e é sincronizado, mas dados não
+
+**Estratégia Recomendada: Backup Manual e Upload**
+
+Dan pode usar esta abordagem simples (não requer código):
+
+1. **Trabalhar localmente** — adicione conteúdos, categorias, banners via admin em `http://127.0.0.1:8000/admin/`
+2. **Fazer backup do banco local:**
+   ```bash
+   # Windows/Mac/Linux — no terminal da pasta do projeto
+   cp db.sqlite3 db.sqlite3.backup.$(date +%Y%m%d_%H%M%S)
+   # Ou copie manualmente o arquivo db.sqlite3 para uma pasta de backup
+   ```
+3. **Subir código para GitHub** (como sempre, via `.bat` ou git push):
+   ```bash
+   git add -A
+   git commit -m "Nova categoria/conteúdo"
+   git push origin main
+   ```
+4. **Subir o banco para SEDU** via cPanel ou SFTP:
+   - **Via cPanel:** File Manager → navegue para `/home/rabalista/site-curriculos-sedu/`
+     - Delete o `db.sqlite3` antigo
+     - Upload do seu arquivo `db.sqlite3` local (o backup)
+   - **Via SFTP (mais seguro):**
+     ```bash
+     sftp rabalista@rabalista.pythonanywhere.com
+     cd site-curriculos-sedu
+     rename db.sqlite3 db.sqlite3.backup
+     put C:\Users\ridan\Claude\Projects\Site Curriculos SEDU\db.sqlite3 db.sqlite3
+     exit
+     ```
+5. **Reload no PythonAnywhere:**
+   - Acesse painel PythonAnywhere
+   - Aba **Web** → clique **Reload** (botão verde)
+6. ✅ **Pronto!** Django carrega o novo banco e site mostra os dados novos
+
+**Fluxo Resumido:**
+```
+Local (PC)                GitHub                    SEDU (servidor)
+Adiciona no admin   →   Sobe código via push   →   Puxa código
+Salva em db.sqlite3 →   (dados NÃO vão)        →   db.sqlite3 antigo
+    ↓                                               ↑
+    └─── Backup manual ──→ Upload via SFTP ───────┘
+         do db.sqlite3
+```
+
+**Cuidados Importantes:**
+
+1. **Migrations devem estar sincronizadas:** Se você mudou modelos Django, execute no Bash do PythonAnywhere antes de trocar o banco:
+   ```bash
+   cd ~/site-curriculos-sedu && python manage.py migrate
+   ```
+
+2. **Dados em SEDU são perdidos:** Se o servidor tinha dados que não estão no seu backup local, eles sumirem após o upload. **Sempre faça backup do banco SEDU antes de trocar:**
+   ```bash
+   # No Bash PythonAnywhere:
+   cp ~/site-curriculos-sedu/db.sqlite3 ~/db.sqlite3.backup.sedu
+   ```
+
+3. **Permissões do arquivo:** Após upload, garanta que o arquivo tem permissões certas:
+   ```bash
+   chmod 644 ~/site-curriculos-sedu/db.sqlite3
+   ```
+
+4. **Horário do servidor:** Se conteúdos estão agendados com `data_publicacao` futura, verifique se a hora do servidor está correta:
+   ```bash
+   # No Bash PythonAnywhere:
+   date
+   ```
+
+5. **Tamanho do banco:** SQLite funciona bem até ~500MB. Se o banco ficar muito grande, migrar para PostgreSQL será necessário. Ver tamanho:
+   ```bash
+   # No Bash PythonAnywhere:
+   ls -lh ~/site-curriculos-sedu/db.sqlite3
+   ```
+
+**Como Verificar se Funcionou:**
+
+```bash
+# No seu PC, abra http://127.0.0.1:8000/admin/ e veja conteúdo X
+# Depois, 5 minutos após fazer reload em SEDU, abra:
+# https://rabalista.pythonanywhere.com/admin/ e veja se conteúdo X aparece
+```
+
+Ou via linha de comando (verificar contagem de conteúdos):
+```bash
+# Local:
+sqlite3 db.sqlite3 "SELECT COUNT(*) FROM conteudo_conteudo;"
+
+# SEDU (Bash PythonAnywhere):
+cd ~/site-curriculos-sedu && sqlite3 db.sqlite3 "SELECT COUNT(*) FROM conteudo_conteudo;"
+```
+
+Se os números forem iguais, o banco foi sincronizado com sucesso ✅
+
+**Frequência Recomendada:**
+- Sincronizar 1x por semana ou sempre que adicionar conteúdo importante
+- Manter backups por pelo menos 1 mês (para poder reverter se necessário)
+- Documentar a data de cada backup
+
+**Alternativa: Management Commands (Para o Futuro)**
+Se quiser automatizar (requer código Python), usar `management/commands/` para recriar dados programaticamente. Ver seção "Management commands disponíveis" acima. Mas por enquanto, a estratégia manual é a mais simples e funciona perfeitamente.
+
 ## Como rodar
 
 ```bash
