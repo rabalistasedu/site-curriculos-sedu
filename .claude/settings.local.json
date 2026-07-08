@@ -37,7 +37,9 @@
       "Bash(python -c \"import django; import os; os.environ['DJANGO_SETTINGS_MODULE']='curriculo_sedu.settings'; django.setup\\(\\); from django.contrib.auth.models import User; print\\([\\(u.username, u.is_superuser\\) for u in User.objects.all\\(\\)]\\)\")",
       "Bash(python -c ' *)",
       "Bash(set PYTHONIOENCODING=utf-8)",
-      "Bash('C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\site-curriculos-venv\\\\Scripts\\\\python.exe' -c ' *)"
+      "Bash('C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\site-curriculos-venv\\\\Scripts\\\\python.exe' -c ' *)",
+      "Bash(git --version)",
+      "Bash(git config *)"
     ]
   }
 }
