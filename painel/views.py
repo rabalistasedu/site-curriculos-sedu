@@ -188,6 +188,7 @@ def _publicar(request):
         ordem = 0
 
     feitos = []
+    conteudo_criado = False
 
     # 1. Conteúdo (com título): cria uma única vez e vincula a todos os destinos
     tem_arquivos = any(k.startswith('arquivo_') for k in request.FILES)
@@ -241,6 +242,7 @@ def _publicar(request):
         locais = ', '.join(d.nome for d in destinos)
         extra = f' com {n_anexos} anexo(s)' if n_anexos else ''
         feitos.append(f'Conteúdo "{conteudo.titulo}"{extra} publicado em: {locais}')
+        conteudo_criado = True
 
     # 2. Sem título: arquivos soltos viram anexos de cada categoria destino
     elif tem_arquivos:
@@ -282,17 +284,28 @@ def _publicar(request):
             estilo.save()
         feitos.append(f'Aparência aplicada a {len(destinos)} botão(ões)')
 
-    # 4b. Ícone personalizado (imagem) dos botões/subbotões marcados
-    botao_icone_imagem = request.FILES.get('botao_icone_imagem')
-    if botao_icone_imagem:
+    # 4b. Ícone dos BOTÕES/subbotões marcados (só quando NÃO foi criado um
+    #     conteúdo — se um conteúdo foi criado, a imagem/ícone escolhido já
+    #     virou o ícone DELE, no bloco 1). Assim, o MESMO campo "Ícone" do
+    #     painel serve para o conteúdo (quando há título) ou para o botão
+    #     (quando você só marcou botões, sem título) — nunca é desperdiçado,
+    #     e por isso salvar só o ícone já é uma alteração válida.
+    #     Aceita `icone_imagem` (campo principal) e `botao_icone_imagem`
+    #     (compatibilidade com submissões antigas).
+    icone_botao = icone_imagem or request.FILES.get('botao_icone_imagem')
+    icone_manual_val = request.POST.get('icone_manual', '').strip()
+    if not conteudo_criado and (icone_botao or icone_manual_val):
         for d in destinos:
-            # Reposiciona o cursor do arquivo a cada botão — o mesmo upload é
-            # reaproveitado em todos os destinos marcados, e o cursor fica no
-            # fim depois de cada gravação (senão os próximos salvariam vazio)
-            botao_icone_imagem.seek(0)
-            d.icone_imagem = botao_icone_imagem
-            d.save(update_fields=['icone_imagem'])
-        feitos.append(f'Ícone personalizado aplicado a {len(destinos)} botão(ões)')
+            if icone_botao:
+                # Reposiciona o cursor do arquivo a cada botão — o mesmo upload
+                # é reaproveitado em todos os destinos e o cursor fica no fim
+                # depois de cada gravação (senão os próximos gravariam vazio)
+                icone_botao.seek(0)
+                d.icone_imagem = icone_botao
+            if icone_manual_val:
+                d.icone = icone_manual_val
+            d.save(update_fields=['icone_imagem', 'icone'])
+        feitos.append(f'Ícone aplicado a {len(destinos)} botão(ões)')
 
     # 5. Visibilidade dos botões marcados na página inicial
     #    (barra superior do site / seção "Navegue por área")
@@ -317,8 +330,9 @@ def _publicar(request):
     else:
         messages.warning(
             request,
-            'Nada para publicar: preencha um título, um link, um arquivo, '
-            'um texto de área ou uma aparência.'
+            'Nada para salvar: escolha pelo menos uma coisa para alterar nos '
+            'botões marcados — um título/link/arquivo (novo conteúdo), um ícone, '
+            'uma cor/tamanho, o texto da área ou a visibilidade.'
         )
     return redirect('painel:central')
 

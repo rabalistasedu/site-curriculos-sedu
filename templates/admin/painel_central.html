@@ -216,18 +216,24 @@
                 </div>
             </div>
 
-            <!-- Ícone -->
+            <!-- Ícone (serve para o conteúdo OU para o próprio botão) -->
             <div class="pc-secao">
-                <h3><i class="fas fa-icons"></i> Ícone do card (opcional)</h3>
+                <h3><i class="fas fa-icons"></i> Ícone (opcional)</h3>
                 <div class="pc-secao-body">
+                    <div class="ajuda" style="margin-bottom:10px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;">
+                        <strong>Como funciona:</strong> se você preencher um <strong>Título</strong> acima, este ícone
+                        vira o ícone do <strong>conteúdo</strong> criado. Se você <strong>não</strong> preencher título
+                        (só marcou botões na árvore), este ícone vira o ícone dos <strong>botões marcados</strong>.
+                        Nos dois casos, salvar só o ícone já é permitido — os outros campos são opcionais.
+                    </div>
                     {{ icon_picker_html }}
                     <div class="pc-campo" style="margin-top:14px;border-top:1px dashed #cbd5e1;padding-top:12px;">
                         <label>OU envie uma imagem/ícone personalizado</label>
                         <input type="file" name="icone_imagem" accept=".ico,.png,.jpg,.jpeg,.svg,.webp,.gif">
                         <div class="ajuda">
-                            Qualquer formato (PNG, JPG, SVG, ICO, WEBP...). Use uma imagem com fundo
-                            transparente para não prejudicar a estética do botão. Se enviada, tem
-                            prioridade sobre o ícone escolhido acima.
+                            Qualquer formato (PNG, JPG, SVG, ICO, WEBP...). A imagem se ajusta
+                            automaticamente ao espaço do ícone. Se enviada, tem prioridade sobre o
+                            ícone escolhido acima.
                         </div>
                     </div>
                 </div>
@@ -237,15 +243,6 @@
             <div class="pc-secao">
                 <h3><i class="fas fa-palette"></i> Aparência dos botões marcados (opcional)</h3>
                 <div class="pc-secao-body">
-                    <div class="pc-campo" style="margin-bottom:14px;border-bottom:1px dashed #cbd5e1;padding-bottom:14px;">
-                        <label>Ícone do(s) botão(ões) marcado(s) — imagem personalizada</label>
-                        <input type="file" name="botao_icone_imagem" accept=".ico,.png,.jpg,.jpeg,.svg,.webp,.gif">
-                        <div class="ajuda">
-                            Qualquer formato (PNG, JPG, SVG, ICO, WEBP...). Use fundo transparente. Aplica-se
-                            a TODOS os botões/subbotões marcados na árvore, substituindo o ícone atual deles —
-                            a imagem se ajusta automaticamente ao botão, sem cortar.
-                        </div>
-                    </div>
                     <div class="pc-grid3">
                         <div class="pc-campo">
                             <label>Cor de fundo</label>

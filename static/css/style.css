@@ -1714,6 +1714,14 @@ img { max-width: 100%; height: auto; display: block; }
     box-sizing: border-box;
 }
 .sidebar-item .icone-personalizado { padding: 0; flex-shrink: 0; }
+/* O ícone personalizado do CARD DE CONTEÚDO tem que aparecer INTEIRO (contain),
+   sem cortar — precisa vencer a regra `.card-image img { object-fit: cover }`
+   (usada nas imagens de destaque) pela especificidade (correção 2026-07-11:
+   antes o ícone do card de conteúdo ficava cortado por causa daquela regra) */
+.card-image .icone-personalizado {
+    object-fit: contain;
+    padding: 10px;
+}
 
 /* 8) Cards de conteúdo (categoria/home) mais compactos — mesmo espírito
       dos quadrados de "Navegue por área" (pedido de 2026-07-11) */
