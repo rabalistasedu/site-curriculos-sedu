@@ -69,7 +69,9 @@
       "Bash(git pull *)",
       "Bash(git checkout *)",
       "Bash(git commit -m 'Merge remoto \\(ngrok\\) com trabalho local: mantem .gitignore correto e junta settings *)",
-      "Bash(git commit -m 'Corrige .bat de subir para GitHub \\(caminho antigo + pull antes do push\\) e atualiza CLAUDE.md *)"
+      "Bash(git commit -m 'Corrige .bat de subir para GitHub \\(caminho antigo + pull antes do push\\) e atualiza CLAUDE.md *)",
+      "Bash(./venv/Scripts/python.exe manage.py makemigrations conteudo painel)",
+      "Bash(git commit -m 'Atualiza arquivos .md com todas as mudanças de 2026-07-11 *)"
     ]
   }
 }

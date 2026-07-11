@@ -84,7 +84,7 @@ def _data_publicacao(post):
         return timezone.now()
 
 
-CAMPOS_ESTILO = ('cor_fundo', 'cor_texto', 'fonte', 'tamanho_fonte', 'alinhamento')
+CAMPOS_ESTILO = ('cor_fundo', 'cor_texto', 'fonte', 'tamanho_fonte', 'alinhamento', 'tamanho')
 
 
 # ── Tela 1: Painel Administrativo Completo ────────────────────────────
@@ -170,7 +170,10 @@ def _publicar(request):
 
     titulo = request.POST.get('titulo', '').strip()
     url_externa = request.POST.get('url_externa', '').strip()
+    url_video = request.POST.get('url_video', '').strip()
     nome_url = request.POST.get('nome_url', '').strip()
+    tipo_manual = request.POST.get('tipo_conteudo', '').strip()
+    icone_imagem = request.FILES.get('icone_imagem')
     resumo = request.POST.get('resumo', '').strip()
     corpo = request.POST.get('corpo', '').strip()
     texto_area = request.POST.get('texto_area', '').strip()
@@ -188,11 +191,17 @@ def _publicar(request):
 
     # 1. Conteúdo (com título): cria uma única vez e vincula a todos os destinos
     tem_arquivos = any(k.startswith('arquivo_') for k in request.FILES)
-    if titulo or url_externa:
+    if titulo or url_externa or url_video:
         titulo_final = titulo or nome_url or url_externa
         if url_externa and not titulo:
             titulo_final = nome_url or url_externa
-        tipo = 'link' if url_externa else ('documento' if tem_arquivos else 'post')
+        # Tipo escolhido manualmente tem prioridade; sem escolha, o site deduz
+        # pelo que foi preenchido (comportamento automático de sempre)
+        tipo = tipo_manual or (
+            'video' if url_video else
+            'link' if url_externa else
+            'documento' if tem_arquivos else 'post'
+        )
         conteudo = Conteudo.objects.create(
             titulo=titulo_final,
             slug=_slug_unico(Conteudo, titulo_final),
@@ -201,7 +210,9 @@ def _publicar(request):
             resumo=resumo,
             corpo=corpo,
             url_externa=url_externa,
+            url_video=url_video,
             icone_manual=request.POST.get('icone_manual', '').strip(),
+            icone_imagem=icone_imagem,
             status=status,
             destaque=destaque,
             recente=recente,

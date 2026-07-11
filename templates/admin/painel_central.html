@@ -140,6 +140,17 @@
                 <h3><i class="fas fa-file-lines"></i> Conteúdo (opcional)</h3>
                 <div class="pc-secao-body">
                     <div class="pc-campo">
+                        <label>O que você vai postar?</label>
+                        <select name="tipo_conteudo" id="pc-tipo-conteudo">
+                            <option value="">— Automático (o site decide pelo que for preenchido) —</option>
+                            <option value="documento">📄 Documento — qualquer tipo de arquivo (use "Anexos" abaixo)</option>
+                            <option value="video">🎬 Vídeo — vídeo do YouTube/Vimeo ou URL</option>
+                            <option value="post">📝 Post — texto ou URL</option>
+                            <option value="link">🔗 Link — URL</option>
+                        </select>
+                        <div class="ajuda">Escolha o tipo para destacar os campos certos abaixo (documento, vídeo, post ou link).</div>
+                    </div>
+                    <div class="pc-campo">
                         <label>Título</label>
                         <input type="text" name="titulo" maxlength="300" placeholder="Título do conteúdo que vai aparecer no card">
                     </div>
@@ -147,7 +158,11 @@
                         <label>Resumo</label>
                         <input type="text" name="resumo" placeholder="Breve descrição exibida no card (opcional)">
                     </div>
-                    <div class="pc-campo">
+                    <div class="pc-campo pc-campo-video" hidden>
+                        <label>URL do vídeo (YouTube ou Vimeo)</label>
+                        <input type="url" name="url_video" placeholder="https://www.youtube.com/watch?v=...">
+                    </div>
+                    <div class="pc-campo pc-campo-post">
                         <label>Texto completo (Post)</label>
                         <textarea name="corpo" placeholder="Texto do post — aparece na página do conteúdo (aceita HTML)"></textarea>
                     </div>
@@ -155,12 +170,12 @@
             </div>
 
             <!-- Link -->
-            <div class="pc-secao">
+            <div class="pc-secao pc-secao-link">
                 <h3><i class="fas fa-link"></i> Link / URL (opcional)</h3>
                 <div class="pc-secao-body">
                     <div class="pc-grid2">
                         <div class="pc-campo">
-                            <label>URL onde está armazenado o arquivo</label>
+                            <label>URL onde está armazenado o arquivo ou site</label>
                             <input type="url" name="url_externa" placeholder="https://...">
                         </div>
                         <div class="pc-campo">
@@ -206,6 +221,15 @@
                 <h3><i class="fas fa-icons"></i> Ícone do card (opcional)</h3>
                 <div class="pc-secao-body">
                     {{ icon_picker_html }}
+                    <div class="pc-campo" style="margin-top:14px;border-top:1px dashed #cbd5e1;padding-top:12px;">
+                        <label>OU envie uma imagem/ícone personalizado</label>
+                        <input type="file" name="icone_imagem" accept=".ico,.png,.jpg,.jpeg,.svg,.webp,.gif">
+                        <div class="ajuda">
+                            Qualquer formato (PNG, JPG, SVG, ICO, WEBP...). Use uma imagem com fundo
+                            transparente para não prejudicar a estética do botão. Se enviada, tem
+                            prioridade sobre o ícone escolhido acima.
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -231,7 +255,7 @@
                             <input type="number" name="estilo_tamanho_fonte" min="10" max="40" placeholder="ex: 15">
                         </div>
                     </div>
-                    <div class="pc-grid2">
+                    <div class="pc-grid3">
                         <div class="pc-campo">
                             <label>Fonte</label>
                             <select name="estilo_fonte">
@@ -251,6 +275,16 @@
                                 <option value="center">Centralizado</option>
                                 <option value="right">Direita</option>
                             </select>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Tamanho do botão</label>
+                            <select name="estilo_tamanho">
+                                <option value="">Automático (padrão)</option>
+                                <option value="pequeno">Pequeno</option>
+                                <option value="medio">Médio</option>
+                                <option value="grande">Grande</option>
+                            </select>
+                            <div class="ajuda">Vale para o botão e os subbotões de dentro dele, nos locais marcados.</div>
                         </div>
                     </div>
                     <label class="pc-chk"><input type="checkbox" name="botao_pulsante"> <strong>Botão vibrante / pulsante</strong> — os botões marcados pulsam suavemente no site</label>
@@ -326,6 +360,24 @@
 
 <script>
 (function () {
+    // ── Tipo de conteúdo: destaca os campos certos para cada tipo ──
+    var tipoSelect = document.getElementById('pc-tipo-conteudo');
+    if (tipoSelect) {
+        var campoVideo = document.querySelector('.pc-campo-video');
+        var campoPost = document.querySelector('.pc-campo-post');
+        var secaoLink = document.querySelector('.pc-secao-link');
+        var secaoAnexos = document.getElementById('pc-anexos').closest('.pc-secao');
+        function atualizarTipo() {
+            var tipo = tipoSelect.value;
+            campoVideo.hidden = (tipo !== 'video');
+            campoPost.hidden = (tipo === 'video' || tipo === 'link' || tipo === 'documento');
+            secaoLink.style.display = (tipo === 'documento' || tipo === 'video') ? 'none' : '';
+            secaoAnexos.style.display = (tipo === 'video' || tipo === 'link' || tipo === 'post') ? 'none' : '';
+        }
+        tipoSelect.addEventListener('change', atualizarTipo);
+        atualizarTipo();
+    }
+
     // ── Expandir / recolher ──
     document.querySelectorAll('.pc-toggle').forEach(function (t) {
         if (t.classList.contains('pc-toggle-vazio')) return;

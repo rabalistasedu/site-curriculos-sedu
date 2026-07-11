@@ -157,11 +157,15 @@ class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             'classes': ('collapse',),
         }),
         ('🎨 Ícone do card', {
-            'fields': ('icone_manual',),
+            'fields': ('icone_manual', 'icone_imagem'),
             'description': (
                 'Aparece no card quando não há "Imagem de destaque". '
                 'Escolha "Automático" para o site decidir sozinho, ou clique em um '
-                'ícone específico para usar sempre esse.'
+                'ícone específico para usar sempre esse. '
+                'Ou, em "Ícone personalizado (imagem)", envie sua própria imagem/ícone '
+                '(qualquer formato, inclusive .ico) — use uma imagem com fundo '
+                'transparente para não prejudicar a estética do botão. A imagem '
+                'enviada tem prioridade sobre o ícone escolhido acima.'
             ),
         }),
         ('⚙️ Publicação', {

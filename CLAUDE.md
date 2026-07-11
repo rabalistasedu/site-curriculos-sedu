@@ -12,7 +12,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migração pendente do último commit**: a migração `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area) precisa de `python manage.py migrate` em qualquer ambiente novo.
+- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -40,7 +40,7 @@ conteudo/                # App principal do site
   widgets.py             # CategoriaPicker (3 níveis), IconPicker, RichTextWidget
   busca_utils.py         # Busca sem acento (filtrar_por_texto, BuscaSemAcentoMixin)
   context_processors.py  # site_config (config + menu_categorias, filtrado por mostrar_menu_superior)
-  migrations/            # 0001 inicial → 0012 (Carrossel, url_imagem, campos de visibilidade)
+  migrations/            # 0001 inicial → 0013 (icone_imagem em Conteudo)
   management/commands/   # ver seção "Management commands"
 painel/                  # App do Painel Central Administrativo (2026-07-10)
   models.py              # Vinculo (publicação multi-destino), EstiloBotao (aparência por botão)
@@ -100,6 +100,7 @@ EXEMPLOS_HTACCESS.md / TESTE_MANUAL_URLS.md    # Apoio à migração final
 - Campos: `titulo`, `slug`, `resumo`, `corpo` (HTML), `arquivo`, `url_video`, `url_externa`, `imagem_destaque`, `autor`
 - `categoria` (FK, **SET_NULL**) — vínculo primário; o Painel Central soma outros locais via `Vinculo`
 - `icone_manual` (IconPicker no admin) — sobrepõe o `icone_criativo` automático por palavra-chave
+- `icone_imagem` (FileField, `icones/`, opcional, migração 0013) — ícone personalizado enviado como imagem (qualquer formato, inclusive .ico); tem prioridade sobre `icone_manual`/`icone_criativo`. Nos templates, renderizado como `<img class="icone-personalizado">` dentro do container do ícone (`card-image-placeholder`/`list-icon`/`sidebar-item`), com a classe `sem-fundo` no container para remover o gradiente de fundo por trás (não prejudica a estética de imagens com fundo transparente)
 - `destaque` (bool) — seção Destaques da home | `recente` (bool) — seção "Conteúdos recentes" (curada)
 - `ordem` (int) — ordenação manual; nas listagens de categoria, `ordem=0` = sem posição (vai pro fim)
 - **Agendamento**: status Publicado + `data_publicacao` futura = invisível até a data (`ConteudoQuerySet.publicados()`)
@@ -144,7 +145,7 @@ Comentários com moderação (substitui o Disqus). `conteudo` (FK), `nome`, `ema
 ## Modelos — app `painel`
 
 - **`Vinculo(conteudo, categoria, ordem, pulsante)`** — publica o MESMO conteúdo em vários locais sem duplicar. `Conteudo.categoria` continua sendo o vínculo primário; vínculos SOMAM locais. `categoria_detalhe` une os dois: `Q(categoria__in=...) | Q(vinculos__categoria__in=...)` + `distinct()`. `unique_together (conteudo, categoria)`
-- **`EstiloBotao(categoria OneToOne)`** — aparência opcional do botão: `cor_fundo`, `cor_texto`, `fonte`, `tamanho_fonte`, `alinhamento`, `pulsante`. Property `css_inline` aplicada nos templates (chips de subcategoria, topic-grid, cards da home). Sem registro = aparência automática
+- **`EstiloBotao(categoria OneToOne)`** — aparência opcional do botão: `cor_fundo`, `cor_texto`, `fonte`, `tamanho_fonte`, `alinhamento`, `tamanho` (pequeno/médio/grande, migração `painel.0002`), `pulsante`. Property `css_inline` aplicada nos templates (chips de subcategoria, topic-grid, cards da home). Property `classe_tamanho` (`botao-tam-pequeno`/`botao-tam-grande`/vazio) some no template como classe extra — vale para o botão E os subbotões de dentro dele, nos locais marcados. Sem registro = aparência automática
 - Efeito pulsante no site: classe `.btn-pulse` (animação `btnPulse`); vem de `EstiloBotao.pulsante` (botões) ou `Vinculo.pulsante` (cards, via set `pulsantes` no contexto)
 
 ## URLs
@@ -167,7 +168,7 @@ Comentários com moderação (substitui o Disqus). `conteudo` (FK), `nome`, `ema
 2. **Organizador de Conteúdo** (`/admin/organizar/`) — navegar pela hierarquia, criar subcategorias, mover conteúdos entre categorias via busca, reordenar inline. Mostra exatamente o que aparece no site.
 3. **Painel Adicionar Arquivos** (`/admin/adicionar-arquivos/`) — subir arquivos em lote: escolher categoria → nomear grupo (cria/reutiliza subcategoria) → subir arquivos com nomes opcionais.
 4. **Painel Administrativo Completo** (`/admin/painel-central/`, app `painel`, banner roxo no dashboard):
-   - **Tela 1**: árvore completa de botões com checkboxes em cascata + pesquisa (sem acento). Painel direito com seções: Conteúdo, Link/URL (nome amigável), Anexos (linhas dinâmicas), Texto da área, Ícone (IconPicker), Aparência dos botões (cores, fonte, tamanho, alinhamento, pulsante), **Página inicial — visibilidade** (selects `vis_menu`/`vis_area`: Não alterar / Sim / Não → gravam `mostrar_menu_superior`/`mostrar_navegue_area` dos botões marcados) e Publicação (status, agendamento, destaque, recentes, pulsante, ordem). Salvar distribui para TODOS os destinos marcados (cria `Vinculo` para cada um). Sem título + com arquivos = anexos de categoria.
+   - **Tela 1**: árvore completa de botões com checkboxes em cascata + pesquisa (sem acento). Painel direito com seções: Conteúdo (com select **"O que você vai postar?"** — Automático/Documento/Vídeo/Post/Link — `tipo_conteudo` no POST; JS mostra/oculta os campos certos: Vídeo revela "URL do vídeo", oculta Texto/Link; Documento oculta Texto/Link e destaca Anexos; Post/Link mostram Texto e Link, ocultam Anexos), Link/URL (nome amigável), Anexos (linhas dinâmicas), Texto da área, **Ícone** (IconPicker + upload de imagem personalizada `icone_imagem`, qualquer formato incl. .ico, sem fundo), Aparência dos botões (cores, fonte, **tamanho do botão** — pequeno/médio/grande, alinhamento, pulsante), **Página inicial — visibilidade** (selects `vis_menu`/`vis_area`: Não alterar / Sim / Não → gravam `mostrar_menu_superior`/`mostrar_navegue_area` dos botões marcados) e Publicação (status, agendamento, destaque, recentes, pulsante, ordem). Salvar distribui para TODOS os destinos marcados (cria `Vinculo` para cada um). Sem título + com arquivos = anexos de categoria. Se `tipo_conteudo` não for escolhido, o site continua deduzindo o tipo automaticamente pelo que foi preenchido (comportamento antigo preservado).
    - **Criar novo botão**: o select de "pai" lista **todos os níveis** da árvore (`_arvore_flat` com indentação por `nbsp`) — dá para criar botão dentro de qualquer botão.
    - **Excluir botão selecionado** (2026-07-11): botão vermelho abaixo da árvore, ação `excluir_nos`, confirmação dupla no JS. Exclui as categorias marcadas + subbotões (CASCADE). Conteúdos NÃO são excluídos (`Conteudo.categoria` é SET_NULL) — ficam recuperáveis na Tela 2.
    - **Tela 2**: todos os conteúdos com busca, paginação (60/pág), seleção múltipla; ações: Salvar (destaque/recentes/ordem em lote), Remover dos botões (desfaz vínculos + `categoria=None`), Excluir permanentemente (confirmação dupla).
@@ -249,9 +250,12 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
 5. **Painel Central**: excluir botões marcados (ação `excluir_nos`, dupla confirmação); criar botão dentro de qualquer nível (`_arvore_flat`); correção dos campos/selects cortados (altura 36px, min-width 0, grades responsivas).
 6. **Carrossel** (`Carrossel` + `CarrosselImagem`): junto aos cartazes, autoplay, tamanho configurável, 5 linhas de imagem (arquivo ou URL), `codigo_html` avançado com marcador `<!--IMAGENS-->` renderizado em iframe isolado.
 7. **Imagem por URL** em Banner e Cartaz (`url_imagem` + property `imagem_src`; campos `imagem` viraram opcionais).
-8. **Brasão do ES no header refeito** (`static/img/brasao-es.png`): o antigo `logogov.png` tinha o brasão + o texto "GOVERNO DO ESTADO DO ESPÍRITO SANTO" embaixo — espremido em 50px de altura, o brasão ficava minúsculo e desfocado. Foi gerado (via Pillow) um recorte só do brasão, com realce de saturação/contraste (+18%/+6%), 323×340px nativos (nítido em telas retina). Agora exibe 48×50px — mesmo tamanho do logo GECEB (49×50px). O `logogov.png` original foi mantido na pasta como referência, mas não é mais usado.
-- Versão de cache atualizada para `?v=20260711-1` (CSS e JS).
-- Testado: páginas 200, ações do painel via test client, breakpoints 1280/1160/960/375px, menu ⋯ funcionando.
+8. **Ícone personalizado em Conteudo** (`icone_imagem`, migração `conteudo.0013`): upload de imagem (qualquer formato, inclusive .ico) para usar no lugar do ícone Font Awesome. Editável no admin de Conteudo ("🎨 Ícone do card") e no Painel Central (seção "Ícone do card"). Tem prioridade sobre `icone_manual`/automático nos 5 pontos onde `icone_criativo` aparece (home destaques/recentes, categoria content-grid, busca, sidebar de relacionados).
+9. **Cards de conteúdo mais compactos**: `.content-grid`/`.content-card` (categoria e home) reduzidos — colunas de 280px→180px, placeholder de ícone 110px→64/100px, padding do corpo 20px→12px, título 16px→13,5px (2 linhas), mesmo espírito visual dos quadrados de "Navegue por área"/"Conteúdos recentes".
+10. **Tamanho dos botões no Painel Central** (`EstiloBotao.tamanho`, migração `painel.0002`): select Pequeno/Médio/Grande na seção "Aparência dos botões marcados", aplica classes `botao-tam-pequeno`/`botao-tam-grande` em `area-card` (home), `topic-btn` (índice geral) e `subcategory-chip` (subcategorias) — vale para o botão e os subbotões de dentro dele, nos locais marcados.
+11. **Brasão do ES no header refeito** (`static/img/brasao-es.png`): o antigo `logogov.png` tinha o brasão + o texto "GOVERNO DO ESTADO DO ESPÍRITO SANTO" embaixo — espremido em 50px de altura, o brasão ficava minúsculo e desfocado. Foi gerado (via Pillow) um recorte só do brasão, com realce de saturação/contraste (+18%/+6%), 323×340px nativos (nítido em telas retina). Agora exibe 48×50px — mesmo tamanho do logo GECEB (49×50px). O `logogov.png` original foi mantido na pasta como referência, mas não é mais usado.
+- Versão de cache do CSS evoluiu ao longo do dia: `?v=20260711-1` → `-2` (pílula do Currículo Atual + recentes quadrados) → `-3` (ícone personalizado, cards compactos, tamanho de botão). JS ficou em `?v=20260711-1`.
+- Testado: páginas 200, ações do painel via test client, breakpoints 1280/1160/960/375px, menu ⋯ funcionando, submissão completa do Painel Central com tipo de conteúdo/vídeo/ícone-imagem/tamanho.
 
 ## Deploy
 

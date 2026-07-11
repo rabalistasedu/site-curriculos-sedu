@@ -82,7 +82,8 @@
             <h3>Relacionados</h3>
             {% for item in relacionados %}
             <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="sidebar-item">
-                <i class="{{ item.icone_criativo }}"></i>
+                {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado" style="width:18px;height:18px;">
+                {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                 <span>{{ item.titulo|truncatewords:10 }}</span>
             </a>
             {% endfor %}

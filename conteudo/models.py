@@ -180,6 +180,14 @@ class Conteudo(models.Model):
         help_text='Deixe em branco para o site escolher um ícone automaticamente '
                   'com base no título e na categoria.'
     )
+    # Ícone personalizado enviado como imagem — tem prioridade sobre icone_manual
+    icone_imagem = models.FileField(
+        'Ícone personalizado (imagem)', upload_to='icones/', blank=True, null=True,
+        help_text='Envie uma imagem para usar como ícone do card, no lugar do ícone '
+                  'automático. Aceita qualquer formato (PNG, JPG, SVG, ICO, WEBP...). '
+                  'Use uma imagem com fundo transparente para não prejudicar a '
+                  'estética do botão. Se preenchido, tem prioridade sobre o ícone escolhido.'
+    )
 
     # Publicação
     status = models.CharField(

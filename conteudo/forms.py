@@ -19,6 +19,9 @@ class ConteudoAdminForm(forms.ModelForm):
         widgets = {
             'categoria': CategoriaPicker(include_home=False),
             'icone_manual': IconPicker(),
+            'icone_imagem': forms.FileInput(attrs={
+                'accept': '.ico,.png,.jpg,.jpeg,.svg,.webp,.gif',
+            }),
             'arquivo': forms.FileInput(attrs={
                 'accept': (
                     '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,'

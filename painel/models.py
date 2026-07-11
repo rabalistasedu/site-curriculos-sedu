@@ -54,6 +54,12 @@ class EstiloBotao(models.Model):
         ('center', 'Centralizado'),
         ('right', 'Direita'),
     ]
+    TAMANHO_CHOICES = [
+        ('', 'Automático (tamanho padrão)'),
+        ('pequeno', 'Pequeno'),
+        ('medio', 'Médio (padrão)'),
+        ('grande', 'Grande'),
+    ]
     categoria = models.OneToOneField(
         'conteudo.Categoria', on_delete=models.CASCADE,
         related_name='estilo', verbose_name='Categoria (botão)'
@@ -73,6 +79,11 @@ class EstiloBotao(models.Model):
     alinhamento = models.CharField(
         'Alinhamento do texto', max_length=10, blank=True,
         choices=ALINHAMENTO_CHOICES
+    )
+    tamanho = models.CharField(
+        'Tamanho do botão', max_length=10, blank=True,
+        choices=TAMANHO_CHOICES,
+        help_text='Controla o tamanho do botão (e dos subbotões dentro dele) no site.'
     )
     pulsante = models.BooleanField(
         'Botão vibrante/pulsante', default=False,
@@ -102,3 +113,10 @@ class EstiloBotao(models.Model):
         if self.alinhamento:
             partes.append(f'text-align:{self.alinhamento};justify-content:{ {"left":"flex-start","center":"center","right":"flex-end"}[self.alinhamento] };')
         return ''.join(partes)
+
+    @property
+    def classe_tamanho(self):
+        """Classe CSS de tamanho pronta para o template (vazio = tamanho padrão)."""
+        if self.tamanho in ('pequeno', 'grande'):
+            return f'botao-tam-{self.tamanho}'
+        return ''

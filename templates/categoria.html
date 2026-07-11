@@ -54,7 +54,7 @@
         <div class="topic-grid">
             {% for botao in botoes %}
             <a href="{% url 'conteudo:categoria' botao.slug %}"
-               class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}"
+               class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}{% if botao.estilo.classe_tamanho %} {{ botao.estilo.classe_tamanho }}{% endif %}"
                {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}>
                 <span class="topic-icon"><i class="{{ botao.icone_display }}"></i></span>
                 <span class="topic-label">{{ botao.nome }}</span>
@@ -68,7 +68,7 @@
         <div class="subcategories">
             {% for sub in subcategorias %}
             <a href="{% url 'conteudo:categoria' sub.slug %}"
-               class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
+               class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}{% if sub.estilo.classe_tamanho %} {{ sub.estilo.classe_tamanho }}{% endif %}"
                {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
                 {% if sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
                 {{ sub.nome }}
@@ -132,8 +132,9 @@
                     <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
                 </div>
                 {% else %}
-                <div class="card-image card-image-placeholder">
-                    <i class="{{ item.icone_criativo }}"></i>
+                <div class="card-image card-image-placeholder{% if item.icone_imagem %} sem-fundo{% endif %}">
+                    {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
+                    {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                 </div>
                 {% endif %}
                 <div class="card-body">
