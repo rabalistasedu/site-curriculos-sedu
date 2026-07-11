@@ -64,7 +64,12 @@
       "Bash(wc -c static/js/main.js staticfiles/js/main.js)",
       "Bash(grep -c navMore staticfiles/js/main.js)",
       "Bash(./venv/Scripts/python.exe manage.py shell -c ' *)",
-      "Bash(./venv/Scripts/python.exe -c ' *)"
+      "Bash(./venv/Scripts/python.exe -c ' *)",
+      "Bash(git fetch *)",
+      "Bash(git pull *)",
+      "Bash(git checkout *)",
+      "Bash(git commit -m 'Merge remoto \\(ngrok\\) com trabalho local: mantem .gitignore correto e junta settings *)",
+      "Bash(git commit -m 'Corrige .bat de subir para GitHub \\(caminho antigo + pull antes do push\\) e atualiza CLAUDE.md *)"
     ]
   }
 }
