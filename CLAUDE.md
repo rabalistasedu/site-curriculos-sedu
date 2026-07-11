@@ -297,8 +297,13 @@ venv\Scripts\activate            # Windows (Mac/Linux: source venv/bin/activate)
 python manage.py migrate         # aplica migrações pendentes (ex.: 0012)
 python manage.py runserver
 ```
-- Site: http://127.0.0.1:8000/ | Admin: http://127.0.0.1:8000/admin/ (superuser local existente: `ridan`)
-- O Dan usa o atalho `INICIAR SITE.bat`. Para compartilhar demo: ngrok (`ngrok_compartilhar.py`).
+- Site: http://127.0.0.1:8000/ | Admin: http://127.0.0.1:8000/admin/ (superusers locais: `ridan` e `rabalista`)
+- O Dan usa os atalhos `.bat` (2026-07-11 — feitos para ele levar a pasta completa para o computador do trabalho, usuário Windows `rabalista`):
+  - **`INICIAR SISTEMA.bat`** (raiz): versão portátil do INICIAR SITE.bat — detecta venv copiado de outra máquina e o recria sozinho (o venv guarda em `pyvenv.cfg` o caminho do Python da máquina onde nasceu), roda `migrate`, garante que o superuser `rabalista` existe (se não existir, cria com senha `sedu2026` — o get_or_create NUNCA mexe no usuário se ele já existe) e sobe o servidor abrindo o navegador.
+  - **`BAT SEDU/ATUALIZAR BANCO.bat`**: conserta o venv se preciso → `git pull` (não-fatal sem internet) → `migrate` → `importar_remanescentes` (idempotente). Usar após copiar a pasta ou baixar atualizações.
+  - `INICIAR SITE.bat` antigo continua na pasta e funcionando (regra de nunca quebrar o que existe).
+  - ⚠️ Os `.bat` precisam ser **ASCII puro**: caracteres UTF-8 multibyte (─, ç, ã) deslocam o parser do cmd.exe e geram comandos-lixo ("'utro' não é reconhecido..."). Já corrigido nos três.
+- Para compartilhar demo: ngrok (`ngrok_compartilhar.py`).
 - **Ao testar CSS/JS**: incrementar o `?v=` no `base.html` e recarregar com Ctrl+Shift+R.
 
 ### Fluxo de trabalho com Git
