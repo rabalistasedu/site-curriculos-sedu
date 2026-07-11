@@ -11,6 +11,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - O site está **completo e funcional localmente**, com 231+ conteúdos migrados do WordPress no `db.sqlite3` local.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
+- **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
 - **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
@@ -324,6 +325,25 @@ python manage.py curar_recentes                  # Seleção oficial de "Conteú
 python manage.py resolver_pendencias             # Arquivou os 3 itens sem conteúdo no site antigo
 ```
 `migrar_ifa` e `organizar_curriculo_atual` MOVEM documentos existentes em vez de duplicar e usam slugs FIXOS.
+
+## Importação do portal antigo (2026-07-11 — concluída nesta máquina)
+
+Fluxo em 3 comandos (pasta `importacao/` no projeto), criado a partir do plano
+"Plano_Importacao_Completa_Portal_Curriculo_SEDU" aprovado pelo Dan:
+
+```bash
+python importacao/inventariar_wordpress.py    # FASE 1: baixa via API REST do WP as 188 páginas
+                                              #   + 1 post do portal antigo -> inventario_wordpress.json
+python manage.py comparar_portais             # FASE 2: cruza inventário × banco -> relatorio_comparacao.md
+                                              #   (match por URL, slug, título normalizado e apelidos de hubs)
+python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta (aceita --dry-run)
+```
+
+- **O que foi importado** (134 itens, tudo como `tipo='link'` apontando para o portal antigo, que seguirá no ar como subdomínio): 91 itinerários de formação técnica → subcategoria NOVA "Formação Técnica e Profissional" (slug `formacao-tecnica-e-profissional`, dentro de IFA); 21 ementas EM → "Ementas Curriculares"; 16 volumes/visualizadores de PDF do currículo → sub-botões de Currículo Atual por etapa (com antiduplicação pelo link do PDF extraído do iframe); consulta pública IFA, edital rotinas 2025, 2 revistas Diálogos, notícia Árvore de Livros → categorias afins.
+- **Garantias**: só `get_or_create` (idempotente — 2ª execução cria 0), nunca altera/exclui nada, log em `importacao/log_importacao_*.txt`, backup do banco antes (`db.sqlite3.backup-AAAAMMDD`, não versionado).
+- **Páginas ignoradas de propósito** (`SLUGS_IGNORAR` em `comparar_portais.py`): `sobre` (é a home do site antigo), `politica-de-cookies`, `elementor-24030` (página vazia). Páginas-hub (rpe, olimpiadas, livrodidatico...) casam com botões existentes via `ALIASES_WP_CATEGORIA`.
+- ⚠️ **O banco não viaja pelo Git**: na máquina do Dan, rodar os 3 comandos acima após `git pull` (o inventário já está versionado, então dá para pular a Fase 1 se o site antigo não mudou).
+- Categoria reserva "Portal Antigo — a classificar" (oculta da home) só é criada se algum item não tiver destino conhecido — nesta execução não foi necessária.
 
 ## O que falta / próximos passos possíveis
 

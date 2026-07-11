@@ -2,177 +2,50 @@
 
 - Gerado em: 2026-07-11T13:09:27 (inventário) / agora (comparação)
 - Itens analisados do portal antigo: **189** (188 páginas + 1 posts publicados)
-- Banco novo no momento da comparação: 409 conteúdos, 118 botões/categorias
+- Banco novo no momento da comparação: 543 conteúdos, 119 botões/categorias
 
 | Situação | Quantidade |
 |---|---|
-| ✅ Já existe no portal novo | 51 |
-| ❌ FALTA (candidato a importar) | 135 |
-| ⚠️ Ambíguo (decisão manual) | 1 |
-| ⏭️ Ignorado (página de infraestrutura) | 2 |
+| ✅ Já existe no portal novo | 185 |
+| ❌ FALTA (candidato a importar) | 0 |
+| ⚠️ Ambíguo (decisão manual) | 0 |
+| ⏭️ Ignorado (página de infraestrutura) | 4 |
 
 "Cobertura de docs" = quantos dos arquivos/links citados na página
 antiga já existem no portal novo (como conteúdo ou dentro de textos).
 
-## ❌ FALTA — candidatos a importar (135)
+## ❌ FALTA — candidatos a importar (0)
 
-| Título (portal antigo) | URL antiga | Cobertura de docs |
-|---|---|---|
-| 01_Guia_de_Implementacao | `/01_guia_de_implementacao-2/` | — |
-| 02_EF_ANOS_INICIAIS | `/02_ef_anos_iniciais-2/` | — |
-| 03_EF_ANOS_FINAIS_Vol_01_Linguagens_e_Codigos | `/03_ef_anos_finais_vol_01_linguagens_e_codigos-2/` | — |
-| 04_EF_ANOS_FINAIS_Vol_02_Ciencias_da_Natureza | `/04_ef_anos_finais_vol_02_ciencias_da_natureza-2/` | — |
-| 05_EF_ANOS_FINAIS_Vol_03_Ciencias_Humanas | `/05_ef_anos_finais_vol_03_ciencias_humanas-2/` | — |
-| 06_EM_Vol_01_Linguagens_e_Codigos | `/06_em_vol_01_linguagens_e_codigos-2/` | — |
-| 07_EM_Vol_02_Ciencias_da_Natureza | `/07_em_vol_02_ciencias_da_natureza-2/` | — |
-| 08_EM_Vol_03_Ciencias_Humanas | `/08_em_vol_03_ciencias_humanas-2/` | — |
-| Ações da Escola Egídio Bordoni com a Árvore de livros | `/2022/04/01/09/09/46/11946/acoes-da-escola-egidio-bordoni-com-a-arvore-de-livros/arvore-livros/curriculo/` | — |
-| CONSULTA PÚBLICA PARA O CURRÍCULO DOS NOVOS ITINERÁRIOS FORMATIVOS DE  | `/consultacurriculosifas/` | 0/29 |
-| edital-rotinas-2025 | `/edital-rotinas-2025/` | — |
-| EMENTA ARTE EM 1 SÉRIE | `/ementa-arte-em-1-serie/` | 0/2 |
-| EMENTA BIOLOGIA EM 3 SÉRIE | `/ementa-biologia-em-3-serie/` | 0/2 |
-| EMENTA EDUCAÇÃO FÍSICA EM 1 SÉRIE | `/ementa-educacao-fisica-em-1-serie/` | 0/2 |
-| EMENTA EM BIOLOGIA 2 Serie | `/ementa-biologia-2-serie/` | 0/2 |
-| EMENTA FILOSOFIA EM 1 SÉRIE | `/ementa-filosofia-em-1-serie/` | 0/2 |
-| EMENTA FÍSICA EM 1 SÉRIE | `/ementa-fisica-em-1-serie/` | 0/2 |
-| EMENTA FÍSICA EM 2 SÉRIE | `/ementa-fisica-em-2-serie/` | 0/2 |
-| EMENTA GEOGRAFIA EM 2 SÉRIE | `/ementa-geografia-em-2-serie/` | 0/2 |
-| EMENTA GEOGRAFIA EM 3 SÉRIE | `/ementa-geografia-em-3-serie/` | 0/2 |
-| EMENTA HISTÓRIA EM 2 SÉRIE | `/ementa-historia-em-2-serie/` | 0/2 |
-| EMENTA HISTÓRIA EM 3 SÉRIE | `/ementa-historia-em-3-serie/` | 0/2 |
-| EMENTA LÍNGUA INGLESA EM 1 SÉRIE | `/ementa-lingua-inglesa-em-1-serie/` | 0/2 |
-| EMENTA LÍNGUA PORTUGUESA EM 1 SÉRIE | `/ementa-lingua-portuguesa-em-1-serie/` | 0/2 |
-| EMENTA LÍNGUA PORTUGUESA EM 2 SÉRIE | `/ementa-lingua-portuguesa-em-2-serie/` | 0/2 |
-| EMENTA LÍNGUA PORTUGUESA EM 3 SÉRIE | `/ementa-lingua-portuguesa-em-3-serie/` | 0/2 |
-| EMENTA MATEMÁTICA EM 1 SÉRIE | `/ementa-matematica-em-1-serie/` | 0/2 |
-| EMENTA MATEMÁTICA EM 2 SÉRIE | `/ementa-matematica-em-2-serie/` | 0/2 |
-| EMENTA MATEMÁTICA EM 3 SÉRIE | `/ementa-matematica-em-3-serie/` | 0/2 |
-| EMENTA QUÍMICA EM 1 SÉRIE | `/ementa-quimica-em-1-serie/` | 0/2 |
-| EMENTA QUÍMICA EM 2 SÉRIE | `/ementa-quimica-em-2-serie/` | 0/2 |
-| EMENTA SOCIOLOGIA EM 1 SÉRIE | `/ementa-sociologia-em-1-serie/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-administracao/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-agronegocio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-agropecuaria/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-analises-clinicas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-automacao-industrial/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-comercio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-condominio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-design-grafico/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-edificacoes/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-eletromecanica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-eletrotecnica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-guia-de-turismo/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-informatica-para-internet/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-logistica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-manutencao-e-suporte-em-informatica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-marketing/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-mecanica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-meio-ambiente/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-producao-de-audio-e-video/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-publicidade/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-quimica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-recursos-humanos/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-rede-de-computadores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-secretariado/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-seguranca-do-trabalho/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-sistemas-de-energia-renovavel/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-transacoes-imobiliarias/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-vendas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-administracao/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-analises-clinicas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-comercio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-comercio-exterior/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-condominio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-controle-ambiental/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-design-de-interiores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-design-grafico/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-eletrotecnica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-gerencia-em-saude/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-guia-de-turismo/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-informatica-para-internet/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-logistica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-manutencao-suporte-em-informatica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-marketing/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-mecanica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-multimidia/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-producao-de-audio-e-video/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-publicidade/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-quimica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-recursos-humanos/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-rede-de-computadores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-seguranca-do-trabalho/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-sistemas-de-energia-renovavel/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-vendas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-componentes-integradores-estudo-orientado/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-administracao/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-agronegocio/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-agropecuaria/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-analises-clinicas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-comercio-exterior/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-computacao-grafica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-design-de-interiores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-edificacoes/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-gerencia-em-saude/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-informatica-para-internet/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-logistica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-manutencao-suporte-em-informatica/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-marketing/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-publicidade/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-recursos-humanos/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-redes-de-computadores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-sistemas-de-energia-renovavel/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-vendas/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-componentes-integradores-estudo-orientado/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-aprofundamento-agropecuaria/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-componentes-integradores-estudo-orientado/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-componentes-integradores-projeto-de-vida/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 |
-| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 |
-| Revista Diálogos 1 Edição | `/dialogos-1/` | — |
-| Revista Diálogos 2 Edição | `/dialogos-2/` | — |
-| rpe2024 | `/elementor-24030/` | — |
-| V. 1 &#8211; Educação Infantil | `/educacao-infantil/` | 0/1 |
-| V. 2 &#8211; Ensino Fundamental – Anos Iniciais Ciências da Natureza e | `/volume-2-ensino-fundamental-anos-iniciais-ciencias-da-natureza-e-matematica/` | 1/1 |
-| V. 3 &#8211; Ensino Fundamental – Anos Iniciais Ciências Humanas e Ens | `/volume-3-ensino-fundamental-anos-iniciais-ciencias-humanas-e-ensino-religioso/` | 1/1 |
-| V. 4 &#8211; Ensino Fundamental – Anos Iniciais Área de Linguagens: Ar | `/volume-4-ensino-fundamental-anos-iniciais-area-de-linguagens-arte-e-educacao-fisica/` | 0/1 |
-| V. 5 &#8211; Ensino Fundamental – Anos Iniciais Área de Linguagens: Lí | `/volume-5-ensino-fundamental-anos-iniciais-area-de-linguagens-lingua-portuguesa/` | 0/1 |
-| V. 6 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Ci | `/volume-6-ensino-fundamental-anos-finais-area-de-ciencias-da-natureza-e-matematica/` | 1/1 |
-| V. 7 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Ci | `/volume-07-ensino-fundamental-anos-finais-area-de-ciencias-humanas-e-ensino-religioso/` | 1/1 |
-| V. 8 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Li | `/volume-08-ensino-fundamental-anos-finais-area-de-linguagens-arte-educacao-fisica-e-lingua-inglesa/` | 1/1 |
-| V. 9 – Ensino Fundamental – Anos Finais – Área de Linguagens: Língua P | `/v-9-ensino-fundamental-anos-finais-area-de-linguagens-lingua-portuguesa/` | 0/1 |
+*Nenhum item.*
 
-## ⚠️ AMBÍGUO — revisar manualmente (1)
+## ⚠️ AMBÍGUO — revisar manualmente (0)
+
+*Nenhum item.*
+
+## ✅ JÁ EXISTE — nada a fazer (185)
 
 | Título (portal antigo) | URL antiga | Cobertura de docs | Correspondência |
 |---|---|---|---|
-| Currículo do Espírito Santo | `/` | — | parecido (89%) com "curriculo do espirito santo — 2009" |
-
-## ✅ JÁ EXISTE — nada a fazer (51)
-
-| Título (portal antigo) | URL antiga | Cobertura de docs | Correspondência |
-|---|---|---|---|
+| 01_Guia_de_Implementacao | `/01_guia_de_implementacao-2/` | — | slug → conteúdo "Guia de Implementação do Currículo" (pk 426) |
+| 02_EF_ANOS_INICIAIS | `/02_ef_anos_iniciais-2/` | — | slug → conteúdo "Currículo — Ensino Fundamental Anos Iniciais" (pk 427) |
+| 03_EF_ANOS_FINAIS_Vol_01_Linguagens_e_Codigos | `/03_ef_anos_finais_vol_01_linguagens_e_codigos-2/` | — | slug → conteúdo "Currículo — EF Anos Finais Vol. 1: Linguagens e Códigos" (pk 428) |
+| 04_EF_ANOS_FINAIS_Vol_02_Ciencias_da_Natureza | `/04_ef_anos_finais_vol_02_ciencias_da_natureza-2/` | — | slug → conteúdo "Currículo — EF Anos Finais Vol. 2: Ciências da Natureza" (pk 429) |
+| 05_EF_ANOS_FINAIS_Vol_03_Ciencias_Humanas | `/05_ef_anos_finais_vol_03_ciencias_humanas-2/` | — | slug → conteúdo "Currículo — EF Anos Finais Vol. 3: Ciências Humanas" (pk 430) |
+| 06_EM_Vol_01_Linguagens_e_Codigos | `/06_em_vol_01_linguagens_e_codigos-2/` | — | slug → conteúdo "Currículo — Ensino Médio Vol. 1: Linguagens e Códigos" (pk 431) |
+| 07_EM_Vol_02_Ciencias_da_Natureza | `/07_em_vol_02_ciencias_da_natureza-2/` | — | slug → conteúdo "Currículo — Ensino Médio Vol. 2: Ciências da Natureza" (pk 432) |
+| 08_EM_Vol_03_Ciencias_Humanas | `/08_em_vol_03_ciencias_humanas-2/` | — | slug → conteúdo "Currículo — Ensino Médio Vol. 3: Ciências Humanas" (pk 433) |
 | A Mitigação de Desigualdades na Educação Básica do ES pela via da Educ | `/geepei/` | — | URL → conteúdo "GEEPEI — Espaços Potencialmente Educativos e Inovadores" (pk 58) |
+| Ações da Escola Egídio Bordoni com a Árvore de livros | `/2022/04/01/09/09/46/11946/acoes-da-escola-egidio-bordoni-com-a-arvore-de-livros/arvore-livros/curriculo/` | — | URL → conteúdo "Ações da Escola Egídio Bordoni com a Árvore de livros" (pk 434) |
 | Cadernos de Práticas e Vivências Integradoras EJA | `/cadernospraticaseja/` | 0/4 | URL → conteúdo "Cadernos de Práticas da EJA" (pk 79) |
 | Cadernos Metodológicos | `/cadernosmetodologicos/` | 0/16 | URL → conteúdo "Cadernos Metodológicos" (pk 23) |
-| CURRÍCULO 2009 | `/curriculo-2009/` | 0/8 | URL → conteúdo "Currículo do Espírito Santo — 2009" (pk 51) |
+| CONSULTA PÚBLICA PARA O CURRÍCULO DOS NOVOS ITINERÁRIOS FORMATIVOS DE  | `/consultacurriculosifas/` | 0/29 | URL → conteúdo "Consulta Pública — Currículos dos Novos Itinerários Formativos" (pk 435) |
+| CURRÍCULO 2009 | `/curriculo-2009/` | 8/8 | URL → conteúdo "Currículo do Espírito Santo — 2009" (pk 51) |
 | Currículo 2018 | `/curriculo-2018/` | 0/6 | URL → conteúdo "Currículo do Espírito Santo — 2018" (pk 50) |
 | CURRÍCULO ATUAL | `/documentos/` | 56/125 | título → botão/categoria "Currículo Atual" (pk 2) |
 | CURRÍCULO DA COMPUTAÇÃO | `/curriculocomputacao/` | 0/10 | URL → conteúdo "Currículo de Computação do Espírito Santo" (pk 19) |
 | Documento curricular referência da Busca Ativa Escolar | `/buscaativaescolar/` | 0/103 | URL → conteúdo "Busca Ativa Escolar" (pk 88) |
 | Documentos curriculares | `/documentoscurriculares/` | 1/1 | hub (apelido manual) → botão/categoria "Documentos Curriculares" (pk 1) |
+| edital-rotinas-2025 | `/edital-rotinas-2025/` | — | URL → conteúdo "Edital Rotinas 2025" (pk 438) |
 | Educação Ambiental | `/educacaoambiental/` | 0/23 | URL → conteúdo "Programa Educação Ambiental" (pk 56) |
 | Educação das relações étnico-raciais | `/relacoesetnicoraciais/` | 0/18 | URL → conteúdo "Educação das Relações Étnico-Raciais" (pk 84) |
 | Educação de Jovens &amp; Adultos &#8211; DCEJA | `/dceja/` | 0/10 | URL → conteúdo "Documento Curricular da EJA — DCEJA" (pk 77) |
@@ -182,12 +55,124 @@ antiga já existem no portal novo (como conteúdo ou dentro de textos).
 | EDUCAÇÃO ESCOLAR QUILOMBOLA | `/educacaoescolarquilombola/` | 0/69 | URL → conteúdo "Educação Escolar Quilombola" (pk 83) |
 | Educar para a Paz | `/educarparaapaz/` | 0/8 | URL → conteúdo "Programa Educar para a Paz" (pk 53) |
 | Educar para a Paz | `/educarparapaz/` | — | título → botão/categoria "Educar para a Paz" (pk 24) |
+| EMENTA ARTE EM 1 SÉRIE | `/ementa-arte-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA ARTE EM 1 SÉRIE" (pk 440) |
+| EMENTA BIOLOGIA EM 3 SÉRIE | `/ementa-biologia-em-3-serie/` | 0/2 | URL → conteúdo "EMENTA BIOLOGIA EM 3 SÉRIE" (pk 442) |
+| EMENTA EDUCAÇÃO FÍSICA EM 1 SÉRIE | `/ementa-educacao-fisica-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA EDUCAÇÃO FÍSICA EM 1 SÉRIE" (pk 443) |
+| EMENTA EM BIOLOGIA 2 Serie | `/ementa-biologia-2-serie/` | 0/2 | URL → conteúdo "EMENTA EM BIOLOGIA 2 Serie" (pk 441) |
+| EMENTA FILOSOFIA EM 1 SÉRIE | `/ementa-filosofia-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA FILOSOFIA EM 1 SÉRIE" (pk 444) |
+| EMENTA FÍSICA EM 1 SÉRIE | `/ementa-fisica-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA FÍSICA EM 1 SÉRIE" (pk 445) |
+| EMENTA FÍSICA EM 2 SÉRIE | `/ementa-fisica-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA FÍSICA EM 2 SÉRIE" (pk 446) |
+| EMENTA GEOGRAFIA EM 2 SÉRIE | `/ementa-geografia-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA GEOGRAFIA EM 2 SÉRIE" (pk 447) |
+| EMENTA GEOGRAFIA EM 3 SÉRIE | `/ementa-geografia-em-3-serie/` | 0/2 | URL → conteúdo "EMENTA GEOGRAFIA EM 3 SÉRIE" (pk 448) |
+| EMENTA HISTÓRIA EM 2 SÉRIE | `/ementa-historia-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA HISTÓRIA EM 2 SÉRIE" (pk 449) |
+| EMENTA HISTÓRIA EM 3 SÉRIE | `/ementa-historia-em-3-serie/` | 0/2 | URL → conteúdo "EMENTA HISTÓRIA EM 3 SÉRIE" (pk 450) |
+| EMENTA LÍNGUA INGLESA EM 1 SÉRIE | `/ementa-lingua-inglesa-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA LÍNGUA INGLESA EM 1 SÉRIE" (pk 451) |
+| EMENTA LÍNGUA PORTUGUESA EM 1 SÉRIE | `/ementa-lingua-portuguesa-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA LÍNGUA PORTUGUESA EM 1 SÉRIE" (pk 452) |
+| EMENTA LÍNGUA PORTUGUESA EM 2 SÉRIE | `/ementa-lingua-portuguesa-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA LÍNGUA PORTUGUESA EM 2 SÉRIE" (pk 453) |
+| EMENTA LÍNGUA PORTUGUESA EM 3 SÉRIE | `/ementa-lingua-portuguesa-em-3-serie/` | 0/2 | URL → conteúdo "EMENTA LÍNGUA PORTUGUESA EM 3 SÉRIE" (pk 454) |
+| EMENTA MATEMÁTICA EM 1 SÉRIE | `/ementa-matematica-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA MATEMÁTICA EM 1 SÉRIE" (pk 455) |
+| EMENTA MATEMÁTICA EM 2 SÉRIE | `/ementa-matematica-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA MATEMÁTICA EM 2 SÉRIE" (pk 456) |
+| EMENTA MATEMÁTICA EM 3 SÉRIE | `/ementa-matematica-em-3-serie/` | 0/2 | URL → conteúdo "EMENTA MATEMÁTICA EM 3 SÉRIE" (pk 457) |
+| EMENTA QUÍMICA EM 1 SÉRIE | `/ementa-quimica-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA QUÍMICA EM 1 SÉRIE" (pk 458) |
+| EMENTA QUÍMICA EM 2 SÉRIE | `/ementa-quimica-em-2-serie/` | 0/2 | URL → conteúdo "EMENTA QUÍMICA EM 2 SÉRIE" (pk 459) |
+| EMENTA SOCIOLOGIA EM 1 SÉRIE | `/ementa-sociologia-em-1-serie/` | 0/2 | URL → conteúdo "EMENTA SOCIOLOGIA EM 1 SÉRIE" (pk 460) |
 | Ementas Curriculares | `/ementas/` | 0/496 | URL → conteúdo "Ementas Curriculares" (pk 25) |
 | Espaços Potencialmente Educativos do Espírito Santo | `/espacoseducativos/` | 0/4 | URL → conteúdo "Espaços Potencialmente Educativos do Espírito Santo" (pk 76) |
 | Estudos Especiais de Recuperação | `/eer/` | 0/152 | URL → conteúdo "Estudos Especiais de Recuperação" (pk 87) |
 | Guia de Oportunidades Ensino Fundamental | `/guiaoportunidadesef/` | 0/1 | URL → conteúdo "Guia de Oportunidades para o Estudante do Ensino Fundamental" (pk 48) |
 | Guia de Oportunidades para o Estudante do Ensino Médio Capixaba | `/guiadeoportunidades/` | 0/1 | URL → conteúdo "Guia de Oportunidades para o Estudante do Ensino Médio Capixaba" (pk 49) |
 | Guias de Habilidades do Material Didático de Tecnologia e Pensamento C | `/guiasdehabilidades/` | 0/9 | URL → conteúdo "Guias de Habilidades" (pk 22) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-administracao/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Administração" (pk 461) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-agronegocio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Agronegócio" (pk 462) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-agropecuaria/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Agropecuária" (pk 463) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-analises-clinicas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Análises Clínicas" (pk 464) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-automacao-industrial/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Automação Industrial" (pk 465) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-comercio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Comércio" (pk 466) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-condominio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Condomínio" (pk 467) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-design-grafico/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Design Gráfico" (pk 468) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-edificacoes/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Edificações" (pk 469) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-eletromecanica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Eletromecânica" (pk 470) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-eletrotecnica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Eletrotécnica" (pk 471) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-guia-de-turismo/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Guia de Turismo" (pk 472) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-informatica-para-internet/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Informática para Internet" (pk 473) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-logistica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Logística" (pk 474) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-manutencao-e-suporte-em-informatica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Manutenção e Suporte em Informática" (pk 475) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-marketing/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Marketing" (pk 476) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-mecanica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Mecânica" (pk 477) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-meio-ambiente/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Meio Ambiente" (pk 478) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-producao-de-audio-e-video/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Produção de Áudio e Vídeo" (pk 479) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-publicidade/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Publicidade" (pk 480) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-quimica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Química" (pk 481) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-recursos-humanos/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Recursos Humanos" (pk 482) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-rede-de-computadores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Rede de Computadores" (pk 483) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-secretariado/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Secretariado" (pk 484) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-seguranca-do-trabalho/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Segurança do Trabalho" (pk 485) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-sistemas-de-energia-renovavel/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Sistemas de Energia Renovável" (pk 486) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-transacoes-imobiliarias/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Transações Imobiliárias" (pk 487) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-aprofundamentos-vendas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Aprofundamentos – Vendas" (pk 488) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Componentes Integradores – PROJETO DE VIDA" (pk 489) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Formação para o Mundo do Trabalho – CULTURA DIGITAL" (pk 490) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Formação para o Mundo do Trabalho – HIGIENE SAÚDE E SEGURANÇA" (pk 491) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 30 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-30-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Formação para o Mundo do Trabalho – PROJETOS EMPREENDEDORES" (pk 492) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-administracao/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – ADMINISTRAÇÃO" (pk 493) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-analises-clinicas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – ANÁLISES CLÍNICAS" (pk 494) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-comercio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – COMÉRCIO" (pk 495) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-comercio-exterior/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – COMÉRCIO EXTERIOR" (pk 496) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-condominio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – CONDOMÍNIO" (pk 497) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-controle-ambiental/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – CONTROLE AMBIENTAL" (pk 498) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-design-de-interiores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – DESIGN DE INTERIORES" (pk 499) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-design-grafico/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – DESIGN GRÁFICO" (pk 500) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-eletrotecnica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – ELETROTÉCNICA" (pk 501) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-gerencia-em-saude/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – GERÊNCIA EM SAÚDE" (pk 502) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-guia-de-turismo/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – GUIA DE TURISMO" (pk 503) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-informatica-para-internet/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – INFORMÁTICA PARA INTERNET" (pk 504) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-logistica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – LOGÍSTICA" (pk 505) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-manutencao-suporte-em-informatica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – MANUTENÇÃO SUPORTE EM INFORMÁTICA" (pk 506) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-marketing/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – MARKETING" (pk 507) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-mecanica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – MECÂNICA" (pk 508) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-multimidia/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – MULTIMÍDIA" (pk 509) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-producao-de-audio-e-video/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – PRODUÇÃO DE AÚDIO E VÍDEO" (pk 510) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-publicidade/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – PUBLICIDADE" (pk 511) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-quimica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – QUÍMICA" (pk 512) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-recursos-humanos/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – RECURSOS HUMANOS" (pk 513) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-rede-de-computadores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – REDE DE COMPUTADORES" (pk 514) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-seguranca-do-trabalho/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – SEGURANÇA DO TRABALHO" (pk 515) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-sistemas-de-energia-renovavel/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – SISTEMAS DE ENERGIA RENOVÁVEL" (pk 516) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-aprofundamento-vendas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Aprofundamento – VENDAS" (pk 517) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-componentes-integradores-estudo-orientado/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Componentes Integradores – ESTUDO ORIENTADO" (pk 518) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Componentes Integradores – PROJETO DE VIDA" (pk 519) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Formação para o Mundo do Trabalho -CULTURA DIGITAL" (pk 520) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Formação para o Mundo do Trabalho -HIGIENE SAÚDE E SEGURANÇA" (pk 521) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 35 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-35-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Formação para o Mundo do Trabalho -PROJETOS EMPREENDEDORES" (pk 522) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-administracao/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – ADMINISTRAÇÃO" (pk 523) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-agronegocio/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – AGRONEGÓCIO" (pk 524) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-agropecuaria/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – AGROPECUÁRIA" (pk 525) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-analises-clinicas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – ANÁLISES CLÍNICAS" (pk 526) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-comercio-exterior/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – COMÉRCIO EXTERIOR" (pk 527) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-computacao-grafica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – COMPUTAÇÃO GRÁFICA" (pk 528) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-design-de-interiores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – DESIGN DE INTERIORES" (pk 529) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-edificacoes/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – EDIFICAÇÕES" (pk 530) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-gerencia-em-saude/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – GERÊNCIA EM SAÚDE" (pk 531) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-informatica-para-internet/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – INFORMÁTICA PARA INTERNET" (pk 532) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-logistica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – LOGÍSTICA" (pk 533) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-manutencao-suporte-em-informatica/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – MANUTENÇÃO SUPORTE EM INFORMÁTICA" (pk 534) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-marketing/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – MARKETING" (pk 535) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-publicidade/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – PUBLICIDADE" (pk 536) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-recursos-humanos/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – RECURSOS HUMANOS" (pk 537) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-redes-de-computadores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – REDES DE COMPUTADORES" (pk 538) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-sistemas-de-energia-renovavel/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – SISTEMAS DE ENERGIA RENOVÁVEL" (pk 539) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-aprofundamento-vendas/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Aprofundamento – VENDAS" (pk 540) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-componentes-integradores-estudo-orientado/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Componentes Integradores – ESTUDO ORIENTADO" (pk 541) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-componentes-integradores-projeto-de-vida/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Componentes Integradores – PROJETO DE VIDA" (pk 542) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Formação para o Mundo do Trabalho – CULTURA DIGITAL" (pk 543) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Formação para o Mundo do Trabalho – PROJETOS EMPREENDEDORES" (pk 545) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; 43 aulas semanai | `/itinerario-de-formacao-tecnica-e-profissional-43-aulas-semanais-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Formação para o Mundo do Trabalho -HIGIENE SAÚDE E SEGURANÇA" (pk 544) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-aprofundamento-agropecuaria/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Aprofundamento – AGROPECUÁRIA" (pk 546) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-componentes-integradores-estudo-orientado/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Componentes Integradores – ESTUDO ORIENTADO" (pk 547) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-componentes-integradores-projeto-de-vida/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Componentes Integradores – PROJETO DE VIDA" (pk 548) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-cultura-digital/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Formação para o Mundo do Trabalho – CULTURA DIGITAL" (pk 549) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-higiene-saude-e-seguranca/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Formação para o Mundo do Trabalho – HIGIENE SAÚDE E SEGURANÇA" (pk 550) |
+| ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL &#8211; Regime de Altern | `/itinerario-de-formacao-tecnica-e-profissional-regime-de-alternancia-formacao-para-o-mundo-do-trabalho-projetos-empreendedores/` | 0/2 | URL → conteúdo "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância – Formação para o Mundo do Trabalho – PROJETOS EMPREENDEDORES" (pk 551) |
 | Mais Leitores | `/maisleitores/` | 0/6 | URL → conteúdo "Programa Mais Leitores" (pk 55) |
 | Mapa de Progressão da Aprendizagem | `/progressao/` | 0/9 | URL → conteúdo "Mapa de Progressão da Aprendizagem" (pk 24) |
 | Materiais de Apoio para os Aprofundamentos dos Itinerários Formativos  | `/itinerarios/` | 0/18 | URL → conteúdo "Materiais de Apoio para Aprofundamentos do Ensino Médio" (pk 47) |
@@ -211,12 +196,25 @@ antiga já existem no portal novo (como conteúdo ou dentro de textos).
 | Projeto Integrador | `/projetointegrador/` | 8/8 | hub (apelido manual) → botão/categoria "Projetos Integradores" (pk 97) |
 | Projeto Integrador de Pesquisa e Articulação com o Território &#8211;  | `/pipat/` | — | URL → conteúdo "PIPAT — Projeto Integrador de Pesquisa e Articulação com o Território" (pk 60) |
 | REVISTA DIÁLOGOS | `/revistadialogos/` | 0/4 | URL → conteúdo "Revista Diálogos" (pk 100) |
+| Revista Diálogos 1 Edição | `/dialogos-1/` | — | URL → conteúdo "Revista Diálogos — 1ª Edição" (pk 436) |
+| Revista Diálogos 2 Edição | `/dialogos-2/` | — | URL → conteúdo "Revista Diálogos — 2ª Edição" (pk 437) |
 | Rotina Pedagógica Escolar &#8211; RPE | `/rpe2025/` | 0/32 | hub (apelido manual) → botão/categoria "Rotinas Pedagógicas Escolares (RPE)" (pk 103) |
 | ROTINAS PEDAGÓGICAS RPE 2026 | `/rpe/` | 42/58 | hub (apelido manual) → botão/categoria "Rotinas Pedagógicas Escolares (RPE)" (pk 103) |
 | SEQUÊNCIAS DIDÁTICAS DO PROJETO AVENTURAS LITERÁRIAS | `/sequencias-didaticas-do-projeto-aventuras-literarias/` | 0/80 | URL → conteúdo "Sequências Didáticas do Projeto Aventuras Literárias" (pk 27) |
 | Tempo integral em tempo integral | `/tempo-integral/` | 0/159 | URL → conteúdo "Educação Integral em Tempo Integral" (pk 86) |
+| V. 1 &#8211; Educação Infantil | `/educacao-infantil/` | 0/1 | URL → conteúdo "Currículo — Volume 1: Educação Infantil" (pk 439) |
+| V. 2 &#8211; Ensino Fundamental – Anos Iniciais Ciências da Natureza e | `/volume-2-ensino-fundamental-anos-iniciais-ciencias-da-natureza-e-matematica/` | 1/1 | URL → conteúdo "V. 2 – Ensino Fundamental – Anos Iniciais Ciências da Natureza e Matemática" (pk 555) |
+| V. 3 &#8211; Ensino Fundamental – Anos Iniciais Ciências Humanas e Ens | `/volume-3-ensino-fundamental-anos-iniciais-ciencias-humanas-e-ensino-religioso/` | 1/1 | URL → conteúdo "V. 3 – Ensino Fundamental – Anos Iniciais Ciências Humanas e Ensino Religioso" (pk 556) |
+| V. 4 &#8211; Ensino Fundamental – Anos Iniciais Área de Linguagens: Ar | `/volume-4-ensino-fundamental-anos-iniciais-area-de-linguagens-arte-e-educacao-fisica/` | 0/1 | URL → conteúdo "V. 4 – Ensino Fundamental – Anos Iniciais Área de Linguagens: Arte e Educação Física" (pk 557) |
+| V. 5 &#8211; Ensino Fundamental – Anos Iniciais Área de Linguagens: Lí | `/volume-5-ensino-fundamental-anos-iniciais-area-de-linguagens-lingua-portuguesa/` | 0/1 | URL → conteúdo "V. 5 – Ensino Fundamental – Anos Iniciais Área de Linguagens: Língua Portuguesa" (pk 558) |
+| V. 6 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Ci | `/volume-6-ensino-fundamental-anos-finais-area-de-ciencias-da-natureza-e-matematica/` | 1/1 | URL → conteúdo "V. 6 – Ensino Fundamental – Anos Finais – Área de Ciências da Natureza e Matemática" (pk 559) |
+| V. 7 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Ci | `/volume-07-ensino-fundamental-anos-finais-area-de-ciencias-humanas-e-ensino-religioso/` | 1/1 | URL → conteúdo "V. 7 – Ensino Fundamental – Anos Finais – Área de Ciências Humanas e Ensino Religioso" (pk 553) |
+| V. 8 &#8211; Ensino Fundamental &#8211; Anos Finais &#8211; Área de Li | `/volume-08-ensino-fundamental-anos-finais-area-de-linguagens-arte-educacao-fisica-e-lingua-inglesa/` | 1/1 | URL → conteúdo "V. 8 – Ensino Fundamental – Anos Finais – Área de Linguagens: Arte, Educação Física e Língua Inglesa" (pk 554) |
+| V. 9 – Ensino Fundamental – Anos Finais – Área de Linguagens: Língua P | `/v-9-ensino-fundamental-anos-finais-area-de-linguagens-lingua-portuguesa/` | 0/1 | URL → conteúdo "V. 9 – Ensino Fundamental – Anos Finais – Área de Linguagens: Língua Portuguesa" (pk 552) |
 
-## ⏭️ Ignorados (2)
+## ⏭️ Ignorados (4)
 
 - Mapa do Site (`mapa-do-site`)
+- rpe2024 (`elementor-24030`)
 - Política de Cookies (`politica-de-cookies`)
+- Currículo do Espírito Santo (`sobre`)

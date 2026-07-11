@@ -1,0 +1,154 @@
+=== Importação do conteúdo remanescente — SIMULAÇÃO (--dry-run, nada será gravado) ===
+
+Itens do portal antigo analisados: 186 | já existiam: 51 | a importar: 135
+
+  [dry-run] criaria botão "Formação Técnica e Profissional" dentro de "Itinerários Formativos de Aprofundamento (IFA)"
+  [dry-run] criaria: "Guia de Implementação do Currículo" -> Material de Apoio
+  [dry-run] criaria: "Currículo — Ensino Fundamental Anos Iniciais" -> Ensino Fundamental — Anos Iniciais
+  [dry-run] criaria: "Currículo — EF Anos Finais Vol. 1: Linguagens e Códigos" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "Currículo — EF Anos Finais Vol. 2: Ciências da Natureza" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "Currículo — EF Anos Finais Vol. 3: Ciências Humanas" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "Currículo — Ensino Médio Vol. 1: Linguagens e Códigos" -> Ensino Médio
+  [dry-run] criaria: "Currículo — Ensino Médio Vol. 2: Ciências da Natureza" -> Ensino Médio
+  [dry-run] criaria: "Currículo — Ensino Médio Vol. 3: Ciências Humanas" -> Ensino Médio
+  [dry-run] criaria: "Ações da Escola Egídio Bordoni com a Árvore de livros" -> Mais Leitores
+  [dry-run] criaria: "Consulta Pública — Currículos dos Novos Itinerários Formativos" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "Revista Diálogos — 1ª Edição" -> Institucional
+  [dry-run] criaria: "Revista Diálogos — 2ª Edição" -> Institucional
+  [dry-run] criaria: "Edital Rotinas 2025" -> Rotinas Pedagógicas Escolares (RPE)
+  [dry-run] criaria: "Currículo — Volume 1: Educação Infantil" -> Educação Infantil
+  [dry-run] criaria: "EMENTA ARTE EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA EM BIOLOGIA 2 Serie" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA BIOLOGIA EM 3 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA EDUCAÇÃO FÍSICA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA FILOSOFIA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA FÍSICA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA FÍSICA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA GEOGRAFIA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA GEOGRAFIA EM 3 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA HISTÓRIA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA HISTÓRIA EM 3 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA LÍNGUA INGLESA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA LÍNGUA PORTUGUESA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA LÍNGUA PORTUGUESA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA LÍNGUA PORTUGUESA EM 3 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA MATEMÁTICA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA MATEMÁTICA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA MATEMÁTICA EM 3 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA QUÍMICA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA QUÍMICA EM 2 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "EMENTA SOCIOLOGIA EM 1 SÉRIE" -> Ementas Curriculares
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Co" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 30 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Co" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Co" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 35 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Ap" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Co" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Co" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – 43 aulas semanais – Fo" -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "ITINERÁRIO DE FORMAÇÃO TÉCNICA E PROFISSIONAL – Regime de Alternância " -> Itinerários Formativos de Aprofundamento (IFA)
+  [dry-run] criaria: "Currículo do Espírito Santo" -> (botão reserva)
+  [dry-run] criaria: "V. 9 – Ensino Fundamental – Anos Finais – Área de Linguagens: Língua P" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "V. 7 – Ensino Fundamental – Anos Finais – Área de Ciências Humanas e E" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "V. 8 – Ensino Fundamental – Anos Finais – Área de Linguagens: Arte, Ed" -> Ensino Fundamental — Anos Finais
+  [dry-run] criaria: "V. 2 – Ensino Fundamental – Anos Iniciais Ciências da Natureza e Matem" -> Ensino Fundamental — Anos Iniciais
+  [dry-run] criaria: "V. 3 – Ensino Fundamental – Anos Iniciais Ciências Humanas e Ensino Re" -> Ensino Fundamental — Anos Iniciais
+  [dry-run] criaria: "V. 4 – Ensino Fundamental – Anos Iniciais Área de Linguagens: Arte e E" -> Ensino Fundamental — Anos Iniciais
+  [dry-run] criaria: "V. 5 – Ensino Fundamental – Anos Iniciais Área de Linguagens: Língua P" -> Ensino Fundamental — Anos Iniciais
+  [dry-run] criaria: "V. 6 – Ensino Fundamental – Anos Finais – Área de Ciências da Natureza" -> Ensino Fundamental — Anos Finais
+
+=== RESUMO ===
+Conteúdos criados: 135 | pulados: 0 | erros: 0 | botões criados: 0
+    92 -> Itinerários Formativos de Aprofundamento (IFA)
+    21 -> Ementas Curriculares
+     7 -> Ensino Fundamental — Anos Finais
+     5 -> Ensino Fundamental — Anos Iniciais
+     3 -> Ensino Médio
+     2 -> Institucional
+     1 -> Material de Apoio
+     1 -> Mais Leitores
+     1 -> Rotinas Pedagógicas Escolares (RPE)
+     1 -> Educação Infantil
+     1 -> (botão reserva)

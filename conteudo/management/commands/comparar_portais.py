@@ -33,6 +33,8 @@ SLUGS_IGNORAR = {
     'home', 'inicio', 'pagina-inicial', 'sample-page', 'pagina-exemplo',
     'contato', 'fale-conosco', 'mapa-do-site', 'busca', 'search',
     'politica-de-cookies',
+    'sobre',  # é a página INICIAL do site antigo (URL raiz) — o site novo tem a própria home
+    'elementor-24030',  # página "rpe2024" totalmente VAZIA no WP (0 bytes de conteúdo)
 }
 
 # Páginas "hub" do WP cujo equivalente no site novo é um BOTÃO (categoria)
