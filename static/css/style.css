@@ -1805,3 +1805,42 @@ img { max-width: 100%; height: auto; display: block; }
     margin-right: 6px;
     padding: 0;
 }
+
+/* 11) Botão discreto "Voltar página inicial" no rodapé (pedido 2026-07-11).
+      Pulsa (brilho BRANCO — o pulso azul padrão sumiria no rodapé azul)
+      apenas fora da home, mesmo espírito do logo pulsante do topo. */
+.footer-voltar-inicio {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: fit-content;
+    margin-top: 12px;
+    padding: 5px 12px;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+}
+.footer-voltar-inicio i { font-size: 10px; }
+.footer-voltar-inicio:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+}
+@keyframes voltarPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+    70%  { box-shadow: 0 0 0 9px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+.footer-voltar-inicio.pulse { animation: voltarPulse 2s ease-out infinite; }
+.footer-voltar-inicio.pulse:hover { animation: none; }
+
+/* 12) VLibras (widget oficial gov.br) discreto — menor e semitransparente
+      até passar o mouse; fica no canto direito, próximo ao rodapé. */
+div[vw-access-button] {
+    transform: scale(0.72);
+    transform-origin: right center;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+}
+div[vw-access-button]:hover { opacity: 1; }
