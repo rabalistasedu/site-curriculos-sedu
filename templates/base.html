@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS do site (versionado para evitar cache do navegador) -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260711-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260711-9">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -86,26 +86,25 @@
             {% endfor %}
         </div>
     </div>
+    {# Botão discreto de volta à home — acima da barra do cadeado, colado à direita; pulsa fora da home #}
+    <div class="container footer-voltar-wrap">
+        <a href="{% url 'conteudo:home' %}"
+           class="footer-voltar-inicio{% if request.path != '/' %} pulse{% endif %}"
+           title="Voltar à página inicial">
+            <i class="fas fa-house"></i> Voltar página inicial
+        </a>
+    </div>
     <div class="footer-bottom">
         <div class="container footer-bottom-inner">
             <p>&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo</p>
             <a href="/admin/" class="admin-access-btn" title="Área administrativa">
                 <i class="fas fa-lock"></i>
             </a>
-            {# Botão discreto de volta à home, encostado à direita da margem
-               inferior — pulsa apenas fora da página inicial #}
-            <a href="{% url 'conteudo:home' %}"
-               class="footer-voltar-inicio{% if request.path != '/' %} pulse{% endif %}"
-               title="Voltar à página inicial">
-                <i class="fas fa-house"></i> Voltar página inicial
-            </a>
         </div>
     </div>
 </footer>
 
-{# ── VLibras: tradução para Libras (widget oficial do Governo Federal) ──
-   Código de https://vlibras.gov.br/doc/widget/installation/webpageintegration.html
-   O botão de acesso é estilizado (menor/discreto) em style.css. #}
+{# VLibras — widget oficial gov.br (código de vlibras.gov.br/doc/widget); botão estilizado em style.css #}
 <div vw class="enabled">
     <div vw-access-button class="active"></div>
     <div vw-plugin-wrapper>
