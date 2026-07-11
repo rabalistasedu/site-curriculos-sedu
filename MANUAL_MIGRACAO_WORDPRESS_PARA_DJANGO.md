@@ -1,8 +1,18 @@
 # Manual: Migração de WordPress para Django — Solução de Links `/wp-content/`
 
-**Data:** 2026-07-07  
-**Versão:** 1.0  
+**Data:** 2026-07-07 (atualizado 2026-07-11)  
+**Versão:** 1.1  
 **Preparado para:** Dan (SEDU)  
+
+---
+
+## 🚦 STATUS DE DEPLOY (2026-07-11)
+
+> ⚠️ **PythonAnywhere foi ABANDONADO** em 2026-07-10 — ambiente de teste insuficiente  
+> 🎯 **Destino final**: servidor da SEDU em `curriculo.sedu.es.gov.br`  
+> 🔄 **Até lá**: demonstrações via **ngrok** (URL pública compartilhada com gerente)  
+
+Este manual continua sendo a **estratégia de produção** para quando o site subir no servidor da SEDU.
 
 ---
 
@@ -10,7 +20,7 @@
 
 Quando o novo site Django (Python) ficar **ativo** em `curriculo.sedu.es.gov.br`, o WordPress será **removido ou desligado**. Porém:
 
-- Todos os 1000+ arquivos migrados têm links como:  
+- Todos os ~1000 arquivos migrados têm links como:  
   `https://curriculo.sedu.es.gov.br/curriculo/wp-content/uploads/2023/09/Curriculo-EM_Aprofundamento...pdf`
 
 - Desses arquivos, apenas uma pequena parte foi **copiada** para o novo site (`/media/anexos/`)

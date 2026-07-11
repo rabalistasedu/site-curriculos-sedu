@@ -4,17 +4,31 @@
 
 > Documento Mestre da Nova Arquitetura Administrativa
 
-\---
+---
+
+## ⚠️ STATUS DE IMPLEMENTAÇÃO (2026-07-11)
+
+✅ **Partes 1–5 da especificação foram IMPLEMENTADAS E TESTADAS** em 2026-07-10.
+
+✨ **Novos pedidos de 2026-07-11** (adicionados APÓS a Parte 5, coexistem sem alterar o painel existente):
+1. **Ícone personalizado** — campo `icone_imagem` em Conteudo (upload de imagem, qualquer formato)
+2. **Cards mais compactos** — grid reduzido em tamanho (visual mais enxuto)
+3. **Tamanho de botões** — `EstiloBotao.tamanho` (Pequeno/Médio/Grande) na seção "Aparência dos botões marcados"
+4. **Tipo de conteúdo** — select inteligente (Automático/Documento/Vídeo/Post/Link) que mostra/oculta campos do formulário
+
+Essas mudanças foram implementadas preservando o princípio: **SEMPRE ADICIONAR, NUNCA QUEBRAR**. Nenhuma funcionalidade existente foi removida ou modificada.
+
+---
 
 ## Projeto
 
 Site Currículos SEDU
 
-\---
+---
 
 ## Versão
 
-1.0
+1.0 (base especificação) + Atualizações 2026-07-11 (4 novos pedidos)
 
 \---
 
