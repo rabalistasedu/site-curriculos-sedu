@@ -1768,10 +1768,14 @@ img { max-width: 100%; height: auto; display: block; }
 .subcategory-chip.botao-tam-grande { padding: 11px 24px; font-size: 15px; }
 
 /* 10) Ícone personalizado (imagem) nos BOTÕES/subbotões de categoria —
-       ajusta automaticamente ao espaço do ícone, sem cortar (pedido 2026-07-11) */
+       preenche todo o formato (círculo/quadrado arredondado) do botão
+       automaticamente, do mesmo tamanho que os ícones dos outros botões
+       (correção 2026-07-11: antes a imagem ficava pequena "boiando" dentro
+       do círculo em vez de se adequar ao formato do botão) */
 .category-icon.sem-fundo,
 .topic-icon.sem-fundo {
     background: none;
+    overflow: hidden;
 }
 .category-icon.sem-fundo:hover,
 .topic-icon.sem-fundo:hover,
@@ -1779,11 +1783,17 @@ img { max-width: 100%; height: auto; display: block; }
 .topic-btn:hover .topic-icon.sem-fundo {
     background: none;
 }
+.category-icon.sem-fundo .icone-personalizado,
+.topic-icon.sem-fundo .icone-personalizado {
+    object-fit: cover;
+    padding: 0;
+}
 .chip-icone-personalizado {
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
     vertical-align: middle;
-    margin-right: 4px;
+    margin-right: 6px;
     padding: 0;
 }
