@@ -12,7 +12,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
+- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -40,7 +40,7 @@ conteudo/                # App principal do site
   widgets.py             # CategoriaPicker (3 níveis), IconPicker, RichTextWidget
   busca_utils.py         # Busca sem acento (filtrar_por_texto, BuscaSemAcentoMixin)
   context_processors.py  # site_config (config + menu_categorias, filtrado por mostrar_menu_superior)
-  migrations/            # 0001 inicial → 0013 (icone_imagem em Conteudo)
+  migrations/            # 0001 inicial → 0014 (icone_imagem em Categoria)
   management/commands/   # ver seção "Management commands"
 painel/                  # App do Painel Central Administrativo (2026-07-10)
   models.py              # Vinculo (publicação multi-destino), EstiloBotao (aparência por botão)
@@ -87,12 +87,13 @@ EXEMPLOS_HTACCESS.md / TESTE_MANUAL_URLS.md    # Apoio à migração final
 ## Modelos — app `conteudo`
 
 ### Categoria (= "botão" do site)
-- `nome`, `slug`, `descricao` (HTML do texto introdutório), `icone` (classe Font Awesome), `imagem`, `ordem`, `ativa`
+- `nome`, `slug`, `descricao` (HTML do texto introdutório), `icone` (classe Font Awesome), `imagem` ("Imagem de capa" — hoje sem uso nos templates, reservada para o futuro), `ordem`, `ativa`
+- **`icone_imagem`** (FileField, `icones_categoria/`, opcional, migração 0014) — ícone do BOTÃO enviado como imagem (qualquer formato, inclusive .ico); tem prioridade sobre `icone`/`icone_display`. Renderizado como `<img class="icone-personalizado">` com a classe `sem-fundo` no container (`category-icon`/`topic-icon`, e `chip-icone-personalizado` no `subcategory-chip`) — a imagem se ajusta ao espaço do ícone via `object-fit: contain` sem cortar, tanto no botão principal (home) quanto em subbotões (índice geral e página de categoria). Editável no admin de Categoria ("Aparência") e em lote no Painel Central (seção "Aparência dos botões marcados" → "Ícone do(s) botão(ões) marcado(s)")
 - `categoria_pai` (FK self, CASCADE) — hierarquia SEM limite de níveis (adjacency list); o site exibe bem até 3 níveis
 - **`mostrar_menu_superior`** (bool, default True, migração 0012) — se False, o botão some da barra azul do topo E da lista "Navegação" do rodapé (o `context_processors.site_config` filtra `menu_categorias` por esse campo). Vale para botões do nível principal
 - **`mostrar_navegue_area`** (bool, default True, migração 0012) — se False, o botão some da seção "Navegue por área" da home (filtro na view `home`). Vale para botões do nível principal
 - Ambos editáveis no admin de Categoria (seção "📍 Onde este botão aparece") e em lote no Painel Central
-- Propriedade `icone_display` — ícone cadastrado ou escolhido automaticamente pelo nome
+- Propriedade `icone_display` — ícone cadastrado ou escolhido automaticamente pelo nome (usada apenas quando `icone_imagem` está vazio)
 - No admin: `icone` usa IconPicker; `slug` tem `autocomplete="off"` (o navegador às vezes sugere lixo do histórico — não é bug do site)
 
 ### Conteudo
@@ -254,8 +255,9 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
 9. **Cards de conteúdo mais compactos**: `.content-grid`/`.content-card` (categoria e home) reduzidos — colunas de 280px→180px, placeholder de ícone 110px→64/100px, padding do corpo 20px→12px, título 16px→13,5px (2 linhas), mesmo espírito visual dos quadrados de "Navegue por área"/"Conteúdos recentes".
 10. **Tamanho dos botões no Painel Central** (`EstiloBotao.tamanho`, migração `painel.0002`): select Pequeno/Médio/Grande na seção "Aparência dos botões marcados", aplica classes `botao-tam-pequeno`/`botao-tam-grande` em `area-card` (home), `topic-btn` (índice geral) e `subcategory-chip` (subcategorias) — vale para o botão e os subbotões de dentro dele, nos locais marcados.
 11. **Brasão do ES no header refeito** (`static/img/brasao-es.png`): o antigo `logogov.png` tinha o brasão + o texto "GOVERNO DO ESTADO DO ESPÍRITO SANTO" embaixo — espremido em 50px de altura, o brasão ficava minúsculo e desfocado. Foi gerado (via Pillow) um recorte só do brasão, com realce de saturação/contraste (+18%/+6%), 323×340px nativos (nítido em telas retina). Agora exibe 48×50px — mesmo tamanho do logo GECEB (49×50px). O `logogov.png` original foi mantido na pasta como referência, mas não é mais usado.
-- Versão de cache do CSS evoluiu ao longo do dia: `?v=20260711-1` → `-2` (pílula do Currículo Atual + recentes quadrados) → `-3` (ícone personalizado, cards compactos, tamanho de botão). JS ficou em `?v=20260711-1`.
-- Testado: páginas 200, ações do painel via test client, breakpoints 1280/1160/960/375px, menu ⋯ funcionando, submissão completa do Painel Central com tipo de conteúdo/vídeo/ícone-imagem/tamanho.
+12. **Ícone personalizado nos BOTÕES de categoria** (`Categoria.icone_imagem`, migração `conteudo.0014`): mesmo recurso do item 8, mas para o botão/subbotão em si (não o conteúdo dentro dele) — corrige o problema relatado pelo Dan de o ícone automático (pasta genérica) aparecer "cortado"/sem graça quando ele queria uma imagem própria. Editável no admin de Categoria (seção "Aparência", ao lado do IconPicker) e em lote no Painel Central (nova seção dentro de "Aparência dos botões marcados" → "Ícone do(s) botão(ões) marcado(s)" — aplica a mesma imagem a TODOS os destinos marcados na árvore, sejam botões principais ou subbotões). A imagem se ajusta automaticamente ao espaço do ícone via `object-fit: contain` (sem cortar/distorcer) em `category-icon` (home), `topic-icon` (índice geral) e `subcategory-chip` (subcategorias, com classe extra `chip-icone-personalizado` por não ter um container de tamanho fixo). ⚠️ Detalhe técnico: como o mesmo arquivo enviado é reaproveitado para vários destinos na view `_publicar`, é preciso `botao_icone_imagem.seek(0)` antes de cada `.save()` — senão os destinos além do primeiro gravam arquivo vazio (o cursor de leitura já estava no fim).
+- Versão de cache do CSS evoluiu ao longo do dia: `?v=20260711-1` → `-2` (pílula do Currículo Atual + recentes quadrados) → `-3` (ícone personalizado em Conteudo, cards compactos, tamanho de botão) → `-4` (ícone personalizado em Categoria/botões). JS ficou em `?v=20260711-1`.
+- Testado: páginas 200, ações do painel via test client, breakpoints 1280/1160/960/375px, menu ⋯ funcionando, submissão completa do Painel Central com tipo de conteúdo/vídeo/ícone-imagem/tamanho, upload de ícone de botão em lote para categoria pai + subcategoria simultaneamente (confirmado que ambos os arquivos gravam com o tamanho completo, sem truncamento).
 
 ## Deploy
 

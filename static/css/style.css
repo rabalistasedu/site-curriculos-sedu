@@ -1766,3 +1766,24 @@ img { max-width: 100%; height: auto; display: block; }
 
 .subcategory-chip.botao-tam-pequeno { padding: 5px 12px; font-size: 11px; }
 .subcategory-chip.botao-tam-grande { padding: 11px 24px; font-size: 15px; }
+
+/* 10) Ícone personalizado (imagem) nos BOTÕES/subbotões de categoria —
+       ajusta automaticamente ao espaço do ícone, sem cortar (pedido 2026-07-11) */
+.category-icon.sem-fundo,
+.topic-icon.sem-fundo {
+    background: none;
+}
+.category-icon.sem-fundo:hover,
+.topic-icon.sem-fundo:hover,
+.area-card:hover .category-icon.sem-fundo,
+.topic-btn:hover .topic-icon.sem-fundo {
+    background: none;
+}
+.chip-icone-personalizado {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 4px;
+    padding: 0;
+}

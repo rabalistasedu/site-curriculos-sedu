@@ -78,8 +78,17 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             ),
         }),
         ('Aparência', {
-            'fields': ('icone', 'imagem', 'ordem', 'ativa'),
-            'description': '⚠️ "Imagem de capa" aceita apenas imagens (JPG, PNG, GIF). Para anexar PDF, Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.',
+            'fields': ('icone', 'icone_imagem', 'imagem', 'ordem', 'ativa'),
+            'description': (
+                '"Ícone" escolhe um ícone pronto (Font Awesome). "Ícone personalizado '
+                '(imagem)" substitui por uma imagem enviada por você (qualquer formato, '
+                'inclusive .ico) — use fundo transparente para não prejudicar a estética; '
+                'a imagem se ajusta automaticamente ao botão, sem cortar, tanto no botão '
+                'principal quanto em subbotões. '
+                '⚠️ "Imagem de capa" é diferente — aceita apenas imagens (JPG, PNG, GIF) '
+                'e é usada para outros fins, não como ícone do botão. Para anexar PDF, '
+                'Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.'
+            ),
         }),
         ('📍 Onde este botão aparece na página inicial', {
             'fields': ('mostrar_menu_superior', 'mostrar_navegue_area'),

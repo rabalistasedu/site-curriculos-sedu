@@ -56,7 +56,10 @@
             <a href="{% url 'conteudo:categoria' botao.slug %}"
                class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}{% if botao.estilo.classe_tamanho %} {{ botao.estilo.classe_tamanho }}{% endif %}"
                {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}>
-                <span class="topic-icon"><i class="{{ botao.icone_display }}"></i></span>
+                <span class="topic-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                    {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
+                    {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
+                </span>
                 <span class="topic-label">{{ botao.nome }}</span>
             </a>
             {% endfor %}
@@ -70,7 +73,8 @@
             <a href="{% url 'conteudo:categoria' sub.slug %}"
                class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}{% if sub.estilo.classe_tamanho %} {{ sub.estilo.classe_tamanho }}{% endif %}"
                {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
-                {% if sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
+                {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado">
+                {% elif sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
                 {{ sub.nome }}
             </a>
             {% endfor %}

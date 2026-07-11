@@ -158,8 +158,9 @@
                     <a href="{% url 'conteudo:categoria' cat.slug %}"
                        class="area-card{% if cat.estilo.pulsante %} btn-pulse{% endif %}{% if cat.estilo.classe_tamanho %} {{ cat.estilo.classe_tamanho }}{% endif %}"
                        {% if cat.estilo %}style="{{ cat.estilo.css_inline }}"{% endif %}>
-                        <div class="category-icon">
-                            <i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>
+                        <div class="category-icon{% if cat.icone_imagem %} sem-fundo{% endif %}">
+                            {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
+                            {% else %}<i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>{% endif %}
                         </div>
                         <div class="area-text">
                             <h3>{{ cat.nome }}</h3>

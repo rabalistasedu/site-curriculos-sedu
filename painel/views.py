@@ -282,6 +282,18 @@ def _publicar(request):
             estilo.save()
         feitos.append(f'Aparência aplicada a {len(destinos)} botão(ões)')
 
+    # 4b. Ícone personalizado (imagem) dos botões/subbotões marcados
+    botao_icone_imagem = request.FILES.get('botao_icone_imagem')
+    if botao_icone_imagem:
+        for d in destinos:
+            # Reposiciona o cursor do arquivo a cada botão — o mesmo upload é
+            # reaproveitado em todos os destinos marcados, e o cursor fica no
+            # fim depois de cada gravação (senão os próximos salvariam vazio)
+            botao_icone_imagem.seek(0)
+            d.icone_imagem = botao_icone_imagem
+            d.save(update_fields=['icone_imagem'])
+        feitos.append(f'Ícone personalizado aplicado a {len(destinos)} botão(ões)')
+
     # 5. Visibilidade dos botões marcados na página inicial
     #    (barra superior do site / seção "Navegue por área")
     vis_menu = request.POST.get('vis_menu', '')

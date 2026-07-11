@@ -68,6 +68,15 @@ class Categoria(models.Model):
         'Ícone', max_length=50, blank=True,
         help_text='Nome do ícone (ex: fas fa-book, fas fa-trophy)'
     )
+    icone_imagem = models.FileField(
+        'Ícone personalizado (imagem)', upload_to='icones_categoria/', blank=True, null=True,
+        help_text='Envie uma imagem para usar como ícone deste botão, no lugar do ícone '
+                  'automático/Font Awesome. Aceita qualquer formato (PNG, JPG, SVG, ICO, '
+                  'WEBP...). Use uma imagem com fundo transparente para não prejudicar a '
+                  'estética do botão. A imagem é ajustada automaticamente ao espaço do '
+                  'ícone (sem cortar) tanto no botão principal quanto em subbotões. Se '
+                  'preenchido, tem prioridade sobre o ícone escolhido.'
+    )
     imagem = models.ImageField('Imagem de capa', upload_to='categorias/', blank=True, null=True)
     ordem = models.PositiveIntegerField('Ordem no menu', default=0)
     ativa = models.BooleanField('Ativa', default=True)

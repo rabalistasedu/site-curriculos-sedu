@@ -39,6 +39,9 @@ class CategoriaAdminForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'icone': IconPicker(),
+            'icone_imagem': forms.FileInput(attrs={
+                'accept': '.ico,.png,.jpg,.jpeg,.svg,.webp,.gif',
+            }),
             'slug': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
 
