@@ -1806,20 +1806,33 @@ img { max-width: 100%; height: auto; display: block; }
     padding: 0;
 }
 
-/* 11) Botão discreto "Voltar página inicial" no rodapé (pedido 2026-07-11).
-      Pulsa (brilho BRANCO — o pulso azul padrão sumiria no rodapé azul)
-      apenas fora da home, mesmo espírito do logo pulsante do topo. */
+/* 11) Botão discreto "Voltar página inicial" — encostado no lado DIREITO
+      da margem inferior do rodapé (faixa do copyright), sem deslocar o
+      texto centralizado. Pulsa (brilho BRANCO — o pulso azul padrão
+      sumiria no rodapé azul) apenas fora da home. */
+.footer-bottom-inner { position: relative; }
 .footer-voltar-inicio {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    width: fit-content;
-    margin-top: 12px;
-    padding: 5px 12px;
-    font-size: 11.5px;
+    padding: 4px 11px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.25);
     border-radius: 999px;
+    white-space: nowrap;
+}
+@media (max-width: 768px) {
+    /* No celular o rodapé quebra linha: o botão volta ao fluxo, centralizado */
+    .footer-voltar-inicio {
+        position: static;
+        transform: none;
+        margin: 4px auto 0;
+    }
 }
 .footer-voltar-inicio i { font-size: 10px; }
 .footer-voltar-inicio:hover {

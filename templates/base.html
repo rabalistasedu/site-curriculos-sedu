@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS do site (versionado para evitar cache do navegador) -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260711-7">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260711-8">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -84,12 +84,6 @@
             {% for cat in menu_categorias %}
             <a href="{% url 'conteudo:categoria' cat.slug %}">{{ cat.nome }}</a>
             {% endfor %}
-            {# Botão discreto de volta à home — pulsa apenas fora da página inicial #}
-            <a href="{% url 'conteudo:home' %}"
-               class="footer-voltar-inicio{% if request.path != '/' %} pulse{% endif %}"
-               title="Voltar à página inicial">
-                <i class="fas fa-house"></i> Voltar página inicial
-            </a>
         </div>
     </div>
     <div class="footer-bottom">
@@ -97,6 +91,13 @@
             <p>&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo</p>
             <a href="/admin/" class="admin-access-btn" title="Área administrativa">
                 <i class="fas fa-lock"></i>
+            </a>
+            {# Botão discreto de volta à home, encostado à direita da margem
+               inferior — pulsa apenas fora da página inicial #}
+            <a href="{% url 'conteudo:home' %}"
+               class="footer-voltar-inicio{% if request.path != '/' %} pulse{% endif %}"
+               title="Voltar à página inicial">
+                <i class="fas fa-house"></i> Voltar página inicial
             </a>
         </div>
     </div>
