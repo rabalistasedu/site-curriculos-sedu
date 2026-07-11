@@ -8,7 +8,8 @@ echo   SUBIR SITE CURRICULOS SEDU PARA GITHUB
 echo ============================================
 echo.
 
-cd /d "C:\Users\ridan\Claude\Projects\Site Curriculos SEDU"
+:: Entra na pasta do projeto (a pasta acima de onde este .bat esta salvo)
+cd /d "%~dp0.."
 
 echo Pasta do projeto: %CD%
 echo.
@@ -32,6 +33,13 @@ echo.
 
 git add -A
 git commit -m "%MSG%"
+
+:: Baixa novidades do GitHub antes de enviar (evita o erro "fetch first"
+:: quando houve commit feito em outro computador ou pelo site do GitHub)
+echo.
+echo Baixando novidades do GitHub (se houver)...
+git pull --no-rebase origin main
+
 git push origin main
 
 echo.

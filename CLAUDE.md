@@ -22,7 +22,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Venv** em `venv/` (Windows: `venv\Scripts\activate`)
 - CSS puro (sem frameworks), Font Awesome 6 (CDN), Google Fonts (Inter)
 - **Apps Django**: `conteudo` (site + admin) e `painel` (Painel Central Administrativo)
-- **Versionamento: GitHub** — https://github.com/DanBalista/site-curriculos-sedu.git
+- **Versionamento: GitHub** — https://github.com/rabalistasedu/site-curriculos-sedu.git (remoto `origin`)
 - Ambiente de desenvolvimento atual: **Windows 11** (pasta `C:\ridan\Claude\Projects\Site Curriculos SEDU`)
 
 ## Estrutura do projeto
@@ -73,7 +73,9 @@ static/
                          #   com texto — não usado mais no header), gerenciaok.png (GECEB),
                          #   hero-ilustracao.png
 staticfiles/             # Gerado por collectstatic — NÃO editar, não versionado
-media/                   # Uploads (banners/, destaques/, cartazes/, carrossel/, anexos/) — não versionado
+media/                   # Uploads (banners/, destaques/, cartazes/, carrossel/, anexos/)
+                         #   ⚠️ media/ É versionado no Git (51+ arquivos) — os uploads viajam
+                         #   entre computadores pelo GitHub. Só db.sqlite3 fica de fora.
 db.sqlite3               # Banco populado (231+ conteúdos) — NÃO versionado no Git
 INICIAR SITE.bat         # Atalho do Dan para subir o servidor local
 ngrok.exe / ngrok_compartilhar.py  # Compartilhar demonstração local via ngrok
@@ -268,7 +270,7 @@ Os ~1000 arquivos migrados têm links para `/curriculo/wp-content/uploads/...`. 
   ```bash
   cd ~/site-curriculos-sedu && git fetch origin main && git reset --hard origin/main && source venv/bin/activate && python manage.py migrate && python manage.py collectstatic --noinput --clear && echo "==== PRONTO! Va na aba Web e clique em Reload ===="
   ```
-  Usa `git reset --hard` (não `git pull`) porque `staticfiles/` saiu do Git e o pull travava com "local changes would be overwritten". É seguro: `db.sqlite3` e `media/` são untracked.
+  Usa `git reset --hard` (não `git pull`) porque `staticfiles/` saiu do Git e o pull travava com "local changes would be overwritten". `db.sqlite3` é untracked (seguro). ⚠️ Atenção: `media/` HOJE é versionado — um `reset --hard` no servidor sobrescreve uploads feitos direto lá com a versão do GitHub.
 
 ### Sincronização do banco entre ambientes
 `db.sqlite3` NÃO é versionado — cada ambiente tem o seu. Código sincroniza via GitHub; **dados não**.
@@ -289,8 +291,9 @@ python manage.py runserver
 - **Ao testar CSS/JS**: incrementar o `?v=` no `base.html` e recarregar com Ctrl+Shift+R.
 
 ### Fluxo de trabalho com Git
-1. **Dan**: clique 2x no `.bat` "Subir GitHub SEDU" (Desktop) — faz `git add -A` + commit + push para `origin main`.
+1. **Dan**: clique 2x no `.bat` "Subir GitHub SEDU" (em `BAT SEDU/`, com atalho no Desktop) — faz `git add -A` + commit + **`git pull --no-rebase`** + push para `origin main`. (Corrigido em 2026-07-11: o caminho antigo `C:\Users\ridan\...` foi trocado por `%~dp0..` — funciona de qualquer pasta — e o pull automático evita o erro "fetch first".)
 2. Em outro ambiente: `git pull` + `python manage.py migrate` (+ `collectstatic` se for produção) + reload.
+3. O outro `.bat` ("COMPARTILHAR COM GERENTE") abre o ngrok na porta 8000 para demonstrações; o settings tem `CSRF_TRUSTED_ORIGINS` para domínios do ngrok (commit "codigo ngrok" vindo de outra máquina).
 
 ## Management commands (todos idempotentes)
 
@@ -333,3 +336,5 @@ python manage.py resolver_pendencias             # Arquivou os 3 itens sem conte
 7. **Nunca editar `staticfiles/`** — é gerado.
 8. **Painel Central**: os checkboxes da árvore pertencem ao form de publicar (`form="form-publicar"`); o form de excluir copia os ids via JS no submit.
 9. **Editei um template mas o site não muda (mesmo sem cache do navegador)** → o Django 5.x usa cache de templates e o servidor de preview roda com `--noreload`: REINICIE o `runserver` após editar arquivos `.html` de `templates/`.
+10. **Push rejeitado ("fetch first" / "remote contains work")** → houve commit em outro computador ou pelo site do GitHub. Solução: `git pull --no-rebase origin main`, resolver conflitos se houver, e `git push`. O `.bat` "Subir GitHub SEDU" já faz o pull automaticamente antes do push (corrigido em 2026-07-11).
+11. **Cuidado com o `.gitignore` em outros computadores**: em 2026-07-11 um commit feito em outra máquina ("codigo ngrok") substituiu por acidente o `.gitignore` inteiro pelo do venv (`*` — ignorar tudo). Foi corrigido no merge `2faca8e` mantendo a versão completa. Se o `.gitignore` aparecer com uma linha só (`*`), restaurar do histórico: `git checkout 2faca8e -- .gitignore`.
