@@ -18,10 +18,17 @@ def home(request):
     cartazes_esq = Cartaz.objects.filter(ativo=True, lado='esquerdo')
     cartazes_dir = Cartaz.objects.filter(ativo=True, lado='direito')
 
-    # Carrosséis ativos — aparecem junto com os cartazes, no lado escolhido
+    # Carrosséis ativos — aparecem junto com os cartazes, no lado escolhido.
+    # Carrossel sem NENHUMA imagem (e sem código HTML) não tem o que exibir:
+    # é pulado para não renderizar uma moldura vazia — era isso que dava a
+    # impressão de o checkbox "Ativar carrossel" não funcionar.
     carrosseis = list(Carrossel.objects.filter(ativo=True).prefetch_related('imagens'))
     for c in carrosseis:
         c.html_personalizado = _montar_carrossel_html(c)
+    carrosseis = [
+        c for c in carrosseis
+        if c.html_personalizado or any(i.imagem_src for i in c.imagens.all())
+    ]
     carrosseis_esq = [c for c in carrosseis if c.lado == 'esquerdo']
     carrosseis_dir = [c for c in carrosseis if c.lado == 'direito']
 
@@ -34,6 +41,9 @@ def home(request):
         'cartazes_dir': cartazes_dir,
         'carrosseis_esq': carrosseis_esq,
         'carrosseis_dir': carrosseis_dir,
+        # Sem nenhum cartaz (dos dois lados), o carrossel ganha a coluna
+        # lateral inteira (classe col-cheia no template)
+        'sem_cartazes': not (cartazes_esq.exists() or cartazes_dir.exists()),
     })
 
 
@@ -160,11 +170,13 @@ def conteudo_detalhe(request, slug):
 
 
 def busca(request):
-    """Busca textual por conteúdos — ignora acentos e maiúsculas/minúsculas
+    """Busca textual em TUDO que existe no site — conteúdos E botões/áreas
+    (categorias) — ignorando acentos e maiúsculas/minúsculas
     ("matematica" encontra "Matemática")."""
     from .busca_utils import filtrar_por_texto
     query = request.GET.get('q', '').strip()
     resultados = []
+    categorias_encontradas = []
 
     if query:
         resultados = filtrar_por_texto(
@@ -172,8 +184,16 @@ def busca(request):
             query,
             ('titulo', 'resumo', 'corpo'),
         )
+        # Botões/áreas do site também entram na busca (pelo nome e pelo
+        # texto introdutório) — antes a busca só achava conteúdos
+        categorias_encontradas = filtrar_por_texto(
+            Categoria.objects.filter(ativa=True),
+            query,
+            ('nome', 'descricao'),
+        )
 
     return render(request, 'busca.html', {
         'query': query,
         'resultados': resultados,
+        'categorias_encontradas': categorias_encontradas,
     })

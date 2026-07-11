@@ -17,6 +17,22 @@
 <section class="section">
     <div class="container">
         {% if query %}
+            {% if categorias_encontradas %}
+            <div class="busca-categorias">
+                <h3 class="busca-categorias-titulo"><i class="fas fa-folder-open"></i> Botões e áreas do site</h3>
+                <div class="subcategories">
+                    {% for cat in categorias_encontradas %}
+                    <a href="{% url 'conteudo:categoria' cat.slug %}" class="subcategory-chip">
+                        {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado">
+                        {% elif cat.icone %}<i class="{{ cat.icone }}"></i>{% endif %}
+                        {{ cat.nome }}
+                        {% if cat.categoria_pai %}<span class="chip-pai">em {{ cat.categoria_pai.nome }}</span>{% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             {% if resultados %}
             <p class="results-count">{{ resultados|length }} resultado{{ resultados|pluralize }} para "{{ query }}"</p>
             <div class="content-list">
@@ -37,7 +53,7 @@
                 </a>
                 {% endfor %}
             </div>
-            {% else %}
+            {% elif not categorias_encontradas %}
             <div class="empty-state">
                 <i class="fas fa-search"></i>
                 <p>Nenhum resultado encontrado para "{{ query }}".</p>

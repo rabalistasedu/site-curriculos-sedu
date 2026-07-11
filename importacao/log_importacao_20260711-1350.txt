@@ -1,0 +1,7 @@
+=== Importação do conteúdo remanescente — IMPORTAÇÃO REAL ===
+
+Itens do portal antigo analisados: 185 | já existiam: 185 | a importar: 0
+
+
+=== RESUMO ===
+Conteúdos criados: 0 | pulados: 0 | erros: 0 | botões criados: 0

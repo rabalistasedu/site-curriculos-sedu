@@ -61,6 +61,22 @@
     </a>
 </div>
 
+<!-- Banner da Barra Superior -->
+<div style="background: linear-gradient(135deg, #0e7490 0%, #164e63 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-window-maximize" style="margin-right: 8px;"></i>
+            Botões da Barra Superior
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #e0f2fe;">
+            Escolha quais botões aparecem na barra azul do topo do site, mude a ordem, crie, edite ou exclua.
+        </p>
+    </div>
+    <a href="{% url 'admin_barra_superior' %}" style="background: #fff; color: #0e7490; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-sliders"></i> Gerir Barra Superior
+    </a>
+</div>
+
 <!-- A lista de apps não é repetida aqui: ela já aparece na barra lateral
      esquerda do admin (nav sidebar). Os banners acima dão acesso rápido
      aos painéis visuais. -->

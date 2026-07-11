@@ -71,7 +71,7 @@
 
     <!-- Cartazes laterais (desktop): presos DENTRO da área branca (sticky) -->
     {% if cartazes_esq or carrosseis_esq %}
-    <div class="cartazes-lateral cartazes-esq">
+    <div class="cartazes-lateral cartazes-esq{% if sem_cartazes %} col-cheia{% endif %}">
         <div class="cartazes-inner">
             {% for c in cartazes_esq %}
             <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">
@@ -86,7 +86,7 @@
     {% endif %}
 
     {% if cartazes_dir or carrosseis_dir %}
-    <div class="cartazes-lateral cartazes-dir">
+    <div class="cartazes-lateral cartazes-dir{% if sem_cartazes %} col-cheia{% endif %}">
         <div class="cartazes-inner">
             {% for c in cartazes_dir %}
             <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">

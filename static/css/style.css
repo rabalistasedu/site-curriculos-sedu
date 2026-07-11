@@ -1849,3 +1849,107 @@ div[vw-access-button] {
     transition: opacity 0.2s;
 }
 div[vw-access-button]:hover { opacity: 1; }
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-11 (parte 2) — Plano da Homepage (PPTX do Dan)
+   Regra: só reposicionamento/altura — nenhuma funcionalidade alterada.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 1) Banner/hero mais BAIXO na vertical — a imagem continua inteira
+      (object-fit: contain, nunca corta nem deforma) e qualquer imagem
+      nova enviada pelo admin respeita automaticamente estas alturas. */
+.hero-slide { min-height: 240px; }
+.hero-slide img { height: 240px; }
+.hero-slide.tamanho-pequeno { min-height: 170px; }
+.hero-slide.tamanho-pequeno img { height: 170px; }
+.hero-slide.tamanho-grande { min-height: 340px; }
+.hero-slide.tamanho-grande img { height: 340px; }
+.hero-default { min-height: 210px; }
+.hero-overlay { padding: 24px 48px; }
+@media (max-width: 768px) {
+    .hero-slide { min-height: 150px; }
+    .hero-slide img { height: 150px; }
+}
+
+/* 2) Bloco "Currículo do Espírito Santo" (home-intro) — já fica em fluxo
+      logo abaixo do banner (sobe/desce junto com QUALQUER altura de
+      imagem); só encurtamos o respiro para acompanhar o banner menor. */
+.home-intro { padding: 14px 48px 18px; }
+.home-intro h1 { font-size: 20px; margin-bottom: 6px; }
+.home-intro-texto { font-size: 14px; }
+
+/* 3) Mais espaço para "Conteúdos recentes" e "Navegue por área":
+      as duas colunas ganham mais altura útil antes da scrollbar interna */
+.areas-list { max-height: 560px; }
+.home-recentes .content-list { max-height: 560px; }
+
+/* 4) Carrossel SEM cartazes (nenhum dos dois lados): ocupa a coluna
+      lateral INTEIRA — preso (sticky) como os cartazes, respeitando as
+      margens superior/inferior da área branca ao rolar a página.
+      Com cartazes presentes, nada muda (divisão normal do espaço). */
+.cartazes-lateral.col-cheia .cartazes-inner {
+    height: calc(100vh - 104px);   /* 88px do topo sticky + 16px de respiro */
+}
+.cartazes-lateral.col-cheia .carrossel-widget,
+.cartazes-lateral.col-cheia .carrossel-iframe {
+    height: 100% !important;       /* vence a altura definida no admin */
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* 5) Barra superior — botões FIXOS bem discretos: brancos, letra sem
+      negrito, realce sutil (pílula quase transparente que acende de leve
+      no hover). Quais botões aparecem é controlado pelo novo painel
+      "Botões da Barra Superior" no admin (mostrar_menu_superior). */
+.nav-link {
+    font-weight: 400;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 999px;
+    padding: 6px 14px;
+}
+.nav-link:hover { background: rgba(255, 255, 255, 0.18); color: #fff; }
+.nav-link i { font-size: 11px; opacity: 0.8; }
+
+/* 6) Ícone de localização (Google Maps) à direita da busca — discreto */
+.nav-localizacao {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    margin-left: 8px;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 15px;
+    transition: background 0.2s, transform 0.2s;
+    flex-shrink: 0;
+}
+.nav-localizacao:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    transform: scale(1.08);
+}
+@media (max-width: 768px) {
+    .nav-localizacao { width: 30px; height: 30px; font-size: 13px; }
+}
+
+/* 7) Busca — seção "Botões e áreas do site" nos resultados */
+.busca-categorias { margin-bottom: 26px; }
+.busca-categorias-titulo {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+.busca-categorias-titulo i { color: var(--primary); margin-right: 6px; }
+.busca-categorias .subcategories { margin-bottom: 0; }
+.chip-pai {
+    font-size: 10.5px;
+    color: var(--text-secondary);
+    opacity: 0.8;
+    margin-left: 5px;
+}

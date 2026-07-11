@@ -1,0 +1,74 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .bs-wrap { max-width: 760px; }
+    .bs-hint { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px;
+               padding: 10px 14px; font-size: 13px; margin-bottom: 18px; color: #1e3a5f; }
+    .bs-tabela { width: 100%; border-collapse: collapse; background: #fff;
+                 border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .bs-tabela th { background: #f3f6fa; text-align: left; padding: 10px 12px;
+                    font-size: 12px; text-transform: uppercase; color: #4b5563; }
+    .bs-tabela td { padding: 9px 12px; border-top: 1px solid #eef1f5; font-size: 14px; }
+    .bs-tabela tr:hover td { background: #f8fafc; }
+    .bs-ordem { width: 64px; padding: 4px 6px; }
+    .bs-acoes a { margin-right: 10px; font-size: 13px; white-space: nowrap; }
+    .bs-salvar { background: #1e5fae; color: #fff; border: none; border-radius: 6px;
+                 padding: 10px 26px; font-size: 14px; font-weight: 700; cursor: pointer;
+                 margin-top: 16px; }
+    .bs-salvar:hover { background: #164a8a; }
+    .bs-novo { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+               margin-left: 12px; font-size: 14px; }
+    .bs-off td { opacity: 0.55; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bs-wrap">
+    <h1><i class="fas fa-window-maximize"></i> Botões da barra superior</h1>
+    <div class="bs-hint">
+        Marque quais botões principais aparecem na <strong>barra azul do topo do site</strong>
+        (e na lista "Navegação" do rodapé). A ordem define a posição da esquerda para a
+        direita. Botões desmarcados continuam existindo normalmente — só saem da barra.
+        Se não couberem todos na tela, os excedentes vão para o menu "⋯" automaticamente.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <table class="bs-tabela">
+            <tr>
+                <th style="width:90px;">Na barra?</th>
+                <th>Botão</th>
+                <th style="width:80px;">Ordem</th>
+                <th style="width:200px;">Ações</th>
+            </tr>
+            {% for cat in principais %}
+            <tr {% if not cat.mostrar_menu_superior %}class="bs-off"{% endif %}>
+                <td style="text-align:center;">
+                    <input type="checkbox" name="na_barra" value="{{ cat.pk }}"
+                           {% if cat.mostrar_menu_superior %}checked{% endif %}>
+                </td>
+                <td>
+                    {% if cat.icone %}<i class="{{ cat.icone }}" style="margin-right:6px;color:#1e5fae;"></i>{% endif %}
+                    {{ cat.nome }}
+                    {% if not cat.ativa %}<span style="color:#b91c1c;font-size:11px;"> (inativa)</span>{% endif %}
+                </td>
+                <td><input type="number" class="bs-ordem" name="ordem_{{ cat.pk }}" value="{{ cat.ordem }}"></td>
+                <td class="bs-acoes">
+                    <a href="{% url 'admin:conteudo_categoria_change' cat.pk %}">✏️ Editar</a>
+                    <a href="{% url 'admin:conteudo_categoria_delete' cat.pk %}" style="color:#b91c1c;">🗑 Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <button type="submit" class="bs-salvar"><i class="fas fa-floppy-disk"></i> Salvar barra superior</button>
+        <a class="bs-novo" href="{% url 'admin:conteudo_categoria_add' %}">
+            <i class="fas fa-plus-circle"></i> Criar novo botão
+        </a>
+    </form>
+</div>
+{% endblock %}

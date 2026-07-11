@@ -45,6 +45,39 @@ class CategoriaAdminForm(forms.ModelForm):
             'slug': forms.TextInput(attrs={'autocomplete': 'off'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # "Categoria pai" em ÁRVORE ordenada com indentação (como o select
+        # "Criar botão" do Painel Central) — antes vinha em ordem aleatória
+        # no formato "Pai → Filho", difícil de localizar qualquer botão.
+        campo = self.fields.get('categoria_pai')
+        if campo:
+            widget = campo.widget
+            # desembrulha o RelatedFieldWidgetWrapper do admin (botões +/lápis)
+            alvo = getattr(widget, 'widget', widget)
+            alvo.choices = self._arvore_choices()
+
+    def _arvore_choices(self):
+        filhos = {}
+        for c in Categoria.objects.order_by('ordem', 'nome'):
+            filhos.setdefault(c.categoria_pai_id, []).append(c)
+
+        proprio_pk = self.instance.pk
+        itens = [('', '— Nenhuma (botão do nível principal) —')]
+
+        def caminhar(pai_id, nivel):
+            for c in filhos.get(pai_id, []):
+                if c.pk == proprio_pk:
+                    # pula a própria categoria (e a subárvore dela) —
+                    # um botão não pode ficar dentro de si mesmo
+                    continue
+                recuo = ' ' * (nivel * 4)
+                itens.append((c.pk, f'{recuo}{"└ " if nivel else ""}{c.nome}'))
+                caminhar(c.pk, nivel + 1)
+
+        caminhar(None, 0)
+        return itens
+
 
 class ConfiguracaoSiteAdminForm(forms.ModelForm):
     class Meta:

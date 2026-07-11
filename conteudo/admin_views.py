@@ -327,3 +327,43 @@ def api_subcategorias_itens(request):
         return JsonResponse({'error': 'ação desconhecida'}, status=400)
 
     return JsonResponse({'error': 'método não permitido'}, status=405)
+
+
+# ── Gestão dos botões da BARRA SUPERIOR da home (pedido 2026-07-11) ────
+# Tela simples: marcar/desmarcar quais botões principais aparecem na barra
+# azul do topo, mudar a ordem, e atalhos para criar/editar/excluir botões.
+
+@staff_member_required
+def barra_superior_view(request):
+    principais = Categoria.objects.filter(
+        categoria_pai__isnull=True).order_by('ordem', 'nome')
+
+    if request.method == 'POST':
+        marcados = set(request.POST.getlist('na_barra'))
+        alterados = 0
+        for cat in principais:
+            novo = str(cat.pk) in marcados
+            try:
+                nova_ordem = int(request.POST.get(f'ordem_{cat.pk}', cat.ordem))
+            except (TypeError, ValueError):
+                nova_ordem = cat.ordem
+            if cat.mostrar_menu_superior != novo or cat.ordem != nova_ordem:
+                cat.mostrar_menu_superior = novo
+                cat.ordem = nova_ordem
+                cat.save(update_fields=['mostrar_menu_superior', 'ordem'])
+                alterados += 1
+        if alterados:
+            messages.success(
+                request,
+                f'{alterados} botão(ões) atualizado(s). A barra superior do '
+                'site já reflete a mudança.')
+        else:
+            messages.info(request, 'Nada mudou.')
+        return redirect('admin_barra_superior')
+
+    return render(request, 'admin/barra_superior.html', {
+        'title': 'Botões da barra superior',
+        'principais': principais,
+        'has_permission': True,
+        'is_app_index': True,
+    })
