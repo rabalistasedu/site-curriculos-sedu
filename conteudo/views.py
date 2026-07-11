@@ -41,9 +41,6 @@ def home(request):
         'cartazes_dir': cartazes_dir,
         'carrosseis_esq': carrosseis_esq,
         'carrosseis_dir': carrosseis_dir,
-        # Sem nenhum cartaz (dos dois lados), o carrossel ganha a coluna
-        # lateral inteira (classe col-cheia no template)
-        'sem_cartazes': not (cartazes_esq.exists() or cartazes_dir.exists()),
     })
 
 

@@ -1953,3 +1953,19 @@ div[vw-access-button]:hover { opacity: 1; }
     opacity: 0.8;
     margin-left: 5px;
 }
+
+/* 8) Barra azul do topo mais BAIXA + botões centralizados, menores e um
+      pouco mais claros (pedido 2026-07-11, ajuste fino da parte 2) */
+.header-inner { height: 58px; }
+.nav { justify-content: center; }
+.nav-link {
+    font-size: 12px;
+    padding: 4px 12px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.13);
+}
+.nav-link:hover { background: rgba(255, 255, 255, 0.24); }
+.nav-link i { font-size: 10px; }
+@media (max-width: 900px) {
+    .header-inner { height: auto; }
+}
