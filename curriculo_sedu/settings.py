@@ -15,8 +15,14 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*']  # Permite todos os hosts em desenvolvimento (seguro remover antes de produção)
+ALLOWED_HOSTS = ['*']  # Permite todos os hosts em desenvolvimento (restringir antes da produção na SEDU)
 
+# Permite acessar o painel administrativo pelo ngrok
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.ngrok-free.app",
+    "https://*.ngrok-free.dev",
+    "https://*.ngrok.app",
+]
 # ── Apps ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
