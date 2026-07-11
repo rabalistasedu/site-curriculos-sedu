@@ -74,7 +74,32 @@
       "Bash(git commit -m 'Atualiza arquivos .md com todas as mudanças de 2026-07-11 *)",
       "Bash(git restore *)",
       "Bash(rm -f media/icones_categoria/icone.png media/icones_categoria/icone_botao.png \"media/icones_categoria/icone_botao_4AGwtMw.png\")",
-      "Bash(rmdir media/icones_categoria)"
+      "Bash(rmdir media/icones_categoria)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{url_effective}\" -L --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/\")",
+      "Bash(curl -s -L --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/\")",
+      "Bash(curl -s --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/pages?per_page=1\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/posts?per_page=1\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/media?per_page=1\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -sI --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/pages?per_page=1\")",
+      "Bash(curl -sI --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/posts?per_page=1\")",
+      "Bash(curl -sI --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/media?per_page=1\")",
+      "Bash(curl -s --max-time 20 \"https://curriculo.sedu.es.gov.br/curriculo/wp-json/wp/v2/pages?per_page=2&_fields=id,link,title,parent,status\")",
+      "Bash(cp db.sqlite3 \"db.sqlite3.backup-20260711\")",
+      "Bash(./venv/Scripts/python.exe -c \"import requests; print\\('requests OK', requests.__version__\\)\")",
+      "Bash(./venv/Scripts/python.exe -c \"import bs4; print\\('bs4 OK'\\)\")",
+      "Bash(./venv/Scripts/pip.exe list *)",
+      "Bash(./venv/Scripts/python.exe importacao/inventariar_wordpress.py)",
+      "Bash(curl -s --max-time 30 \"https://curriculo.sedu.es.gov.br/curriculo/\" -o importacao/_home_antiga.html)",
+      "Bash(./venv/Scripts/python.exe manage.py comparar_portais)",
+      "Bash(./venv/Scripts/python.exe manage.py importar_remanescentes --dry-run)",
+      "Bash(./venv/Scripts/python.exe manage.py importar_remanescentes)",
+      "Bash(cat \"INICIAR SITE.bat\")",
+      "Bash(ls \"BAT SEDU/\")",
+      "Bash(ls requirements*.txt)",
+      "Bash(./venv/Scripts/python.exe manage.py shell -c \"from django.contrib.auth.models import User; u,c=User.objects.get_or_create\\(username='rabalista', defaults={'is_superuser':True,'is_staff':True}\\); c and \\(u.set_password\\('sedu2026'\\) or u.save\\(\\)\\); print\\('CRIADO rabalista/sedu2026' if c else 'ja existe'\\)\")",
+      "Bash(./venv/Scripts/python.exe manage.py shell -c \"from django.contrib.auth.models import User; u=User.objects.get\\(username='rabalista'\\); print\\('is_superuser:', u.is_superuser, '| is_staff:', u.is_staff, '| senha sedu2026 confere:', u.check_password\\('sedu2026'\\)\\)\")",
+      "Bash(cmd //c \"\\\\\"BAT SEDU\\\\\\\\ATUALIZAR BANCO.bat\\\\\"\")",
+      "Bash(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\" && rm -f importacao/log_importacao_20260711-1331.txt importacao/log_importacao_20260711-1332.txt importacao/log_importacao_20260711-1330*.txt && ls importacao/)"
     ]
   }
 }
