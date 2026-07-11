@@ -3,8 +3,12 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Count
-from .models import Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz, Anexo
+from .models import (
+    Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz,
+    Anexo, Carrossel, CarrosselImagem,
+)
 from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
+from .busca_utils import BuscaSemAcentoMixin
 
 
 # ── Customização global do Admin ──────────────────────────────────────
@@ -51,7 +55,8 @@ class AnexoCategoriaInline(admin.TabularInline):
 
 # ── Categoria ─────────────────────────────────────────────────────────
 @admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
+class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
+    busca_normalizada_campos = ('nome',)
     form = CategoriaAdminForm
     list_display = ['nome', 'categoria_pai', 'ordem', 'ativa', 'total_conteudos']
     list_filter = ['ativa', 'categoria_pai']
@@ -75,6 +80,12 @@ class CategoriaAdmin(admin.ModelAdmin):
         ('Aparência', {
             'fields': ('icone', 'imagem', 'ordem', 'ativa'),
             'description': '⚠️ "Imagem de capa" aceita apenas imagens (JPG, PNG, GIF). Para anexar PDF, Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.',
+        }),
+        ('📍 Onde este botão aparece na página inicial', {
+            'fields': ('mostrar_menu_superior', 'mostrar_navegue_area'),
+            'description': 'Estas opções valem para botões do nível principal: '
+                           'controlam a barra azul do topo (e a lista "Navegação" '
+                           'do rodapé) e a seção "Navegue por área" da home.',
         }),
     )
 
@@ -102,7 +113,8 @@ class CategoriaAdmin(admin.ModelAdmin):
 
 # ── Conteúdo ──────────────────────────────────────────────────────────
 @admin.register(Conteudo)
-class ConteudoAdmin(admin.ModelAdmin):
+class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
+    busca_normalizada_campos = ('titulo', 'resumo', 'corpo')
     form = ConteudoAdminForm
     inlines = [AnexoConteudoInline]
     list_display = ['titulo', 'tipo_badge', 'area_destino', 'status_badge', 'destaque', 'recente', 'ordem', 'data_publicacao']
@@ -266,11 +278,12 @@ class BannerAdmin(admin.ModelAdmin):
             'fields': ('titulo', 'subtitulo', 'link'),
         }),
         ('🖼️ Imagem', {
-            'fields': ('imagem', 'tamanho'),
+            'fields': ('imagem', 'url_imagem', 'tamanho'),
             'description': (
                 'Qualquer formato de imagem funciona (horizontal ou vertical) — '
                 'ela nunca será cortada ou distorcida. Use "Tamanho" para controlar '
-                'a altura do banner na página.'
+                'a altura do banner na página. Você pode subir um arquivo OU colar '
+                'o endereço (URL) de uma imagem da internet.'
             ),
         }),
         ('⚙️ Exibição', {
@@ -295,10 +308,10 @@ class BannerAdmin(admin.ModelAdmin):
     area_banner.short_description = 'Aparece em'
 
     def preview_imagem(self, obj):
-        if obj.imagem:
+        if obj.imagem_src:
             return format_html(
                 '<img src="{}" style="height:40px; border-radius:4px;" />',
-                obj.imagem.url
+                obj.imagem_src
             )
         return '—'
     preview_imagem.short_description = 'Preview'
@@ -322,7 +335,8 @@ class BannerAdmin(admin.ModelAdmin):
 
 # ── Comentários ───────────────────────────────────────────────────────
 @admin.register(Comentario)
-class ComentarioAdmin(admin.ModelAdmin):
+class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
+    busca_normalizada_campos = ('nome', 'email', 'texto')
     list_display = ['nome', 'conteudo_link', 'texto_resumido', 'aprovado', 'data_criacao']
     list_filter = ['aprovado', 'data_criacao']
     list_editable = ['aprovado']
@@ -387,9 +401,10 @@ class CartazAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('🖼️ Cartaz do evento', {
-            'fields': ('titulo', 'imagem', 'link'),
+            'fields': ('titulo', 'imagem', 'url_imagem', 'link'),
             'description': (
-                'Suba a imagem do cartaz e cole o link do evento. '
+                'Suba a imagem do cartaz OU cole o endereço (URL) de uma imagem '
+                'da internet, e cole o link do evento. '
                 'O cartaz aparece discretamente nas laterais da página principal.'
             ),
         }),
@@ -411,10 +426,10 @@ class CartazAdmin(admin.ModelAdmin):
     lado_badge.short_description = 'Lado'
 
     def preview_imagem(self, obj):
-        if obj.imagem:
+        if obj.imagem_src:
             return format_html(
                 '<img src="{}" style="height:60px; border-radius:4px;" />',
-                obj.imagem.url
+                obj.imagem_src
             )
         return '—'
     preview_imagem.short_description = 'Preview'
@@ -436,12 +451,65 @@ class CartazAdmin(admin.ModelAdmin):
     delete_selected.short_description = '🗑️ Remover cartazes selecionados'
 
 
+# ── Carrossel ────────────────────────────────────────────────────────
+class CarrosselImagemInline(admin.TabularInline):
+    model = CarrosselImagem
+    extra = 5  # 5 linhas prontas; o link "Adicionar outra Imagem" cria mais
+    fields = ['imagem', 'url_imagem', 'link', 'ordem']
+    verbose_name = 'Imagem'
+    verbose_name_plural = '🖼️ Imagens do carrossel (suba um arquivo OU cole uma URL em cada linha)'
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'imagem':
+            kwargs['widget'] = forms.FileInput(attrs={'accept': '.jpg,.jpeg,.png,.gif,.webp'})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+@admin.register(Carrossel)
+class CarrosselAdmin(admin.ModelAdmin):
+    list_display = ['titulo', 'ativo', 'lado', 'largura', 'altura', 'total_imagens']
+    list_editable = ['ativo']
+    inlines = [CarrosselImagemInline]
+
+    fieldsets = (
+        ('🎠 Carrossel', {
+            'fields': ('titulo', 'ativo', 'lado', 'ordem'),
+            'description': (
+                'Com "Ativar carrossel" marcado, ele aparece na área dos cartazes '
+                'da página inicial, no lado escolhido, seguindo as mesmas regras '
+                'dos cartazes (nunca invade o banner nem o rodapé). '
+                'Desmarcado, não aparece no site.'
+            ),
+        }),
+        ('📐 Tamanho e velocidade', {
+            'fields': ('largura', 'altura', 'intervalo'),
+            'description': 'Escolha a largura e a altura do painel do carrossel (em pixels) '
+                           'e de quantos em quantos segundos as imagens passam sozinhas.',
+        }),
+        ('🧩 Aparência personalizada (avançado, opcional)', {
+            'classes': ('collapse',),
+            'fields': ('codigo_html',),
+            'description': (
+                'Para mudar o formato do carrossel, cole aqui um código HTML completo '
+                'e salve. Escreva o marcador &lt;!--IMAGENS--&gt; no lugar onde as '
+                'imagens cadastradas abaixo devem entrar. Deixe em branco para usar '
+                'o visual padrão do site.'
+            ),
+        }),
+    )
+
+    def total_imagens(self, obj):
+        return obj.imagens.count()
+    total_imagens.short_description = 'Imagens'
+
+
 # ── Anexos ───────────────────────────────────────────────────────────
 @admin.register(Anexo)
-class AnexoAdmin(admin.ModelAdmin):
-    list_display = ['nome_exibicao', 'extensao', 'conteudo', 'ordem']
-    list_filter = ['conteudo__categoria']
-    search_fields = ['nome', 'arquivo', 'conteudo__titulo']
+class AnexoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
+    busca_normalizada_campos = ('nome',)
+    list_display = ['nome_exibicao', 'extensao', 'conteudo', 'categoria', 'ordem']
+    list_filter = ['categoria', 'conteudo__categoria']
+    search_fields = ['nome', 'arquivo', 'conteudo__titulo', 'categoria__nome']
     list_editable = ['ordem']
 
     def nome_exibicao(self, obj):

@@ -1,0 +1,469 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/admin_picker.css' %}">
+<style>
+    .pc-wrap { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+    .pc-col-arvore { flex: 1 1 340px; min-width: 300px; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+    .pc-col-painel { flex: 2 1 560px; min-width: 340px; }
+    .pc-titulo-col { font-size: 15px; font-weight: 700; color: #1e3a5f; margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+    .pc-hint { font-size: 12px; color: #6b7280; margin: 0 0 12px; }
+    .pc-busca { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px; }
+    ul.pc-arvore, ul.pc-filhos { list-style: none; margin: 0; padding: 0; }
+    ul.pc-filhos { margin-left: 20px; border-left: 2px solid #eef2f7; padding-left: 6px; }
+    .pc-linha { display: flex; align-items: center; gap: 6px; padding: 4px 2px; border-radius: 6px; }
+    .pc-linha:hover { background: #f1f5fb; }
+    .pc-toggle { border: none; background: none; cursor: pointer; width: 20px; color: #64748b; font-size: 12px; padding: 0; }
+    .pc-toggle-vazio { display: inline-block; width: 20px; }
+    .pc-check { display: flex; align-items: center; gap: 7px; cursor: pointer; flex: 1; font-size: 13px; color: #1a1a2e; }
+    .pc-check i { color: #2d5a8e; width: 16px; text-align: center; }
+    .pc-check input { accent-color: #2d5a8e; width: 15px; height: 15px; }
+    .pc-badge { background: #eef2f7; color: #475569; border-radius: 10px; font-size: 11px; padding: 1px 7px; font-weight: 600; }
+    .pc-ver { color: #94a3b8; font-size: 11px; text-decoration: none; padding: 2px 4px; }
+    .pc-ver:hover { color: #2d5a8e; }
+    .pc-novo { margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 12px; }
+    .pc-novo input[type=text], .pc-novo select { width: 100%; box-sizing: border-box; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+    .pc-secao { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 16px; overflow: hidden; }
+    .pc-secao > h3 { margin: 0; background: linear-gradient(135deg, #2d5a8e, #1e3a5f); color: #fff; font-size: 13px; font-weight: 700; padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+    .pc-secao-body { padding: 14px 16px; }
+    .pc-campo { margin-bottom: 12px; }
+    .pc-campo label { display: block; font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 4px; }
+    .pc-campo input[type=text], .pc-campo input[type=url], .pc-campo input[type=number],
+    .pc-campo input[type=date], .pc-campo input[type=time], .pc-campo textarea, .pc-campo select {
+        width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;
+    }
+    .pc-campo textarea { min-height: 70px; resize: vertical; }
+    .pc-campo .ajuda { font-size: 11px; color: #6b7280; margin-top: 3px; }
+    /* Altura fixa nos selects para o texto não aparecer cortado */
+    .pc-campo select, .pc-novo select { height: 36px; line-height: normal; padding-top: 0; padding-bottom: 0; }
+    .pc-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .pc-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    /* Os campos dentro das grades podem encolher (evita cortar as opções) */
+    .pc-grid2 > div, .pc-grid3 > div { min-width: 0; }
+    /* Em tela estreita, as grades viram uma coluna só — nada fica cortado */
+    @media (max-width: 980px) {
+        .pc-grid2, .pc-grid3 { grid-template-columns: 1fr; }
+    }
+    .pc-anexo-linha { display: grid; grid-template-columns: 1fr 1fr 34px; gap: 8px; margin-bottom: 8px; align-items: center; }
+    .pc-anexo-rm { border: none; background: #fee2e2; color: #b91c1c; border-radius: 6px; height: 32px; cursor: pointer; font-weight: 700; }
+    .pc-add-anexo { background: none; border: 1px dashed #2d5a8e; color: #2d5a8e; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .pc-chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1a1a2e; margin-bottom: 8px; cursor: pointer; }
+    .pc-chk input { accent-color: #2d5a8e; width: 15px; height: 15px; }
+    .pc-salvar { background: linear-gradient(135deg, #059669, #047857); color: #fff; border: none; border-radius: 8px; padding: 13px 34px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; }
+    .pc-salvar:hover { filter: brightness(1.08); }
+    .pc-destinos-resumo { font-size: 12px; color: #1e3a5f; background: #eef4fb; border: 1px solid #cfe0f3; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; }
+    .pc-topo-links { margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .pc-topo-links a { background: #fff; border: 1px solid #cbd5e1; color: #1e3a5f; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+    input[type=color].pc-cor { width: 100%; height: 36px; border: 1px solid #cbd5e1; border-radius: 6px; padding: 2px; background: #fff; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pc-topo-links">
+    <a href="{% url 'painel:conteudos' %}"><i class="fas fa-list-check"></i> Conteúdo para modificar ou configurar</a>
+    <a href="{% url 'admin_organizar' %}"><i class="fas fa-folder-tree"></i> Organizador</a>
+    <a href="{% url 'admin_adicionar_arquivos' %}"><i class="fas fa-cloud-arrow-up"></i> Adicionar Arquivos</a>
+    <a href="/admin/"><i class="fas fa-arrow-left"></i> Voltar ao admin</a>
+</div>
+
+<div class="pc-wrap">
+
+    <!-- ══════════ COLUNA ESQUERDA: ÁRVORE DE BOTÕES ══════════ -->
+    <div class="pc-col-arvore">
+        <h3 class="pc-titulo-col"><i class="fas fa-sitemap"></i> Botões do site</h3>
+        <p class="pc-hint">Marque onde publicar. Marcar um botão marca também os que estão dentro dele. Clique em ▸ para abrir subbotões e subáreas.</p>
+        <input type="text" class="pc-busca" id="pc-busca" placeholder="🔍 Pesquisar botão...">
+
+        <ul class="pc-arvore" id="pc-arvore">
+            {% for no in arvore %}
+            {% include 'admin/painel_arvore_no.html' with no=no nivel=0 %}
+            {% endfor %}
+        </ul>
+
+        <!-- Criar novo botão / subbotão (dentro de qualquer botão, em qualquer nível) -->
+        <div class="pc-novo">
+            <h3 class="pc-titulo-col"><i class="fas fa-plus-circle"></i> Criar novo botão</h3>
+            <form method="post" action="{% url 'painel:central' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="criar_no">
+                <input type="text" name="novo_nome" placeholder="Nome do novo botão" required>
+                <select name="novo_pai" title="Escolha dentro de qual botão o novo botão vai ficar">
+                    <option value="">— No nível principal (Navegue por área) —</option>
+                    {% for item in arvore_flat %}
+                    <option value="{{ item.cat.pk }}">{% if item.nivel %}{{ item.recuo }}└ {% endif %}{{ item.cat.nome }}</option>
+                    {% endfor %}
+                </select>
+                <div style="font-size:11px;color:#6b7280;margin:-2px 0 8px;">
+                    Para criar um botão DENTRO de outro botão, escolha o botão "pai" na lista acima
+                    (todos os níveis aparecem).
+                </div>
+                <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;">
+                    <i class="fas fa-plus"></i> Criar botão
+                </button>
+            </form>
+        </div>
+
+        <!-- Excluir botões marcados -->
+        <div class="pc-novo">
+            <h3 class="pc-titulo-col" style="color:#b91c1c;"><i class="fas fa-trash-can"></i> Excluir botão selecionado</h3>
+            <form method="post" action="{% url 'painel:central' %}" id="form-excluir">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="excluir_nos">
+                <div id="pc-excluir-ids"></div>
+                <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">
+                    Marque na árvore acima o(s) botão(ões) que deseja excluir e clique no botão vermelho.
+                    Os subbotões de dentro deles são excluídos junto. Os conteúdos NÃO são excluídos —
+                    ficam salvos e podem ser vinculados a outros botões depois.
+                </div>
+                <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#dc2626,#b91c1c);">
+                    <i class="fas fa-trash-can"></i> Excluir botões marcados
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ══════════ COLUNA DIREITA: COMPOSIÇÃO E PUBLICAÇÃO ══════════ -->
+    <div class="pc-col-painel">
+        <form id="form-publicar" method="post" action="{% url 'painel:central' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="publicar">
+
+            <div class="pc-destinos-resumo" id="pc-resumo">
+                <i class="fas fa-location-dot"></i> Nenhum destino marcado ainda — marque botões na árvore à esquerda.
+            </div>
+
+            <!-- Conteúdo -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-file-lines"></i> Conteúdo (opcional)</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-campo">
+                        <label>Título</label>
+                        <input type="text" name="titulo" maxlength="300" placeholder="Título do conteúdo que vai aparecer no card">
+                    </div>
+                    <div class="pc-campo">
+                        <label>Resumo</label>
+                        <input type="text" name="resumo" placeholder="Breve descrição exibida no card (opcional)">
+                    </div>
+                    <div class="pc-campo">
+                        <label>Texto completo (Post)</label>
+                        <textarea name="corpo" placeholder="Texto do post — aparece na página do conteúdo (aceita HTML)"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-link"></i> Link / URL (opcional)</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-grid2">
+                        <div class="pc-campo">
+                            <label>URL onde está armazenado o arquivo</label>
+                            <input type="url" name="url_externa" placeholder="https://...">
+                        </div>
+                        <div class="pc-campo">
+                            <label>Nome amigável da URL</label>
+                            <input type="text" name="nome_url" placeholder="Nome que aparece no site no lugar do endereço">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anexos -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-paperclip"></i> Anexos (opcional)</h3>
+                <div class="pc-secao-body">
+                    <p class="ajuda" style="font-size:11px;color:#6b7280;margin:0 0 10px;">
+                        PDF, Word, Excel, PowerPoint, vídeo, imagem, ZIP... Com título preenchido, os arquivos
+                        entram dentro do conteúdo; sem título, viram "Arquivos para download" de cada botão marcado.
+                    </p>
+                    <div id="pc-anexos">
+                        <div class="pc-anexo-linha">
+                            <input type="file" name="arquivo_0">
+                            <input type="text" name="nome_0" placeholder="Nome amigável (opcional)">
+                            <button type="button" class="pc-anexo-rm" title="Remover linha">×</button>
+                        </div>
+                    </div>
+                    <button type="button" class="pc-add-anexo" id="pc-add-anexo"><i class="fas fa-plus"></i> Adicionar mais arquivo</button>
+                </div>
+            </div>
+
+            <!-- Texto da área -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-align-left"></i> Texto da área — Post acima dos botões (opcional)</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-campo">
+                        <textarea name="texto_area" placeholder="Este texto aparece no topo da página de cada botão marcado, acima dos subbotões e conteúdos (aceita HTML)"></textarea>
+                        <div class="ajuda">⚠️ Substitui o texto introdutório atual das áreas marcadas.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ícone -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-icons"></i> Ícone do card (opcional)</h3>
+                <div class="pc-secao-body">
+                    {{ icon_picker_html }}
+                </div>
+            </div>
+
+            <!-- Aparência do botão -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-palette"></i> Aparência dos botões marcados (opcional)</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-grid3">
+                        <div class="pc-campo">
+                            <label>Cor de fundo</label>
+                            <input type="color" class="pc-cor" id="pc-cor-fundo" value="#2d5a8e" data-alvo="estilo_cor_fundo">
+                            <input type="hidden" name="estilo_cor_fundo" value="">
+                            <div class="ajuda"><label class="pc-chk" style="margin:4px 0 0;"><input type="checkbox" id="pc-usar-fundo"> usar esta cor</label></div>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Cor do texto</label>
+                            <input type="color" class="pc-cor" id="pc-cor-texto" value="#1a1a2e" data-alvo="estilo_cor_texto">
+                            <input type="hidden" name="estilo_cor_texto" value="">
+                            <div class="ajuda"><label class="pc-chk" style="margin:4px 0 0;"><input type="checkbox" id="pc-usar-texto"> usar esta cor</label></div>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Tamanho da letra (px)</label>
+                            <input type="number" name="estilo_tamanho_fonte" min="10" max="40" placeholder="ex: 15">
+                        </div>
+                    </div>
+                    <div class="pc-grid2">
+                        <div class="pc-campo">
+                            <label>Fonte</label>
+                            <select name="estilo_fonte">
+                                <option value="">Fonte do site (Inter)</option>
+                                <option value="Georgia">Georgia (serifada)</option>
+                                <option value="Arial">Arial</option>
+                                <option value="Verdana">Verdana</option>
+                                <option value="Times New Roman">Times New Roman</option>
+                                <option value="Courier New">Courier New</option>
+                            </select>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Alinhamento do texto</label>
+                            <select name="estilo_alinhamento">
+                                <option value="">Automático</option>
+                                <option value="left">Esquerda</option>
+                                <option value="center">Centralizado</option>
+                                <option value="right">Direita</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label class="pc-chk"><input type="checkbox" name="botao_pulsante"> <strong>Botão vibrante / pulsante</strong> — os botões marcados pulsam suavemente no site</label>
+                </div>
+            </div>
+
+            <!-- Visibilidade na página inicial -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-house"></i> Página inicial — onde os botões marcados aparecem</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-grid2">
+                        <div class="pc-campo">
+                            <label>Aparecer na barra superior do site</label>
+                            <select name="vis_menu">
+                                <option value="">— Não alterar —</option>
+                                <option value="sim">Sim — aparece na barra superior</option>
+                                <option value="nao">Não — some da barra superior</option>
+                            </select>
+                            <div class="ajuda">Também controla a lista "Navegação" do rodapé. Vale para botões do nível principal.</div>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Aparecer no "Navegue por área"</label>
+                            <select name="vis_area">
+                                <option value="">— Não alterar —</option>
+                                <option value="sim">Sim — aparece no Navegue por área</option>
+                                <option value="nao">Não — some do Navegue por área</option>
+                            </select>
+                            <div class="ajuda">Seção da página inicial com os botões das áreas. Vale para botões do nível principal.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Publicação -->
+            <div class="pc-secao">
+                <h3><i class="fas fa-bullhorn"></i> Publicação</h3>
+                <div class="pc-secao-body">
+                    <div class="pc-grid3">
+                        <div class="pc-campo">
+                            <label>Status</label>
+                            <select name="status">
+                                <option value="publicado">Publicado</option>
+                                <option value="rascunho">Rascunho</option>
+                            </select>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Data de publicação</label>
+                            <input type="date" name="pub_data">
+                            <div class="ajuda">Vazio = publica imediatamente</div>
+                        </div>
+                        <div class="pc-campo">
+                            <label>Hora</label>
+                            <input type="time" name="pub_hora">
+                        </div>
+                    </div>
+                    <label class="pc-chk"><input type="checkbox" name="destaque"> Destaque na home</label>
+                    <label class="pc-chk"><input type="checkbox" name="recente"> Aparecer em "Conteúdos recentes"</label>
+                    <label class="pc-chk"><input type="checkbox" name="pulsante"> Conteúdo vibrante / pulsante (o card do conteúdo pulsa nos locais marcados)</label>
+                    <div class="pc-campo" style="max-width:180px;">
+                        <label>Ordem de exibição</label>
+                        <input type="number" name="ordem" value="0" min="0">
+                        <div class="ajuda">Sempre da esquerda para a direita. 0 = fim da lista.</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="pc-salvar" onclick="return pcConfirmar();">
+                <i class="fas fa-floppy-disk"></i> SALVAR E PUBLICAR NOS BOTÕES MARCADOS
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+    // ── Expandir / recolher ──
+    document.querySelectorAll('.pc-toggle').forEach(function (t) {
+        if (t.classList.contains('pc-toggle-vazio')) return;
+        t.addEventListener('click', function () {
+            var filhos = t.closest('.pc-no').querySelector(':scope > .pc-filhos');
+            if (!filhos) return;
+            filhos.hidden = !filhos.hidden;
+            t.textContent = filhos.hidden ? '▸' : '▾';
+        });
+    });
+
+    // ── Checkboxes em cascata (marcar pai marca filhos; estado parcial) ──
+    function descendentes(li) {
+        return Array.prototype.slice.call(li.querySelectorAll('.pc-filhos input[name=destinos]'));
+    }
+    function atualizarPais(input) {
+        var li = input.closest('.pc-no');
+        var pai = li.parentElement.closest('.pc-no');
+        while (pai) {
+            var chk = pai.querySelector(':scope > .pc-linha input[name=destinos]');
+            var descs = descendentes(pai);
+            var marcados = descs.filter(function (d) { return d.checked; }).length;
+            chk.indeterminate = marcados > 0 && marcados < descs.length;
+            pai = pai.parentElement.closest('.pc-no');
+        }
+    }
+    document.querySelectorAll('input[name=destinos]').forEach(function (c) {
+        c.addEventListener('change', function () {
+            descendentes(c.closest('.pc-no')).forEach(function (d) { d.checked = c.checked; });
+            atualizarPais(c);
+            atualizarResumo();
+        });
+    });
+
+    // ── Resumo de destinos ──
+    function atualizarResumo() {
+        var marcados = Array.prototype.slice.call(
+            document.querySelectorAll('input[name=destinos]:checked'));
+        var el = document.getElementById('pc-resumo');
+        if (!marcados.length) {
+            el.innerHTML = '<i class="fas fa-location-dot"></i> Nenhum destino marcado ainda — marque botões na árvore à esquerda.';
+            return;
+        }
+        var nomes = marcados.slice(0, 6).map(function (m) {
+            return m.closest('.pc-check').querySelector('.pc-nome').textContent;
+        });
+        var extra = marcados.length > 6 ? ' e mais ' + (marcados.length - 6) + '...' : '';
+        el.innerHTML = '<i class="fas fa-location-dot"></i> <strong>Publicar em (' + marcados.length + '):</strong> ' + nomes.join(', ') + extra;
+    }
+
+    // ── Pesquisa na árvore (ignora acentos e maiúsculas/minúsculas) ──
+    function normalizar(t) {
+        return t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    }
+    document.getElementById('pc-busca').addEventListener('input', function () {
+        var q = normalizar(this.value.trim());
+        document.querySelectorAll('#pc-arvore .pc-no').forEach(function (li) {
+            if (!q) { li.style.display = ''; return; }
+            var bate = normalizar(li.textContent).indexOf(q) !== -1;
+            li.style.display = bate ? '' : 'none';
+            if (bate) {
+                var filhos = li.querySelector(':scope > .pc-filhos');
+                if (filhos) filhos.hidden = false;
+            }
+        });
+    });
+
+    // ── Linhas dinâmicas de anexos ──
+    var idx = 1;
+    document.getElementById('pc-add-anexo').addEventListener('click', function () {
+        var div = document.createElement('div');
+        div.className = 'pc-anexo-linha';
+        div.innerHTML = '<input type="file" name="arquivo_' + idx + '">' +
+            '<input type="text" name="nome_' + idx + '" placeholder="Nome amigável (opcional)">' +
+            '<button type="button" class="pc-anexo-rm" title="Remover linha">×</button>';
+        document.getElementById('pc-anexos').appendChild(div);
+        idx++;
+    });
+    document.getElementById('pc-anexos').addEventListener('click', function (e) {
+        if (e.target.classList.contains('pc-anexo-rm')) {
+            var linhas = document.querySelectorAll('.pc-anexo-linha');
+            if (linhas.length > 1) e.target.closest('.pc-anexo-linha').remove();
+            else { e.target.closest('.pc-anexo-linha').querySelector('input[type=file]').value = ''; }
+        }
+    });
+
+    // ── Cores: só enviam valor se "usar esta cor" estiver marcado ──
+    function ligarCor(corId, chkId, hiddenName) {
+        var cor = document.getElementById(corId);
+        var chk = document.getElementById(chkId);
+        var hidden = document.querySelector('input[name=' + hiddenName + ']');
+        function sync() { hidden.value = chk.checked ? cor.value : ''; }
+        cor.addEventListener('input', function () { chk.checked = true; sync(); });
+        chk.addEventListener('change', sync);
+    }
+    ligarCor('pc-cor-fundo', 'pc-usar-fundo', 'estilo_cor_fundo');
+    ligarCor('pc-cor-texto', 'pc-usar-texto', 'estilo_cor_texto');
+
+    // ── Excluir botões marcados (confirmação dupla) ──
+    document.getElementById('form-excluir').addEventListener('submit', function (e) {
+        var marcados = Array.prototype.slice.call(
+            document.querySelectorAll('input[name=destinos]:checked'));
+        if (!marcados.length) {
+            e.preventDefault();
+            alert('Marque na árvore o(s) botão(ões) que deseja excluir.');
+            return;
+        }
+        var nomes = marcados.map(function (m) {
+            return m.closest('.pc-check').querySelector('.pc-nome').textContent;
+        });
+        if (!confirm('Excluir ' + marcados.length + ' botão(ões) do site?\n\n' + nomes.join(', '))) {
+            e.preventDefault();
+            return;
+        }
+        if (!confirm('TEM CERTEZA? Os subbotões de dentro deles também serão excluídos.\n(Os conteúdos continuam salvos.)')) {
+            e.preventDefault();
+            return;
+        }
+        var alvo = document.getElementById('pc-excluir-ids');
+        alvo.innerHTML = '';
+        marcados.forEach(function (m) {
+            var h = document.createElement('input');
+            h.type = 'hidden';
+            h.name = 'destinos';
+            h.value = m.value;
+            alvo.appendChild(h);
+        });
+    });
+
+    // ── Confirmação ao salvar ──
+    window.pcConfirmar = function () {
+        var n = document.querySelectorAll('input[name=destinos]:checked').length;
+        if (!n) {
+            alert('Marque pelo menos um botão de destino na árvore à esquerda.');
+            return false;
+        }
+        return confirm('Publicar nos ' + n + ' botão(ões) marcado(s)?');
+    };
+})();
+</script>
+{% endblock %}

@@ -75,6 +75,19 @@ class Categoria(models.Model):
         'self', on_delete=models.CASCADE, null=True, blank=True,
         related_name='subcategorias', verbose_name='Categoria pai'
     )
+    mostrar_menu_superior = models.BooleanField(
+        'Aparecer na barra superior do site', default=True,
+        help_text='Se marcado, o botão aparece na barra azul do topo da página '
+                  'inicial e na lista "Navegação" do rodapé. Se desmarcado, some '
+                  'dessas duas barras (mas a página da categoria continua existindo). '
+                  'Vale apenas para botões do nível principal.'
+    )
+    mostrar_navegue_area = models.BooleanField(
+        'Aparecer no "Navegue por área"', default=True,
+        help_text='Se marcado, o botão aparece na seção "Navegue por área" da '
+                  'página inicial. Se desmarcado, não aparece lá. '
+                  'Vale apenas para botões do nível principal.'
+    )
 
     class Meta:
         verbose_name = 'Categoria'
@@ -309,7 +322,13 @@ class Banner(models.Model):
     ]
     titulo = models.CharField('Título', max_length=200)
     subtitulo = models.CharField('Subtítulo', max_length=300, blank=True)
-    imagem = models.ImageField('Imagem do banner', upload_to='banners/')
+    imagem = models.ImageField('Imagem do banner', upload_to='banners/', blank=True, null=True)
+    url_imagem = models.URLField(
+        'Imagem por URL (opcional)', blank=True,
+        help_text='Cole aqui o endereço de uma imagem da internet para usá-la '
+                  'no lugar do arquivo enviado. Se os dois estiverem preenchidos, '
+                  'a URL tem prioridade.'
+    )
     link = models.URLField('Link ao clicar', blank=True)
     tamanho = models.CharField(
         'Tamanho da imagem', max_length=10, choices=TAMANHO_CHOICES, default='medio',
@@ -332,6 +351,15 @@ class Banner(models.Model):
     def __str__(self):
         return self.titulo
 
+    @property
+    def imagem_src(self):
+        """Endereço da imagem exibida: URL externa (se houver) ou arquivo enviado."""
+        if self.url_imagem:
+            return self.url_imagem
+        if self.imagem:
+            return self.imagem.url
+        return ''
+
 
 class Cartaz(models.Model):
     """Cartazes de eventos — aparecem discretamente nas laterais da página principal."""
@@ -345,7 +373,13 @@ class Cartaz(models.Model):
         ('grande', 'Grande (200px)'),
     ]
     titulo = models.CharField('Título do evento', max_length=200)
-    imagem = models.ImageField('Imagem do cartaz', upload_to='cartazes/')
+    imagem = models.ImageField('Imagem do cartaz', upload_to='cartazes/', blank=True, null=True)
+    url_imagem = models.URLField(
+        'Imagem por URL (opcional)', blank=True,
+        help_text='Cole aqui o endereço de uma imagem da internet para usá-la '
+                  'como cartaz, no lugar do arquivo enviado. Se os dois estiverem '
+                  'preenchidos, a URL tem prioridade.'
+    )
     link = models.URLField('Link do evento', blank=True, help_text='URL para inscrição ou página do evento')
     lado = models.CharField('Lado da página', max_length=10, choices=LADO_CHOICES, default='esquerdo')
     tamanho = models.CharField('Tamanho do cartaz', max_length=10, choices=TAMANHO_CHOICES, default='pequeno')
@@ -359,6 +393,93 @@ class Cartaz(models.Model):
 
     def __str__(self):
         return f'{self.titulo} ({self.get_lado_display()})'
+
+    @property
+    def imagem_src(self):
+        """Endereço da imagem exibida: URL externa (se houver) ou arquivo enviado."""
+        if self.url_imagem:
+            return self.url_imagem
+        if self.imagem:
+            return self.imagem.url
+        return ''
+
+
+class Carrossel(models.Model):
+    """Carrossel de imagens exibido junto com os cartazes na página inicial.
+
+    As imagens passam automaticamente. Segue as mesmas regras dos cartazes:
+    fica preso à área branca de conteúdo e nunca invade banner ou rodapé."""
+    LADO_CHOICES = [
+        ('esquerdo', 'Lado esquerdo'),
+        ('direito', 'Lado direito'),
+    ]
+    titulo = models.CharField('Nome do carrossel', max_length=200, default='Carrossel')
+    ativo = models.BooleanField(
+        'Ativar carrossel', default=False,
+        help_text='Se marcado, o carrossel aparece na área dos cartazes da '
+                  'página inicial. Se desmarcado, não aparece.'
+    )
+    lado = models.CharField('Lado da página', max_length=10, choices=LADO_CHOICES, default='direito')
+    largura = models.PositiveIntegerField(
+        'Largura (px)', default=200,
+        help_text='Largura do painel do carrossel em pixels. Ex.: 200'
+    )
+    altura = models.PositiveIntegerField(
+        'Altura (px)', default=356,
+        help_text='Altura do painel do carrossel em pixels. Ex.: 356'
+    )
+    intervalo = models.PositiveIntegerField(
+        'Tempo entre imagens (segundos)', default=5,
+        help_text='As imagens passam sozinhas a cada X segundos.'
+    )
+    ordem = models.PositiveIntegerField('Ordem entre os cartazes', default=0)
+    codigo_html = models.TextField(
+        'Código HTML personalizado (opcional)', blank=True,
+        help_text='Avançado: cole aqui um código HTML completo para trocar a '
+                  'aparência do carrossel. Onde as imagens devem entrar, escreva '
+                  'o marcador <!--IMAGENS--> (ele é substituído pelas imagens '
+                  'cadastradas abaixo). Deixe em branco para usar o visual padrão.'
+    )
+
+    class Meta:
+        verbose_name = 'Carrossel'
+        verbose_name_plural = 'Carrosséis'
+        ordering = ['ordem']
+
+    def __str__(self):
+        return f'{self.titulo} ({"ativo" if self.ativo else "inativo"})'
+
+
+class CarrosselImagem(models.Model):
+    """Uma imagem do carrossel — enviada como arquivo ou puxada de uma URL."""
+    carrossel = models.ForeignKey(
+        Carrossel, on_delete=models.CASCADE,
+        related_name='imagens', verbose_name='Carrossel'
+    )
+    imagem = models.ImageField('Imagem (arquivo)', upload_to='carrossel/', blank=True, null=True)
+    url_imagem = models.URLField(
+        'Imagem por URL', blank=True,
+        help_text='Cole o endereço de uma imagem da internet. Se os dois '
+                  'estiverem preenchidos, a URL tem prioridade.'
+    )
+    link = models.URLField('Link ao clicar (opcional)', blank=True)
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Imagem do carrossel'
+        verbose_name_plural = 'Imagens do carrossel'
+        ordering = ['ordem', 'pk']
+
+    def __str__(self):
+        return f'Imagem {self.ordem} de {self.carrossel.titulo}'
+
+    @property
+    def imagem_src(self):
+        if self.url_imagem:
+            return self.url_imagem
+        if self.imagem:
+            return self.imagem.url
+        return ''
 
 
 class ConfiguracaoSite(models.Model):

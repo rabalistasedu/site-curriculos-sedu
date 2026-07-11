@@ -1,0 +1,26 @@
+{# Nó recursivo da árvore do Painel Central — recebe "no" (dict com cat, filhos, n_conteudos) e "nivel" #}
+<li class="pc-no nivel-{{ nivel }}">
+    <div class="pc-linha">
+        {% if no.filhos %}
+        <button type="button" class="pc-toggle" title="Expandir / recolher">▸</button>
+        {% else %}
+        <span class="pc-toggle pc-toggle-vazio"></span>
+        {% endif %}
+        <label class="pc-check">
+            <input type="checkbox" name="destinos" value="{{ no.cat.pk }}" form="form-publicar">
+            <i class="{{ no.cat.icone_display }}"></i>
+            <span class="pc-nome">{{ no.cat.nome }}</span>
+        </label>
+        {% if no.n_conteudos %}<span class="pc-badge">{{ no.n_conteudos }}</span>{% endif %}
+        <a class="pc-ver" href="/categoria/{{ no.cat.slug }}/" target="_blank" rel="noopener" title="Ver no site"><i class="fas fa-arrow-up-right-from-square"></i></a>
+    </div>
+    {% if no.filhos %}
+    <ul class="pc-filhos" hidden>
+        {% for filho in no.filhos %}
+        {% with nivel_filho=nivel|add:1 %}
+        {% include 'admin/painel_arvore_no.html' with no=filho nivel=nivel_filho %}
+        {% endwith %}
+        {% endfor %}
+    </ul>
+    {% endif %}
+</li>

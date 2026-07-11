@@ -45,43 +45,25 @@
     </a>
 </div>
 
-<!-- Lista de apps padrão do admin -->
-{% if app_list %}
-{% for app in app_list %}
-<div class="app-{{ app.app_label }} module{% if app.app_url in request.path|default:'' %} current-app{% endif %}">
-    <table>
-        <caption>
-            <a href="{{ app.app_url }}" class="section" title="{% blocktranslate with name=app.name %}Models in the {{ name }} application{% endblocktranslate %}">{{ app.name }}</a>
-        </caption>
-        {% for model in app.models %}
-        <tr class="model-{{ model.object_name|lower }}">
-            {% if model.admin_url %}
-            <th scope="row"><a href="{{ model.admin_url }}">{{ model.name }}</a></th>
-            {% else %}
-            <th scope="row">{{ model.name }}</th>
-            {% endif %}
-            {% if model.add_url %}
-            <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
-            {% else %}
-            <td>&nbsp;</td>
-            {% endif %}
-            {% if model.admin_url and show_changelinks %}
-            {% if model.view_only %}
-            <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
-            {% else %}
-            <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
-            {% endif %}
-            {% elif show_changelinks %}
-            <td>&nbsp;</td>
-            {% endif %}
-        </tr>
-        {% endfor %}
-    </table>
+<!-- Banner do Painel Administrativo Completo -->
+<div style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-wand-magic-sparkles" style="margin-right: 8px;"></i>
+            Painel Administrativo Completo
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #ede9fe;">
+            Marque botões na árvore do site e publique conteúdos, anexos, links e aparência em vários locais de uma vez.
+        </p>
+    </div>
+    <a href="{% url 'painel:central' %}" style="background: #fff; color: #7c3aed; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-table-columns"></i> Abrir Painel Completo
+    </a>
 </div>
-{% endfor %}
-{% else %}
-<p>{% translate "You don't have permission to view or edit anything." %}</p>
-{% endif %}
+
+<!-- A lista de apps não é repetida aqui: ela já aparece na barra lateral
+     esquerda do admin (nav sidebar). Os banners acima dão acesso rápido
+     aos painéis visuais. -->
 {% endblock %}
 
 {% block sidebar %}

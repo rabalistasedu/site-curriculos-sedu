@@ -357,8 +357,8 @@ img { max-width: 100%; height: auto; display: block; }
 .areas-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    max-height: 600px;
+    gap: 6px;
+    max-height: 420px;
     overflow-y: auto;
     padding-right: 4px;
     scrollbar-width: thin;
@@ -371,8 +371,8 @@ img { max-width: 100%; height: auto; display: block; }
 .area-card {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px;
+    gap: 6px;
+    padding: 6px 8px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
@@ -384,10 +384,10 @@ img { max-width: 100%; height: auto; display: block; }
     box-shadow: var(--shadow-lg);
     border-color: var(--primary-light);
 }
-.area-card .category-icon { margin: 0; width: 32px; height: 32px; font-size: 14px; flex: 0 0 auto; }
+.area-card .category-icon { margin: 0; width: 24px; height: 24px; font-size: 11px; flex: 0 0 auto; }
 .area-card:hover .category-icon { background: var(--primary); color: #fff; }
-.area-text h3 { font-size: 12.5px; font-weight: 600; margin-bottom: 1px; line-height: 1.3; }
-.area-text p { font-size: 11px; color: var(--text-secondary); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.area-text h3 { font-size: 11px; font-weight: 600; margin-bottom: 0; line-height: 1.25; }
+.area-text p { font-size: 10px; color: var(--text-secondary); line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
 /* Botão "Currículo Atual" em destaque — sempre no topo de "Navegue por área" */
 .area-card-featured {
@@ -395,19 +395,19 @@ img { max-width: 100%; height: auto; display: block; }
     background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%);
     border-color: transparent;
     box-shadow: 0 3px 10px rgba(15,45,92,0.35);
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 16px 10px;
-    gap: 6px;
+    padding: 8px 10px;
+    gap: 8px;
 }
 .area-card-featured .category-icon {
     background: rgba(255,255,255,0.15);
     color: #fff;
-    width: 40px;
-    height: 40px;
-    font-size: 18px;
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
     margin: 0;
 }
 .area-card-featured:hover .category-icon { background: rgba(255,255,255,0.25); color: #fff; }
@@ -420,7 +420,7 @@ img { max-width: 100%; height: auto; display: block; }
 }
 .area-card-featured .area-text h3 {
     color: #fff;
-    font-size: 15px;
+    font-size: 12.5px;
     font-weight: 600;
     text-align: center;
     margin: 0;
@@ -544,8 +544,8 @@ img { max-width: 100%; height: auto; display: block; }
 .home-recentes .content-list {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    max-height: 600px;
+    gap: 6px;
+    max-height: 420px;
     overflow-y: auto;
     padding-right: 6px;
     scrollbar-width: thin;
@@ -555,10 +555,10 @@ img { max-width: 100%; height: auto; display: block; }
 .home-recentes .content-list::-webkit-scrollbar-track { background: var(--bg-alt); border-radius: 4px; }
 .home-recentes .content-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
 .home-recentes .content-list::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
-.home-recentes .list-item { padding: 10px; gap: 8px; }
-.home-recentes .list-icon { width: 32px; height: 32px; font-size: 14px; }
-.home-recentes .list-info h3 { font-size: 12.5px; margin-bottom: 1px; line-height: 1.3; }
-.home-recentes .list-meta { gap: 8px; font-size: 10.5px; flex-wrap: wrap; }
+.home-recentes .list-item { padding: 6px 8px; gap: 6px; }
+.home-recentes .list-icon { width: 24px; height: 24px; font-size: 11px; }
+.home-recentes .list-info h3 { font-size: 11px; margin-bottom: 0; line-height: 1.25; }
+.home-recentes .list-meta { gap: 6px; font-size: 9.5px; flex-wrap: wrap; }
 .home-recentes .list-arrow { display: none; }
 
 .list-item {
@@ -1262,9 +1262,26 @@ img { max-width: 100%; height: auto; display: block; }
     display: block;
 }
 
-/* Só mostra cartazes laterais em telas largas (monitor grande) */
-@media (max-width: 1400px) {
+/* Cartazes laterais só somem em telas realmente estreitas (celular/tablet).
+   Antes o limite era 1400px, o que fazia os cartazes SUMIREM com um simples
+   zoom de 110% no navegador — agora eles encolhem em vez de desaparecer. */
+@media (max-width: 1000px) {
     .cartazes-lateral { display: none; }
+}
+
+/* Faixa intermediária (notebook / zoom): o conteúdo central encolhe um pouco
+   para deixar espaço aos cartazes, que ficam menores mas SEMPRE visíveis. */
+@media (min-width: 1001px) and (max-width: 1400px) {
+    .home-conteudo .container { max-width: calc(100vw - 240px); }
+    .cartazes-lateral {
+        display: flex;
+        width: 104px;
+        justify-content: center;
+    }
+    .cartazes-inner { width: 100%; align-items: center; }
+    .cartaz-item { width: 100%; }
+    .cartaz-pequeno, .cartaz-medio, .cartaz-grande { max-width: 96px; }
+    .carrossel-widget, .carrossel-iframe { max-width: 96px !important; }
 }
 
 /* ── Cartazes mobile/tablet — botão flutuante + painel ────────── */
@@ -1373,10 +1390,310 @@ img { max-width: 100%; height: auto; display: block; }
     line-height: 1.3;
 }
 
-/* Mostra botão e painel apenas em telas pequenas com cartazes
-   (900px em vez de 1400px, para que o botão "Eventos" não apareça
-   sobreposto/atrás de outros elementos em desktop pequeno) */
-@media (max-width: 900px) {
+/* Mostra botão e painel apenas quando os cartazes laterais somem
+   (até 1000px — mesma faixa em que .cartazes-lateral é ocultado) */
+@media (max-width: 1000px) {
     .cartazes-mobile-btn { display: flex; }
     .cartazes-painel { display: block; }
+}
+
+/* ── Botão / card vibrante-pulsante (Painel Central Administrativo) ──
+   Aplicado quando o admin marca "vibrante/pulsante" em um botão
+   (EstiloBotao.pulsante) ou em um conteúdo em um local (Vinculo.pulsante). */
+@keyframes btnPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(45, 90, 142, 0.45); }
+    70%  { box-shadow: 0 0 0 12px rgba(45, 90, 142, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(45, 90, 142, 0); }
+}
+.btn-pulse {
+    animation: btnPulse 2s ease-out infinite;
+    position: relative;
+}
+.btn-pulse:hover {
+    animation: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-10 — pedidos do Dan
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1) Colunas da home com o MESMO tamanho: os cards de "Conteúdos
+      recentes" ficam do mesmo tamanho dos cards de "Navegue por área"
+      (as duas listas têm scrollbar interna quando crescem). */
+.home-split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+/* 2) Botão "Currículo Atual" FIXO no topo de "Navegue por área":
+      não desce com a barra de rolagem interna da lista. */
+.areas-list .area-card-featured {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* 3) Cartazes laterais responsivos: a largura deles nunca passa do
+      espaço livre entre a borda da tela e o conteúdo central (1200px),
+      então em notebook eles encolhem em vez de invadir o conteúdo. */
+@media (min-width: 1401px) {
+    .cartazes-lateral {
+        width: calc((100vw - 1240px) / 2);
+        display: flex;
+        justify-content: center;
+    }
+    .cartazes-inner { width: 100%; align-items: center; }
+    .cartaz-item { width: 100%; }
+    .cartaz-pequeno { max-width: 90px; }
+    .cartaz-medio { max-width: 140px; }
+    .cartaz-grande { max-width: 200px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-11 — pedidos do Dan
+   ══════════════════════════════════════════════════════════════════ */
+
+/* 1) "Navegue por área": botões QUADRADOS menores (3 por linha), com o
+      ícone em cima e o texto embaixo — ocupam menos espaço na home.
+      A letra foi AUMENTADA (13px) para continuar fácil de ler. */
+.areas-list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.area-card {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+    padding: 10px 6px;
+    min-height: 88px;
+}
+.area-card .category-icon { width: 30px; height: 30px; font-size: 14px; }
+.area-card .area-text { display: flex; flex-direction: column; align-items: center; }
+.area-text h3 { font-size: 13px; line-height: 1.25; }
+/* Nos quadrados, a descrição pequena é escondida para o botão ficar limpo */
+.area-card .area-text p { display: none; }
+
+/* 2) Botão "Currículo Atual" MENOR: não ocupa mais a linha inteira —
+      vira um botão compacto centralizado no topo da lista. */
+.areas-list .area-card-featured {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: max-content;
+    max-width: 100%;
+    min-height: 0;
+    flex-direction: row;
+    padding: 9px 28px;
+    gap: 10px;
+    border-radius: 999px;
+}
+.area-card-featured .category-icon { width: 28px; height: 28px; font-size: 14px; }
+.area-card-featured .area-text h3 { font-size: 14px; }
+
+/* Em telas bem estreitas, 2 quadrados por linha */
+@media (max-width: 480px) {
+    .areas-list { grid-template-columns: 1fr 1fr; }
+}
+
+/* 3) Carrossel de imagens (junto com os cartazes, na lateral da home) */
+.carrossel-widget {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #eef2f7;
+    box-shadow: 0 0 25px -5px rgba(190, 24, 93, 0.35),
+                0 0 25px -5px rgba(29, 78, 216, 0.35);
+}
+.carrossel-iframe {
+    border: 0;
+    border-radius: 16px;
+    display: block;
+    background: #fff;
+}
+.carrossel-slides {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scrollbar-width: none;
+}
+.carrossel-slides::-webkit-scrollbar { display: none; }
+.carrossel-slide {
+    min-height: 100%;
+    width: 100%;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+}
+.carrossel-slide a { display: block; width: 100%; height: 100%; }
+.carrossel-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.carrossel-indicadores {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 2;
+}
+.carrossel-ind {
+    width: 4px;
+    height: 22px;
+    border-radius: 999px;
+    background: rgba(30, 58, 138, 0.3);
+    transition: background 0.3s;
+}
+.carrossel-ind.ativo { background: #be185d; }
+.carrossel-navs {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 2;
+}
+.carrossel-nav {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(29, 78, 216, 0.25);
+    background: rgba(255, 255, 255, 0.85);
+    color: #1d4ed8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+.carrossel-nav-baixo { color: #be185d; border-color: rgba(190, 24, 93, 0.25); }
+.carrossel-nav:hover { background: #fff; }
+
+/* 4) Barra superior: quando os botões não cabem, os excedentes vão para
+      um menu de "3 pontinhos" (⋯) — nada mais fica cortado. */
+.nav { position: relative; overflow-x: visible; min-width: 0; }
+.nav-more {
+    display: none;
+    background: rgba(255, 255, 255, 0.12);
+    border: none;
+    color: #fff;
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.nav-more:hover { background: rgba(255, 255, 255, 0.22); }
+.nav-more.visivel { display: inline-flex; align-items: center; }
+.nav-more-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    padding: 6px;
+    min-width: 220px;
+    max-height: 60vh;
+    overflow-y: auto;
+    z-index: 300;
+}
+.nav-more-menu.aberto { display: block; }
+.nav-more-menu .nav-link {
+    display: block;
+    color: var(--text);
+    padding: 9px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    white-space: normal;
+}
+.nav-more-menu .nav-link:hover { background: var(--bg-alt); }
+.nav-more-menu .nav-link i { color: var(--primary); margin-right: 8px; display: inline-block !important; }
+/* No celular o menu vira lista vertical (hamburger) — o ⋯ não é usado */
+@media (max-width: 768px) {
+    .nav-more { display: none !important; }
+    .nav-more-menu { display: none !important; }
+}
+
+/* 5) Botão "Currículo Atual" centralizado ACIMA das duas colunas
+      (Conteúdos recentes + Navegue por área) — pedido de 2026-07-11 */
+.curriculo-atual-topo {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 22px;
+}
+.curriculo-atual-topo .area-card-featured {
+    flex-direction: row;
+    width: max-content;
+    max-width: 100%;
+    min-height: 0;
+    padding: 10px 34px;
+    gap: 10px;
+    border-radius: 999px;
+}
+
+/* 6) "Conteúdos recentes" no MESMO formato dos quadrados de
+      "Navegue por área" (ícone em cima, texto embaixo, letra 13px) */
+.home-recentes .content-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.home-recentes .list-item {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 6px;
+    padding: 10px 6px;
+    min-height: 88px;
+}
+.home-recentes .list-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    margin: 0;
+    flex: 0 0 auto;
+}
+.home-recentes .list-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.home-recentes .list-info h3 {
+    font-size: 13px;
+    line-height: 1.25;
+    margin: 0;
+}
+.home-recentes .list-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* Em telas bem estreitas, 2 quadrados por linha (igual ao Navegue por área) */
+@media (max-width: 480px) {
+    .home-recentes .content-list { grid-template-columns: 1fr 1fr; }
+}
+
+/* Títulos longos nos quadrados de "Conteúdos recentes": máximo 3 linhas */
+.home-recentes .list-info h3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

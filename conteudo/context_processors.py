@@ -5,5 +5,7 @@ def site_config(request):
     """Disponibiliza dados globais em todos os templates"""
     return {
         'config': ConfiguracaoSite.get_config(),
-        'menu_categorias': Categoria.objects.filter(ativa=True, categoria_pai__isnull=True),
+        'menu_categorias': Categoria.objects.filter(
+            ativa=True, categoria_pai__isnull=True, mostrar_menu_superior=True
+        ),
     }

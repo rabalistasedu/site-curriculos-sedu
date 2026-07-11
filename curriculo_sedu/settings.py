@@ -15,7 +15,7 @@ SECRET_KEY = os.environ.get(
 
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0').split(',')
+ALLOWED_HOSTS = ['*']  # Permite todos os hosts em desenvolvimento (seguro remover antes de produção)
 
 # ── Apps ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'conteudo',
+    'painel',
 ]
 
 MIDDLEWARE = [

@@ -221,3 +221,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Ferramentas locais de demonstracao (ngrok) - nao versionar
+ngrok.exe
+ngrok/
+BKPbat/

@@ -53,7 +53,9 @@
         {% endif %}
         <div class="topic-grid">
             {% for botao in botoes %}
-            <a href="{% url 'conteudo:categoria' botao.slug %}" class="topic-btn">
+            <a href="{% url 'conteudo:categoria' botao.slug %}"
+               class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}"
+               {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}>
                 <span class="topic-icon"><i class="{{ botao.icone_display }}"></i></span>
                 <span class="topic-label">{{ botao.nome }}</span>
             </a>
@@ -65,7 +67,9 @@
         {% if subcategorias %}
         <div class="subcategories">
             {% for sub in subcategorias %}
-            <a href="{% url 'conteudo:categoria' sub.slug %}" class="subcategory-chip">
+            <a href="{% url 'conteudo:categoria' sub.slug %}"
+               class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
+               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
                 {% if sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
                 {{ sub.nome }}
             </a>
@@ -121,7 +125,7 @@
         <div class="content-grid">
             {% for item in conteudos %}
             <a href="{% if item.tipo == 'link' and item.url_externa %}{{ item.url_externa }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
-               class="content-card"
+               class="content-card{% if item.pk in pulsantes %} btn-pulse{% endif %}"
                {% if item.tipo == 'link' %}target="_blank" rel="noopener"{% endif %}>
                 {% if item.imagem_destaque %}
                 <div class="card-image">

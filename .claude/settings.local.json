@@ -39,7 +39,32 @@
       "Bash(set PYTHONIOENCODING=utf-8)",
       "Bash('C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\site-curriculos-venv\\\\Scripts\\\\python.exe' -c ' *)",
       "Bash(git --version)",
-      "Bash(git config *)"
+      "Bash(git config *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(./venv/Scripts/python.exe manage.py makemigrations painel)",
+      "Bash(./venv/Scripts/python.exe manage.py migrate painel)",
+      "Bash(./venv/Scripts/python.exe manage.py check)",
+      "Bash(./venv/Scripts/python.exe manage.py resolver_pendencias)",
+      "Bash(python -)",
+      "Bash(rm -f teste.txt)",
+      "Bash(rm -rf \".claude/worktrees/practical-elion-ed7138\")",
+      "Bash(printf '\\\\n# Ferramentas locais de demonstracao \\(ngrok\\) - nao versionar\\\\nngrok.exe\\\\nngrok/\\\\nBKPbat/\\\\n')",
+      "Bash(cmd //c \"\\\\\"INICIAR SITE.bat\\\\\"\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000/)",
+      "Bash(taskkill //F //IM python.exe //FI \"WINDOWTITLE eq SITE*\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8000/)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist //FI \"PID eq 3528\")",
+      "PowerShell($out = & cmd /c '\"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\INICIAR SITE.bat\"' 2>&1 | Out-String; $out.Substring\\(0, [Math]::Min\\(1600, $out.Length\\)\\))",
+      "Bash(cmd //c \"%TEMP%\\\\\\\\teste_iniciar.bat\")",
+      "PowerShell(& cmd /c \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site` Curriculos` SEDU\\\\teste_iniciar_local.bat\")",
+      "PowerShell(Set-Location 'C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU'; $s = [IO.File]::ReadAllText\\(\"$PWD\\\\INICIAR SITE.bat\"\\); $s = $s.Replace\\('venv\\\\Scripts\\\\python.exe manage.py runserver', 'venv\\\\Scripts\\\\python.exe manage.py check'\\).Replace\\('start \"\" http://127.0.0.1:8000/', 'echo [teste] navegador pulado'\\).Replace\\(\"pause`r`n\", \"echo [teste] fim`r`n\"\\).Replace\\('chcp 65001', 'chcp 850'\\); [IO.File]::WriteAllText\\(\"$PWD\\\\teste_local.bat\", $s, [Text.Encoding]::GetEncoding\\(850\\)\\); & cmd /c '.\\\\teste_local.bat'; Remove-Item \"$PWD\\\\teste_local.bat\" -Force)",
+      "Bash(./venv/Scripts/python.exe manage.py makemigrations conteudo)",
+      "Bash(./venv/Scripts/python.exe manage.py migrate)",
+      "Bash(wc -c static/js/main.js staticfiles/js/main.js)",
+      "Bash(grep -c navMore staticfiles/js/main.js)",
+      "Bash(./venv/Scripts/python.exe manage.py shell -c ' *)",
+      "Bash(./venv/Scripts/python.exe -c ' *)"
     ]
   }
 }

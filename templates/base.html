@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS do site (versionado para evitar cache do navegador) -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260707-4">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260711-2">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -29,7 +29,7 @@
 <!-- ── Header ─────────────────────────────────────────────────── -->
 <header class="header">
     <div class="container header-inner">
-        <img src="{% static 'img/logogov.png' %}" alt="Governo do ES" class="header-brasao">
+        <img src="{% static 'img/brasao-es.png' %}" alt="Brasão do Estado do Espírito Santo" class="header-brasao">
 
         <a href="{% url 'conteudo:home' %}" class="logo {% block logo_class %}{% endblock %}">
             <div class="logo-text">
@@ -49,6 +49,8 @@
                 {{ cat.nome }}
             </a>
             {% endfor %}
+            <button type="button" class="nav-more" id="navMore" aria-label="Mais categorias" title="Mais categorias">⋯</button>
+            <div class="nav-more-menu" id="navMoreMenu"></div>
         </nav>
 
         <form action="{% url 'conteudo:busca' %}" class="search-form">
@@ -94,7 +96,7 @@
     </div>
 </footer>
 
-<script src="{% static 'js/main.js' %}"></script>
+<script src="{% static 'js/main.js' %}?v=20260711-1"></script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

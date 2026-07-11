@@ -91,8 +91,10 @@ def organizar_view(request):
             categoria=categoria
         ).select_related('categoria').order_by('titulo')
         if busca:
-            todos_conteudos = todos_conteudos.filter(
-                Q(titulo__icontains=busca) | Q(resumo__icontains=busca)
+            # Busca tolerante: ignora acentos e maiúsculas/minúsculas
+            from .busca_utils import filtrar_por_texto
+            todos_conteudos = filtrar_por_texto(
+                todos_conteudos, busca, ('titulo', 'resumo')
             )
 
         context = {

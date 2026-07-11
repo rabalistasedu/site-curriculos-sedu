@@ -1,12 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Case, When, Value, IntegerField, F
 from django.contrib import messages
-from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo
+from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel
 
 
 def home(request):
     """Página principal do site"""
-    categorias = Categoria.objects.filter(ativa=True, categoria_pai__isnull=True)
+    categorias = Categoria.objects.filter(
+        ativa=True, categoria_pai__isnull=True, mostrar_navegue_area=True
+    )
     # Apenas banners sem categoria específica aparecem na home
     banners = Banner.objects.filter(ativo=True, categoria__isnull=True)
     destaques = Conteudo.objects.publicados().filter(destaque=True)[:6]
@@ -16,6 +18,13 @@ def home(request):
     cartazes_esq = Cartaz.objects.filter(ativo=True, lado='esquerdo')
     cartazes_dir = Cartaz.objects.filter(ativo=True, lado='direito')
 
+    # Carrosséis ativos — aparecem junto com os cartazes, no lado escolhido
+    carrosseis = list(Carrossel.objects.filter(ativo=True).prefetch_related('imagens'))
+    for c in carrosseis:
+        c.html_personalizado = _montar_carrossel_html(c)
+    carrosseis_esq = [c for c in carrosseis if c.lado == 'esquerdo']
+    carrosseis_dir = [c for c in carrosseis if c.lado == 'direito']
+
     return render(request, 'home.html', {
         'categorias': categorias,
         'banners': banners,
@@ -23,7 +32,33 @@ def home(request):
         'recentes': recentes,
         'cartazes_esq': cartazes_esq,
         'cartazes_dir': cartazes_dir,
+        'carrosseis_esq': carrosseis_esq,
+        'carrosseis_dir': carrosseis_dir,
     })
+
+
+def _montar_carrossel_html(carrossel):
+    """Se o carrossel tem código HTML personalizado, substitui o marcador
+    <!--IMAGENS--> (ou {{IMAGENS}}) pelas imagens cadastradas e devolve o
+    HTML pronto para ser exibido em um iframe isolado. Sem código, devolve
+    vazio e o site usa o visual padrão."""
+    codigo = (carrossel.codigo_html or '').strip()
+    if not codigo:
+        return ''
+    slides = []
+    for img in carrossel.imagens.all():
+        src = img.imagem_src
+        if not src:
+            continue
+        tag = f'<img src="{src}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">'
+        if img.link:
+            tag = f'<a href="{img.link}" target="_blank" rel="noopener">{tag}</a>'
+        slides.append(f'<div class="carousel-item" style="min-height:100%;width:100%;">{tag}</div>')
+    imagens_html = ''.join(slides)
+    for marcador in ('<!--IMAGENS-->', '{{IMAGENS}}'):
+        if marcador in codigo:
+            codigo = codigo.replace(marcador, imagens_html)
+    return codigo
 
 
 # Página que funciona como "índice geral": reproduz a grade completa do
@@ -50,15 +85,22 @@ def categoria_detalhe(request, slug):
             'banners': banners_cat,
         })
 
-    # Conteúdos desta categoria e das subcategorias
+    # Conteúdos desta categoria e das subcategorias — inclui também os
+    # publicados aqui por vínculo (Painel Central), sem duplicar.
     # ordem=0 significa "sem posição definida" → vai para o final (9999)
     # ordem=1,2,3... aparece primeiro, nessa sequência
+    from painel.models import Vinculo
+    cats = [categoria] + list(subcategorias)
     conteudos = Conteudo.objects.publicados().filter(
-        categoria__in=[categoria] + list(subcategorias)
-    ).order_by(
+        Q(categoria__in=cats) | Q(vinculos__categoria__in=cats)
+    ).distinct().order_by(
         Case(When(ordem=0, then=Value(9999)), default=F('ordem'), output_field=IntegerField()),
         '-data_publicacao'
     )
+    # Conteúdos marcados como vibrantes/pulsantes nestes locais
+    pulsantes = set(Vinculo.objects.filter(
+        categoria__in=cats, pulsante=True
+    ).values_list('conteudo_id', flat=True))
 
     # Filtro por tipo
     tipo = request.GET.get('tipo')
@@ -77,6 +119,7 @@ def categoria_detalhe(request, slug):
         'tipo_filtro': tipo,
         'banners': banners_cat,
         'anexos_categoria': anexos_categoria,
+        'pulsantes': pulsantes,
     })
 
 
@@ -117,15 +160,17 @@ def conteudo_detalhe(request, slug):
 
 
 def busca(request):
-    """Busca textual por conteúdos"""
+    """Busca textual por conteúdos — ignora acentos e maiúsculas/minúsculas
+    ("matematica" encontra "Matemática")."""
+    from .busca_utils import filtrar_por_texto
     query = request.GET.get('q', '').strip()
     resultados = []
 
     if query:
-        resultados = Conteudo.objects.publicados().filter(
-            Q(titulo__icontains=query) |
-            Q(resumo__icontains=query) |
-            Q(corpo__icontains=query)
+        resultados = filtrar_por_texto(
+            Conteudo.objects.publicados(),
+            query,
+            ('titulo', 'resumo', 'corpo'),
         )
 
     return render(request, 'busca.html', {

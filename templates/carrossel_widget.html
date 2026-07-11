@@ -1,0 +1,36 @@
+{# Widget do carrossel — recebe "carrossel" no contexto. #}
+{# Se houver código HTML personalizado, mostra dentro de um iframe isolado #}
+{# (o código não interfere no CSS do site). Senão, usa o visual padrão. #}
+{% if carrossel.html_personalizado %}
+<iframe class="carrossel-iframe"
+        style="width:{{ carrossel.largura }}px;max-width:100%;height:{{ carrossel.altura }}px;"
+        srcdoc="{{ carrossel.html_personalizado }}"
+        title="{{ carrossel.titulo }}" loading="lazy" frameborder="0"></iframe>
+{% else %}
+<div class="carrossel-widget"
+     style="width:{{ carrossel.largura }}px;max-width:100%;height:{{ carrossel.altura }}px;"
+     data-intervalo="{{ carrossel.intervalo }}">
+    <div class="carrossel-slides">
+        {% for img in carrossel.imagens.all %}{% if img.imagem_src %}
+        <div class="carrossel-slide">
+            {% if img.link %}<a href="{{ img.link }}" target="_blank" rel="noopener">{% endif %}
+            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
+            {% if img.link %}</a>{% endif %}
+        </div>
+        {% endif %}{% endfor %}
+    </div>
+    <div class="carrossel-indicadores">
+        {% for img in carrossel.imagens.all %}{% if img.imagem_src %}
+        <span class="carrossel-ind{% if forloop.first %} ativo{% endif %}"></span>
+        {% endif %}{% endfor %}
+    </div>
+    <div class="carrossel-navs">
+        <button type="button" class="carrossel-nav carrossel-nav-cima" aria-label="Imagem anterior">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+        <button type="button" class="carrossel-nav carrossel-nav-baixo" aria-label="Próxima imagem">
+            <i class="fas fa-chevron-down"></i>
+        </button>
+    </div>
+</div>
+{% endif %}

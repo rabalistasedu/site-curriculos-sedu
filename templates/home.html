@@ -8,8 +8,8 @@
     {% if banners %}
     <div class="hero-slider" id="heroSlider">
         {% for banner in banners %}
-        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem.url }}')">
-            <img src="{{ banner.imagem.url }}" alt="{{ banner.titulo }}">
+        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}')">
+            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}">
             <div class="hero-overlay">
                 <h1>{{ banner.titulo }}</h1>
                 {% if banner.subtitulo %}<p>{{ banner.subtitulo }}</p>{% endif %}
@@ -69,31 +69,50 @@
 <section class="section home-conteudo">
 
     <!-- Cartazes laterais (desktop): presos DENTRO da área branca (sticky) -->
-    {% if cartazes_esq %}
+    {% if cartazes_esq or carrosseis_esq %}
     <div class="cartazes-lateral cartazes-esq">
         <div class="cartazes-inner">
             {% for c in cartazes_esq %}
             <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">
-                <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+                <img src="{{ c.imagem_src }}" alt="{{ c.titulo }}">
             </a>
+            {% endfor %}
+            {% for carrossel in carrosseis_esq %}
+            {% include 'carrossel_widget.html' %}
             {% endfor %}
         </div>
     </div>
     {% endif %}
 
-    {% if cartazes_dir %}
+    {% if cartazes_dir or carrosseis_dir %}
     <div class="cartazes-lateral cartazes-dir">
         <div class="cartazes-inner">
             {% for c in cartazes_dir %}
             <a href="{{ c.link }}" class="cartaz-item cartaz-{{ c.tamanho }}" target="_blank" rel="noopener" title="{{ c.titulo }}">
-                <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+                <img src="{{ c.imagem_src }}" alt="{{ c.titulo }}">
             </a>
+            {% endfor %}
+            {% for carrossel in carrosseis_dir %}
+            {% include 'carrossel_widget.html' %}
             {% endfor %}
         </div>
     </div>
     {% endif %}
 
     <div class="container">
+
+        <!-- Botão "Currículo Atual" centralizado acima das duas colunas -->
+        <div class="curriculo-atual-topo">
+            <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured">
+                <div class="category-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <div class="area-text">
+                    <h3>Currículo Atual</h3>
+                </div>
+            </a>
+        </div>
+
         <div class="home-split">
 
             <!-- Esquerda: Conteúdos recentes -->
@@ -133,16 +152,10 @@
                     Navegue por área
                 </h2>
                 <div class="areas-list">
-                    <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured">
-                        <div class="category-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="area-text">
-                            <h3>Currículo Atual</h3>
-                        </div>
-                    </a>
                     {% for cat in categorias %}
-                    <a href="{% url 'conteudo:categoria' cat.slug %}" class="area-card">
+                    <a href="{% url 'conteudo:categoria' cat.slug %}"
+                       class="area-card{% if cat.estilo.pulsante %} btn-pulse{% endif %}"
+                       {% if cat.estilo %}style="{{ cat.estilo.css_inline }}"{% endif %}>
                         <div class="category-icon">
                             <i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>
                         </div>
@@ -160,7 +173,7 @@
 </section>
 
 <!-- ── Cartazes de eventos: botão flutuante + painel (mobile/tablet) ─ -->
-{% if cartazes_esq or cartazes_dir %}
+{% if cartazes_esq or cartazes_dir or carrosseis_esq or carrosseis_dir %}
 <!-- Cartazes mobile/tablet: botão + painel -->
 <button class="cartazes-mobile-btn" onclick="document.getElementById('cartazesPainel').classList.toggle('aberto')" aria-label="Ver eventos">
     <i class="fas fa-calendar-star"></i>
@@ -176,16 +189,29 @@
     <div class="cartazes-painel-grid">
         {% for c in cartazes_esq %}
         <a href="{{ c.link }}" class="cartaz-painel-item" target="_blank" rel="noopener">
-            <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+            <img src="{{ c.imagem_src }}" alt="{{ c.titulo }}">
             <span>{{ c.titulo }}</span>
         </a>
         {% endfor %}
         {% for c in cartazes_dir %}
         <a href="{{ c.link }}" class="cartaz-painel-item" target="_blank" rel="noopener">
-            <img src="{{ c.imagem.url }}" alt="{{ c.titulo }}">
+            <img src="{{ c.imagem_src }}" alt="{{ c.titulo }}">
             <span>{{ c.titulo }}</span>
         </a>
         {% endfor %}
+        {# Imagens dos carrosséis também aparecem no painel de eventos do celular #}
+        {% for carrossel in carrosseis_esq %}{% for img in carrossel.imagens.all %}{% if img.imagem_src %}
+        <a href="{{ img.link|default:'#' }}" class="cartaz-painel-item" {% if img.link %}target="_blank" rel="noopener"{% endif %}>
+            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
+            <span>{{ carrossel.titulo }}</span>
+        </a>
+        {% endif %}{% endfor %}{% endfor %}
+        {% for carrossel in carrosseis_dir %}{% for img in carrossel.imagens.all %}{% if img.imagem_src %}
+        <a href="{{ img.link|default:'#' }}" class="cartaz-painel-item" {% if img.link %}target="_blank" rel="noopener"{% endif %}>
+            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
+            <span>{{ carrossel.titulo }}</span>
+        </a>
+        {% endif %}{% endfor %}{% endfor %}
     </div>
 </div>
 {% endif %}

@@ -1,0 +1,148 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .cf-topo { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+    .cf-topo a { background: #fff; border: 1px solid #cbd5e1; color: #1e3a5f; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+    .cf-busca { display: flex; gap: 8px; }
+    .cf-busca input { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; width: 280px; }
+    .cf-busca button { background: #2d5a8e; color: #fff; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: 600; }
+    .cf-acoes { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+    .cf-btn { border: none; border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .cf-btn-salvar { background: #059669; color: #fff; }
+    .cf-btn-remover { background: #d97706; color: #fff; }
+    .cf-btn-excluir { background: #b91c1c; color: #fff; }
+    table.cf-tabela { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+    .cf-tabela th { background: #f1f5f9; color: #334155; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; padding: 10px 10px; text-align: left; }
+    .cf-tabela td { padding: 9px 10px; border-top: 1px solid #eef2f7; font-size: 13px; vertical-align: middle; }
+    .cf-tabela tr:hover td { background: #f8fafc; }
+    .cf-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; color: #fff; }
+    .cf-area { font-size: 12px; }
+    .cf-area .pai { color: #6b7280; }
+    .cf-area .sub { color: #2d5a8e; font-weight: 700; }
+    .cf-ordem { width: 60px; padding: 5px; border: 1px solid #cbd5e1; border-radius: 5px; }
+    .cf-vinculos { background: #eef4fb; color: #1e3a5f; border-radius: 10px; padding: 1px 8px; font-size: 11px; font-weight: 700; }
+    .cf-pag { margin-top: 16px; display: flex; gap: 8px; align-items: center; font-size: 13px; }
+    .cf-pag a { color: #2d5a8e; font-weight: 700; text-decoration: none; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 12px; background: #fff; }
+    .cf-sel-tudo { font-size: 12px; color: #475569; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cf-topo">
+    <a href="{% url 'painel:central' %}"><i class="fas fa-arrow-left"></i> Voltar ao Painel Completo</a>
+    <form method="get" class="cf-busca">
+        <input type="text" name="busca" value="{{ busca }}" placeholder="🔍 Pesquisar por título ou resumo...">
+        <button type="submit">Pesquisar</button>
+    </form>
+    <span style="font-size:13px;color:#6b7280;">{{ total }} conteúdo(s)</span>
+</div>
+
+<form method="post" id="cf-form">
+    {% csrf_token %}
+    <input type="hidden" name="action" id="cf-action" value="salvar">
+    <input type="hidden" name="busca" value="{{ busca }}">
+    <input type="hidden" name="pagina" value="{{ page.number }}">
+
+    <div class="cf-acoes">
+        <button type="submit" class="cf-btn cf-btn-salvar" onclick="return cfSalvar();">
+            <i class="fas fa-floppy-disk"></i> Salvar alterações (destaque, recentes, ordem)
+        </button>
+        <button type="submit" class="cf-btn cf-btn-remover" onclick="return cfRemover();">
+            <i class="fas fa-link-slash"></i> Remover selecionados dos botões (mantém o conteúdo salvo)
+        </button>
+        <button type="submit" class="cf-btn cf-btn-excluir" onclick="return cfExcluir();">
+            <i class="fas fa-trash"></i> Excluir selecionados permanentemente
+        </button>
+    </div>
+
+    <table class="cf-tabela">
+        <thead>
+            <tr>
+                <th><label class="cf-sel-tudo"><input type="checkbox" id="cf-sel-todos"> Todos</label></th>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Área no site</th>
+                <th>Vínculos</th>
+                <th>Status</th>
+                <th>Destaque na home</th>
+                <th>Conteúdos recentes</th>
+                <th>Ordem</th>
+                <th>Data</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in page %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="sel" value="{{ c.pk }}" class="cf-sel">
+                    <input type="hidden" name="pk" value="{{ c.pk }}">
+                </td>
+                <td><strong>{{ c.titulo|truncatechars:70 }}</strong></td>
+                <td>
+                    {% if c.tipo == 'documento' %}<span class="cf-badge" style="background:#2563eb;">Documento</span>
+                    {% elif c.tipo == 'video' %}<span class="cf-badge" style="background:#dc2626;">Vídeo</span>
+                    {% elif c.tipo == 'post' %}<span class="cf-badge" style="background:#059669;">Post</span>
+                    {% elif c.tipo == 'link' %}<span class="cf-badge" style="background:#7c3aed;">Link</span>
+                    {% else %}<span class="cf-badge" style="background:#d97706;">Página</span>{% endif %}
+                </td>
+                <td class="cf-area">
+                    {% if c.categoria %}
+                        {% if c.categoria.categoria_pai %}<span class="pai">{{ c.categoria.categoria_pai.nome }}</span><br>{% endif %}
+                        <span class="sub">{{ c.categoria.nome }}</span>
+                    {% else %}
+                        <span style="color:#9ca3af;">— fora do site —</span>
+                    {% endif %}
+                </td>
+                <td>{% if c.n_vinculos %}<span class="cf-vinculos">{{ c.n_vinculos }} local(is)</span>{% else %}—{% endif %}</td>
+                <td>
+                    {% if c.status == 'publicado' %}<span class="cf-badge" style="background:#10b981;">Publicado</span>
+                    {% elif c.status == 'rascunho' %}<span class="cf-badge" style="background:#f59e0b;">Rascunho</span>
+                    {% else %}<span class="cf-badge" style="background:#6b7280;">Arquivado</span>{% endif %}
+                </td>
+                <td style="text-align:center;"><input type="checkbox" name="destaque_{{ c.pk }}" {% if c.destaque %}checked{% endif %}></td>
+                <td style="text-align:center;"><input type="checkbox" name="recente_{{ c.pk }}" {% if c.recente %}checked{% endif %}></td>
+                <td><input type="number" class="cf-ordem" name="ordem_{{ c.pk }}" value="{{ c.ordem }}" min="0"></td>
+                <td style="font-size:12px;color:#6b7280;">{{ c.data_publicacao|date:"d/m/Y H:i" }}</td>
+                <td><a href="/admin/conteudo/conteudo/{{ c.pk }}/change/" title="Editar tudo" style="color:#2d5a8e;"><i class="fas fa-pen"></i></a></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="11" style="text-align:center;color:#6b7280;padding:30px;">Nenhum conteúdo encontrado.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+
+<div class="cf-pag">
+    {% if page.has_previous %}<a href="?page={{ page.previous_page_number }}&busca={{ busca }}">← Anterior</a>{% endif %}
+    <span>Página {{ page.number }} de {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="?page={{ page.next_page_number }}&busca={{ busca }}">Próxima →</a>{% endif %}
+</div>
+
+<script>
+document.getElementById('cf-sel-todos').addEventListener('change', function () {
+    document.querySelectorAll('.cf-sel').forEach(c => c.checked = this.checked);
+});
+function cfNSel() { return document.querySelectorAll('.cf-sel:checked').length; }
+function cfSalvar() {
+    document.getElementById('cf-action').value = 'salvar';
+    return true;
+}
+function cfRemover() {
+    var n = cfNSel();
+    if (!n) { alert('Selecione pelo menos um conteúdo.'); return false; }
+    document.getElementById('cf-action').value = 'remover_vinculos';
+    return confirm('Remover ' + n + ' conteúdo(s) de TODOS os botões do site?\n\nO conteúdo NÃO será excluído — continua salvo no admin e pode ser vinculado de novo depois.');
+}
+function cfExcluir() {
+    var n = cfNSel();
+    if (!n) { alert('Selecione pelo menos um conteúdo.'); return false; }
+    document.getElementById('cf-action').value = 'excluir';
+    return confirm('⚠️ EXCLUIR PERMANENTEMENTE ' + n + ' conteúdo(s)?\n\nEssa ação NÃO pode ser desfeita. Os anexos e comentários deles também serão excluídos.') &&
+           confirm('Confirma mesmo a exclusão definitiva de ' + n + ' conteúdo(s)?');
+}
+</script>
+{% endblock %}
