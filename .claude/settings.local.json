@@ -103,7 +103,8 @@
       "Bash(cp \"C:\\\\Users\\\\prisc\\\\Downloads\\\\acertar a home page espaco.pptx\" home.pptx)",
       "Bash(markitdown home.pptx)",
       "Bash(python -m markitdown home.pptx)",
-      "Bash(./venv/Scripts/python.exe -)"
+      "Bash(./venv/Scripts/python.exe -)",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo)"
     ]
   }
 }

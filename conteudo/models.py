@@ -150,7 +150,11 @@ class Conteudo(models.Model):
     """Modelo principal — qualquer conteúdo do site (documento, vídeo, post, link)"""
     objects = ConteudoQuerySet.as_manager()
 
-    titulo = models.CharField('Título', max_length=300)
+    titulo = models.CharField(
+        'Título', max_length=300, blank=True,
+        help_text='Opcional. Deixe em branco para postar só uma imagem/vídeo, '
+                  'sem nenhum texto aparecendo sobre ela.'
+    )
     slug = models.SlugField('URL amigável', max_length=300, unique=True, blank=True)
     tipo = models.CharField('Tipo de conteúdo', max_length=20, choices=TipoConteudo.choices, default=TipoConteudo.POST)
     categoria = models.ForeignKey(
@@ -264,7 +268,10 @@ class Conteudo(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.titulo)
+            # Sem título (ex.: destaque só com imagem/vídeo), usa o tipo como
+            # base do endereço — nunca gera um slug vazio.
+            base = self.titulo or self.get_tipo_display() or 'conteudo'
+            self.slug = slugify(base) or 'conteudo'
             original_slug = self.slug
             counter = 1
             while Conteudo.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
@@ -273,7 +280,7 @@ class Conteudo(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.titulo
+        return self.titulo or f'{self.get_tipo_display()} #{self.pk}'
 
     @property
     def tipo_icone(self):
@@ -324,6 +331,38 @@ class Conteudo(models.Model):
             return f'https://player.vimeo.com/video/{video_id}'
         return url
 
+    @property
+    def link_externo(self):
+        """URL externa pronta para uso no href. Garante que sempre tenha
+        um schema (http:// ou https://) na frente — sem isso o navegador
+        interpreta 'uol.com.br' como caminho interno do próprio site
+        (=> tenta abrir /uol.com.br dentro do site atual, o que dá o erro
+        "recusou a se conectar"). Aceita URLs coladas sem o https://."""
+        url = (self.url_externa or '').strip()
+        if not url:
+            return ''
+        # Já tem schema (http://, https://, mailto:, tel:, ftp://, //)?
+        if '://' in url or url.startswith(('mailto:', 'tel:', '//', '#', '/')):
+            return url
+        # Sem schema: assume https:// (mais seguro e mais comum hoje)
+        return 'https://' + url
+
+    @property
+    def video_thumbnail_url(self):
+        """Miniatura do vídeo (só YouTube tem endereço de miniatura público
+        e previsível; Vimeo exige chamada de API, então fica sem miniatura)."""
+        url = self.url_video
+        if not url:
+            return ''
+        video_id = ''
+        if 'youtube.com/watch' in url:
+            video_id = url.split('v=')[1].split('&')[0]
+        elif 'youtu.be/' in url:
+            video_id = url.split('youtu.be/')[1].split('?')[0]
+        if video_id:
+            return f'https://img.youtube.com/vi/{video_id}/hqdefault.jpg'
+        return ''
+
 
 class Anexo(models.Model):
     """Arquivos anexados a um conteúdo ou categoria — PDF, Word, Excel, vídeo, etc."""
@@ -371,7 +410,10 @@ class Banner(models.Model):
         ('medio', 'Médio (padrão)'),
         ('grande', 'Grande'),
     ]
-    titulo = models.CharField('Título', max_length=200)
+    titulo = models.CharField(
+        'Título', max_length=200, blank=True,
+        help_text='Opcional. Deixe em branco se não quiser nenhum texto sobre o banner.'
+    )
     subtitulo = models.CharField('Subtítulo', max_length=300, blank=True)
     imagem = models.ImageField('Imagem do banner', upload_to='banners/', blank=True, null=True)
     url_imagem = models.URLField(
@@ -400,7 +442,7 @@ class Banner(models.Model):
         ordering = ['ordem']
 
     def __str__(self):
-        return self.titulo
+        return self.titulo or f'Banner #{self.pk} (sem título)'
 
     @property
     def imagem_src(self):

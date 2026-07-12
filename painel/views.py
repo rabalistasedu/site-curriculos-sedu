@@ -174,6 +174,7 @@ def _publicar(request):
     nome_url = request.POST.get('nome_url', '').strip()
     tipo_manual = request.POST.get('tipo_conteudo', '').strip()
     icone_imagem = request.FILES.get('icone_imagem')
+    imagem_destaque = request.FILES.get('imagem_destaque')
     resumo = request.POST.get('resumo', '').strip()
     corpo = request.POST.get('corpo', '').strip()
     texto_area = request.POST.get('texto_area', '').strip()
@@ -190,9 +191,11 @@ def _publicar(request):
     feitos = []
     conteudo_criado = False
 
-    # 1. Conteúdo (com título): cria uma única vez e vincula a todos os destinos
+    # 1. Conteúdo: cria uma única vez e vincula a todos os destinos.
+    # Título é OPCIONAL — uma imagem de destaque, vídeo ou link já bastam
+    # para criar o conteúdo (ex.: postar só uma imagem no "Destaque").
     tem_arquivos = any(k.startswith('arquivo_') for k in request.FILES)
-    if titulo or url_externa or url_video:
+    if titulo or url_externa or url_video or imagem_destaque:
         titulo_final = titulo or nome_url or url_externa
         if url_externa and not titulo:
             titulo_final = nome_url or url_externa
@@ -212,6 +215,7 @@ def _publicar(request):
             corpo=corpo,
             url_externa=url_externa,
             url_video=url_video,
+            imagem_destaque=imagem_destaque,
             icone_manual=request.POST.get('icone_manual', '').strip(),
             icone_imagem=icone_imagem,
             texto_alinhamento=request.POST.get('texto_alinhamento', '').strip(),
@@ -247,7 +251,8 @@ def _publicar(request):
             )
         locais = ', '.join(d.nome for d in destinos)
         extra = f' com {n_anexos} anexo(s)' if n_anexos else ''
-        feitos.append(f'Conteúdo "{conteudo.titulo}"{extra} publicado em: {locais}')
+        nome_exibicao = conteudo.titulo or conteudo.get_tipo_display()
+        feitos.append(f'Conteúdo "{nome_exibicao}"{extra} publicado em: {locais}')
         conteudo_criado = True
 
     # 2. Sem título: arquivos soltos viram anexos de cada categoria destino

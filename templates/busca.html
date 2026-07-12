@@ -37,13 +37,15 @@
             <p class="results-count">{{ resultados|length }} resultado{{ resultados|pluralize }} para "{{ query }}"</p>
             <div class="content-list">
                 {% for item in resultados %}
-                <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="list-item">
+                <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
+                   class="list-item"
+                   {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
                     <div class="list-icon{% if item.icone_imagem %} sem-fundo{% endif %}">
                         {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
                         {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                     </div>
                     <div class="list-info">
-                        <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
+                        <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo|default:item.get_tipo_display }}</h3>
                         {% if item.resumo %}<p>{{ item.resumo|truncatewords:25 }}</p>{% endif %}
                         <div class="list-meta">
                             {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}

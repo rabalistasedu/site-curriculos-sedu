@@ -25,11 +25,11 @@
         <div class="cat-banner-slider">
             {% for b in banners %}
             {% if b.link %}
-            <a href="{{ b.link }}" class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem.url }}')" target="_blank" rel="noopener">
+            <a href="{{ b.link }}" class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem_src }}')" target="_blank" rel="noopener">
             {% else %}
-            <div class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem.url }}')">
+            <div class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem_src }}')">
             {% endif %}
-                <img src="{{ b.imagem.url }}" alt="{{ b.titulo }}">
+                <img src="{{ b.imagem_src }}" alt="{{ b.titulo }}">
                 {% if b.titulo or b.subtitulo %}
                 <div class="cat-banner-overlay">
                     {% if b.titulo %}<h3>{{ b.titulo }}</h3>{% endif %}
@@ -128,9 +128,9 @@
         {% if conteudos %}
         <div class="content-grid">
             {% for item in conteudos %}
-            <a href="{% if item.tipo == 'link' and item.url_externa %}{{ item.url_externa }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
+            <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
                class="content-card{% if item.pk in pulsantes %} btn-pulse{% endif %}"
-               {% if item.tipo == 'link' %}target="_blank" rel="noopener"{% endif %}>
+               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
                 {% if item.imagem_destaque %}
                 <div class="card-image">
                     <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
@@ -142,7 +142,7 @@
                 </div>
                 {% endif %}
                 <div class="card-body">
-                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
+                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo|default:item.get_tipo_display }}</h3>
                     {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
                     <div class="card-footer">
                         <span class="card-date">{{ item.data_publicacao|date:"d/m/Y" }}</span>

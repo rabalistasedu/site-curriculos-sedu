@@ -10,11 +10,13 @@
         {% for banner in banners %}
         <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}')">
             <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}">
+            {% if banner.titulo or banner.subtitulo or banner.link %}
             <div class="hero-overlay">
-                <h1>{{ banner.titulo }}</h1>
+                {% if banner.titulo %}<h1>{{ banner.titulo }}</h1>{% endif %}
                 {% if banner.subtitulo %}<p>{{ banner.subtitulo }}</p>{% endif %}
                 {% if banner.link %}<a href="{{ banner.link }}" class="btn btn-primary">Saiba mais</a>{% endif %}
             </div>
+            {% endif %}
         </div>
         {% endfor %}
     </div>
@@ -41,24 +43,36 @@
 <section class="section section-alt">
     <div class="container">
         <h2 class="section-title">Destaques</h2>
-        <div class="content-grid">
+        <div class="content-grid destaques-grid">
             {% for item in destaques %}
-            <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="content-card">
+            <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
+               class="content-card"
+               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
                 {% if item.imagem_destaque %}
-                <div class="card-image">
+                <div class="card-image" style="background-image:url('{{ item.imagem_destaque.url }}')">
                     <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
                 </div>
+                {% elif item.tipo == 'video' and item.video_thumbnail_url %}
+                <div class="card-image destaque-video" style="background-image:url('{{ item.video_thumbnail_url }}')">
+                    <img src="{{ item.video_thumbnail_url }}" alt="{{ item.titulo }}">
+                    <span class="destaque-play-icon"><i class="fas fa-play"></i></span>
+                </div>
+                {% elif item.icone_imagem %}
+                <div class="card-image" style="background-image:url('{{ item.icone_imagem.url }}')">
+                    <img src="{{ item.icone_imagem.url }}" alt="{{ item.titulo }}">
+                </div>
                 {% else %}
-                <div class="card-image card-image-placeholder{% if item.icone_imagem %} sem-fundo{% endif %}">
-                    {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
-                    {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
+                <div class="card-image card-image-placeholder">
+                    <i class="{{ item.icone_criativo }}"></i>
                 </div>
                 {% endif %}
+                {% if item.titulo or item.resumo or item.categoria %}
                 <div class="card-body">
-                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
+                    {% if item.titulo %}<h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>{% endif %}
                     {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
                     {% if item.categoria %}<span class="card-category">{{ item.categoria.nome }}</span>{% endif %}
                 </div>
+                {% endif %}
             </a>
             {% endfor %}
         </div>
@@ -127,13 +141,15 @@
                 {% if recentes %}
                 <div class="content-list">
                     {% for item in recentes %}
-                    <a href="{% url 'conteudo:conteudo_detalhe' item.slug %}" class="list-item">
+                    <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
+                       class="list-item"
+                       {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
                         <div class="list-icon{% if item.icone_imagem %} sem-fundo{% endif %}">
                             {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
                             {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                         </div>
                         <div class="list-info">
-                            <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
+                            <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo|default:item.get_tipo_display }}</h3>
                             <div class="list-meta">
                                 {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}
                                 <span>{{ item.data_publicacao|date:"d/m/Y" }}</span>
