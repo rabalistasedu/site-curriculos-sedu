@@ -126,6 +126,38 @@
             </form>
         </div>
 
+        {% comment %}Editar botao selecionado — mostra quando EXATAMENTE 1 botao esta marcado na arvore. Permite editar nome, descricao (texto), icone e ver/gerenciar anexos daquele botao.{% endcomment %}
+        <div class="pc-novo" id="pc-editar-secao" style="display:none;background:#f0fdf4;border-radius:8px;padding:10px 12px;margin-top:14px;border:1px solid #bbf7d0;">
+            <h3 class="pc-titulo-col" style="color:#15803d;"><i class="fas fa-pen-to-square"></i> Editar botão selecionado</h3>
+            <form method="post" action="{% url 'painel:central' %}" id="form-editar" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="editar_botao">
+                <input type="hidden" name="editar_id" id="pc-editar-id" value="">
+                <div style="font-size:11px;color:#6b7280;margin-bottom:6px;">
+                    Editando: <strong id="pc-editar-nome-label"></strong>
+                </div>
+                <label style="font-size:12px;font-weight:600;color:#374151;">Nome:</label>
+                <input type="text" name="editar_nome" id="pc-editar-nome" placeholder="Nome do botão" style="background:#fff;">
+                <label style="font-size:12px;font-weight:600;color:#374151;">Texto / Descrição:</label>
+                <textarea name="editar_descricao" id="pc-editar-descricao" rows="3" placeholder="Texto que aparece na página do botão (aceita HTML)" style="background:#fff;width:100%;box-sizing:border-box;padding:7px 9px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;resize:vertical;"></textarea>
+                <label style="font-size:12px;font-weight:600;color:#374151;">Ícone (Font Awesome):</label>
+                <input type="text" name="editar_icone" id="pc-editar-icone" placeholder="Ex.: fas fa-book" style="background:#fff;">
+                <label style="font-size:12px;font-weight:600;color:#374151;">Ícone personalizado (imagem):</label>
+                <input type="file" name="editar_icone_imagem" accept="image/*,.ico" style="font-size:12px;margin-bottom:8px;">
+                <div id="pc-editar-anexos-info" style="font-size:11px;color:#6b7280;margin-bottom:6px;"></div>
+                <label style="font-size:12px;font-weight:600;color:#374151;">Adicionar anexo:</label>
+                <input type="file" name="editar_anexo" style="font-size:12px;margin-bottom:8px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#22c55e,#15803d);">
+                        <i class="fas fa-save"></i> Salvar alterações
+                    </button>
+                    <a id="pc-editar-link-admin" href="#" target="_blank" rel="noopener" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#6b7280,#374151);text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+                        <i class="fas fa-arrow-up-right-from-square"></i> Abrir no admin completo
+                    </a>
+                </div>
+            </form>
+        </div>
+
         <!-- Excluir botões marcados -->
         <div class="pc-novo">
             <h3 class="pc-titulo-col" style="color:#b91c1c;"><i class="fas fa-trash-can"></i> Excluir botão selecionado</h3>
@@ -624,6 +656,46 @@
             h.value = m.value;
             alvo.appendChild(h);
         });
+    });
+
+    // ── Editar botão selecionado (mostra quando 1 botão marcado) ──
+    var editarSecao = document.getElementById('pc-editar-secao');
+    function atualizarEditar() {
+        var marcados = Array.prototype.slice.call(
+            document.querySelectorAll('input[name=destinos]:checked'));
+        if (marcados.length === 1) {
+            var id = marcados[0].value;
+            document.getElementById('pc-editar-id').value = id;
+            document.getElementById('pc-editar-link-admin').href = '/admin/conteudo/categoria/' + id + '/change/';
+            var nome = marcados[0].closest('.pc-check').querySelector('.pc-nome').textContent;
+            document.getElementById('pc-editar-nome-label').textContent = nome;
+            // Buscar dados do botão via AJAX
+            fetch('/admin/painel-central/?action=dados_botao&id=' + id, {
+                headers: {'X-Requested-With': 'XMLHttpRequest'}
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                document.getElementById('pc-editar-nome').value = d.nome || '';
+                document.getElementById('pc-editar-descricao').value = d.descricao || '';
+                document.getElementById('pc-editar-icone').value = d.icone || '';
+                var info = '';
+                if (d.n_anexos > 0) {
+                    info = '<i class="fas fa-paperclip"></i> ' + d.n_anexos + ' anexo(s) neste botão. ';
+                }
+                if (d.n_conteudos > 0) {
+                    info += '<i class="fas fa-file"></i> ' + d.n_conteudos + ' conteúdo(s) dentro.';
+                }
+                if (!info) info = 'Nenhum anexo ou conteúdo neste botão ainda.';
+                document.getElementById('pc-editar-anexos-info').innerHTML = info;
+            });
+            editarSecao.style.display = '';
+        } else {
+            editarSecao.style.display = 'none';
+        }
+    }
+    // Atualizar edição sempre que checkbox muda
+    document.querySelectorAll('input[name=destinos]').forEach(function (c) {
+        c.addEventListener('change', atualizarEditar);
     });
 
     // ── Confirmação ao salvar ──

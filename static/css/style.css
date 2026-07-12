@@ -446,6 +446,9 @@ img { max-width: 100%; height: auto; display: block; }
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     transition: all var(--transition);
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
 }
 .topic-btn:hover {
     transform: translateY(-2px);
@@ -518,8 +521,8 @@ img { max-width: 100%; height: auto; display: block; }
     text-transform: uppercase;
 }
 
-.card-body { padding: 20px; }
-.card-body h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+.card-body { padding: 20px; text-align: center; }
+.card-body h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; line-height: 1.4; text-align: center; }
 .card-body p { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
 
 .card-footer { display: flex; align-items: center; gap: 12px; }
@@ -2043,9 +2046,11 @@ div[vw-access-button]:hover { opacity: 1; }
     letter-spacing: 0.3px;
     text-transform: uppercase;
 }
-.content-card--subbotao .card-footer .card-date {
-    color: var(--primary);
-    font-weight: 600;
+.content-card--subbotao .card-body {
+    text-align: center;
+}
+.content-card--subbotao .card-body h3 {
+    text-align: center;
 }
 
 /* 10) Rodapé no menor tamanho possível (Item 2 do plano) — só espaçamentos

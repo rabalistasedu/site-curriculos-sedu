@@ -46,8 +46,6 @@ class CategoriaPicker(forms.Widget):
 
         for pai in pais:
             subs = pai.subcategorias.filter(ativa=True).order_by('nome')
-            if not subs.exists():
-                continue
 
             pai_icone = pai.icone or 'fas fa-folder-open'
             parts.append(
@@ -58,10 +56,21 @@ class CategoriaPicker(forms.Widget):
                 f'<div class="cp-group-btns">'
             )
 
+            if not subs.exists():
+                is_sel = (value_str == str(pai.pk))
+                sel_cls = ' cp-selected' if is_sel else ''
+                chk = 'checked' if is_sel else ''
+                parts.append(
+                    f'<label class="cp-btn{sel_cls}">'
+                    f'<input type="radio" name="{name}" value="{pai.pk}" {chk}>'
+                    f'<span class="cp-icon"><i class="{pai_icone}"></i></span>'
+                    f'<span class="cp-label">{pai.nome}</span>'
+                    f'</label>'
+                )
+
             for sub in subs:
                 netos = sub.subcategorias.filter(ativa=True).order_by('nome')
                 if netos.exists():
-                    # Mostra sub como cabeçalho e seus filhos como botões
                     sub_icone = sub.icone_display
                     parts.append(
                         f'<div class="cp-subgroup">'
@@ -83,7 +92,6 @@ class CategoriaPicker(forms.Widget):
                         )
                     parts.append('</div>')
                 else:
-                    # Sub sem filhos — botão direto
                     is_sel = (value_str == str(sub.pk))
                     sel_cls = ' cp-selected' if is_sel else ''
                     chk = 'checked' if is_sel else ''

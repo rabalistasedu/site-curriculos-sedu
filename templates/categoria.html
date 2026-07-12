@@ -138,9 +138,6 @@
                 <div class="card-body">
                     <h3>{{ sub.nome }}</h3>
                     {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:15 }}</p>{% endif %}
-                    <div class="card-footer">
-                        <span class="card-date"><i class="fas fa-arrow-right"></i> Abrir para ver / adicionar arquivos</span>
-                    </div>
                 </div>
             </a>
             {% endfor %}

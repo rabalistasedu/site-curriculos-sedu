@@ -11,6 +11,7 @@ remoção de vínculos.
 """
 from datetime import datetime
 
+from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
@@ -106,6 +107,12 @@ def painel_central_view(request):
         if action == 'criar_subareas':
             return _criar_subareas(request)
 
+        if action == 'editar_botao':
+            return _editar_botao(request)
+
+    if request.GET.get('action') == 'dados_botao' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return _dados_botao(request)
+
     arvore = _montar_arvore()
     context = {
         'title': 'Painel Administrativo Completo',
@@ -119,7 +126,9 @@ def painel_central_view(request):
 
 
 def _criar_no(request):
-    """Cria um novo botão (categoria raiz), subbotão ou subárea."""
+    """Cria um novo botão (categoria raiz), subbotão ou subárea.
+    Se nenhum pai for escolhido, o botão vai para a categoria especial
+    "Botões novos criados" (criada automaticamente se não existir)."""
     nome = request.POST.get('novo_nome', '').strip()
     pai_id = request.POST.get('novo_pai', '').strip()
     if not nome:
@@ -128,6 +137,17 @@ def _criar_no(request):
     pai = None
     if pai_id:
         pai = get_object_or_404(Categoria, pk=pai_id)
+    else:
+        pai, _criada = Categoria.objects.get_or_create(
+            slug='botoes-novos-criados',
+            defaults={
+                'nome': 'Botões novos criados',
+                'icone': 'fas fa-plus-circle',
+                'ativa': True,
+                'mostrar_menu_superior': False,
+                'mostrar_navegue_area': False,
+            },
+        )
     Categoria.objects.create(
         nome=nome,
         slug=_slug_unico(Categoria, nome),
@@ -135,7 +155,7 @@ def _criar_no(request):
         icone=request.POST.get('novo_icone', '').strip() or 'fas fa-folder-open',
         ativa=True,
     )
-    onde = f'dentro de "{pai.nome}"' if pai else 'no nível principal (Navegue por área)'
+    onde = f'dentro de "{pai.nome}"'
     messages.success(request, f'Botão "{nome}" criado {onde}.')
     return redirect('painel:central')
 
@@ -192,6 +212,55 @@ def _criar_subareas(request):
         request,
         f'{len(criados)} subárea(s) criada(s): ' + '; '.join(criados)
     )
+    return redirect('painel:central')
+
+
+def _dados_botao(request):
+    """Endpoint AJAX: retorna dados de uma categoria para edição inline."""
+    cat_id = request.GET.get('id')
+    cat = get_object_or_404(Categoria, pk=cat_id)
+    return JsonResponse({
+        'nome': cat.nome,
+        'descricao': cat.descricao or '',
+        'icone': cat.icone or '',
+        'n_anexos': cat.anexos.count(),
+        'n_conteudos': Conteudo.objects.filter(categoria=cat).count(),
+    })
+
+
+def _editar_botao(request):
+    """Salva edições no botão (categoria) selecionado: nome, descrição,
+    ícone (FA ou imagem) e anexo opcional."""
+    cat_id = request.POST.get('editar_id')
+    cat = get_object_or_404(Categoria, pk=cat_id)
+
+    nome = request.POST.get('editar_nome', '').strip()
+    if nome and nome != cat.nome:
+        cat.nome = nome
+        cat.slug = _slug_unico(Categoria, nome)
+
+    descricao = request.POST.get('editar_descricao', '').strip()
+    cat.descricao = descricao
+
+    icone = request.POST.get('editar_icone', '').strip()
+    if icone:
+        cat.icone = icone
+
+    icone_img = request.FILES.get('editar_icone_imagem')
+    if icone_img:
+        cat.icone_imagem.save(icone_img.name, icone_img, save=False)
+
+    cat.save()
+
+    anexo_file = request.FILES.get('editar_anexo')
+    if anexo_file:
+        Anexo.objects.create(
+            categoria=cat,
+            arquivo=anexo_file,
+            nome=anexo_file.name,
+        )
+
+    messages.success(request, f'Botão "{cat.nome}" atualizado com sucesso.')
     return redirect('painel:central')
 
 
