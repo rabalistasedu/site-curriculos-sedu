@@ -56,6 +56,9 @@ class CategoriaAdminForm(forms.ModelForm):
             # desembrulha o RelatedFieldWidgetWrapper do admin (botões +/lápis)
             alvo = getattr(widget, 'widget', widget)
             alvo.choices = self._arvore_choices()
+            # habilita a caixinha de pesquisa (static/js/filtro_select.js,
+            # carregado pelo Media do CategoriaAdmin)
+            alvo.attrs['data-pesquisavel'] = '🔍 Pesquisar botão pai...'
 
     def _arvore_choices(self):
         filhos = {}

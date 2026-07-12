@@ -62,6 +62,10 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     list_filter = ['ativa', 'categoria_pai']
     list_editable = ['ordem', 'ativa']
     search_fields = ['nome']
+
+    class Media:
+        # caixinha de pesquisa do select "Categoria pai" (data-pesquisavel)
+        js = ['js/filtro_select.js']
     prepopulated_fields = {'slug': ('nome',)}
     actions = ['ativar_selecionadas', 'desativar_selecionadas', 'delete_selected']
     inlines = [AnexoCategoriaInline]

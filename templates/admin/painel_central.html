@@ -90,7 +90,8 @@
                 {% csrf_token %}
                 <input type="hidden" name="action" value="criar_no">
                 <input type="text" name="novo_nome" placeholder="Nome do novo botão" required>
-                <select name="novo_pai" title="Escolha dentro de qual botão o novo botão vai ficar">
+                <select name="novo_pai" data-pesquisavel="🔍 Pesquisar botão pai..."
+                        title="Escolha dentro de qual botão o novo botão vai ficar">
                     <option value="">— No nível principal (Navegue por área) —</option>
                     {% for item in arvore_flat %}
                     <option value="{{ item.cat.pk }}">{% if item.nivel %}{{ item.recuo }}└ {% endif %}{{ item.cat.nome }}</option>
@@ -524,4 +525,5 @@
     };
 })();
 </script>
+<script src="{% static 'js/filtro_select.js' %}"></script>
 {% endblock %}
