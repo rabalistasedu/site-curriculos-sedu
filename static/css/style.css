@@ -1969,3 +1969,44 @@ div[vw-access-button]:hover { opacity: 1; }
 @media (max-width: 900px) {
     .header-inner { height: auto; }
 }
+
+/* 9) Carrossel — QUALQUER arquivo (imagem ou vídeo) se ajusta ao espaço
+      do carrossel, em qualquer tamanho (coluna cheia, dividindo com
+      cartaz, faixa 96px do notebook, mobile): conteúdo INTEIRO (contain,
+      sem corte nem distorção) sobre um fundo borrado da própria imagem
+      que preenche as sobras quando a proporção difere. */
+.carrossel-slide {
+    position: relative;
+    overflow: hidden;
+    background: #0f2033;
+}
+.carrossel-slide-fundo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(16px) brightness(0.6);
+    transform: scale(1.15);
+}
+.carrossel-slide img,
+.carrossel-slide video {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* 10) Rodapé no menor tamanho possível (Item 2 do plano) — só espaçamentos
+       e fontes; nada de conteúdo removido nem funcionalidade alterada */
+.footer { padding: 10px 0 0; }
+.footer-inner { gap: 8px 20px; padding-bottom: 8px; }
+.footer-info h3, .footer-links h3 { font-size: 11.5px; margin-bottom: 4px; }
+.footer-info p { font-size: 11.5px; margin-bottom: 2px; }
+.footer-links a { font-size: 10.5px; }
+.footer-voltar-wrap { padding-bottom: 6px; }
+.footer-voltar-inicio { padding: 3px 10px; font-size: 10.5px; }
+@media (max-width: 900px) {
+    .footer-inner { gap: 12px; }
+}

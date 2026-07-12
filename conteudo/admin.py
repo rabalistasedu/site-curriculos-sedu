@@ -470,11 +470,11 @@ class CarrosselImagemInline(admin.TabularInline):
     extra = 5  # 5 linhas prontas; o link "Adicionar outra Imagem" cria mais
     fields = ['imagem', 'url_imagem', 'link', 'ordem']
     verbose_name = 'Imagem'
-    verbose_name_plural = '🖼️ Imagens do carrossel (suba um arquivo OU cole uma URL em cada linha)'
+    verbose_name_plural = '🖼️ Imagens e vídeos do carrossel (suba um arquivo OU cole uma URL em cada linha)'
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'imagem':
-            kwargs['widget'] = forms.FileInput(attrs={'accept': '.jpg,.jpeg,.png,.gif,.webp'})
+            kwargs['widget'] = forms.FileInput(attrs={'accept': '.jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.ogg,.ogv,.mov,.m4v'})
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 

@@ -14,7 +14,13 @@
         {% for img in carrossel.imagens.all %}{% if img.imagem_src %}
         <div class="carrossel-slide">
             {% if img.link %}<a href="{{ img.link }}" target="_blank" rel="noopener">{% endif %}
-            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
+            {% if img.eh_video %}
+            <video src="{{ img.imagem_src }}" autoplay muted loop playsinline preload="metadata"></video>
+            {% else %}
+            {# Fundo borrado preenche as sobras quando a proporção difere — a imagem aparece INTEIRA por cima #}
+            <span class="carrossel-slide-fundo" style="background-image:url('{{ img.imagem_src }}')"></span>
+            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}" loading="lazy">
+            {% endif %}
             {% if img.link %}</a>{% endif %}
         </div>
         {% endif %}{% endfor %}

@@ -57,7 +57,12 @@ def _montar_carrossel_html(carrossel):
         src = img.imagem_src
         if not src:
             continue
-        tag = f'<img src="{src}" alt="" style="width:100%;height:100%;object-fit:cover;display:block;">'
+        if img.eh_video:
+            tag = (f'<video src="{src}" autoplay muted loop playsinline '
+                   f'style="width:100%;height:100%;object-fit:contain;display:block;background:#0f2033;"></video>')
+        else:
+            tag = (f'<img src="{src}" alt="" '
+                   f'style="width:100%;height:100%;object-fit:contain;display:block;background:#0f2033;">')
         if img.link:
             tag = f'<a href="{img.link}" target="_blank" rel="noopener">{tag}</a>'
         slides.append(f'<div class="carousel-item" style="min-height:100%;width:100%;">{tag}</div>')

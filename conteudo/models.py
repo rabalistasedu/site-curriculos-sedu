@@ -468,16 +468,22 @@ class Carrossel(models.Model):
 
 
 class CarrosselImagem(models.Model):
-    """Uma imagem do carrossel — enviada como arquivo ou puxada de uma URL."""
+    """Um item do carrossel — imagem OU vídeo, enviado como arquivo ou
+    puxado de uma URL. O conteúdo se ajusta sozinho ao espaço do carrossel."""
+    EXTENSOES_VIDEO = ('.mp4', '.webm', '.ogg', '.ogv', '.mov', '.m4v')
+
     carrossel = models.ForeignKey(
         Carrossel, on_delete=models.CASCADE,
         related_name='imagens', verbose_name='Carrossel'
     )
-    imagem = models.ImageField('Imagem (arquivo)', upload_to='carrossel/', blank=True, null=True)
+    imagem = models.FileField(
+        'Imagem ou vídeo (arquivo)', upload_to='carrossel/', blank=True, null=True,
+        help_text='Aceita imagem (JPG, PNG, GIF, WEBP...) ou vídeo (MP4, WEBM...).'
+    )
     url_imagem = models.URLField(
-        'Imagem por URL', blank=True,
-        help_text='Cole o endereço de uma imagem da internet. Se os dois '
-                  'estiverem preenchidos, a URL tem prioridade.'
+        'Imagem/vídeo por URL', blank=True,
+        help_text='Cole o endereço de uma imagem ou vídeo da internet. Se os '
+                  'dois estiverem preenchidos, a URL tem prioridade.'
     )
     link = models.URLField('Link ao clicar (opcional)', blank=True)
     ordem = models.PositiveIntegerField('Ordem', default=0)
@@ -497,6 +503,12 @@ class CarrosselImagem(models.Model):
         if self.imagem:
             return self.imagem.url
         return ''
+
+    @property
+    def eh_video(self):
+        """True quando o arquivo/URL é um vídeo (pela extensão)."""
+        src = self.imagem_src.split('?')[0].lower()
+        return src.endswith(self.EXTENSOES_VIDEO)
 
 
 class ConfiguracaoSite(models.Model):
