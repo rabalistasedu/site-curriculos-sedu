@@ -283,7 +283,7 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
 - Versão de cache do CSS evoluiu ao longo do dia: `?v=20260711-1` → `-2` (pílula do Currículo Atual + recentes quadrados) → `-3` (ícone personalizado em Conteudo, cards compactos, tamanho de botão) → `-4` (ícone personalizado em Categoria/botões) → `-5` (correção do ajuste de imagem — cover nos botões) → `-6` (card de conteúdo volta a contain) → `-7` (botão voltar no rodapé + VLibras). JS ficou em `?v=20260711-1`.
 - Testado: páginas 200, ações do painel via test client, submissão completa do Painel Central, ícone-só sem título aplicado a pai+sub (212 bytes cada, sem truncamento), ícone com título indo para o conteúdo e NÃO para o botão, card de conteúdo com `object-fit:contain` confirmado via computed style, campo `botao_icone_imagem` confirmado removido do HTML.
 
-### 2026-07-12 — Correções de bugs de layout responsivo
+### 2026-07-12 — Correções de bugs de layout responsivo (parte 1)
 1. **Navegação embolada no celular** — regra global `.home-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }` (de 2026-07-10) sobrescrevia media queries de mobile (≤860px) que mandavam empilhar em 1 coluna. Solução: limitar a regra a `@media (min-width: 861px)` — agora no celular home-split volta a 1 coluna (343px), deixando o layout legível.
 
 2. **Carrossel "Sedu Informa" dividido em dois no painel "Eventos"** — as 2 imagens do carrossel estavam sendo "explodidas" em 2 cards separados com `href="#"` (links mortos), dando impressão de "dividido em dois e sem funcionar". Solução: incluir o carrossel INTEIRO no painel como widget funcional (`<div class="cartaz-painel-carrossel">{% include 'carrossel_widget.html' %}</div>`) — agora passa as imagens sozinho, com setas e autoplay. CSS: `.cartaz-painel-carrossel { grid-column: 1 / -1; }` (ocupa largura total). Teste: painel agora tem 1 carrossel funcional (2 slides, 2 setas) + 3 cartazes reais, 0 links mortos.
@@ -294,6 +294,17 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
 
 - Versão de cache: CSS `?v=20260712-5` (incrementado de `-4`).
 - Testado no navegador: desktop (1440×860): carrossel ocupa 619px (sem overflow), mobile (375×812): home-split 1 coluna (343px), painel Eventos com carrossel funcional 335px (largura cheia).
+
+### 2026-07-12 — Correções de funcionalidade de anexos + subbotões (parte 2)
+1. **Anexos de conteúdo não apareciam na página de detalhe** — quando o Dan criava um conteúdo via Painel Central com título + arquivos, o sistema salvava os Anexo ligados àquele Conteudo, mas a página `conteudo_detalhe.html` NUNCA exibia esses anexos. A seção "Arquivos para download" só existia em páginas de categoria, não de conteúdo. Solução: (a) adicionar `anexos = conteudo.anexos.all()` à view `conteudo_detalhe`, (b) reproduzir a seção `.anexos-section` do template de categoria no template de conteúdo, com os mesmos ícones coloridos por tipo (PDF, Word, Excel, PPT, vídeo, imagem). Agora: conteúdo com anexos mostra a seção; sem anexos, nada aparece.
+
+2. **Subbotões não apareciam visualmente como cards grandes** — o Dan criava um subbotão (ex.: "Documentos Orientadores" dentro de "Educação Escolar Quilombola") e o botão era salvo no banco, mas SÓ aparecia como chip PEQUENO no topo da página da categoria pai. O Dan não via visualmente onde era para clicar / adicionar conteúdo. Solução: (a) adicionar as subcategorias à `content-grid` (mesmo array de cards) ANTES dos conteúdos, (b) estilizar cards de subbotão com borda azul 2px, badge "🗂️ BOTÃO" azul, ícone com fundo claro (`#e6efff`), texto "→ Abrir para ver / adicionar arquivos" no rodapé. Agora: subbotões aparecem como cards destacados no meio da página, ao lado dos conteúdos normais, ainda mantendo os chips no topo.
+
+3. **Senha do usuário ridan restaurada** — havia sido resetada durante investigação anterior. Volta a `Sedu@2026`.
+
+- Versão de cache: CSS `?v=20260712-6` (incrementado de `-5`).
+- Arquivos modificados: `conteudo/views.py` (adicionar anexos à view), `templates/conteudo_detalhe.html` (seção de anexos), `templates/categoria.html` (subbotões como cards), `static/css/style.css` (estilos `.content-card--subbotao` e `.card-badge-botao`).
+- Testado: "Documentos Orientadores" (subbotão de Quilombola) aparece como card no meio, tem 1 anexo visible, breadcrumb correto `Início / Educação Escolar Quilombola / Documentos Orientadores`.
 
 ## Deploy
 

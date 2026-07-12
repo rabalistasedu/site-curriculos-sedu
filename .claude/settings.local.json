@@ -104,7 +104,8 @@
       "Bash(markitdown home.pptx)",
       "Bash(python -m markitdown home.pptx)",
       "Bash(./venv/Scripts/python.exe -)",
-      "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo)"
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo)",
+      "Bash(venv/Scripts/python.exe -c ' *)"
     ]
   }
 }

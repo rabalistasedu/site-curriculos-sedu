@@ -2002,6 +2002,45 @@ div[vw-access-button]:hover { opacity: 1; }
     display: block;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-12 — subbotoes como cards grandes na content-grid
+   Antes: subbotoes so apareciam como chips pequenos no topo da pagina
+   da categoria pai, e o Dan nao via visualmente onde clicar para
+   entrar e adicionar arquivos/links. Agora aparecem como CARDS
+   destacados no meio, ao lado dos conteudos (borda azul, badge "Botao").
+   ══════════════════════════════════════════════════════════════════ */
+.content-card--subbotao {
+    border: 2px solid var(--primary);
+    box-shadow: 0 4px 14px rgba(45, 90, 142, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.content-card--subbotao:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(45, 90, 142, 0.28);
+}
+.content-card--subbotao .card-image-placeholder {
+    background: linear-gradient(135deg, #e6efff 0%, #dbe7fb 100%);
+    color: var(--primary);
+}
+.card-badge-botao {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--primary);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+.content-card--subbotao .card-footer .card-date {
+    color: var(--primary);
+    font-weight: 600;
+}
+
 /* 10) Rodapé no menor tamanho possível (Item 2 do plano) — só espaçamentos
        e fontes; nada de conteúdo removido nem funcionalidade alterada */
 .footer { padding: 10px 0 0; }

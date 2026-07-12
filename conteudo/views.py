@@ -164,10 +164,13 @@ def conteudo_detalhe(request, slug):
         else:
             messages.error(request, 'Preencha seu nome e o comentário.')
 
+    anexos = conteudo.anexos.all().order_by('ordem', 'nome')
+
     return render(request, 'conteudo_detalhe.html', {
         'conteudo': conteudo,
         'relacionados': relacionados,
         'comentarios': comentarios,
+        'anexos': anexos,
     })
 
 

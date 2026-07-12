@@ -124,9 +124,27 @@
         </div>
         {% endif %}
 
-        <!-- Lista de conteúdos -->
-        {% if conteudos %}
+        {% comment %}Subbotoes tambem aparecem como CARDS GRANDES na area principal (antes so viravam chips pequenos no topo) — assim ficam visiveis e o admin ve onde clicar para adicionar conteudo dentro.{% endcomment %}
+        {% if subcategorias or conteudos %}
         <div class="content-grid">
+            {% for sub in subcategorias %}
+            <a href="{% url 'conteudo:categoria' sub.slug %}"
+               class="content-card content-card--subbotao{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
+               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
+                <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}">
+                    {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado">
+                    {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
+                </div>
+                <div class="card-body">
+                    <span class="card-badge-botao"><i class="fas fa-folder-open"></i> Botão</span>
+                    <h3>{{ sub.nome }}</h3>
+                    {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:15 }}</p>{% endif %}
+                    <div class="card-footer">
+                        <span class="card-date"><i class="fas fa-arrow-right"></i> Abrir para ver / adicionar arquivos</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
             {% for item in conteudos %}
             <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
                class="content-card{% if item.pk in pulsantes %} btn-pulse{% endif %}"
