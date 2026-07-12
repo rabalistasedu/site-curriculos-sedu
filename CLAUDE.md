@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v3 — atualizado em 2026-07-11)
+# Site Currículos SEDU — Contexto do Projeto (v4 — atualizado em 2026-07-12)
 
 ## O que é este projeto
 
