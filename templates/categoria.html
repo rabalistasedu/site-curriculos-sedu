@@ -136,7 +136,6 @@
                     {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
                 </div>
                 <div class="card-body">
-                    <span class="card-badge-botao"><i class="fas fa-folder-open"></i> Botão</span>
                     <h3>{{ sub.nome }}</h3>
                     {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:15 }}</p>{% endif %}
                     <div class="card-footer">
