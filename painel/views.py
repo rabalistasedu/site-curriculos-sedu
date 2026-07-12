@@ -103,6 +103,9 @@ def painel_central_view(request):
         if action == 'excluir_nos':
             return _excluir_nos(request)
 
+        if action == 'criar_subareas':
+            return _criar_subareas(request)
+
     arvore = _montar_arvore()
     context = {
         'title': 'Painel Administrativo Completo',
@@ -155,6 +158,39 @@ def _excluir_nos(request):
         f'{n} botão(ões) excluído(s): {nomes}. Os conteúdos que estavam '
         'neles continuam salvos (sem local de exibição) e podem ser '
         'vinculados novamente em "Conteúdo para modificar ou configurar".'
+    )
+    return redirect('painel:central')
+
+
+def _criar_subareas(request):
+    """Cria uma nova subárea (subbotão) DENTRO de cada botão marcado na
+    árvore. Atalho: em vez de ir no formulário "Criar novo botão" e
+    escolher pai um a um, marca os pais na árvore e cria de uma vez."""
+    nome = request.POST.get('subarea_nome', '').strip()
+    if not nome:
+        messages.error(request, 'Digite o nome da subárea.')
+        return redirect('painel:central')
+    ids = request.POST.getlist('destinos')
+    pais = list(Categoria.objects.filter(pk__in=ids))
+    if not pais:
+        messages.error(
+            request,
+            'Marque na árvore o(s) botão(ões) dentro dos quais a subárea será criada.'
+        )
+        return redirect('painel:central')
+    criados = []
+    for pai in pais:
+        nova = Categoria.objects.create(
+            nome=nome,
+            slug=_slug_unico(Categoria, nome),
+            categoria_pai=pai,
+            icone='fas fa-folder-open',
+            ativa=True,
+        )
+        criados.append(f'"{nome}" dentro de "{pai.nome}"')
+    messages.success(
+        request,
+        f'{len(criados)} subárea(s) criada(s): ' + '; '.join(criados)
     )
     return redirect('painel:central')
 

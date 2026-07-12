@@ -107,6 +107,25 @@
             </form>
         </div>
 
+        {% comment %}Criar subarea/subbotao DENTRO dos botoes marcados (2026-07-12). Atalho: em vez de ir no formulario "Criar novo botao" e escolher o pai manualmente, marque um botao na arvore acima e digite o nome do subbotao aqui — ele vira subbotao do(s) botao(oes) marcado(s).{% endcomment %}
+        <div class="pc-novo" style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-top:14px;border:1px solid #bfdbfe;">
+            <h3 class="pc-titulo-col" style="color:#1d4ed8;"><i class="fas fa-sitemap"></i> Criar subárea nos botões marcados</h3>
+            <form method="post" action="{% url 'painel:central' %}" id="form-subarea">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="criar_subareas">
+                <div id="pc-subarea-ids"></div>
+                <input type="text" name="subarea_nome" placeholder="Nome da nova subárea" required style="background:#fff;">
+                <div style="font-size:11px;color:#6b7280;margin:-2px 0 8px;">
+                    Marque na árvore acima UM ou mais botões e digite o nome da subárea que vai
+                    aparecer DENTRO de cada um. Ex.: marque "Projetos Integradores" e crie subáreas
+                    como "Documentos Gerais", "Ciências da Natureza", etc.
+                </div>
+                <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);">
+                    <i class="fas fa-plus"></i> Criar subárea dentro dos marcados
+                </button>
+            </form>
+        </div>
+
         <!-- Excluir botões marcados -->
         <div class="pc-novo">
             <h3 class="pc-titulo-col" style="color:#b91c1c;"><i class="fas fa-trash-can"></i> Excluir botão selecionado</h3>
@@ -486,13 +505,39 @@
     }
     document.getElementById('pc-busca').addEventListener('input', function () {
         var q = normalizar(this.value.trim());
-        document.querySelectorAll('#pc-arvore .pc-no').forEach(function (li) {
-            if (!q) { li.style.display = ''; return; }
-            var bate = normalizar(li.textContent).indexOf(q) !== -1;
-            li.style.display = bate ? '' : 'none';
-            if (bate) {
+        var todos = document.querySelectorAll('#pc-arvore .pc-no');
+        if (!q) {
+            // Reset: mostra todos e RECOLHE (deixa como padrão)
+            todos.forEach(function (li) {
+                li.style.display = '';
+                var f = li.querySelector(':scope > .pc-filhos');
+                if (f) {
+                    f.hidden = true;
+                    var t = li.querySelector(':scope > .pc-linha > .pc-toggle');
+                    if (t) t.textContent = '▸';
+                }
+            });
+            return;
+        }
+        // 1) Descobre quais bate diretamente pelo nome (sem incluir descendentes)
+        todos.forEach(function (li) {
+            var nome = li.querySelector(':scope > .pc-linha .pc-nome');
+            var texto = nome ? normalizar(nome.textContent) : '';
+            li.dataset.pcMatch = texto.indexOf(q) !== -1 ? '1' : '0';
+        });
+        // 2) Cada nó fica visível se ele bate OU se algum descendente bate.
+        //    Ao mesmo tempo, EXPANDE os <ul> dos ancestrais de qualquer match.
+        todos.forEach(function (li) {
+            var descendenteBate = li.querySelectorAll('.pc-no[data-pc-match="1"]').length > 0;
+            var visivel = li.dataset.pcMatch === '1' || descendenteBate;
+            li.style.display = visivel ? '' : 'none';
+            if (descendenteBate) {
                 var filhos = li.querySelector(':scope > .pc-filhos');
-                if (filhos) filhos.hidden = false;
+                if (filhos) {
+                    filhos.hidden = false;
+                    var toggle = li.querySelector(':scope > .pc-linha > .pc-toggle');
+                    if (toggle) toggle.textContent = '▾';
+                }
             }
         });
     });
@@ -549,6 +594,28 @@
             return;
         }
         var alvo = document.getElementById('pc-excluir-ids');
+        alvo.innerHTML = '';
+        marcados.forEach(function (m) {
+            var h = document.createElement('input');
+            h.type = 'hidden';
+            h.name = 'destinos';
+            h.value = m.value;
+            alvo.appendChild(h);
+        });
+    });
+
+    // ── Criar subárea dentro dos botões marcados ──
+    // Copia os checkboxes marcados na árvore (que pertencem ao form-publicar
+    // por HTML) para dentro do form-subarea como hiddens, no momento do submit.
+    document.getElementById('form-subarea').addEventListener('submit', function (e) {
+        var marcados = Array.prototype.slice.call(
+            document.querySelectorAll('input[name=destinos]:checked'));
+        if (!marcados.length) {
+            e.preventDefault();
+            alert('Marque na árvore o(s) botão(ões) DENTRO dos quais a subárea será criada.');
+            return;
+        }
+        var alvo = document.getElementById('pc-subarea-ids');
         alvo.innerHTML = '';
         marcados.forEach(function (m) {
             var h = document.createElement('input');
