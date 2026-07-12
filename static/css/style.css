@@ -1372,6 +1372,16 @@ img { max-width: 100%; height: auto; display: block; }
     line-height: 1.3;
 }
 
+/* Carrossel dentro do painel "Eventos" (celular): ocupa a largura inteira
+   da grade e vira um widget funcional (passa as imagens, setas, autoplay). */
+.cartaz-painel-carrossel { grid-column: 1 / -1; }
+.cartaz-painel-carrossel .carrossel-widget,
+.cartaz-painel-carrossel .carrossel-iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto;
+}
+
 /* Mostra botão e painel apenas quando os cartazes laterais somem
    (até 1000px — mesma faixa em que .cartazes-lateral é ocultado) */
 @media (max-width: 1000px) {
@@ -1401,9 +1411,14 @@ img { max-width: 100%; height: auto; display: block; }
 
 /* 1) Colunas da home com o MESMO tamanho: os cards de "Conteúdos
       recentes" ficam do mesmo tamanho dos cards de "Navegue por área"
-      (as duas listas têm scrollbar interna quando crescem). */
-.home-split {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      (as duas listas têm scrollbar interna quando crescem).
+      SÓ no desktop — no celular as colunas continuam empilhadas (1 coluna).
+      Sem o min-width, esta regra global sobrescrevia as media queries de
+      mobile e deixava a navegação "embolada" em 2 colunas apertadas. */
+@media (min-width: 861px) {
+    .home-split {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
 }
 
 /* 2) Botão "Currículo Atual" FIXO no topo de "Navegue por área":
@@ -1875,6 +1890,10 @@ div[vw-access-button]:hover { opacity: 1; }
       Com cartazes presentes, nada muda (divisão normal do espaço). */
 .cartazes-lateral.col-cheia .cartazes-inner {
     height: calc(100vh - 104px);   /* 88px do topo sticky + 16px de respiro */
+    /* Nunca ultrapassa a área branca (o trilho .cartazes-lateral é top:0
+       bottom:0): em páginas curtas o carrossel encolhe em vez de invadir
+       o rodapé/banner azul — mesma regra dos cartazes. */
+    max-height: 100%;
 }
 .cartazes-lateral.col-cheia .carrossel-widget,
 .cartazes-lateral.col-cheia .carrossel-iframe {

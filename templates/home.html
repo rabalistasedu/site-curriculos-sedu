@@ -220,19 +220,13 @@
             <span>{{ c.titulo }}</span>
         </a>
         {% endfor %}
-        {# Imagens dos carrosséis também aparecem no painel de eventos do celular #}
-        {% for carrossel in carrosseis_esq %}{% for img in carrossel.imagens.all %}{% if img.imagem_src %}
-        <a href="{{ img.link|default:'#' }}" class="cartaz-painel-item" {% if img.link %}target="_blank" rel="noopener"{% endif %}>
-            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
-            <span>{{ carrossel.titulo }}</span>
-        </a>
-        {% endif %}{% endfor %}{% endfor %}
-        {% for carrossel in carrosseis_dir %}{% for img in carrossel.imagens.all %}{% if img.imagem_src %}
-        <a href="{{ img.link|default:'#' }}" class="cartaz-painel-item" {% if img.link %}target="_blank" rel="noopener"{% endif %}>
-            <img src="{{ img.imagem_src }}" alt="{{ carrossel.titulo }}">
-            <span>{{ carrossel.titulo }}</span>
-        </a>
-        {% endif %}{% endfor %}{% endfor %}
+        {% comment %}Carrosséis entram inteiros no painel como widgets funcionais{% endcomment %}
+        {% for carrossel in carrosseis_esq %}
+        <div class="cartaz-painel-carrossel">{% include 'carrossel_widget.html' %}</div>
+        {% endfor %}
+        {% for carrossel in carrosseis_dir %}
+        <div class="cartaz-painel-carrossel">{% include 'carrossel_widget.html' %}</div>
+        {% endfor %}
     </div>
 </div>
 {% endif %}

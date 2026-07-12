@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 231+ conteúdos migrados do WordPress no `db.sqlite3` local.
+- O site está **completo e funcional localmente**, com 365+ conteúdos migrados do WordPress no `db.sqlite3` local.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-11, fim do dia — "parte 2")**: banner/hero da home mais baixo, carrossel ocupa a coluna lateral inteira quando não há cartazes, carrossel vazio (sem imagens) não renderiza mais, seletor "Categoria pai" hierárquico no admin, barra superior com 5 botões fixos discretos + ícone de localização (Google Maps) + painel "Botões da Barra Superior" no admin (/admin/barra-superior/), busca agora encontra também categorias/botões. Detalhes no histórico item 16.
+- **Leva mais recente (2026-07-12)**: **3 bugs de layout corrigidos** — navegação embolada no mobile (home-split global sobrescrevia media queries), carrossel "Sedu Informa" dividido em cards mortos no painel Eventos (agora widget funcional), carrossel vazando 137px para rodapé no desktop (max-height: 100%). Também removido comentário Django multilinhas que aparecia no site.
+- **Leva anterior (2026-07-11, fim do dia — "parte 2")**: banner/hero da home mais baixo, carrossel ocupa a coluna lateral inteira quando não há cartazes, carrossel vazio (sem imagens) não renderiza mais, seletor "Categoria pai" hierárquico no admin, barra superior com 5 botões fixos discretos + ícone de localização (Google Maps) + painel "Botões da Barra Superior" no admin (/admin/barra-superior/), busca agora encontra também categorias/botões. Detalhes no histórico item 16.
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
@@ -281,6 +282,18 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
     - **Busca acha tudo**: a view `busca` agora também procura em `Categoria` (nome + descrição, sem acento) e mostra a seção "Botões e áreas do site" (chips) acima dos conteúdos; "nenhum resultado" só aparece se AMBAS as listas vierem vazias.
 - Versão de cache do CSS evoluiu ao longo do dia: `?v=20260711-1` → `-2` (pílula do Currículo Atual + recentes quadrados) → `-3` (ícone personalizado em Conteudo, cards compactos, tamanho de botão) → `-4` (ícone personalizado em Categoria/botões) → `-5` (correção do ajuste de imagem — cover nos botões) → `-6` (card de conteúdo volta a contain) → `-7` (botão voltar no rodapé + VLibras). JS ficou em `?v=20260711-1`.
 - Testado: páginas 200, ações do painel via test client, submissão completa do Painel Central, ícone-só sem título aplicado a pai+sub (212 bytes cada, sem truncamento), ícone com título indo para o conteúdo e NÃO para o botão, card de conteúdo com `object-fit:contain` confirmado via computed style, campo `botao_icone_imagem` confirmado removido do HTML.
+
+### 2026-07-12 — Correções de bugs de layout responsivo
+1. **Navegação embolada no celular** — regra global `.home-split { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }` (de 2026-07-10) sobrescrevia media queries de mobile (≤860px) que mandavam empilhar em 1 coluna. Solução: limitar a regra a `@media (min-width: 861px)` — agora no celular home-split volta a 1 coluna (343px), deixando o layout legível.
+
+2. **Carrossel "Sedu Informa" dividido em dois no painel "Eventos"** — as 2 imagens do carrossel estavam sendo "explodidas" em 2 cards separados com `href="#"` (links mortos), dando impressão de "dividido em dois e sem funcionar". Solução: incluir o carrossel INTEIRO no painel como widget funcional (`<div class="cartaz-painel-carrossel">{% include 'carrossel_widget.html' %}</div>`) — agora passa as imagens sozinho, com setas e autoplay. CSS: `.cartaz-painel-carrossel { grid-column: 1 / -1; }` (ocupa largura total). Teste: painel agora tem 1 carrossel funcional (2 slides, 2 setas) + 3 cartazes reais, 0 links mortos.
+
+3. **Carrossel vazando para rodapé azul** — carrossel em coluna cheia (sem cartaz) tinha altura fixa (`calc(100vh - 104px)`) sem limite máximo, invadindo o rodapé em 137px no desktop. Solução: adicionar `max-height: 100%` a `.cartazes-lateral.col-cheia .cartazes-inner` — agora o carrossel é confinado ao trilho branco (`.home-conteudo`), respeitando as mesmas regras dos cartazes (nunca invade header/footer).
+
+4. **Comentário Django multilinhas visível** — comentário `{# ... #}` com quebra de linha de 223–225 em home.html estava sendo renderizado como texto na página ("{% Cada carrossel entra INTEIRO no painel..."). Django só suporta `{# #}` em UMA linha. Solução: trocar por `{% comment %}...{% endcomment %}` (aceita múltiplas linhas).
+
+- Versão de cache: CSS `?v=20260712-5` (incrementado de `-4`).
+- Testado no navegador: desktop (1440×860): carrossel ocupa 619px (sem overflow), mobile (375×812): home-split 1 coluna (343px), painel Eventos com carrossel funcional 335px (largura cheia).
 
 ## Deploy
 
