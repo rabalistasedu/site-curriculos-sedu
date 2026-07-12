@@ -407,9 +407,11 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
 # ── Cartazes ─────────────────────────────────────────────────────────
 @admin.register(Cartaz)
 class CartazAdmin(admin.ModelAdmin):
-    list_display = ['titulo', 'lado_badge', 'preview_imagem', 'ordem', 'ativo']
+    # 'lado' e 'tamanho' são editáveis DIRETO NA LISTA (pedido 2026-07-11):
+    # dá para trocar Lado esquerdo/Lado direito sem abrir cada cartaz
+    list_display = ['titulo', 'preview_imagem', 'lado', 'tamanho', 'ordem', 'ativo']
     list_filter = ['lado', 'ativo']
-    list_editable = ['ordem', 'ativo']
+    list_editable = ['lado', 'tamanho', 'ordem', 'ativo']
     actions = ['ativar_selecionados', 'desativar_selecionados', 'delete_selected']
 
     fieldsets = (
@@ -426,17 +428,6 @@ class CartazAdmin(admin.ModelAdmin):
             'description': 'Escolha em qual lado da página o cartaz vai aparecer e o tamanho desejado.',
         }),
     )
-
-    def lado_badge(self, obj):
-        cor = '#2d5a8e' if obj.lado == 'esquerdo' else '#7c3aed'
-        emoji = '⬅️' if obj.lado == 'esquerdo' else '➡️'
-        return format_html(
-            '<span style="background:{};color:white;padding:3px 10px;'
-            'border-radius:12px;font-size:11px;font-weight:600;">'
-            '{} {}</span>',
-            cor, emoji, obj.get_lado_display()
-        )
-    lado_badge.short_description = 'Lado'
 
     def preview_imagem(self, obj):
         if obj.imagem_src:
@@ -480,8 +471,9 @@ class CarrosselImagemInline(admin.TabularInline):
 
 @admin.register(Carrossel)
 class CarrosselAdmin(admin.ModelAdmin):
+    # 'lado' também é editável direto na lista, como nos cartazes
     list_display = ['titulo', 'ativo', 'lado', 'largura', 'altura', 'total_imagens']
-    list_editable = ['ativo']
+    list_editable = ['ativo', 'lado']
     inlines = [CarrosselImagemInline]
 
     fieldsets = (

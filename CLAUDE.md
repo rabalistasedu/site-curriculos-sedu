@@ -127,6 +127,7 @@ Banners rotativos do hero — na home (`categoria=None`) ou dentro de uma catego
 ### Cartaz
 Cartazes de eventos nas laterais da home.
 - `titulo`, `imagem` (**opcional**), **`url_imagem`** (prioridade sobre arquivo), `link`, `lado` (esquerdo/direito), `tamanho` (pequeno 90px / médio 140px / grande 200px), `ordem`, `ativo` + property `imagem_src`
+- No admin de Cartaz, `lado` e `tamanho` são editáveis DIRETO NA LISTA (list_editable, 2026-07-11) — troca esquerdo/direito sem abrir o cartaz; idem `lado` no admin de Carrossel
 - **Desktop (>1400px)**: colunas laterais dentro da área branca (`.home-conteudo`), presas por `position: sticky` — nunca invadem banner nem rodapé
 - **Faixa 1001–1400px (notebook / zoom 110%)**: o conteúdo central encolhe (`max-width: calc(100vw - 240px)`) e os cartazes ficam com 96px, mas **SEMPRE visíveis** (correção de 2026-07-11 — antes sumiam com zoom)
 - **≤1000px**: colunas somem e entra o botão flutuante "Eventos" (painel deslizante com grade)
