@@ -142,7 +142,7 @@
                 </div>
                 {% endif %}
                 <div class="card-body">
-                    <h3>{{ item.titulo }}</h3>
+                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
                     {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
                     <div class="card-footer">
                         <span class="card-date">{{ item.data_publicacao|date:"d/m/Y" }}</span>

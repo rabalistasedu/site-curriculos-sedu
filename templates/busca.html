@@ -43,7 +43,7 @@
                         {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                     </div>
                     <div class="list-info">
-                        <h3>{{ item.titulo }}</h3>
+                        <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
                         {% if item.resumo %}<p>{{ item.resumo|truncatewords:25 }}</p>{% endif %}
                         <div class="list-meta">
                             {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}

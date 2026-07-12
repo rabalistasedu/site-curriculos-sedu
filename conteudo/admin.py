@@ -181,6 +181,15 @@ class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                 'enviada tem prioridade sobre o ícone escolhido acima.'
             ),
         }),
+        ('🔤 Texto do card', {
+            'fields': ('texto_alinhamento', 'texto_fonte', 'texto_tamanho_fonte'),
+            'description': (
+                'Personalize a aparência do título deste card: centralizar/alinhar, '
+                'trocar a fonte e o tamanho da letra. Deixe em branco para usar a '
+                'aparência automática do site.'
+            ),
+            'classes': ('collapse',),
+        }),
         ('⚙️ Publicação', {
             'fields': ('status', 'destaque', 'recente', 'ordem', 'autor', 'data_publicacao'),
             'description': (

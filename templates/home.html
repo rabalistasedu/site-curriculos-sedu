@@ -55,7 +55,7 @@
                 </div>
                 {% endif %}
                 <div class="card-body">
-                    <h3>{{ item.titulo }}</h3>
+                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
                     {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
                     {% if item.categoria %}<span class="card-category">{{ item.categoria.nome }}</span>{% endif %}
                 </div>
@@ -133,7 +133,7 @@
                             {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
                         </div>
                         <div class="list-info">
-                            <h3>{{ item.titulo }}</h3>
+                            <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo }}</h3>
                             <div class="list-meta">
                                 {% if item.categoria %}<span>{{ item.categoria.nome }}</span>{% endif %}
                                 <span>{{ item.data_publicacao|date:"d/m/Y" }}</span>

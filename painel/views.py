@@ -214,6 +214,12 @@ def _publicar(request):
             url_video=url_video,
             icone_manual=request.POST.get('icone_manual', '').strip(),
             icone_imagem=icone_imagem,
+            texto_alinhamento=request.POST.get('texto_alinhamento', '').strip(),
+            texto_fonte=request.POST.get('texto_fonte', '').strip(),
+            texto_tamanho_fonte=(
+                int(request.POST.get('texto_tamanho_fonte'))
+                if request.POST.get('texto_tamanho_fonte', '').strip().isdigit() else None
+            ),
             status=status,
             destaque=destaque,
             recente=recente,

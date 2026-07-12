@@ -14,7 +14,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria), `conteudo/0015` (carrossel aceita vídeo — ImageField→FileField) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
+- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria), `conteudo/0015` (carrossel aceita vídeo — ImageField→FileField), `conteudo/0016` (texto_alinhamento/texto_fonte/texto_tamanho_fonte em Conteudo) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -108,6 +108,7 @@ EXEMPLOS_HTACCESS.md / TESTE_MANUAL_URLS.md    # Apoio à migração final
 - `ordem` (int) — ordenação manual; nas listagens de categoria, `ordem=0` = sem posição (vai pro fim)
 - **Agendamento**: status Publicado + `data_publicacao` futura = invisível até a data (`ConteudoQuerySet.publicados()`)
 - Propriedades: `tipo_icone`, `icone_criativo`, `extensao_arquivo`, `get_video_embed_url()`
+- **Estilo do título do card** (`texto_alinhamento`, `texto_fonte`, `texto_tamanho_fonte`, migração `conteudo.0016`, 2026-07-11): personaliza a aparência do `<h3>` do título nos 4 pontos onde ele aparece (home destaques, home recentes, categoria content-grid, busca) — property `texto_estilo_inline` monta o `style=` pronto, mesmo espírito do `EstiloBotao.css_inline` do app `painel` mas vivendo direto no Conteudo (cada conteúdo é único, sem precisar de tabela separada). Editável no admin ("🔤 Texto do card", seção colapsável) e no Painel Central (seção "Texto do card" — só se aplica quando um conteúdo é criado, ou seja, com Título preenchido).
 - No admin, a categoria é escolhida via botões visuais (CategoriaPicker)
 
 ### Anexo

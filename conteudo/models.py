@@ -198,6 +198,40 @@ class Conteudo(models.Model):
                   'estética do botão. Se preenchido, tem prioridade sobre o ícone escolhido.'
     )
 
+    # Estilo do TÍTULO do card (opcional) — mesmo espírito do EstiloBotao das
+    # categorias, mas aqui vive direto no Conteudo (cada conteúdo é único)
+    TEXTO_ALINHAMENTO_CHOICES = [
+        ('', 'Automático (padrão do site)'),
+        ('left', 'Esquerda'),
+        ('center', 'Centralizado'),
+        ('right', 'Direita'),
+    ]
+    texto_alinhamento = models.CharField(
+        'Alinhamento do texto', max_length=10, blank=True,
+        choices=TEXTO_ALINHAMENTO_CHOICES,
+        help_text='Alinhamento do título do card no site.'
+    )
+    texto_fonte = models.CharField(
+        'Fonte do texto', max_length=100, blank=True,
+        help_text='Ex.: Georgia, Arial, Times New Roman. Vazio = fonte do site (Inter).'
+    )
+    texto_tamanho_fonte = models.PositiveIntegerField(
+        'Tamanho da letra (px)', null=True, blank=True,
+        help_text='Vazio = tamanho automático do card.'
+    )
+
+    @property
+    def texto_estilo_inline(self):
+        """CSS inline pronto para o título do card, se algum estilo foi definido."""
+        partes = []
+        if self.texto_alinhamento:
+            partes.append(f'text-align:{self.texto_alinhamento};')
+        if self.texto_fonte:
+            partes.append(f"font-family:'{self.texto_fonte}',Inter,sans-serif;")
+        if self.texto_tamanho_fonte:
+            partes.append(f'font-size:{self.texto_tamanho_fonte}px;')
+        return ''.join(partes)
+
     # Publicação
     status = models.CharField(
         'Status', max_length=20,
