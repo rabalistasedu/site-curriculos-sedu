@@ -99,7 +99,11 @@
       "Bash(./venv/Scripts/python.exe manage.py shell -c \"from django.contrib.auth.models import User; u,c=User.objects.get_or_create\\(username='rabalista', defaults={'is_superuser':True,'is_staff':True}\\); c and \\(u.set_password\\('sedu2026'\\) or u.save\\(\\)\\); print\\('CRIADO rabalista/sedu2026' if c else 'ja existe'\\)\")",
       "Bash(./venv/Scripts/python.exe manage.py shell -c \"from django.contrib.auth.models import User; u=User.objects.get\\(username='rabalista'\\); print\\('is_superuser:', u.is_superuser, '| is_staff:', u.is_staff, '| senha sedu2026 confere:', u.check_password\\('sedu2026'\\)\\)\")",
       "Bash(cmd //c \"\\\\\"BAT SEDU\\\\\\\\ATUALIZAR BANCO.bat\\\\\"\")",
-      "Bash(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\" && rm -f importacao/log_importacao_20260711-1331.txt importacao/log_importacao_20260711-1332.txt importacao/log_importacao_20260711-1330*.txt && ls importacao/)"
+      "Bash(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\" && rm -f importacao/log_importacao_20260711-1331.txt importacao/log_importacao_20260711-1332.txt importacao/log_importacao_20260711-1330*.txt && ls importacao/)",
+      "Bash(cp \"C:\\\\Users\\\\prisc\\\\Downloads\\\\acertar a home page espaco.pptx\" home.pptx)",
+      "Bash(markitdown home.pptx)",
+      "Bash(python -m markitdown home.pptx)",
+      "Bash(./venv/Scripts/python.exe -)"
     ]
   }
 }
