@@ -1,0 +1,1101 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}Estrutura de Árvores | {{ site_title|default:"Admin" }}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+    --ea-primary: #d97706;
+    --ea-primary-dark: #92400e;
+    --ea-bg: #f8f9fa;
+    --ea-surface: #fff;
+    --ea-border: #e5e7eb;
+    --ea-text: #1f2937;
+    --ea-text-muted: #6b7280;
+    --ea-success: #059669;
+    --ea-danger: #dc2626;
+    --ea-info: #2563eb;
+    --ea-warning: #d97706;
+}
+
+/* ── Layout ──────────────────────────────────────────── */
+.ea-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    min-height: 70vh;
+}
+@media (max-width: 980px) {
+    .ea-wrap { grid-template-columns: 1fr; }
+}
+
+.ea-col { background: var(--ea-surface); border: 1px solid var(--ea-border); border-radius: 10px; padding: 16px; }
+.ea-col-arvore { max-height: 80vh; display: flex; flex-direction: column; }
+.ea-col-painel { max-height: 80vh; overflow-y: auto; }
+
+/* ── Header ──────────────────────────────────────────── */
+.ea-header {
+    background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.ea-header h2 { margin: 0; font-size: 20px; font-weight: 700; color: #fff; }
+.ea-header p { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+.ea-stats { display: flex; gap: 16px; }
+.ea-stat { text-align: center; }
+.ea-stat-num { font-size: 22px; font-weight: 700; }
+.ea-stat-label { font-size: 11px; opacity: 0.8; }
+
+/* ── Busca ────────────────────────────────────────────── */
+.ea-busca-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+.ea-busca {
+    flex: 1;
+    padding: 8px 12px 8px 34px;
+    border: 1px solid var(--ea-border);
+    border-radius: 6px;
+    font-size: 13px;
+    background: var(--ea-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 10px center;
+    outline: none;
+}
+.ea-busca:focus { border-color: var(--ea-primary); box-shadow: 0 0 0 2px rgba(217,119,6,.15); }
+.ea-btn-sm {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+.ea-btn-primary { background: var(--ea-primary); color: #fff; }
+.ea-btn-primary:hover { background: var(--ea-primary-dark); }
+.ea-btn-success { background: var(--ea-success); color: #fff; }
+.ea-btn-success:hover { background: #047857; }
+.ea-btn-danger { background: var(--ea-danger); color: #fff; }
+.ea-btn-danger:hover { background: #b91c1c; }
+.ea-btn-info { background: var(--ea-info); color: #fff; }
+.ea-btn-info:hover { background: #1d4ed8; }
+.ea-btn-ghost { background: transparent; color: var(--ea-text-muted); border: 1px solid var(--ea-border); }
+.ea-btn-ghost:hover { background: var(--ea-bg); }
+.ea-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+
+/* ── Filtros ──────────────────────────────────────────── */
+.ea-filtros { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.ea-filtro-chip {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    cursor: pointer;
+    border: 1px solid var(--ea-border);
+    background: var(--ea-surface);
+    color: var(--ea-text-muted);
+}
+.ea-filtro-chip.active { background: var(--ea-primary); color: #fff; border-color: var(--ea-primary); }
+
+/* ── Árvore ──────────────────────────────────────────── */
+.ea-arvore { flex: 1; overflow-y: auto; overflow-x: hidden; padding-right: 4px; }
+.ea-arvore ul { list-style: none; margin: 0; padding: 0 0 0 20px; }
+.ea-arvore > ul { padding-left: 0; }
+.ea-no {
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    transition: background .1s;
+    user-select: none;
+}
+.ea-no:hover { background: #fef3c7; }
+.ea-no.selected { background: #fde68a; font-weight: 600; }
+.ea-no.match { background: #fef9c3; }
+.ea-no.dragging { opacity: 0.4; }
+.ea-no.drag-over { border: 2px dashed var(--ea-primary); background: #fffbeb; }
+.ea-toggle {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--ea-text-muted);
+    flex-shrink: 0;
+}
+.ea-toggle.vazio { visibility: hidden; }
+.ea-icone {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--ea-primary);
+    flex-shrink: 0;
+}
+.ea-icone img { width: 20px; height: 20px; object-fit: contain; border-radius: 3px; }
+.ea-nome { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ea-badges { display: flex; gap: 4px; flex-shrink: 0; }
+.ea-badge {
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 600;
+}
+.ea-badge-conteudo { background: #dbeafe; color: #1e40af; }
+.ea-badge-anexo { background: #d1fae5; color: #065f46; }
+.ea-badge-id { background: #f3f4f6; color: #6b7280; font-weight: 400; }
+.ea-no-hidden { display: none !important; }
+.ea-ul-hidden { display: none; }
+
+/* ── Painel de detalhes ──────────────────────────────── */
+.ea-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ea-text-muted);
+}
+.ea-empty i { font-size: 48px; opacity: 0.3; margin-bottom: 12px; display: block; }
+
+.ea-secao {
+    border: 1px solid var(--ea-border);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+.ea-secao-header {
+    background: var(--ea-bg);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+.ea-secao-header i.fa-chevron-down { margin-left: auto; font-size: 10px; transition: transform .2s; }
+.ea-secao-header.collapsed i.fa-chevron-down { transform: rotate(-90deg); }
+.ea-secao-body { padding: 14px; }
+.ea-secao-body.collapsed { display: none; }
+
+.ea-campo { margin-bottom: 12px; }
+.ea-campo label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ea-text-muted);
+    margin-bottom: 4px;
+}
+.ea-campo input[type="text"],
+.ea-campo input[type="url"],
+.ea-campo input[type="number"],
+.ea-campo textarea,
+.ea-campo select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--ea-border);
+    border-radius: 6px;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+.ea-campo textarea { min-height: 60px; resize: vertical; }
+
+.ea-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+.ea-info-item {
+    padding: 8px 10px;
+    background: var(--ea-bg);
+    border-radius: 6px;
+    font-size: 12px;
+}
+.ea-info-item strong { display: block; font-size: 11px; color: var(--ea-text-muted); margin-bottom: 2px; }
+
+/* ── Lista de conteúdos/anexos ────────────────────────── */
+.ea-lista-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--ea-border);
+    font-size: 12px;
+}
+.ea-lista-item:last-child { border-bottom: none; }
+.ea-lista-item .ea-tipo {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    background: #e5e7eb;
+    color: #374151;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+.ea-lista-item .ea-titulo { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Biblioteca de ícones ────────────────────────────── */
+.ea-icones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 6px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+.ea-icone-item {
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--ea-border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--ea-text);
+    transition: all .15s;
+}
+.ea-icone-item:hover { border-color: var(--ea-primary); background: #fffbeb; }
+.ea-icone-item.selected { border-color: var(--ea-primary); background: #fde68a; box-shadow: 0 0 0 2px rgba(217,119,6,.2); }
+.ea-icone-item img { width: 28px; height: 28px; object-fit: contain; }
+
+/* ── Toast ────────────────────────────────────────────── */
+.ea-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    z-index: 9999;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all .3s;
+    max-width: 400px;
+}
+.ea-toast.show { opacity: 1; transform: translateY(0); }
+.ea-toast.success { background: var(--ea-success); }
+.ea-toast.error { background: var(--ea-danger); }
+
+/* ── Modal de confirmação ─────────────────────────────── */
+.ea-modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+}
+.ea-modal-bg.show { display: flex; }
+.ea-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.ea-modal h3 { margin: 0 0 10px; font-size: 16px; }
+.ea-modal p { margin: 0 0 16px; font-size: 13px; color: var(--ea-text-muted); }
+.ea-modal-btns { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── Move modal ───────────────────────────────────────── */
+.ea-move-lista {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--ea-border);
+    border-radius: 6px;
+    margin-bottom: 12px;
+}
+.ea-move-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    border-bottom: 1px solid var(--ea-border);
+}
+.ea-move-item:hover { background: #fef3c7; }
+.ea-move-item:last-child { border-bottom: none; }
+.ea-move-item.selected { background: #fde68a; font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block content %}
+<div class="ea-header">
+    <div>
+        <h2><i class="fas fa-network-wired"></i> Estrutura de Árvores</h2>
+        <p>Gerencie toda a hierarquia do site: crie, edite, mova, reordene e exclua botões em qualquer nível.</p>
+    </div>
+    <div class="ea-stats" id="eaStats"></div>
+</div>
+
+<div class="ea-wrap">
+    <!-- ── Coluna esquerda: Árvore ────────────────────── -->
+    <div class="ea-col ea-col-arvore">
+        <div class="ea-busca-wrap">
+            <input type="text" class="ea-busca" id="eaBusca" placeholder="Pesquisar na árvore (sem acento)...">
+            <button class="ea-btn-sm ea-btn-ghost" onclick="EA.expandirTudo()" title="Expandir tudo"><i class="fas fa-expand"></i></button>
+            <button class="ea-btn-sm ea-btn-ghost" onclick="EA.recolherTudo()" title="Recolher tudo"><i class="fas fa-compress"></i></button>
+        </div>
+        <div class="ea-filtros" id="eaFiltros">
+            <span class="ea-filtro-chip active" data-filtro="todos">Todos</span>
+            <span class="ea-filtro-chip" data-filtro="com-conteudo">Com conteúdo</span>
+            <span class="ea-filtro-chip" data-filtro="vazios">Vazios</span>
+            <span class="ea-filtro-chip" data-filtro="raiz">Só raiz</span>
+        </div>
+        <div class="ea-toolbar">
+            <button class="ea-btn-sm ea-btn-success" onclick="EA.abrirCriar(null)"><i class="fas fa-plus"></i> Novo botão raiz</button>
+            <button class="ea-btn-sm ea-btn-info" onclick="EA.abrirCriarFilho()" id="btnCriarFilho" style="display:none"><i class="fas fa-plus-circle"></i> Criar subbotão</button>
+        </div>
+        <div class="ea-arvore" id="eaArvore"></div>
+    </div>
+
+    <!-- ── Coluna direita: Painel de detalhes ─────────── -->
+    <div class="ea-col ea-col-painel" id="eaPainel">
+        <div class="ea-empty" id="eaEmpty">
+            <i class="fas fa-hand-pointer"></i>
+            <p>Clique em um item na árvore para ver os detalhes e editar.</p>
+        </div>
+        <div id="eaDetalhes" style="display:none"></div>
+    </div>
+</div>
+
+<!-- ── Modal de confirmação ────────────────────────── -->
+<div class="ea-modal-bg" id="eaModalBg">
+    <div class="ea-modal" id="eaModal">
+        <h3 id="eaModalTitulo"></h3>
+        <p id="eaModalMsg"></p>
+        <div class="ea-modal-btns">
+            <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
+            <button class="ea-btn-sm ea-btn-danger" id="eaModalConfirm">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Toast ────────────────────────────────────────── -->
+<div class="ea-toast" id="eaToast"></div>
+
+<script>
+const ARVORE_DATA = {{ arvore_json|safe }};
+const API_URL = "{% url 'admin_arvore_api' %}";
+const CSRF = "{{ csrf_token }}";
+const ICONES_ENVIADOS = {{ icones_enviados|safe }};
+
+const FA_ICONES = [
+    'fas fa-folder', 'fas fa-folder-open', 'fas fa-book', 'fas fa-file-pdf',
+    'fas fa-file-word', 'fas fa-file-excel', 'fas fa-file-powerpoint',
+    'fas fa-file-image', 'fas fa-file-video', 'fas fa-file-audio',
+    'fas fa-file-archive', 'fas fa-file-alt', 'fas fa-file-code',
+    'fas fa-globe', 'fas fa-link', 'fas fa-compass', 'fas fa-route',
+    'fas fa-diagram-project', 'fas fa-calendar-check', 'fas fa-project-diagram',
+    'fas fa-book-reader', 'fas fa-users', 'fas fa-trophy', 'fas fa-landmark',
+    'fas fa-graduation-cap', 'fas fa-chalkboard-teacher', 'fas fa-school',
+    'fas fa-university', 'fas fa-star', 'fas fa-heart', 'fas fa-flag',
+    'fas fa-map', 'fas fa-newspaper', 'fas fa-bullhorn', 'fas fa-cog',
+    'fas fa-tools', 'fas fa-chart-bar', 'fas fa-chart-pie', 'fas fa-chart-line',
+    'fas fa-database', 'fas fa-shield-halved', 'fas fa-lock', 'fas fa-key',
+    'fas fa-bell', 'fas fa-envelope', 'fas fa-camera', 'fas fa-music',
+    'fas fa-video', 'fas fa-image', 'fas fa-paint-brush', 'fas fa-palette',
+    'fas fa-puzzle-piece', 'fas fa-lightbulb', 'fas fa-rocket',
+    'fas fa-seedling', 'fas fa-leaf', 'fas fa-tree', 'fas fa-mountain',
+    'fas fa-sun', 'fas fa-cloud', 'fas fa-bolt', 'fas fa-fire',
+    'fas fa-water', 'fas fa-fish', 'fas fa-paw', 'fas fa-dove',
+    'fas fa-handshake', 'fas fa-medal', 'fas fa-award', 'fas fa-certificate',
+    'fas fa-clipboard-list', 'fas fa-tasks', 'fas fa-list-check',
+    'fas fa-sitemap', 'fas fa-network-wired', 'fas fa-code-branch',
+    'fas fa-microscope', 'fas fa-atom', 'fas fa-flask', 'fas fa-dna',
+    'fas fa-brain', 'fas fa-calculator', 'fas fa-ruler', 'fas fa-pen',
+    'fas fa-pencil-alt', 'fas fa-eraser', 'fas fa-highlighter',
+    'fas fa-bookmark', 'fas fa-tag', 'fas fa-tags', 'fas fa-thumbtack',
+    'fas fa-paperclip', 'fas fa-at', 'fas fa-hashtag', 'fas fa-percent',
+    'fas fa-home', 'fas fa-building', 'fas fa-city', 'fas fa-hospital',
+    'fas fa-church', 'fas fa-store', 'fas fa-warehouse',
+];
+
+const EA = {
+    dados: ARVORE_DATA,
+    selecionado: null,
+    filtroAtual: 'todos',
+
+    init() {
+        this.renderArvore();
+        this.contarStats();
+        this.bindBusca();
+        this.bindFiltros();
+    },
+
+    // ── Renderizar árvore ────────────────────────────
+    renderArvore() {
+        const ul = this._renderNos(this.dados);
+        document.getElementById('eaArvore').innerHTML = '';
+        document.getElementById('eaArvore').appendChild(ul);
+    },
+
+    _renderNos(nos) {
+        const ul = document.createElement('ul');
+        nos.forEach(no => {
+            const li = document.createElement('li');
+            li.dataset.id = no.id;
+            li.dataset.nome = no.nome.toLowerCase();
+            li.dataset.conteudos = no.n_conteudos;
+
+            const div = document.createElement('div');
+            div.className = 'ea-no';
+            div.dataset.id = no.id;
+
+            // Toggle
+            const toggle = document.createElement('span');
+            toggle.className = 'ea-toggle' + (no.filhos.length === 0 ? ' vazio' : '');
+            toggle.innerHTML = no.filhos.length > 0 ? '<i class="fas fa-chevron-right"></i>' : '';
+            toggle.onclick = (e) => { e.stopPropagation(); this.toggleNo(li); };
+
+            // Ícone
+            const icone = document.createElement('span');
+            icone.className = 'ea-icone';
+            if (no.icone_imagem) {
+                icone.innerHTML = `<img src="${no.icone_imagem}" alt="">`;
+            } else {
+                icone.innerHTML = `<i class="${no.icone || 'fas fa-folder'}"></i>`;
+            }
+
+            // Nome
+            const nome = document.createElement('span');
+            nome.className = 'ea-nome';
+            nome.textContent = no.nome;
+
+            // Badges
+            const badges = document.createElement('span');
+            badges.className = 'ea-badges';
+            if (no.n_conteudos > 0) badges.innerHTML += `<span class="ea-badge ea-badge-conteudo">${no.n_conteudos}</span>`;
+            if (no.n_anexos > 0) badges.innerHTML += `<span class="ea-badge ea-badge-anexo">${no.n_anexos} <i class="fas fa-paperclip" style="font-size:8px"></i></span>`;
+            badges.innerHTML += `<span class="ea-badge ea-badge-id">#${no.id}</span>`;
+
+            div.appendChild(toggle);
+            div.appendChild(icone);
+            div.appendChild(nome);
+            div.appendChild(badges);
+
+            div.onclick = () => this.selecionar(no.id);
+
+            // Drag
+            div.draggable = true;
+            div.ondragstart = (e) => { e.dataTransfer.setData('text/plain', no.id); div.classList.add('dragging'); };
+            div.ondragend = () => div.classList.remove('dragging');
+            div.ondragover = (e) => { e.preventDefault(); div.classList.add('drag-over'); };
+            div.ondragleave = () => div.classList.remove('drag-over');
+            div.ondrop = (e) => {
+                e.preventDefault();
+                div.classList.remove('drag-over');
+                const srcId = e.dataTransfer.getData('text/plain');
+                if (srcId != no.id) this.moverNo(srcId, no.id);
+            };
+
+            li.appendChild(div);
+
+            if (no.filhos.length > 0) {
+                const subUl = this._renderNos(no.filhos);
+                subUl.classList.add('ea-ul-hidden');
+                li.appendChild(subUl);
+            }
+
+            ul.appendChild(li);
+        });
+        return ul;
+    },
+
+    toggleNo(li) {
+        const subUl = li.querySelector(':scope > ul');
+        if (!subUl) return;
+        subUl.classList.toggle('ea-ul-hidden');
+        const icon = li.querySelector(':scope > .ea-no > .ea-toggle i');
+        if (icon) icon.className = subUl.classList.contains('ea-ul-hidden') ? 'fas fa-chevron-right' : 'fas fa-chevron-down';
+    },
+
+    expandirTudo() {
+        document.querySelectorAll('.ea-arvore ul').forEach(ul => ul.classList.remove('ea-ul-hidden'));
+        document.querySelectorAll('.ea-toggle i').forEach(i => i.className = 'fas fa-chevron-down');
+    },
+
+    recolherTudo() {
+        document.querySelectorAll('.ea-arvore ul ul').forEach(ul => ul.classList.add('ea-ul-hidden'));
+        document.querySelectorAll('.ea-toggle i').forEach(i => i.className = 'fas fa-chevron-right');
+    },
+
+    // ── Seleção ──────────────────────────────────────
+    selecionar(id) {
+        document.querySelectorAll('.ea-no.selected').forEach(n => n.classList.remove('selected'));
+        const no = document.querySelector(`.ea-no[data-id="${id}"]`);
+        if (no) no.classList.add('selected');
+        this.selecionado = id;
+        document.getElementById('btnCriarFilho').style.display = 'inline-flex';
+        this.carregarDetalhes(id);
+    },
+
+    // ── Busca ────────────────────────────────────────
+    bindBusca() {
+        const input = document.getElementById('eaBusca');
+        let timer;
+        input.addEventListener('input', () => {
+            clearTimeout(timer);
+            timer = setTimeout(() => this.filtrarBusca(input.value), 150);
+        });
+    },
+
+    _normalize(s) {
+        return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    },
+
+    filtrarBusca(termo) {
+        const t = this._normalize(termo);
+        const lis = document.querySelectorAll('.ea-arvore li');
+
+        if (!t) {
+            lis.forEach(li => {
+                li.style.display = '';
+                li.querySelector(':scope > .ea-no')?.classList.remove('match');
+            });
+            this.recolherTudo();
+            return;
+        }
+
+        lis.forEach(li => {
+            const nome = this._normalize(li.dataset.nome || '');
+            const match = nome.includes(t);
+            li.querySelector(':scope > .ea-no')?.classList.toggle('match', match);
+        });
+
+        // Show matched + ancestors
+        lis.forEach(li => {
+            const noDiv = li.querySelector(':scope > .ea-no');
+            if (noDiv && noDiv.classList.contains('match')) {
+                li.style.display = '';
+                let parent = li.parentElement?.closest('li');
+                while (parent) {
+                    parent.style.display = '';
+                    const subUl = parent.querySelector(':scope > ul');
+                    if (subUl) subUl.classList.remove('ea-ul-hidden');
+                    const icon = parent.querySelector(':scope > .ea-no > .ea-toggle i');
+                    if (icon) icon.className = 'fas fa-chevron-down';
+                    parent = parent.parentElement?.closest('li');
+                }
+            } else {
+                const hasMatchedChild = li.querySelector('.match');
+                if (!hasMatchedChild) li.style.display = 'none';
+                else {
+                    li.style.display = '';
+                    const subUl = li.querySelector(':scope > ul');
+                    if (subUl) subUl.classList.remove('ea-ul-hidden');
+                    const icon = li.querySelector(':scope > .ea-no > .ea-toggle i');
+                    if (icon) icon.className = 'fas fa-chevron-down';
+                }
+            }
+        });
+    },
+
+    // ── Filtros ───────────────────────────────────────
+    bindFiltros() {
+        document.querySelectorAll('.ea-filtro-chip').forEach(chip => {
+            chip.onclick = () => {
+                document.querySelectorAll('.ea-filtro-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                this.filtroAtual = chip.dataset.filtro;
+                this.aplicarFiltro();
+            };
+        });
+    },
+
+    aplicarFiltro() {
+        const lis = document.querySelectorAll('.ea-arvore > ul > li');
+        lis.forEach(li => {
+            if (this.filtroAtual === 'todos') { li.style.display = ''; return; }
+            const nc = parseInt(li.dataset.conteudos || '0');
+            if (this.filtroAtual === 'com-conteudo') li.style.display = nc > 0 ? '' : 'none';
+            else if (this.filtroAtual === 'vazios') li.style.display = nc === 0 ? '' : 'none';
+            else if (this.filtroAtual === 'raiz') li.style.display = '';
+        });
+        if (this.filtroAtual === 'raiz') {
+            document.querySelectorAll('.ea-arvore ul ul').forEach(ul => ul.classList.add('ea-ul-hidden'));
+        }
+    },
+
+    // ── Stats ────────────────────────────────────────
+    contarStats() {
+        let total = 0, conteudos = 0;
+        const contar = (nos) => { nos.forEach(n => { total++; conteudos += n.n_conteudos; contar(n.filhos); }); };
+        contar(this.dados);
+        document.getElementById('eaStats').innerHTML =
+            `<div class="ea-stat"><div class="ea-stat-num">${total}</div><div class="ea-stat-label">Botões</div></div>` +
+            `<div class="ea-stat"><div class="ea-stat-num">${conteudos}</div><div class="ea-stat-label">Conteúdos</div></div>`;
+    },
+
+    // ── Carregar detalhes (AJAX) ─────────────────────
+    async carregarDetalhes(id) {
+        document.getElementById('eaEmpty').style.display = 'none';
+        document.getElementById('eaDetalhes').style.display = 'block';
+        document.getElementById('eaDetalhes').innerHTML = '<p style="text-align:center;padding:30px"><i class="fas fa-spinner fa-spin"></i> Carregando...</p>';
+
+        try {
+            const resp = await fetch(`${API_URL}?action=detalhes&id=${id}`);
+            const d = await resp.json();
+            this._renderDetalhes(d);
+        } catch(e) {
+            document.getElementById('eaDetalhes').innerHTML = '<p style="color:red">Erro ao carregar</p>';
+        }
+    },
+
+    _renderDetalhes(d) {
+        let html = '';
+
+        // Info
+        html += `<div class="ea-secao">
+            <div class="ea-secao-header" onclick="EA.toggleSecao(this)">
+                <i class="fas fa-info-circle" style="color:var(--ea-info)"></i> Informações
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="ea-secao-body">
+                <div class="ea-info-grid">
+                    <div class="ea-info-item"><strong>ID</strong> #${d.id}</div>
+                    <div class="ea-info-item"><strong>Slug</strong> ${d.slug}</div>
+                    <div class="ea-info-item"><strong>Ordem</strong> ${d.ordem}</div>
+                    <div class="ea-info-item"><strong>Pai</strong> ${d.pai_nome || '(raiz)'}</div>
+                    <div class="ea-info-item"><strong>Menu superior</strong> ${d.mostrar_menu_superior ? 'Sim' : 'Não'}</div>
+                    <div class="ea-info-item"><strong>Navegue por área</strong> ${d.mostrar_navegue_area ? 'Sim' : 'Não'}</div>
+                    <div class="ea-info-item"><strong>Subbotões</strong> ${d.n_filhos}</div>
+                    <div class="ea-info-item"><strong>Ícone</strong> ${d.icone ? '<i class="' + d.icone + '"></i> ' + d.icone : '(auto)'}</div>
+                </div>
+            </div>
+        </div>`;
+
+        // Editar
+        html += `<div class="ea-secao">
+            <div class="ea-secao-header" onclick="EA.toggleSecao(this)">
+                <i class="fas fa-pen-to-square" style="color:var(--ea-warning)"></i> Editar
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="ea-secao-body">
+                <div class="ea-campo"><label>Nome</label><input type="text" id="edNome" value="${this._esc(d.nome)}"></div>
+                <div class="ea-campo"><label>Descrição</label><textarea id="edDesc">${this._esc(d.descricao)}</textarea></div>
+                <div class="ea-campo"><label>Ordem</label><input type="number" id="edOrdem" value="${d.ordem}" min="0"></div>
+                <div class="ea-campo">
+                    <label>Menu superior</label>
+                    <select id="edMenuSup"><option value="1" ${d.mostrar_menu_superior ? 'selected' : ''}>Sim</option><option value="0" ${!d.mostrar_menu_superior ? 'selected' : ''}>Não</option></select>
+                </div>
+                <div class="ea-campo">
+                    <label>Navegue por área</label>
+                    <select id="edNavArea"><option value="1" ${d.mostrar_navegue_area ? 'selected' : ''}>Sim</option><option value="0" ${!d.mostrar_navegue_area ? 'selected' : ''}>Não</option></select>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarEdicao(${d.id})"><i class="fas fa-check"></i> Salvar</button>
+                    <button class="ea-btn-sm ea-btn-info" onclick="EA.abrirMover(${d.id}, '${this._esc(d.nome)}')"><i class="fas fa-arrows-alt"></i> Mover</button>
+                    <button class="ea-btn-sm ea-btn-danger" onclick="EA.confirmarExcluir(${d.id}, '${this._esc(d.nome)}', ${d.n_filhos})"><i class="fas fa-trash"></i> Excluir</button>
+                    <a href="/admin/conteudo/categoria/${d.id}/change/" class="ea-btn-sm ea-btn-ghost" target="_blank"><i class="fas fa-external-link-alt"></i> Admin completo</a>
+                </div>
+            </div>
+        </div>`;
+
+        // Ícone
+        html += `<div class="ea-secao">
+            <div class="ea-secao-header collapsed" onclick="EA.toggleSecao(this)">
+                <i class="fas fa-palette" style="color:var(--ea-primary)"></i> Ícone
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="ea-secao-body collapsed">
+                <div class="ea-campo"><label>Ícone atual</label><div style="font-size:28px;margin:8px 0">${d.icone_imagem ? '<img src="' + d.icone_imagem + '" style="width:40px;height:40px;object-fit:contain">' : (d.icone ? '<i class="' + d.icone + '"></i>' : '<i class="fas fa-folder text-muted"></i>')}</div></div>
+                <div class="ea-campo"><label>Classe Font Awesome</label><input type="text" id="edIcone" value="${this._esc(d.icone)}" placeholder="fas fa-folder"></div>
+                <div class="ea-campo"><label>Enviar imagem</label><input type="file" id="edIconeImg" accept=".png,.jpg,.jpeg,.svg,.webp,.ico,.gif"></div>
+                <div class="ea-campo"><label><input type="checkbox" id="edLimparIcone"> Remover ícone personalizado</label></div>
+                <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarIcone(${d.id})"><i class="fas fa-check"></i> Salvar ícone</button>
+
+                <hr style="margin:16px 0;border-color:var(--ea-border)">
+                <div class="ea-campo"><label>Biblioteca de ícones Font Awesome</label>
+                    <input type="text" id="eaBuscaIconeFA" placeholder="Buscar ícone..." style="margin-bottom:8px" oninput="EA.filtrarIconesFA(this.value)">
+                    <div class="ea-icones-grid" id="eaIconesFAGrid"></div>
+                </div>
+
+                ${ICONES_ENVIADOS.length > 0 ? `
+                <div class="ea-campo"><label>Ícones personalizados enviados</label>
+                    <div class="ea-icones-grid" id="eaIconesEnvGrid"></div>
+                </div>` : ''}
+
+                <hr style="margin:16px 0;border-color:var(--ea-border)">
+                <div class="ea-campo"><label>Enviar novo ícone para a biblioteca</label>
+                    <input type="file" id="edNovoIconeBib" accept=".png,.jpg,.jpeg,.svg,.webp,.ico,.gif">
+                    <button class="ea-btn-sm ea-btn-primary" onclick="EA.uploadIconeBiblioteca()" style="margin-top:6px"><i class="fas fa-upload"></i> Enviar para biblioteca</button>
+                </div>
+            </div>
+        </div>`;
+
+        // Conteúdos
+        html += `<div class="ea-secao">
+            <div class="ea-secao-header collapsed" onclick="EA.toggleSecao(this)">
+                <i class="fas fa-file-alt" style="color:var(--ea-info)"></i> Conteúdos (${d.conteudos.length})
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="ea-secao-body collapsed">`;
+        if (d.conteudos.length > 0) {
+            d.conteudos.forEach(c => {
+                html += `<div class="ea-lista-item">
+                    <span class="ea-tipo">${c.tipo}</span>
+                    <span class="ea-titulo">${this._esc(c.titulo)}</span>
+                    <a href="/admin/conteudo/conteudo/${c.id}/change/" target="_blank" style="font-size:11px;color:var(--ea-info)" title="Editar"><i class="fas fa-pen"></i></a>
+                    <button class="ea-btn-sm ea-btn-danger" onclick="EA.excluirConteudo(${c.id}, ${d.id})" style="padding:2px 6px;font-size:10px" title="Excluir"><i class="fas fa-trash"></i></button>
+                </div>`;
+            });
+        } else {
+            html += '<p style="font-size:12px;color:var(--ea-text-muted)">Nenhum conteúdo associado.</p>';
+        }
+        html += `<hr style="margin:12px 0;border-color:var(--ea-border)">
+            <p style="font-size:12px;font-weight:600;margin-bottom:8px">Associar novo conteúdo:</p>
+            <div class="ea-campo"><label>Título</label><input type="text" id="acTitulo" placeholder="Título do conteúdo"></div>
+            <div class="ea-campo"><label>Tipo</label><select id="acTipo"><option value="documento">Documento</option><option value="video">Vídeo</option><option value="post">Post</option><option value="link">Link</option><option value="pagina">Página</option></select></div>
+            <div class="ea-campo"><label>URL (para links)</label><input type="url" id="acUrl" placeholder="https://..."></div>
+            <div class="ea-campo"><label>Arquivo</label><input type="file" id="acArquivo"></div>
+            <button class="ea-btn-sm ea-btn-info" onclick="EA.associarConteudo(${d.id})"><i class="fas fa-plus"></i> Associar</button>
+            </div></div>`;
+
+        // Anexos
+        html += `<div class="ea-secao">
+            <div class="ea-secao-header collapsed" onclick="EA.toggleSecao(this)">
+                <i class="fas fa-paperclip" style="color:var(--ea-success)"></i> Anexos (${d.anexos.length})
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="ea-secao-body collapsed">`;
+        if (d.anexos.length > 0) {
+            d.anexos.forEach(a => {
+                html += `<div class="ea-lista-item">
+                    <i class="fas fa-file" style="color:var(--ea-text-muted)"></i>
+                    <span class="ea-titulo">${this._esc(a.nome || a.arquivo)}</span>
+                    <button class="ea-btn-sm ea-btn-danger" onclick="EA.removerAnexo(${a.id}, ${d.id})" style="padding:2px 6px;font-size:10px"><i class="fas fa-times"></i></button>
+                </div>`;
+            });
+        } else {
+            html += '<p style="font-size:12px;color:var(--ea-text-muted)">Nenhum anexo.</p>';
+        }
+        html += `<hr style="margin:12px 0;border-color:var(--ea-border)">
+            <div class="ea-campo"><label>Enviar anexo</label><input type="file" id="axArquivo"></div>
+            <div class="ea-campo"><label>Nome (opcional)</label><input type="text" id="axNome" placeholder="Nome do anexo"></div>
+            <button class="ea-btn-sm ea-btn-success" onclick="EA.uploadAnexo(${d.id})"><i class="fas fa-upload"></i> Enviar</button>
+            </div></div>`;
+
+        document.getElementById('eaDetalhes').innerHTML = html;
+
+        // Render FA icons grid
+        this._renderIconesFAGrid();
+        this._renderIconesEnvGrid();
+    },
+
+    _esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); },
+
+    toggleSecao(header) {
+        header.classList.toggle('collapsed');
+        header.nextElementSibling.classList.toggle('collapsed');
+    },
+
+    // ── Ícones FA grid ───────────────────────────────
+    _renderIconesFAGrid(filtro) {
+        const grid = document.getElementById('eaIconesFAGrid');
+        if (!grid) return;
+        const f = filtro ? this._normalize(filtro) : '';
+        grid.innerHTML = '';
+        FA_ICONES.forEach(ic => {
+            if (f && !this._normalize(ic).includes(f)) return;
+            const div = document.createElement('div');
+            div.className = 'ea-icone-item';
+            div.innerHTML = `<i class="${ic}"></i>`;
+            div.title = ic;
+            div.onclick = () => {
+                grid.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
+                div.classList.add('selected');
+                const inp = document.getElementById('edIcone');
+                if (inp) inp.value = ic;
+            };
+            grid.appendChild(div);
+        });
+    },
+
+    filtrarIconesFA(v) { this._renderIconesFAGrid(v); },
+
+    _renderIconesEnvGrid() {
+        const grid = document.getElementById('eaIconesEnvGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        ICONES_ENVIADOS.forEach(ic => {
+            const div = document.createElement('div');
+            div.className = 'ea-icone-item';
+            div.innerHTML = `<img src="${ic.url}" alt="${ic.nome}">`;
+            div.title = ic.nome;
+            div.onclick = () => {
+                grid.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
+                div.classList.add('selected');
+            };
+            grid.appendChild(div);
+        });
+    },
+
+    // ── CRUD ─────────────────────────────────────────
+    async salvarEdicao(id) {
+        const fd = new FormData();
+        fd.append('action', 'editar');
+        fd.append('id', id);
+        fd.append('nome', document.getElementById('edNome').value);
+        fd.append('descricao', document.getElementById('edDesc').value);
+        fd.append('ordem', document.getElementById('edOrdem').value);
+        fd.append('mostrar_menu_superior', document.getElementById('edMenuSup').value);
+        fd.append('mostrar_navegue_area', document.getElementById('edNavArea').value);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    async salvarIcone(id) {
+        const fd = new FormData();
+        fd.append('action', 'editar');
+        fd.append('id', id);
+        const icone = document.getElementById('edIcone').value;
+        if (icone) fd.append('icone', icone);
+        const img = document.getElementById('edIconeImg').files[0];
+        if (img) fd.append('icone_imagem', img);
+        if (document.getElementById('edLimparIcone').checked) fd.append('limpar_icone_imagem', '1');
+        const r = await this._post(fd);
+        if (r.ok) { this.toast('Ícone atualizado.', 'success'); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    abrirCriar(paiId) {
+        const nome = prompt('Nome do novo botão:');
+        if (!nome || !nome.trim()) return;
+        const fd = new FormData();
+        fd.append('action', 'criar');
+        fd.append('nome', nome.trim());
+        if (paiId) fd.append('pai_id', paiId);
+        this._post(fd).then(r => {
+            if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
+            else this.toast(r.error, 'error');
+        });
+    },
+
+    abrirCriarFilho() {
+        if (!this.selecionado) { this.toast('Selecione um botão primeiro.', 'error'); return; }
+        this.abrirCriar(this.selecionado);
+    },
+
+    confirmarExcluir(id, nome, nFilhos) {
+        document.getElementById('eaModalTitulo').textContent = 'Excluir botão';
+        document.getElementById('eaModalMsg').textContent =
+            `Tem certeza que deseja excluir "${nome}"?` +
+            (nFilhos > 0 ? ` Isso também removerá ${nFilhos} subbotão(ões).` : '') +
+            ' Conteúdos não serão excluídos.';
+        document.getElementById('eaModalConfirm').onclick = () => {
+            this.fecharModal();
+            this.excluirNo(id);
+        };
+        document.getElementById('eaModalBg').classList.add('show');
+    },
+
+    async excluirNo(id) {
+        const fd = new FormData();
+        fd.append('action', 'excluir');
+        fd.append('id', id);
+        const r = await this._post(fd);
+        if (r.ok) {
+            this.toast(r.msg, 'success');
+            this.selecionado = null;
+            document.getElementById('eaDetalhes').style.display = 'none';
+            document.getElementById('eaEmpty').style.display = '';
+            document.getElementById('btnCriarFilho').style.display = 'none';
+            this.recarregar();
+        } else this.toast(r.error, 'error');
+    },
+
+    fecharModal() {
+        document.getElementById('eaModalBg').classList.remove('show');
+    },
+
+    // ── Mover ────────────────────────────────────────
+    abrirMover(id, nome) {
+        let html = `<h3>Mover "${nome}" para:</h3>`;
+        html += '<div class="ea-move-lista">';
+        html += `<div class="ea-move-item" data-pai="" onclick="EA.selecionarDestino(this)"><i class="fas fa-home"></i> (Raiz — sem pai)</div>`;
+        const flat = [];
+        const achatarF = (nos, nivel) => {
+            nos.forEach(n => {
+                if (n.id != id) {
+                    flat.push({ id: n.id, nome: n.nome, nivel });
+                    achatarF(n.filhos, nivel + 1);
+                }
+            });
+        };
+        achatarF(this.dados, 0);
+        flat.forEach(f => {
+            const indent = '&nbsp;'.repeat(f.nivel * 4);
+            html += `<div class="ea-move-item" data-pai="${f.id}" onclick="EA.selecionarDestino(this)">${indent}${f.nivel > 0 ? '└ ' : ''}${this._esc(f.nome)}</div>`;
+        });
+        html += '</div>';
+        html += `<div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
+            <button class="ea-btn-sm ea-btn-info" id="btnConfirmarMover" onclick="EA.confirmarMover(${id})"><i class="fas fa-check"></i> Mover</button>
+        </div>`;
+
+        document.getElementById('eaModal').innerHTML = html;
+        document.getElementById('eaModalBg').classList.add('show');
+        this._moverDestino = '';
+    },
+
+    selecionarDestino(el) {
+        document.querySelectorAll('.ea-move-item.selected').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        this._moverDestino = el.dataset.pai;
+    },
+
+    async confirmarMover(id) {
+        this.fecharModal();
+        // Restore modal to default structure
+        document.getElementById('eaModal').innerHTML = `
+            <h3 id="eaModalTitulo"></h3>
+            <p id="eaModalMsg"></p>
+            <div class="ea-modal-btns">
+                <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
+                <button class="ea-btn-sm ea-btn-danger" id="eaModalConfirm">Confirmar</button>
+            </div>`;
+        const fd = new FormData();
+        fd.append('action', 'mover');
+        fd.append('id', id);
+        fd.append('novo_pai_id', this._moverDestino || '');
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    async moverNo(srcId, destId) {
+        const fd = new FormData();
+        fd.append('action', 'mover');
+        fd.append('id', srcId);
+        fd.append('novo_pai_id', destId);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    // ── Associar conteúdo ────────────────────────────
+    async associarConteudo(catId) {
+        const fd = new FormData();
+        fd.append('action', 'associar_conteudo');
+        fd.append('id', catId);
+        fd.append('titulo', document.getElementById('acTitulo').value);
+        fd.append('tipo', document.getElementById('acTipo').value);
+        fd.append('url_externa', document.getElementById('acUrl').value);
+        const arq = document.getElementById('acArquivo').files[0];
+        if (arq) fd.append('arquivo', arq);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
+        else this.toast(r.error, 'error');
+    },
+
+    // ── Anexos ───────────────────────────────────────
+    async uploadAnexo(catId) {
+        const arq = document.getElementById('axArquivo').files[0];
+        if (!arq) { this.toast('Selecione um arquivo.', 'error'); return; }
+        const fd = new FormData();
+        fd.append('action', 'upload_anexo');
+        fd.append('id', catId);
+        fd.append('arquivo', arq);
+        fd.append('nome', document.getElementById('axNome').value);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
+        else this.toast(r.error, 'error');
+    },
+
+    async excluirConteudo(conteudoId, catId) {
+        if (!confirm('Excluir este conteúdo permanentemente?')) return;
+        const fd = new FormData();
+        fd.append('action', 'excluir_conteudo');
+        fd.append('conteudo_id', conteudoId);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    async removerAnexo(anexoId, catId) {
+        if (!confirm('Remover este anexo?')) return;
+        const fd = new FormData();
+        fd.append('action', 'remover_anexo');
+        fd.append('anexo_id', anexoId);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
+        else this.toast(r.error, 'error');
+    },
+
+    // ── Upload ícone biblioteca ──────────────────────
+    async uploadIconeBiblioteca() {
+        const arq = document.getElementById('edNovoIconeBib').files[0];
+        if (!arq) { this.toast('Selecione um arquivo.', 'error'); return; }
+        const fd = new FormData();
+        fd.append('action', 'upload_icone');
+        fd.append('icone', arq);
+        const r = await this._post(fd);
+        if (r.ok) {
+            this.toast(r.msg, 'success');
+            ICONES_ENVIADOS.push({ nome: r.nome, url: r.url });
+            this._renderIconesEnvGrid();
+        } else this.toast(r.error, 'error');
+    },
+
+    // ── Recarregar árvore ────────────────────────────
+    async recarregar() {
+        try {
+            const resp = await fetch(`${API_URL}?action=arvore_json`);
+            this.dados = await resp.json();
+            this.renderArvore();
+            this.contarStats();
+            if (this.selecionado) {
+                const noDiv = document.querySelector(`.ea-no[data-id="${this.selecionado}"]`);
+                if (noDiv) { noDiv.classList.add('selected'); this.carregarDetalhes(this.selecionado); }
+            }
+        } catch(e) { this.toast('Erro ao recarregar.', 'error'); }
+    },
+
+    // ── Helpers ──────────────────────────────────────
+    async _post(fd) {
+        const resp = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': CSRF },
+            body: fd,
+        });
+        return resp.json();
+    },
+
+    toast(msg, tipo) {
+        const t = document.getElementById('eaToast');
+        t.textContent = msg;
+        t.className = 'ea-toast ' + (tipo || 'success');
+        setTimeout(() => t.classList.add('show'), 10);
+        setTimeout(() => t.classList.remove('show'), 3500);
+    },
+};
+
+EA.init();
+</script>
+{% endblock %}

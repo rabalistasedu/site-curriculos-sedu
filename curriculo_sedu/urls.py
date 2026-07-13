@@ -6,6 +6,7 @@ from conteudo.admin_views import (
     organizar_view, adicionar_arquivos_view, api_subcategorias_itens,
     barra_superior_view,
 )
+from conteudo.arvore_views import estrutura_arvores_view, arvore_api
 from conteudo.media_views import serve_media
 
 urlpatterns = [
@@ -14,6 +15,8 @@ urlpatterns = [
     path('admin/api/subcategorias/', admin.site.admin_view(api_subcategorias_itens), name='api_subcategorias_itens'),
     path('admin/organizar/', admin.site.admin_view(organizar_view), name='admin_organizar'),
     path('admin/barra-superior/', admin.site.admin_view(barra_superior_view), name='admin_barra_superior'),
+    path('admin/estrutura-arvores/', admin.site.admin_view(estrutura_arvores_view), name='admin_estrutura_arvores'),
+    path('admin/estrutura-arvores/api/', admin.site.admin_view(arvore_api), name='admin_arvore_api'),
     path('admin/', admin.site.urls),
     path('', include('conteudo.urls')),
 ]

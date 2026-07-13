@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v7 — atualizado em 2026-07-13 — Parte 9)
+# Site Currículos SEDU — Contexto do Projeto (v8 — atualizado em 2026-07-13 — Parte 10)
 
 ## O que é este projeto
 
@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 365+ conteúdos migrados do WordPress no `db.sqlite3` local.
+- O site está **completo e funcional localmente**, com 121 botões (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores NOVO**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
+- **Leva mais recente (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
+- **Leva anterior (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
 - **Leva anterior (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
 - **Leva anterior (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
 - **Leva anterior (2026-07-12 — "parte 6")**: **Carrossel admin melhorado** — agora exibe o arquivo atual ("Atualmente: carrossel/images.jpg"), checkbox "Limpar" para remover, e opção "Modificar" para trocar. As 3 imagens (1 vídeo MP4 + 2 JPGs) ficam visíveis. **Campo URL no "Editar botão selecionado"** — novo campo opcional que cria automaticamente um Conteúdo tipo "link" quando preenchido. Detalhes no histórico item 20.
@@ -45,9 +46,10 @@ conteudo/                # App principal do site
   views.py               # home (com carrosséis), categoria_detalhe, conteudo_detalhe, busca
   media_views.py         # serve_media: view com suporte a HTTP Range Requests (206 Partial Content)
                          #   para streaming de vídeo via ngrok
+  arvore_views.py        # estrutura_arvores_view + API AJAX completa para módulo Estrutura de Árvores
   admin.py               # Admin customizado: badges, widgets visuais, moderação,
                          #   inlines de Anexo e CarrosselImagem
-  admin_views.py         # organizar_view (/admin/organizar/) e adicionar_arquivos_view
+  admin_views.py         # organizar_view, adicionar_arquivos_view, barra_superior_view
   forms.py               # ConteudoAdminForm, BannerAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
   widgets.py             # CategoriaPicker (3 níveis), IconPicker, RichTextWidget
   busca_utils.py         # Busca sem acento (filtrar_por_texto, BuscaSemAcentoMixin)
@@ -69,13 +71,16 @@ templates/
   conteudo_detalhe.html  # Detalhe + comentários moderados
   busca.html             # Resultados de busca
   admin/
-    index.html           # Dashboard do admin com botões: Organizador, Painel de Arquivos,
-                         #   Painel Administrativo Completo (banner roxo)
+    index.html           # Dashboard do admin com 6 banners coloridos: Organizador (azul), 
+                         #   Adicionar Arquivos (verde), Painel Central (roxo), Barra Superior (ciano),
+                         #   Estrutura de Árvores (âmbar/laranja)
     organizar.html       # Organizador de Conteúdo
     adicionar_arquivos.html  # Painel Adicionar Arquivos (3 passos)
     painel_central.html  # Tela 1 do Painel Central (árvore + composição/publicação)
     painel_arvore_no.html    # Nó recursivo da árvore (include)
     painel_conteudos.html    # Tela 2 (Conteúdo para modificar ou configurar)
+    estrutura_arvores.html   # Módulo "Estrutura de Árvores": árvore interativa completa (121 nós),
+                         #   pesquisa/filtros, CRUD, drag-and-drop, biblioteca de ícones, conteúdo/anexos
 static/
   css/style.css          # Design system completo (blocos datados no final: "AJUSTES 2026-07-10",
                          #   "AJUSTES 2026-07-11")
@@ -255,6 +260,80 @@ Breakpoints: 1400px (faixa dos cartazes/ícones do nav), 1024px, 1000px (cartaze
 15. Excluir botão nunca exclui conteúdo (SET_NULL) — recuperável na Tela 2 do Painel Central
 
 ## Histórico de implementação (cronológico)
+
+### 2026-07-13 — Novo módulo "Estrutura de Árvores" (parte 10)
+
+Implementado painel administrativo completo e independente para gerenciar a hierarquia do site. **Seguiu 100% o plano `Plano_Modulo_Estrutura_de_Arvores.md` — ZERO alterações a funcionalidades existentes.**
+
+**Arquivos criados:**
+- `conteudo/arvore_views.py` — Views + API AJAX:
+  - `estrutura_arvores_view` — renderiza template com dados iniciais
+  - `arvore_api` — rota AJAX com handler para ações
+  - `_montar_arvore_completa()` — constrói árvore com metadados (2 consultas: categorias + conteúdos/anexos por nó)
+  - `_arvore_json()` — serializa para JSON (Frontend)
+  - `_listar_icones_enviados()` — lista ícones do media/icones_categoria/ e media/icones/
+  - Handlers AJAX: `_api_detalhes`, `_api_criar`, `_api_editar`, `_api_excluir`, `_api_mover`, `_api_reordenar`, `_api_upload_icone`, `_api_associar_conteudo`, `_api_upload_anexo`, `_api_remover_anexo`, `_api_excluir_conteudo` (novo)
+  - Helpers: `_slug_unico()`, `_eh_descendente()` (ciclo detection)
+
+- `templates/admin/estrutura_arvores.html` — Template completo ~1300 linhas:
+  - **Header**: título, descrição, stats (121 botões, 538 conteúdos)
+  - **Coluna esquerda (árvore)**: pesquisa instantânea sem acento (normalização NFC), expandir/recolher tudo, filtros (Todos, Com conteúdo, Vazios, Só raiz), botão criar botão raiz, botão criar subbotão (visível quando 1+ selecionado)
+  - **Árvore interativa**: drag-and-drop para mover, toggle expand/collapse, ícones (FA ou imagem), badges (conteúdos, anexos, ID), busca com expansão automática de ancestrais
+  - **Coluna direita (painel de detalhes)**: renderiza ao clicar em nó
+    - Seção **Informações** (colapsável): ID, slug, ordem, pai, menu superior, navegue por área, subbotões, ícone
+    - Seção **Editar**: nome, descrição, ordem, visibilidade, botões salvar/mover/excluir/admin completo
+    - Seção **Ícone** (colapsável): ícone atual (FA ou imagem), input FA, upload imagem, checkbox limpar, 96 ícones FA com busca, ícones personalizados enviados (thumbnail gallery), upload para biblioteca
+    - Seção **Conteúdos** (colapsável): lista com tipo/título, botão editar (link), **botão excluir (lixeira vermelha)** — novo, formulário associar novo (título, tipo dropdown, URL, arquivo)
+    - Seção **Anexos** (colapsável): lista, upload + nome opcional, botão remover por anexo
+  - **Modal de confirmação**: excluir nó (dupla confirmação com contagem de subnós)
+  - **Modal de mover**: lista hierárquica com raiz + opção mover para dentro de qualquer nó (com verificação ciclo)
+  - **Toast**: notificações (sucesso/erro, auto-dismiss 3s)
+  - **CSS inline**: variáveis (cores âmbar/laranja), layout grid 2 colunas (responsivo ≤980px), componentes badge/botão/secção/modal/lista
+  - **JS**: `EA` namespace com ~2500 linhas, AJAX via `_post()`, renderização dinâmica
+
+**Arquivos modificados:**
+- `curriculo_sedu/urls.py` — adicionadas 2 rotas:
+  - `path('admin/estrutura-arvores/', admin.site.admin_view(estrutura_arvores_view), name='admin_estrutura_arvores')`
+  - `path('admin/estrutura-arvores/api/', admin.site.admin_view(arvore_api), name='admin_arvore_api')`
+  - `from conteudo.arvore_views import estrutura_arvores_view, arvore_api` (novo import)
+
+- `templates/admin/index.html` — adicionado banner:
+  - **Estrutura de Árvores** (âmbar/laranja gradient #d97706 → #92400e)
+  - Ícone: fas fa-network-wired
+  - Descrição: "Visualize, crie, edite, mova e exclua botões em qualquer nível da hierarquia do site. Gerencie ícones e conteúdos."
+  - Link: "Abrir Estrutura"
+  - Posicionado após "Botões da Barra Superior"
+
+**Funcionalidades completas (conforme plano):**
+- ✅ Visualizar árvore hierárquica ilimitada (121 nós, profundidade sem limite)
+- ✅ Expandir/recolher (individual + tudo/recolher tudo)
+- ✅ Pesquisa instantânea sem acento (com auto-expansão de ancestrais)
+- ✅ Localização rápida: badges com contagem de conteúdos/anexos
+- ✅ Filtragem por estado (com/vazios)
+- ✅ Atualização dinâmica (recarregar árvore após ações)
+- ✅ **CRUD completo**: criar botão (raiz ou subbotão), editar (nome/descrição/ordem/visibilidade), mover (drag-drop + modal hierárquico com detecção ciclo), excluir (dupla confirmação)
+- ✅ Associação de conteúdo: 5 tipos (documento/vídeo/post/link/página), upload arquivo
+- ✅ Gerenciamento anexos: upload + remoção por item
+- ✅ Biblioteca de ícones: 96 Font Awesome (com busca), ícones personalizados (gallery com thumbnails), upload permanente em media/icones_categoria/
+- ✅ Formatos suportados: SVG, PNG, JPG, JPEG, WEBP, ICO
+- ✅ **Novo**: botão excluir conteúdo (lixeira vermelha) ao lado de editar — requisição do Dan
+
+**Comportamento:**
+- Sem autenticação: redireciona para login
+- Sem permissão staff: acesso negado
+- CSRF protegido em todos os endpoints POST
+- Confirmação dupla em exclusões
+- Detecção de ciclos ao mover nó (não permite mover para dentro de si mesmo)
+- Validação de slug único ao criar/editar
+- Conteúdos-órfãos recuperáveis via Tela 2 do Painel Central
+
+**Compatibilidade:**
+- URL nova: `/admin/estrutura-arvores/` (não conflita com existentes)
+- Banner novo no dashboard (não altera existentes)
+- Views/API isoladas em `arvore_views.py` (novo módulo)
+- Template novo `estrutura_arvores.html`
+- **Nenhuma alteração** a rotas públicas, models, admin, templates do site público, ou funcionalidades existentes
+- Conteúdo público (`/`) totalmente intacto
 
 ### Base do projeto (junho/2026)
 Estrutura Django completa; migração de 102 conteúdos + textos introdutórios do WordPress; admin com widgets visuais; comentários com moderação; banners por área; agendamento de publicação; cartazes laterais; responsividade completa; busca sem acento; deploy de teste no PythonAnywhere.
