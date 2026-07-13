@@ -252,6 +252,17 @@ def _editar_botao(request):
 
     cat.save()
 
+    url = request.POST.get('editar_url', '').strip()
+    if url:
+        Conteudo.objects.create(
+            titulo=nome or cat.nome,
+            slug=_slug_unico(Conteudo, nome or cat.nome),
+            tipo='link',
+            url_externa=url,
+            categoria=cat,
+            status='publicado',
+        )
+
     anexo_file = request.FILES.get('editar_anexo')
     if anexo_file:
         Anexo.objects.create(

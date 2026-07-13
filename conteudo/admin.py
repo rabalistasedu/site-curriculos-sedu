@@ -478,7 +478,9 @@ class CarrosselImagemInline(admin.TabularInline):
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'imagem':
-            kwargs['widget'] = forms.FileInput(attrs={'accept': '.jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.ogg,.ogv,.mov,.m4v'})
+            kwargs['widget'] = forms.ClearableFileInput(attrs={
+                'accept': '.jpg,.jpeg,.png,.gif,.webp,.mp4,.webm,.ogg,.ogv,.mov,.m4v'
+            })
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
