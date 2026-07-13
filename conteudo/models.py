@@ -640,6 +640,12 @@ class Comentario(models.Model):
         Conteudo, on_delete=models.CASCADE,
         related_name='comentarios', verbose_name='Conteúdo'
     )
+    parent = models.ForeignKey(
+        'self', null=True, blank=True,
+        on_delete=models.CASCADE,
+        related_name='respostas',
+        verbose_name='Em resposta a',
+    )
     nome = models.CharField('Nome', max_length=100)
     email = models.EmailField('E-mail', blank=True)
     texto = models.TextField('Comentário')
@@ -653,6 +659,8 @@ class Comentario(models.Model):
         'Resposta do administrador', blank=True,
         help_text='Resposta que aparece vinculada ao comentário no site. Deixe vazio se não quiser responder.'
     )
+    votos_positivos = models.PositiveIntegerField('👍 Curtidas', default=0)
+    votos_negativos = models.PositiveIntegerField('👎 Não curtidas', default=0)
     data_criacao = models.DateTimeField('Enviado em', auto_now_add=True)
     data_resposta = models.DateTimeField('Respondido em', null=True, blank=True)
 

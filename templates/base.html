@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Font Awesome (ícones) -->
+    <!-- Font Awesome (Ã­cones) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <!-- CSS do site (versionado para evitar cache do navegador) -->
@@ -26,15 +26,15 @@
 </head>
 <body>
 
-<!-- ── Header ─────────────────────────────────────────────────── -->
+<!-- â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <header class="header">
     <div class="container header-inner">
-        <img src="{% static 'img/brasao-es.png' %}" alt="Brasão do Estado do Espírito Santo" class="header-brasao">
+        <img src="{% static 'img/brasao-es.png' %}" alt="BrasÃ£o do Estado do EspÃ­rito Santo" class="header-brasao">
 
         <a href="{% url 'conteudo:home' %}" class="logo {% block logo_class %}{% endblock %}">
             <div class="logo-text">
-                <span class="logo-title">Currículo</span>
-                <span class="logo-subtitle">Espírito Santo</span>
+                <span class="logo-title">CurrÃ­culo</span>
+                <span class="logo-subtitle">EspÃ­rito Santo</span>
             </div>
         </a>
 
@@ -49,7 +49,7 @@
                 {{ cat.nome }}
             </a>
             {% endfor %}
-            <button type="button" class="nav-more" id="navMore" aria-label="Mais categorias" title="Mais categorias">⋯</button>
+            <button type="button" class="nav-more" id="navMore" aria-label="Mais categorias" title="Mais categorias">â‹¯</button>
             <div class="nav-more-menu" id="navMoreMenu"></div>
         </nav>
 
@@ -59,10 +59,10 @@
         </form>
 
         {% if config.endereco %}
-        {# Localização do órgão em tempo real no Google Maps (endereço da ConfiguracaoSite) #}
+        {# LocalizaÃ§Ã£o do Ã³rgÃ£o em tempo real no Google Maps (endereÃ§o da ConfiguracaoSite) #}
         <a href="https://www.google.com/maps/search/?api=1&query={{ config.endereco|urlencode }}"
            target="_blank" rel="noopener" class="nav-localizacao"
-           title="Ver a localização da SEDU no mapa">
+           title="Ver a localizaÃ§Ã£o da SEDU no mapa">
             <i class="fas fa-location-dot"></i>
         </a>
         {% endif %}
@@ -71,49 +71,49 @@
     </div>
 </header>
 
-<!-- ── Conteúdo principal ─────────────────────────────────────── -->
+<!-- â”€â”€ ConteÃºdo principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <main class="main">
     {% block content %}{% endblock %}
 </main>
 
-<!-- ── Footer ─────────────────────────────────────────────────── -->
+<!-- â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
 <footer class="footer">
     <div class="container footer-inner">
         <div class="footer-info">
-            <h3>GERÊNCIA DE CURRÍCULO DA EDUCAÇÃO BÁSICA (GECEB)</h3>
+            <h3>GERÃŠNCIA DE CURRÃCULO DA EDUCAÃ‡ÃƒO BÃSICA (GECEB)</h3>
             <p><i class="fas fa-envelope"></i> {{ config.email_contato }}</p>
             <p><i class="fas fa-phone"></i> {{ config.telefone }}</p>
         </div>
         <div class="footer-info">
-            <h3>SECRETARIA DA EDUCAÇÃO (SEDU)</h3>
+            <h3>SECRETARIA DA EDUCAÃ‡ÃƒO (SEDU)</h3>
             <p><i class="fas fa-map-marker-alt"></i> {{ config.endereco|linebreaksbr }}</p>
         </div>
         <div class="footer-links">
-            <h3>Navegação</h3>
+            <h3>NavegaÃ§Ã£o</h3>
             {% for cat in menu_categorias %}
             <a href="{% url 'conteudo:categoria' cat.slug %}">{{ cat.nome }}</a>
             {% endfor %}
         </div>
     </div>
-    {# Botão discreto de volta à home — acima da barra do cadeado, colado à direita; pulsa fora da home #}
+    {# BotÃ£o discreto de volta Ã  home â€” acima da barra do cadeado, colado Ã  direita; pulsa fora da home #}
     <div class="container footer-voltar-wrap">
         <a href="{% url 'conteudo:home' %}"
            class="footer-voltar-inicio{% if request.path != '/' %} pulse{% endif %}"
-           title="Voltar à página inicial">
-            <i class="fas fa-house"></i> Voltar página inicial
+           title="Voltar Ã  pÃ¡gina inicial">
+            <i class="fas fa-house"></i> Voltar pÃ¡gina inicial
         </a>
     </div>
     <div class="footer-bottom">
         <div class="container footer-bottom-inner">
-            <p>&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo</p>
-            <a href="/admin/" class="admin-access-btn" title="Área administrativa">
+            <p>&copy; {{ config.nome_site }} â€” Secretaria de Estado da EducaÃ§Ã£o do EspÃ­rito Santo</p>
+            <a href="/admin/" class="admin-access-btn" title="Ãrea administrativa">
                 <i class="fas fa-lock"></i>
             </a>
         </div>
     </div>
 </footer>
 
-{# VLibras — widget oficial gov.br (código de vlibras.gov.br/doc/widget); botão estilizado em style.css #}
+{# VLibras â€” widget oficial gov.br (cÃ³digo de vlibras.gov.br/doc/widget); botÃ£o estilizado em style.css #}
 <div vw class="enabled">
     <div vw-access-button class="active"></div>
     <div vw-plugin-wrapper>

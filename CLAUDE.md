@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v5 — atualizado em 2026-07-13)
+# Site Currículos SEDU — Contexto do Projeto (v6 — atualizado em 2026-07-13)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 365+ conteúdos migrados do WordPress no `db.sqlite3` local.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — implementado do zero baseado no `Plano_Sistema_de_Comentarios_Moderados.md`. 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
+- **Leva mais recente (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
+- **Leva anterior (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
 - **Leva anterior (2026-07-12 — "parte 6")**: **Carrossel admin melhorado** — agora exibe o arquivo atual ("Atualmente: carrossel/images.jpg"), checkbox "Limpar" para remover, e opção "Modificar" para trocar. As 3 imagens (1 vídeo MP4 + 2 JPGs) ficam visíveis. **Campo URL no "Editar botão selecionado"** — novo campo opcional que cria automaticamente um Conteúdo tipo "link" quando preenchido. Detalhes no histórico item 20.
 - **Leva anterior (2026-07-12 — "parte 5")**: **Editar botão selecionado no Painel Central** — ao marcar 1 botão na árvore, aparece seção verde "Editar botão selecionado" com nome, descrição, ícone (FA + upload de imagem), e upload de anexo. AJAX carrega dados atuais; POST salva e redireciona. **Botões sem pai → "Botões novos criados"** — botões criados sem selecionar pai vão automaticamente para uma categoria raiz oculta. **CategoriaPicker dinâmico** — categorias sem subcategorias (como "Botões novos criados") agora aparecem no Django Admin e no Adicionar Arquivos. **Texto centralizado padrão** em todos os botões (.topic-btn, .card-body, subbotões). **Texto "→ Abrir para ver" removido** dos cards de subbotão. Detalhes no histórico item 19.
 - **Leva anterior (2026-07-12 — "parte 4")**: **Rodapé sticky corrigido** — em páginas com pouco conteúdo (busca vazia, categorias vazias), o rodapé agora cola no fundo da viewport em vez de "flutuar" no meio. Implementado com flexbox no body + flex: 1 no main. Histórico completo no bloco "Histórico de implementação" item 18.
@@ -20,7 +21,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria), `conteudo/0015` (carrossel aceita vídeo — ImageField→FileField), `conteudo/0016` (texto_alinhamento/texto_fonte/texto_tamanho_fonte em Conteudo), `painel/0002` (EstiloBotao.tamanho) e **`conteudo/0019`** (Comentario: status 3 estados + resposta + data_resposta) precisam de `python manage.py migrate` em qualquer ambiente novo.
+- **Migrações aplicadas**: `conteudo/0012-0020` + `painel/0002`. Migração **`conteudo/0020`** (Comentario: parent + votos_positivos + votos_negativos) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -408,6 +409,58 @@ Implementado do zero com base no `Plano_Sistema_de_Comentarios_Moderados.md` (Da
 - **Versão de cache**: CSS `?v=20260713-1` (incrementado de `-8`).
 - **Arquivos modificados**: `conteudo/models.py` (Comentario expandido), `conteudo/migrations/0019_comentario_status_resposta.py` (nova migração), `conteudo/admin.py` (ComentarioAdmin reescrito), `conteudo/views.py` (exibir_comentarios + status), `templates/conteudo_detalhe.html` (seção comentários redesenhada), `static/css/style.css` (novo bloco CSS), `templates/base.html` (cache-busting `-1`).
 - **Testado**: página `/conteudo/teste-5/` mostra formulário, badge, aviso; seção ausente em `/conteudo/link-externo/` (tipo='link'); admin `/admin/conteudo/comentario/` mostra ações em lote e badges coloridos.
+
+### 2026-07-13 — Respostas de visitantes + Votos 👍/👎 em comentários (parte 8)
+Implementado fluxo completo de respostas aninhadas e votação AJAX. **REGRA: nenhuma funcionalidade existente foi alterada.**
+
+1. **Modelo `Comentario` expandido** (migração `conteudo/0020`):
+   - Novo campo `parent` (ForeignKey self, null/blank, CASCADE) — vincula uma resposta ao comentário original
+   - Novo campo `votos_positivos` (PositiveIntegerField, default=0) — contador de 👍
+   - Novo campo `votos_negativos` (PositiveIntegerField, default=0) — contador de 👎
+
+2. **Respostas aninhadas** (`conteudo/views.py`):
+   - View `conteudo_detalhe` agora prefetch respostas (somente `status='publicado'`)
+   - POST recebe `parent_id` hidden (optional) — se preenchido, cria resposta ligada ao comentário original
+   - Respostas entram com `status='pendente'` (moderação igual aos comentários raízes)
+   - Cada resposta pode ser respondida novamente (estrutura recursiva), mas o template exibe apenas 2 níveis (comentário + respostas diretas)
+
+3. **Votação AJAX** (nova URL `/comentario/<pk>/votar/`):
+   - POST com `voto=positivo` ou `voto=negativo`
+   - Retorna JSON com `votos_positivos` e `votos_negativos` atualizados
+   - Sem autenticação (visitante anônimo pode votar)
+   - `@require_POST` + CSRF protegido
+   - No template: JS desabilita os 2 botões de voto após click (1 voto por sessão, browser-local)
+
+4. **Admin** (`conteudo/admin.py`):
+   - Coluna "Tipo" (mostra "↩ Resposta" em roxo se tiver parent, senão vazio)
+   - Coluna "Votos" (mostra 👍 N 👎 N em cores)
+   - Campo `parent` visível na edição (readonly quando obj já existe)
+   - Seção colapsável "👍 Votos dos visitantes" com `votos_positivos`/`votos_negativos` readonly
+
+5. **Template `conteudo_detalhe.html`**:
+   - Comentários raízes renderizam 2 botões: "Gostei" (👍) e "Não gostei" (👎) com contadores
+   - Botão "Responder" que abre/fecha formulário inline (`display: none / block` com classe `.open`)
+   - Formulário inline com campos nome/email/texto + hidden `parent_id` + botões "Enviar resposta" / "Cancelar"
+   - Seção `.comment-replies` (recuada, linha azul à esquerda) com respostas do visitante
+   - Cada resposta renderiza: avatar menor (roxo), label "↩ resposta", seus próprios botões 👍/👎 (sem "Responder" — máx 2 níveis)
+   - JS: delegado ao form-submit; AJAX no click dos botões `.comment-vote-btn` (sem reload)
+
+6. **CSS** (novo bloco "AJUSTES 2026-07-13 — Votos e respostas aninhadas"):
+   - `.comment-actions` — flex container com botões
+   - `.comment-vote-btn` — pílula cinza com 👍/👎, muda cor ao hover (.vote-pos verde, .vote-neg vermelho)
+   - `.comment-vote-btn.voted-pos/voted-neg` — após votar, fica com fundo colorido e font-weight 700
+   - `.comment-reply-btn` — pílula cinza com "Responder"
+   - `.comment-inline-reply` — `display: none`, com classe `.open` fica `display: block`
+   - `.comment-inline-reply.open` — formulário visível com fundo azul claro e borda esquerda
+   - `.comment-replies` — margin-left 40px, borda-left 2px azul, padding-left 12px (recuo visual)
+   - `.comment-item.comment-reply` — fundo semi-transparente, padding reduzido
+   - `.comment-avatar-reply` — 28px (menor que raiz), roxo (#7c3aed)
+   - `.comment-reply-label` — "↩ resposta" em roxo, fundo claro, border-radius 10px
+   - Cache atualizado para `?v=20260713-2`
+
+- **Versão de cache**: CSS `?v=20260713-2` (incrementado de `-1`).
+- **Arquivos modificados**: `conteudo/models.py` (parent + votos), `conteudo/migrations/0020_comentario_parent_votos.py` (nova migração), `conteudo/urls.py` (nova rota votar_comentario), `conteudo/views.py` (prefetch respostas, parent_id no POST, view votar_comentario), `conteudo/admin.py` (coluna eh_resposta, votos_badge, parent no fieldset), `templates/conteudo_detalhe.html` (botões 👍/👎, formulário inline, respostas aninhadas, JS AJAX), `static/css/style.css` (novo bloco de estilos), `templates/base.html` (cache-busting `-2`).
+- **Testado**: página `/conteudo/teste-5/` com comentário publicado + resposta: botões 👍/👎 funcionam via AJAX (contadores incrementam); "Responder" abre/fecha formulário inline; respostas aninhadas aparecem recuadas com label "↩ resposta"; cada resposta tem seus próprios 👍/👎.
 
 ## Deploy
 

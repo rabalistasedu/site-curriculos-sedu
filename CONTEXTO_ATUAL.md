@@ -1,4 +1,4 @@
-# Contexto Atual do Projeto — 2026-07-13 (ATUALIZADO)
+# Contexto Atual do Projeto — 2026-07-13 (ATUALIZADO — parte 8)
 
 ## Estado do projeto
 **Status**: Em desenvolvimento ativo — site funcional localmente, **deploy para produção na SEDU em progresso**
@@ -10,7 +10,7 @@
 - 📋 **Estratégia de migração**: reescrita de URLs do WordPress via `.htaccess` (manter subdomínio do WordPress para não duplicar ~1000 arquivos)
 
 ## Últimas mudanças (2026-07-12 a 2026-07-13)
-Foram implementadas **7 partes de correções + features (18 no total)**:
+Foram implementadas **8 partes de correções + features (19 no total)**:
 
 ### Parte 1—4: Bugs de layout + funcionalidade (2026-07-12, morning-afternoon)
 1. ✅ **Navegação embolada no mobile** — regra global de 2 colunas limitada a 861px+
@@ -36,6 +36,10 @@ Foram implementadas **7 partes de correções + features (18 no total)**:
 15. ✅ **Resposta do admin** — campo editável com data automática
 16. ✅ **Exclusão de tipo "link"** — comentários não aparecem em links externos
 17. ✅ **Visual moderno** — badge, botão gradiente, aviso de moderação, seção colapsável
+
+### Parte 8: Respostas + Votos em comentários (2026-07-13)
+18. ✅ **Respostas de visitantes aninhadas** — `Comentario.parent` (FK self) para threads. Formulário inline "Responder" com comportamento show/hide animado. Respostas renderizadas recuadas com label "↩ resposta" em roxo.
+19. ✅ **Votos 👍/👎 AJAX** — contador de `votos_positivos`/`votos_negativos`. Endpoint `/comentario/<pk>/votar/` (POST). Cada visitante vota 1x por sessão (desabilita botões após click). Atualiza contador sem reload.
 
 ---
 

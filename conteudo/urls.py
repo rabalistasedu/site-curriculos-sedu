@@ -8,4 +8,5 @@ urlpatterns = [
     path('busca/', views.busca, name='busca'),
     path('categoria/<slug:slug>/', views.categoria_detalhe, name='categoria'),
     path('conteudo/<slug:slug>/', views.conteudo_detalhe, name='conteudo_detalhe'),
+    path('comentario/<int:pk>/votar/', views.votar_comentario, name='votar_comentario'),
 ]

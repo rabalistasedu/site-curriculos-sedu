@@ -2311,3 +2311,131 @@ div[vw-access-button]:hover { opacity: 1; }
     .comment-form-box { padding: 14px 14px; }
     .comment-item { padding: 12px 12px; }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-13 — Votos e respostas aninhadas em comentários
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Ações do comentário (votar + responder) */
+.comment-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* Botões de voto 👍/👎 */
+.comment-vote-btn {
+    background: none;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 12px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    font-family: inherit;
+    user-select: none;
+}
+.comment-vote-btn:hover { background: #f9fafb; }
+.comment-vote-btn.vote-pos:hover { border-color: #10b981; color: #10b981; }
+.comment-vote-btn.vote-neg:hover { border-color: #ef4444; color: #ef4444; }
+.comment-vote-btn.voted-pos { border-color: #10b981; color: #10b981; font-weight: 700; background: rgba(16,185,129,.07); }
+.comment-vote-btn.voted-neg { border-color: #ef4444; color: #ef4444; font-weight: 700; background: rgba(239,68,68,.07); }
+.comment-vote-btn:disabled { cursor: default; opacity: 0.8; }
+.comment-vote-btn .vote-count { font-weight: 600; font-size: 11px; min-width: 14px; text-align: center; }
+
+/* Botão "Responder" */
+.comment-reply-btn {
+    background: none;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    font-size: 12px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+.comment-reply-btn:hover { border-color: #2d5a8e; color: #2d5a8e; }
+
+/* Formulário inline de resposta */
+.comment-inline-reply {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #2d5a8e;
+}
+.comment-inline-reply.open { display: block; }
+
+/* Botão "Cancelar" dentro do formulário inline */
+.comment-cancel-reply {
+    background: none;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.2s, color 0.2s;
+}
+.comment-cancel-reply:hover { border-color: #9ca3af; color: #374151; }
+
+/* Botão de resposta inline (menor que o principal) */
+.comment-reply-submit {
+    padding: 7px 16px;
+    font-size: 12.5px;
+}
+
+/* Respostas aninhadas (um nível abaixo) */
+.comment-replies {
+    margin-left: 40px;
+    border-left: 2px solid #e5e7eb;
+    padding-left: 12px;
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+/* Item de resposta */
+.comment-item.comment-reply {
+    background: rgba(255,255,255,0.5);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 4px;
+}
+
+/* Avatar menor para respostas */
+.comment-avatar-reply {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 20px !important;
+    color: #7c3aed !important;
+    flex-shrink: 0;
+}
+
+/* Label "↩ resposta" */
+.comment-reply-label {
+    font-size: 11px;
+    color: #7c3aed;
+    font-weight: 500;
+    background: rgba(124,58,237,0.08);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+    .comment-replies { margin-left: 16px; padding-left: 10px; }
+    .comment-actions { gap: 6px; }
+}

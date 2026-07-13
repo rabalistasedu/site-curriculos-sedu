@@ -1,102 +1,108 @@
-# 🎓 SITE CURRÍCULO SEDU — Resumo de Contexto (2026-07-13)
+﻿# ðŸŽ“ SITE CURRÃCULO SEDU â€” Resumo de Contexto (2026-07-13 â€” parte 8)
 
-## Estado atual: FUNCIONAL E COMPLETO ✅✅✅
+## Estado atual: FUNCIONAL E COMPLETO âœ…âœ…âœ…
 
-Projeto de migração de site WordPress → Django 5.2 para SEDU (Secretaria Educação ES).  
-**Status do banco**: 365+ conteúdos migrados, 10 categorias principais, 42+ subcategorias, **sistema de comentários moderado**.  
-**Deploy**: ❌ PythonAnywhere abandonado | ✅ ngrok (demo) | 🎯 `curriculo.sedu.es.gov.br/curriculo/` (produção)
-
----
-
-## ⚡ Para entender onde estamos (2026-07-11)
-
-### 🚦 Decisão crítica de Deploy (2026-07-10)
-- **PythonAnywhere não é mais usado** — ambiente de teste insuficiente para demonstrações
-- **Novo destino**: servidor próprio da SEDU em `curriculo.sedu.es.gov.br/curriculo/` (subdomínio para não quebrar WordPress existente)
-- **Até lá**: demonstrações via **ngrok** (gera URL pública válida por 2h)
-- **Estratégia**: reescrita de URLs via `.htaccess` Apache (manter WordPress em subdomínio, evitar duplicar ~1000 arquivos)
-
-### Categorias principais (menu "Navegue por área")
-1. **Documentos Curriculares** — Currículo Atual (5 sub-etapas) + Material de Apoio + 7 subcategorias  
-2. **Orientações Curriculares** — 129 docs + 16 subcategorias  
-3. **Itinerários Formativos de Aprofundamento (IFA)** — 10 subcategorias, 14 docs  
-4. **Projetos Integradores** — 5 subcategorias  
-5. **Rotinas Pedagógicas Escolares (RPE)** — 8 subcategorias, **42 apostilas**  
-6. **Programas** — Educar para a Paz, Mais Leitores, Educação Ambiental, Sucesso Escolar
-7. **Livro Didático**, **Modalidades e Diversidade**, **Olimpíadas**, **Institucional**
-
-### 📊 Dados no banco
-- **SQLite** (`db.sqlite3`) — 365+ conteúdos (documento, video, post, link, página)
-- **Sistema de comentários MODERADO** — 3 estados (pendente/publicado/recusado), resposta do admin, não aparece em links
-- **Agendamento de publicação** por data/hora futura
-- **Banners rotativos** por área, tamanho configurável, URL de imagem opcional
-- **Cartazes de eventos** (desktop sticky nas laterais, mobile botão flutuante)
-- **Carrosséis de imagens** com autoplay, aceita vídeos (MP4/WebM/etc), código HTML customizável
+Projeto de migraÃ§Ã£o de site WordPress â†’ Django 5.2 para SEDU (Secretaria EducaÃ§Ã£o ES).  
+**Status do banco**: 365+ conteÃºdos migrados, 10 categorias principais, 42+ subcategorias, **sistema de comentÃ¡rios moderado**.  
+**Deploy**: âŒ PythonAnywhere abandonado | âœ… ngrok (demo) | ðŸŽ¯ `curriculo.sedu.es.gov.br/curriculo/` (produÃ§Ã£o)
 
 ---
 
-## 🆕 O que mudou em 2026-07-12 a 2026-07-13
+## âš¡ Para entender onde estamos (2026-07-11)
 
-### 🎯 7 Partes de Implementação
+### ðŸš¦ DecisÃ£o crÃ­tica de Deploy (2026-07-10)
+- **PythonAnywhere nÃ£o Ã© mais usado** â€” ambiente de teste insuficiente para demonstraÃ§Ãµes
+- **Novo destino**: servidor prÃ³prio da SEDU em `curriculo.sedu.es.gov.br/curriculo/` (subdomÃ­nio para nÃ£o quebrar WordPress existente)
+- **AtÃ© lÃ¡**: demonstraÃ§Ãµes via **ngrok** (gera URL pÃºblica vÃ¡lida por 2h)
+- **EstratÃ©gia**: reescrita de URLs via `.htaccess` Apache (manter WordPress em subdomÃ­nio, evitar duplicar ~1000 arquivos)
 
-**Parte 1–4 (2026-07-12, morning-afternoon): Bugs de layout + funcionalidade**
-- ✅ Navegação embolada em mobile → limitada a 861px+
-- ✅ Carrossel dividido em dois no painel Eventos → widget funcional
-- ✅ Carrossel invadindo rodapé azul → `max-height: 100%`
-- ✅ Anexos de conteúdo invisíveis → seção de download adicionada
-- ✅ Subbotões invisíveis → aparecem como cards destacados com borda azul
-- ✅ Busca da árvore (3+ níveis) → ancestrais expandem automaticamente
-- ✅ Rodapé flutuando em páginas vazias → flexbox sticky footer
+### Categorias principais (menu "Navegue por Ã¡rea")
+1. **Documentos Curriculares** â€” CurrÃ­culo Atual (5 sub-etapas) + Material de Apoio + 7 subcategorias  
+2. **OrientaÃ§Ãµes Curriculares** â€” 129 docs + 16 subcategorias  
+3. **ItinerÃ¡rios Formativos de Aprofundamento (IFA)** â€” 10 subcategorias, 14 docs  
+4. **Projetos Integradores** â€” 5 subcategorias  
+5. **Rotinas PedagÃ³gicas Escolares (RPE)** â€” 8 subcategorias, **42 apostilas**  
+6. **Programas** â€” Educar para a Paz, Mais Leitores, EducaÃ§Ã£o Ambiental, Sucesso Escolar
+7. **Livro DidÃ¡tico**, **Modalidades e Diversidade**, **OlimpÃ­adas**, **Institucional**
 
-**Parte 5 (2026-07-12, evening): Edição inline + features novas**
-- ✅ Editar botão selecionado → seção verde AJAX (nome, descrição, ícone, anexo)
-- ✅ Botões sem pai → "Botões novos criados" (categoria raiz automática)
-- ✅ CategoriaPicker dinâmico → categorias vazias agora aparecem
-- ✅ Criar subárea nos botões marcados → nova seção azul (criar subáreas em lote)
+### ðŸ“Š Dados no banco
+- **SQLite** (`db.sqlite3`) â€” 365+ conteÃºdos (documento, video, post, link, pÃ¡gina)
+- **Sistema de comentÃ¡rios MODERADO** â€” 3 estados (pendente/publicado/recusado), resposta do admin, nÃ£o aparece em links
+- **Agendamento de publicaÃ§Ã£o** por data/hora futura
+- **Banners rotativos** por Ã¡rea, tamanho configurÃ¡vel, URL de imagem opcional
+- **Cartazes de eventos** (desktop sticky nas laterais, mobile botÃ£o flutuante)
+- **CarrossÃ©is de imagens** com autoplay, aceita vÃ­deos (MP4/WebM/etc), cÃ³digo HTML customizÃ¡vel
+
+---
+
+## ðŸ†• O que mudou em 2026-07-12 a 2026-07-13
+
+### ðŸŽ¯ 7 Partes de ImplementaÃ§Ã£o
+
+**Parte 1â€“4 (2026-07-12, morning-afternoon): Bugs de layout + funcionalidade**
+- âœ… NavegaÃ§Ã£o embolada em mobile â†’ limitada a 861px+
+- âœ… Carrossel dividido em dois no painel Eventos â†’ widget funcional
+- âœ… Carrossel invadindo rodapÃ© azul â†’ `max-height: 100%`
+- âœ… Anexos de conteÃºdo invisÃ­veis â†’ seÃ§Ã£o de download adicionada
+- âœ… SubbotÃµes invisÃ­veis â†’ aparecem como cards destacados com borda azul
+- âœ… Busca da Ã¡rvore (3+ nÃ­veis) â†’ ancestrais expandem automaticamente
+- âœ… RodapÃ© flutuando em pÃ¡ginas vazias â†’ flexbox sticky footer
+
+**Parte 5 (2026-07-12, evening): EdiÃ§Ã£o inline + features novas**
+- âœ… Editar botÃ£o selecionado â†’ seÃ§Ã£o verde AJAX (nome, descriÃ§Ã£o, Ã­cone, anexo)
+- âœ… BotÃµes sem pai â†’ "BotÃµes novos criados" (categoria raiz automÃ¡tica)
+- âœ… CategoriaPicker dinÃ¢mico â†’ categorias vazias agora aparecem
+- âœ… Criar subÃ¡rea nos botÃµes marcados â†’ nova seÃ§Ã£o azul (criar subÃ¡reas em lote)
 
 **Parte 6 (2026-07-12, evening): Carrossel admin + URL no painel**
-- ✅ Carrossel admin melhorado → `ClearableFileInput` (mostra arquivo atual + Limpar + Modificar)
-- ✅ Campo URL no painel → cria automaticamente Conteudo tipo "link"
+- âœ… Carrossel admin melhorado â†’ `ClearableFileInput` (mostra arquivo atual + Limpar + Modificar)
+- âœ… Campo URL no painel â†’ cria automaticamente Conteudo tipo "link"
 
-**Parte 7 (2026-07-13): Sistema de Comentários Moderados**
-- ✅ 3 estados (pendente/publicado/recusado) — migração `conteudo.0019`
-- ✅ Resposta do admin — campo editável com data automática
-- ✅ Exclusão em tipo "link" — comentários não aparecem em links externos
-- ✅ Visual moderno — badge de contagem, botão gradiente, aviso de moderação, seção colapsável
+**Parte 7 (2026-07-13): Sistema de ComentÃ¡rios Moderados**
+- âœ… 3 estados (pendente/publicado/recusado) â€” migraÃ§Ã£o `conteudo.0019`
+- âœ… Resposta do admin â€” campo editÃ¡vel com data automÃ¡tica
+- âœ… ExclusÃ£o em tipo "link" â€” comentÃ¡rios nÃ£o aparecem em links externos
+- âœ… Visual moderno â€” badge de contagem, botÃ£o gradiente, aviso de moderaÃ§Ã£o, seÃ§Ã£o colapsÃ¡vel
 
-### 📝 Arquivos modificados (2026-07-12 a 2026-07-13)
-- `conteudo/models.py` — Comentario expandido (status, resposta, data_resposta)
-- `conteudo/migrations/` — 0012–0019 (carrossel, ícones, comentários)
-- `conteudo/admin.py` — ComentarioAdmin reescrito (3 estados, ações em lote, badges)
-- `conteudo/views.py` — conteudo_detalhe com `exibir_comentarios` + comentários com status
-- `painel/views.py` — _dados_botao, _editar_botao, _criar_subareas (AJAX)
-- `templates/conteudo_detalhe.html` — seção de comentários redesenhada
-- `templates/admin/painel_central.html` — "Editar botão selecionado" (AJAX) + "Criar subárea"
-- `static/css/style.css` — novos blocos CSS (comentários, layout fixes) — cache `?v=20260713-1`
-- `templates/base.html` — cache-busting atualizado
+**Parte 8 (2026-07-13): Respostas + Votos em comentÃ¡rios**
+- âœ… Respostas aninhadas â€” `Comentario.parent` (FK self), threads de atÃ© 2 nÃ­veis
+- âœ… FormulÃ¡rio inline "Responder" â€” abre/fecha animado, placeholder dinÃ¢mico ("...a Maria")
+- âœ… VotaÃ§Ã£o ðŸ‘/ðŸ‘Ž AJAX â€” `/comentario/<pk>/votar/`, sem reload, desabilita apÃ³s 1 voto
+- âœ… Respostas recuadas â€” margin-left 40px, borda azul, label "â†© resposta" roxo
 
-### 🔄 Merge de conflito (2026-07-11)
-- Um commit remoto ("codigo ngrok") havia substituído `.gitignore` inteiro por erro
-- Resolvido no merge `2faca8e` mantendo versão completa do `.gitignore`
+### ðŸ“ Arquivos modificados (2026-07-12 a 2026-07-13)
+- `conteudo/models.py` â€” Comentario expandido (status, resposta, data_resposta)
+- `conteudo/migrations/` â€” 0012â€“0019 (carrossel, Ã­cones, comentÃ¡rios)
+- `conteudo/admin.py` â€” ComentarioAdmin reescrito (3 estados, aÃ§Ãµes em lote, badges)
+- `conteudo/views.py` â€” conteudo_detalhe com `exibir_comentarios` + comentÃ¡rios com status
+- `painel/views.py` â€” _dados_botao, _editar_botao, _criar_subareas (AJAX)
+- `templates/conteudo_detalhe.html` â€” seÃ§Ã£o de comentÃ¡rios redesenhada
+- `templates/admin/painel_central.html` â€” "Editar botÃ£o selecionado" (AJAX) + "Criar subÃ¡rea"
+- `static/css/style.css` â€” novos blocos CSS (comentÃ¡rios, layout fixes) â€” cache `?v=20260713-2`
+- `templates/base.html` â€” cache-busting atualizado
+
+### ðŸ”„ Merge de conflito (2026-07-11)
+- Um commit remoto ("codigo ngrok") havia substituÃ­do `.gitignore` inteiro por erro
+- Resolvido no merge `2faca8e` mantendo versÃ£o completa do `.gitignore`
 - Regra: nunca perder o `.gitignore` ao fazer pull em outro computador
 
 ---
 
-## 🚀 Para começar novo (em novo computador)
+## ðŸš€ Para comeÃ§ar novo (em novo computador)
 
-### Opção 1: Git (recomendado)
+### OpÃ§Ã£o 1: Git (recomendado)
 ```bash
 git clone https://github.com/rabalistasedu/site-curriculos-sedu.git
 cd "Site Curriculos SEDU"
 python -m venv venv
 venv\Scripts\activate  # Windows
 pip install -r requirements.txt
-python manage.py migrate  # Aplica migrações 0013 e 0002
+python manage.py migrate  # Aplica migraÃ§Ãµes 0013 e 0002
 python manage.py runserver 8001
 ```
 Acesse: http://127.0.0.1:8001/
 
-### Opção 2: Copiar pasta (sem Git)
+### OpÃ§Ã£o 2: Copiar pasta (sem Git)
 ```bash
 python -m venv venv
 venv\Scripts\activate
@@ -107,83 +113,83 @@ python manage.py runserver 8001
 
 ---
 
-## 📋 Management Commands (já executados; dados no banco)
+## ðŸ“‹ Management Commands (jÃ¡ executados; dados no banco)
 
 ```bash
 python manage.py popular_categorias           # 10 categorias + subcategorias
-python manage.py popular_descricoes           # Textos introdutórios (HTML)
+python manage.py popular_descricoes           # Textos introdutÃ³rios (HTML)
 python manage.py migrar_conteudo              # 102 docs do site antigo
-python manage.py migrar_orientacoes           # 129 docs (Orientações Curriculares)
+python manage.py migrar_orientacoes           # 129 docs (OrientaÃ§Ãµes Curriculares)
 python manage.py migrar_ifa                   # 10 subcats + 14 docs (IFA)
-python manage.py organizar_curriculo_atual    # 5 sub-botões (EI/EFI/EFF/EM/Material)
+python manage.py organizar_curriculo_atual    # 5 sub-botÃµes (EI/EFI/EFF/EM/Material)
 python manage.py migrar_material_apoio        # 5 docs de apoio
 python manage.py migrar_projetos_integradores # 5 subcats (Projetos Integradores)
 python manage.py migrar_rpe                   # 8 subcats + 42 apostilas (RPE)
-python manage.py migrar_olimpiadas            # 9 subcats (Olimpíadas)
-python manage.py curar_recentes                # Marca itens de "Conteúdos recentes"
-python manage.py resolver_pendencias          # Arquiva 3 conteúdos sem dados
+python manage.py migrar_olimpiadas            # 9 subcats (OlimpÃ­adas)
+python manage.py curar_recentes                # Marca itens de "ConteÃºdos recentes"
+python manage.py resolver_pendencias          # Arquiva 3 conteÃºdos sem dados
 ```
-**Todos são idempotentes** (rodar 2x = mesmo resultado).
+**Todos sÃ£o idempotentes** (rodar 2x = mesmo resultado).
 
 ---
 
-## 📁 Estrutura do projeto (atual)
+## ðŸ“ Estrutura do projeto (atual)
 
 ```
 curriculo_sedu/              # Settings, URLs, WSGI
 conteudo/
-  ├─ models.py              # Categoria, Conteudo (+ icone_imagem), Anexo, 
-  │                         #   Banner, Cartaz, Carrossel, ConfiguracaoSite, Comentario
-  ├─ admin.py               # Admin customizado (badges, widgets)
-  ├─ views.py               # home, categoria, conteudo, busca
-  ├─ widgets.py             # IconPicker, CategoriaPicker, RichTextWidget
-  ├─ forms.py               # ConteudoAdminForm (+ icone_imagem)
-  ├─ management/commands/   # 11 migration commands
-  └─ migrations/            # 0001-0019 (comentários novo)
+  â”œâ”€ models.py              # Categoria, Conteudo (+ icone_imagem), Anexo, 
+  â”‚                         #   Banner, Cartaz, Carrossel, ConfiguracaoSite, Comentario
+  â”œâ”€ admin.py               # Admin customizado (badges, widgets)
+  â”œâ”€ views.py               # home, categoria, conteudo, busca
+  â”œâ”€ widgets.py             # IconPicker, CategoriaPicker, RichTextWidget
+  â”œâ”€ forms.py               # ConteudoAdminForm (+ icone_imagem)
+  â”œâ”€ management/commands/   # 11 migration commands
+  â””â”€ migrations/            # 0001-0019 (comentÃ¡rios novo)
 painel/                      # Painel Central Administrativo (Telas 1 e 2)
-  ├─ models.py              # Vinculo, EstiloBotao (+ tamanho)
-  ├─ views.py               # painel_central_view, conteudos_view (Telas 1 e 2)
-  └─ migrations/            # 0001-0002 (tamanho novo)
+  â”œâ”€ models.py              # Vinculo, EstiloBotao (+ tamanho)
+  â”œâ”€ views.py               # painel_central_view, conteudos_view (Telas 1 e 2)
+  â””â”€ migrations/            # 0001-0002 (tamanho novo)
 templates/
-  ├─ base.html              # Header, nav, footer
-  ├─ home.html              # Hero, banners, destaques, recentes, áreas, cartazes, carrosséis
-  ├─ categoria.html         # Subcategorias, filtros, conteúdos
-  ├─ conteudo_detalhe.html  # Detalhe + comentários moderados
-  ├─ busca.html             # Resultados de busca
-  └─ admin/                 # Templates customizados do admin (painel central, organizar)
+  â”œâ”€ base.html              # Header, nav, footer
+  â”œâ”€ home.html              # Hero, banners, destaques, recentes, Ã¡reas, cartazes, carrossÃ©is
+  â”œâ”€ categoria.html         # Subcategorias, filtros, conteÃºdos
+  â”œâ”€ conteudo_detalhe.html  # Detalhe + comentÃ¡rios moderados
+  â”œâ”€ busca.html             # Resultados de busca
+  â””â”€ admin/                 # Templates customizados do admin (painel central, organizar)
 static/
-  ├─ css/style.css          # Design system (?v=20260713-1)
-  ├─ css/admin_picker.css   # Estilos dos widgets visuais
-  ├─ js/main.js             # Slider, menu, carrossel (?v=20260711-1)
-  └─ img/                   # Brasão, logos, ícones
-db.sqlite3                   # Banco SQLite (365+ conteúdos)
+  â”œâ”€ css/style.css          # Design system (?v=20260713-1)
+  â”œâ”€ css/admin_picker.css   # Estilos dos widgets visuais
+  â”œâ”€ js/main.js             # Slider, menu, carrossel (?v=20260711-1)
+  â””â”€ img/                   # BrasÃ£o, logos, Ã­cones
+db.sqlite3                   # Banco SQLite (365+ conteÃºdos)
 requirements.txt
 manage.py
-CLAUDE.md                    # 📘 Documentação técnica completa
-CONTEXTO_ATUAL.md            # 📋 Estado atual + quick start
-README.md                    # 📖 Overview do projeto
+CLAUDE.md                    # ðŸ“˜ DocumentaÃ§Ã£o tÃ©cnica completa
+CONTEXTO_ATUAL.md            # ðŸ“‹ Estado atual + quick start
+README.md                    # ðŸ“– Overview do projeto
 ```
 
 ---
 
-## 🔧 Stack
+## ðŸ”§ Stack
 
 - **Backend**: Django 5.2, Python 3.13 (local) / 3.11 (SEDU)
-- **DB**: SQLite (dev e produção)
+- **DB**: SQLite (dev e produÃ§Ã£o)
 - **Frontend**: CSS puro, Font Awesome 6, Google Fonts (Inter)
 - **Versionamento**: GitHub (`rabalistasedu/site-curriculos-sedu`)
-- **Demo**: ngrok (URL temporária)
-- **Produção**: `curriculo.sedu.es.gov.br/curriculo/` (2026)
+- **Demo**: ngrok (URL temporÃ¡ria)
+- **ProduÃ§Ã£o**: `curriculo.sedu.es.gov.br/curriculo/` (2026)
 
 ---
 
-## 📖 URLs principais
+## ðŸ“– URLs principais
 
-| Rota | Descrição |
+| Rota | DescriÃ§Ã£o |
 |------|-----------|
 | `/` | Home |
-| `/categoria/<slug>/` | Conteúdos da categoria |
-| `/conteudo/<slug>/` | Detalhe + comentários |
+| `/categoria/<slug>/` | ConteÃºdos da categoria |
+| `/conteudo/<slug>/` | Detalhe + comentÃ¡rios |
 | `/busca/?q=termo` | Busca textual |
 | `/admin/` | Django Admin |
 | `/admin/painel-central/` | Painel Central (Telas 1 e 2) |
@@ -192,27 +198,27 @@ README.md                    # 📖 Overview do projeto
 
 ---
 
-## ⚠️ Notas importantes
+## âš ï¸ Notas importantes
 
-1. **Banco já populado** — db.sqlite3 tem tudo. Não precisa rodar commands (a menos que teste).
-2. **Conteúdos apontam para URLs externas** — PDFs no WordPress/Google Drive/SEDU.
-3. **Cache do navegador** — mudar CSS? Force: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
-4. **GitHub** — use `.bat` "Subir GitHub SEDU" (faz pull automático agora).
-5. **Migrações aplicadas** — `conteudo.0012-0019` + `painel.0002`. Para novo ambiente: `python manage.py migrate`.
-6. **Superusers locais** — `ridan` (Sedu@2026), `rabalista`.
-
----
-
-## 📞 Documentação
-
-- **[CLAUDE.md](CLAUDE.md)** — Documentação técnica completa (modelos, views, admin, decisões, troubleshooting)
-- **[CONTEXTO_ATUAL.md](CONTEXTO_ATUAL.md)** — Estado atual + mudanças de 2026-07-11
-- **[README.md](README.md)** — Overview do projeto
-- **[Especificacao_Painel_Admin_Site_Curriculos.md](Especificacao_Painel_Admin_Site_Curriculos.md)** — Spec oficial do Painel Central
-- **[MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md](MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md)** — Deploy final na SEDU
+1. **Banco jÃ¡ populado** â€” db.sqlite3 tem tudo. NÃ£o precisa rodar commands (a menos que teste).
+2. **ConteÃºdos apontam para URLs externas** â€” PDFs no WordPress/Google Drive/SEDU.
+3. **Cache do navegador** â€” mudar CSS? Force: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
+4. **GitHub** â€” use `.bat` "Subir GitHub SEDU" (faz pull automÃ¡tico agora).
+5. **MigraÃ§Ãµes aplicadas** â€” `conteudo.0012-0019` + `painel.0002`. Para novo ambiente: `python manage.py migrate`.
+6. **Superusers locais** â€” `ridan` (Sedu@2026), `rabalista`.
 
 ---
 
-**Última atualização**: 2026-07-13  
-**Versão CSS**: `?v=20260713-1` | **Versão JS**: `?v=20260711-1`  
+## ðŸ“ž DocumentaÃ§Ã£o
+
+- **[CLAUDE.md](CLAUDE.md)** â€” DocumentaÃ§Ã£o tÃ©cnica completa (modelos, views, admin, decisÃµes, troubleshooting)
+- **[CONTEXTO_ATUAL.md](CONTEXTO_ATUAL.md)** â€” Estado atual + mudanÃ§as de 2026-07-11
+- **[README.md](README.md)** â€” Overview do projeto
+- **[Especificacao_Painel_Admin_Site_Curriculos.md](Especificacao_Painel_Admin_Site_Curriculos.md)** â€” Spec oficial do Painel Central
+- **[MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md](MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md)** â€” Deploy final na SEDU
+
+---
+
+**Ãšltima atualizaÃ§Ã£o**: 2026-07-13  
+**VersÃ£o CSS**: `?v=20260713-1` | **VersÃ£o JS**: `?v=20260711-1`  
 **GitHub**: https://github.com/rabalistasedu/site-curriculos-sedu.git

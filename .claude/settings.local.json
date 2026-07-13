@@ -106,7 +106,9 @@
       "Bash(./venv/Scripts/python.exe -)",
       "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo)",
       "Bash(venv/Scripts/python.exe -c ' *)",
-      "Bash(venvScriptspython.exe -c ' *)"
+      "Bash(venvScriptspython.exe -c ' *)",
+      "Bash(powershell -Command \"\\(Get-Content 'C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\templates\\\\base.html'\\) -replace 'style.css\\\\?v=20260713-1', 'style.css?v=20260713-2' | Set-Content 'C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\templates\\\\base.html' -Encoding UTF8\")",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py migrate)"
     ]
   }
 }

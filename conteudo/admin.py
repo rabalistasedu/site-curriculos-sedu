@@ -363,19 +363,19 @@ class BannerAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
-    list_display = ['nome', 'conteudo_link', 'texto_resumido', 'status_badge', 'tem_resposta', 'data_criacao']
+    list_display = ['nome', 'conteudo_link', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
     list_filter = ['status', 'data_criacao']
     search_fields = ['nome', 'email', 'texto', 'conteudo__titulo']
     ordering = ['-data_criacao']
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # edição — nome/email/texto/conteudo/data são leitura
-            return ['nome', 'email', 'texto', 'conteudo', 'data_criacao', 'data_resposta']
-        return ['data_criacao', 'data_resposta']  # criação manual — tudo editável
+            return ['nome', 'email', 'texto', 'conteudo', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
+        return ['data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
 
     fieldsets = (
         ('💬 Comentário', {
-            'fields': ('conteudo', 'nome', 'email', 'texto', 'data_criacao'),
+            'fields': ('conteudo', 'parent', 'nome', 'email', 'texto', 'data_criacao'),
         }),
         ('🔖 Moderação', {
             'fields': ('status',),
@@ -384,6 +384,10 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                 'Publicado = visível no site. '
                 'Recusado = descartado (não aparece no site).'
             ),
+        }),
+        ('👍 Votos dos visitantes', {
+            'fields': ('votos_positivos', 'votos_negativos'),
+            'classes': ('collapse',),
         }),
         ('💬 Resposta do administrador', {
             'fields': ('resposta', 'data_resposta'),
@@ -421,6 +425,22 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             return format_html('<span style="color:#10b981;">✓ Sim</span>')
         return format_html('<span style="color:#9ca3af;">—</span>')
     tem_resposta.short_description = 'Resposta'
+
+    def eh_resposta(self, obj):
+        if obj.parent:
+            return format_html(
+                '<span style="color:#7c3aed;font-size:11px;">↩ Resposta</span>'
+            )
+        return format_html('<span style="color:#9ca3af;font-size:11px;">—</span>')
+    eh_resposta.short_description = 'Tipo'
+
+    def votos_badge(self, obj):
+        return format_html(
+            '<span style="color:#10b981;">👍 {}</span> '
+            '<span style="color:#ef4444;">👎 {}</span>',
+            obj.votos_positivos, obj.votos_negativos
+        )
+    votos_badge.short_description = 'Votos'
 
     actions = ['aprovar_selecionados', 'recusar_selecionados', 'excluir_selecionados']
 

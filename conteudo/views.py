@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q, Case, When, Value, IntegerField, F
+from django.db.models import Q, Case, When, Value, IntegerField, F, Prefetch
 from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel
 
 
@@ -144,8 +146,13 @@ def conteudo_detalhe(request, slug):
 
     # Comentários só aparecem em conteúdos que não são links externos puros
     exibir_comentarios = conteudo.tipo != 'link'
+
+    # Apenas comentários de nível raiz (sem parent); respostas vêm via prefetch
+    respostas_qs = Comentario.objects.filter(status='publicado').order_by('data_criacao')
     comentarios = (
-        conteudo.comentarios.filter(status='publicado').order_by('data_criacao')
+        conteudo.comentarios.filter(status='publicado', parent__isnull=True)
+        .prefetch_related(Prefetch('respostas', queryset=respostas_qs))
+        .order_by('data_criacao')
         if exibir_comentarios else []
     )
 
@@ -153,6 +160,13 @@ def conteudo_detalhe(request, slug):
         nome = request.POST.get('nome', '').strip()
         email = request.POST.get('email', '').strip()
         texto = request.POST.get('texto', '').strip()
+        parent_id = request.POST.get('parent_id', '').strip()
+        parent = None
+        if parent_id:
+            try:
+                parent = Comentario.objects.get(pk=parent_id, conteudo=conteudo, status='publicado', parent__isnull=True)
+            except Comentario.DoesNotExist:
+                pass
         if nome and texto:
             Comentario.objects.create(
                 conteudo=conteudo,
@@ -160,6 +174,7 @@ def conteudo_detalhe(request, slug):
                 email=email,
                 texto=texto,
                 status='pendente',
+                parent=parent,
             )
             messages.success(
                 request,
@@ -207,4 +222,26 @@ def busca(request):
         'query': query,
         'resultados': resultados,
         'categorias_encontradas': categorias_encontradas,
+    })
+
+
+@require_POST
+def votar_comentario(request, pk):
+    """AJAX: registra voto 👍 ou 👎 em um comentário publicado."""
+    try:
+        c = Comentario.objects.get(pk=pk, status='publicado')
+    except Comentario.DoesNotExist:
+        return JsonResponse({'error': 'não encontrado'}, status=404)
+    voto = request.POST.get('voto')
+    if voto == 'positivo':
+        c.votos_positivos += 1
+        c.save(update_fields=['votos_positivos'])
+    elif voto == 'negativo':
+        c.votos_negativos += 1
+        c.save(update_fields=['votos_negativos'])
+    else:
+        return JsonResponse({'error': 'voto inválido'}, status=400)
+    return JsonResponse({
+        'votos_positivos': c.votos_positivos,
+        'votos_negativos': c.votos_negativos,
     })
