@@ -1,9 +1,9 @@
-# 🎓 SITE CURRÍCULO SEDU — Resumo de Contexto (2026-07-11)
+# 🎓 SITE CURRÍCULO SEDU — Resumo de Contexto (2026-07-13)
 
-## Estado atual: FUNCIONAL E EM TRANSIÇÃO ✅➡️🚀
+## Estado atual: FUNCIONAL E COMPLETO ✅✅✅
 
 Projeto de migração de site WordPress → Django 5.2 para SEDU (Secretaria Educação ES).  
-**Status do banco**: 231+ conteúdos migrados, 10 categorias principais, 42+ subcategorias.  
+**Status do banco**: 365+ conteúdos migrados, 10 categorias principais, 42+ subcategorias, **sistema de comentários moderado**.  
 **Deploy**: ❌ PythonAnywhere abandonado | ✅ ngrok (demo) | 🎯 `curriculo.sedu.es.gov.br/curriculo/` (produção)
 
 ---
@@ -26,61 +26,54 @@ Projeto de migração de site WordPress → Django 5.2 para SEDU (Secretaria Edu
 7. **Livro Didático**, **Modalidades e Diversidade**, **Olimpíadas**, **Institucional**
 
 ### 📊 Dados no banco
-- **SQLite** (`db.sqlite3`) — 231+ conteúdos (documento, video, post, link, página)
-- **Sistema de comentários** com moderação (substitui Disqus)
+- **SQLite** (`db.sqlite3`) — 365+ conteúdos (documento, video, post, link, página)
+- **Sistema de comentários MODERADO** — 3 estados (pendente/publicado/recusado), resposta do admin, não aparece em links
 - **Agendamento de publicação** por data/hora futura
-- **Banners rotativos** por área, tamanho configurável
+- **Banners rotativos** por área, tamanho configurável, URL de imagem opcional
 - **Cartazes de eventos** (desktop sticky nas laterais, mobile botão flutuante)
-- **Carrosséis de imagens** (novo 2026-07-11) com autoplay e código HTML customizável
+- **Carrosséis de imagens** com autoplay, aceita vídeos (MP4/WebM/etc), código HTML customizável
 
 ---
 
-## 🆕 O que mudou em 2026-07-11
+## 🆕 O que mudou em 2026-07-12 a 2026-07-13
 
-### ✨ 4 Pedidos Implementados
+### 🎯 7 Partes de Implementação
 
-#### 1. Ícone personalizado (imagem/qualquer formato)
-- Campo novo: `Conteudo.icone_imagem` (FileField, aceita PNG/JPG/SVG/ICO/WEBP)
-- Migração: `conteudo.0013`
-- Editável em: admin de Conteudo + Painel Central
-- Renderização: `<img class="icone-personalizado">` com classe `sem-fundo` (remove gradiente de fundo)
-- Prioridade: `icone_imagem` > `icone_manual` > automático
-- Afeta: home (destaques + recentes), categoria, busca, sidebar
+**Parte 1–4 (2026-07-12, morning-afternoon): Bugs de layout + funcionalidade**
+- ✅ Navegação embolada em mobile → limitada a 861px+
+- ✅ Carrossel dividido em dois no painel Eventos → widget funcional
+- ✅ Carrossel invadindo rodapé azul → `max-height: 100%`
+- ✅ Anexos de conteúdo invisíveis → seção de download adicionada
+- ✅ Subbotões invisíveis → aparecem como cards destacados com borda azul
+- ✅ Busca da árvore (3+ níveis) → ancestrais expandem automaticamente
+- ✅ Rodapé flutuando em páginas vazias → flexbox sticky footer
 
-#### 2. Cards de conteúdo mais compactos
-- **Grid**: 280px → 180px mínimo
-- **Ícone**: 110px → 64-100px
-- **Título**: 16px → 13,5px (max 2 linhas)
-- **Padding**: 20px → 12px
-- **Visual**: mesmo espírito do "Navegue por área" e "Conteúdos recentes" quadrados
+**Parte 5 (2026-07-12, evening): Edição inline + features novas**
+- ✅ Editar botão selecionado → seção verde AJAX (nome, descrição, ícone, anexo)
+- ✅ Botões sem pai → "Botões novos criados" (categoria raiz automática)
+- ✅ CategoriaPicker dinâmico → categorias vazias agora aparecem
+- ✅ Criar subárea nos botões marcados → nova seção azul (criar subáreas em lote)
 
-#### 3. Tamanho dos botões/subbotões no Painel Central
-- Campo novo: `EstiloBotao.tamanho` (select Pequeno/Médio/Grande)
-- Migração: `painel.0002`
-- Property: `classe_tamanho` (retorna `botao-tam-pequeno`/`botao-tam-grande`/vazio)
-- Edição: seção "Aparência dos botões marcados" do Painel Central
-- Aplicação: vale para o botão E todos os subbotões de dentro dele
-- CSS: regras específicas em `area-card`, `topic-btn`, `subcategory-chip`
+**Parte 6 (2026-07-12, evening): Carrossel admin + URL no painel**
+- ✅ Carrossel admin melhorado → `ClearableFileInput` (mostra arquivo atual + Limpar + Modificar)
+- ✅ Campo URL no painel → cria automaticamente Conteudo tipo "link"
 
-#### 4. Tipo de conteúdo ao publicar (select inteligente)
-- Select "O que você vai postar?" (Automático / Documento / Vídeo / Post / Link)
-- JS mostra/oculta campos:
-  - **Vídeo** → "URL do vídeo" (novo campo `url_video`)
-  - **Documento** → Anexos visíveis
-  - **Post** → Texto visível
-  - **Link** → URL externa visível
-- Retrocompatibilidade: sem escolha, site deduz pelo conteúdo preenchido (comportamento antigo)
-- Painel Central: seção "Conteúdo", primeira opção
+**Parte 7 (2026-07-13): Sistema de Comentários Moderados**
+- ✅ 3 estados (pendente/publicado/recusado) — migração `conteudo.0019`
+- ✅ Resposta do admin — campo editável com data automática
+- ✅ Exclusão em tipo "link" — comentários não aparecem em links externos
+- ✅ Visual moderno — badge de contagem, botão gradiente, aviso de moderação, seção colapsável
 
-### 📝 Arquivos modificados
-- `conteudo/models.py` — `icone_imagem` + url_video atualizado
-- `painel/models.py` — `tamanho` em EstiloBotao + property `classe_tamanho`
-- `conteudo/forms.py` — widget para `icone_imagem`
-- `painel/views.py` — tratamento de `tipo_conteudo`, `url_video`, `icone_imagem`
-- `templates/` (5 arquivos) — renderização de `icone_imagem` + `classe_tamanho`
-- `templates/admin/painel_central.html` — select de tipo, upload ícone, select tamanho, JS dinâmico
-- `static/css/style.css` — CSS novo, cache `?v=20260711-3`
-- `BAT SEDU/Subir GitHub SEDU.bat` — corrigido caminho (era `C:\Users\ridan\...` antigo), adicionado `git pull --no-rebase`
+### 📝 Arquivos modificados (2026-07-12 a 2026-07-13)
+- `conteudo/models.py` — Comentario expandido (status, resposta, data_resposta)
+- `conteudo/migrations/` — 0012–0019 (carrossel, ícones, comentários)
+- `conteudo/admin.py` — ComentarioAdmin reescrito (3 estados, ações em lote, badges)
+- `conteudo/views.py` — conteudo_detalhe com `exibir_comentarios` + comentários com status
+- `painel/views.py` — _dados_botao, _editar_botao, _criar_subareas (AJAX)
+- `templates/conteudo_detalhe.html` — seção de comentários redesenhada
+- `templates/admin/painel_central.html` — "Editar botão selecionado" (AJAX) + "Criar subárea"
+- `static/css/style.css` — novos blocos CSS (comentários, layout fixes) — cache `?v=20260713-1`
+- `templates/base.html` — cache-busting atualizado
 
 ### 🔄 Merge de conflito (2026-07-11)
 - Um commit remoto ("codigo ngrok") havia substituído `.gitignore` inteiro por erro
@@ -146,8 +139,8 @@ conteudo/
   ├─ widgets.py             # IconPicker, CategoriaPicker, RichTextWidget
   ├─ forms.py               # ConteudoAdminForm (+ icone_imagem)
   ├─ management/commands/   # 11 migration commands
-  └─ migrations/            # 0001-0013 (icone_imagem novo)
-painel/                      # Painel Central Administrativo
+  └─ migrations/            # 0001-0019 (comentários novo)
+painel/                      # Painel Central Administrativo (Telas 1 e 2)
   ├─ models.py              # Vinculo, EstiloBotao (+ tamanho)
   ├─ views.py               # painel_central_view, conteudos_view (Telas 1 e 2)
   └─ migrations/            # 0001-0002 (tamanho novo)
@@ -155,15 +148,15 @@ templates/
   ├─ base.html              # Header, nav, footer
   ├─ home.html              # Hero, banners, destaques, recentes, áreas, cartazes, carrosséis
   ├─ categoria.html         # Subcategorias, filtros, conteúdos
-  ├─ conteudo_detalhe.html  # Detalhe + comentários
+  ├─ conteudo_detalhe.html  # Detalhe + comentários moderados
   ├─ busca.html             # Resultados de busca
   └─ admin/                 # Templates customizados do admin (painel central, organizar)
 static/
-  ├─ css/style.css          # Design system (?v=20260711-3)
+  ├─ css/style.css          # Design system (?v=20260713-1)
   ├─ css/admin_picker.css   # Estilos dos widgets visuais
   ├─ js/main.js             # Slider, menu, carrossel (?v=20260711-1)
-  └─ img/                   # Logos, brasão, ícones
-db.sqlite3                   # Banco SQLite (231+ conteúdos)
+  └─ img/                   # Brasão, logos, ícones
+db.sqlite3                   # Banco SQLite (365+ conteúdos)
 requirements.txt
 manage.py
 CLAUDE.md                    # 📘 Documentação técnica completa
@@ -205,11 +198,8 @@ README.md                    # 📖 Overview do projeto
 2. **Conteúdos apontam para URLs externas** — PDFs no WordPress/Google Drive/SEDU.
 3. **Cache do navegador** — mudar CSS? Force: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
 4. **GitHub** — use `.bat` "Subir GitHub SEDU" (faz pull automático agora).
-5. **Migrações novas** — `conteudo.0013` (icone_imagem) + `painel.0002` (tamanho).
-6. **Senha admin** — foi alterada para `teste12345` durante testes. Para restaurar:
-   ```bash
-   venv\Scripts\python.exe manage.py changepassword ridan
-   ```
+5. **Migrações aplicadas** — `conteudo.0012-0019` + `painel.0002`. Para novo ambiente: `python manage.py migrate`.
+6. **Superusers locais** — `ridan` (Sedu@2026), `rabalista`.
 
 ---
 
@@ -223,6 +213,6 @@ README.md                    # 📖 Overview do projeto
 
 ---
 
-**Última atualização**: 2026-07-11  
-**Versão CSS**: `?v=20260711-3` | **Versão JS**: `?v=20260711-1`  
+**Última atualização**: 2026-07-13  
+**Versão CSS**: `?v=20260713-1` | **Versão JS**: `?v=20260711-1`  
 **GitHub**: https://github.com/rabalistasedu/site-curriculos-sedu.git

@@ -363,20 +363,32 @@ class BannerAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
-    list_display = ['nome', 'conteudo_link', 'texto_resumido', 'aprovado', 'data_criacao']
-    list_filter = ['aprovado', 'data_criacao']
-    list_editable = ['aprovado']
+    list_display = ['nome', 'conteudo_link', 'texto_resumido', 'status_badge', 'tem_resposta', 'data_criacao']
+    list_filter = ['status', 'data_criacao']
     search_fields = ['nome', 'email', 'texto', 'conteudo__titulo']
-    readonly_fields = ['nome', 'email', 'texto', 'conteudo', 'data_criacao']
     ordering = ['-data_criacao']
 
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # edição — nome/email/texto/conteudo/data são leitura
+            return ['nome', 'email', 'texto', 'conteudo', 'data_criacao', 'data_resposta']
+        return ['data_criacao', 'data_resposta']  # criação manual — tudo editável
+
     fieldsets = (
-        ('💬 Comentário recebido', {
+        ('💬 Comentário', {
             'fields': ('conteudo', 'nome', 'email', 'texto', 'data_criacao'),
         }),
-        ('✅ Moderação', {
-            'fields': ('aprovado',),
-            'description': 'Marque "Aprovado" para publicar o comentário no site. Desmarque para ocultar.',
+        ('🔖 Moderação', {
+            'fields': ('status',),
+            'description': (
+                'Pendente = aguardando revisão. '
+                'Publicado = visível no site. '
+                'Recusado = descartado (não aparece no site).'
+            ),
+        }),
+        ('💬 Resposta do administrador', {
+            'fields': ('resposta', 'data_resposta'),
+            'description': 'Escreva aqui para responder ao comentário. A resposta aparece vinculada ao comentário no site.',
+            'classes': ('collapse',),
         }),
     )
 
@@ -392,29 +404,49 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         return obj.texto[:80] + '…' if len(obj.texto) > 80 else obj.texto
     texto_resumido.short_description = 'Texto'
 
-    def aprovado_badge(self, obj):
-        if obj.aprovado:
-            return format_html('<span style="color:#10b981; font-weight:700;">✓ Aprovado</span>')
-        return format_html('<span style="color:#f59e0b; font-weight:700;">⏳ Aguardando</span>')
-    aprovado_badge.short_description = 'Status'
+    def status_badge(self, obj):
+        cores = {
+            'pendente': ('#f59e0b', '⏳ Pendente'),
+            'publicado': ('#10b981', '✅ Publicado'),
+            'recusado': ('#ef4444', '❌ Recusado'),
+        }
+        cor, label = cores.get(obj.status, ('#6b7280', obj.status))
+        return format_html(
+            '<span style="color:{};font-weight:700;">{}</span>', cor, label
+        )
+    status_badge.short_description = 'Status'
 
-    actions = ['aprovar_selecionados', 'reprovar_selecionados', 'excluir_selecionados']
+    def tem_resposta(self, obj):
+        if obj.resposta:
+            return format_html('<span style="color:#10b981;">✓ Sim</span>')
+        return format_html('<span style="color:#9ca3af;">—</span>')
+    tem_resposta.short_description = 'Resposta'
 
-    @admin.action(description='✅ Aprovar comentários selecionados')
+    actions = ['aprovar_selecionados', 'recusar_selecionados', 'excluir_selecionados']
+
+    @admin.action(description='✅ Aprovar e publicar comentários selecionados')
     def aprovar_selecionados(self, request, queryset):
-        queryset.update(aprovado=True)
-        self.message_user(request, f'{queryset.count()} comentário(s) aprovado(s).')
+        count = queryset.update(status='publicado')
+        self.message_user(request, f'{count} comentário(s) publicado(s).')
 
-    @admin.action(description='❌ Reprovar / ocultar comentários selecionados')
-    def reprovar_selecionados(self, request, queryset):
-        queryset.update(aprovado=False)
-        self.message_user(request, f'{queryset.count()} comentário(s) ocultado(s).')
+    @admin.action(description='❌ Recusar comentários selecionados')
+    def recusar_selecionados(self, request, queryset):
+        count = queryset.update(status='recusado')
+        self.message_user(request, f'{count} comentário(s) recusado(s).')
 
-    @admin.action(description='🗑️ Excluir comentários selecionados')
+    @admin.action(description='🗑️ Excluir comentários selecionados permanentemente')
     def excluir_selecionados(self, request, queryset):
         count = queryset.count()
         queryset.delete()
         self.message_user(request, f'{count} comentário(s) excluído(s) permanentemente.')
+
+    def save_model(self, request, obj, form, change):
+        from django.utils import timezone
+        if obj.resposta and not obj.data_resposta:
+            obj.data_resposta = timezone.now()
+        elif not obj.resposta:
+            obj.data_resposta = None
+        super().save_model(request, obj, form, change)
 
 
 # ── Cartazes ─────────────────────────────────────────────────────────

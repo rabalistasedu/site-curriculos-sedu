@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v4 — atualizado em 2026-07-12)
+# Site Currículos SEDU — Contexto do Projeto (v5 — atualizado em 2026-07-13)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 365+ conteúdos migrados do WordPress no `db.sqlite3` local.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-12 — "parte 6")**: **Carrossel admin melhorado** — agora exibe o arquivo atual ("Atualmente: carrossel/images.jpg"), checkbox "Limpar" para remover, e opção "Modificar" para trocar. As 3 imagens (1 vídeo MP4 + 2 JPGs) ficam visíveis. **Campo URL no "Editar botão selecionado"** — novo campo opcional que cria automaticamente um Conteúdo tipo "link" quando preenchido. Detalhes no histórico item 20.
+- **Leva mais recente (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — implementado do zero baseado no `Plano_Sistema_de_Comentarios_Moderados.md`. 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
+- **Leva anterior (2026-07-12 — "parte 6")**: **Carrossel admin melhorado** — agora exibe o arquivo atual ("Atualmente: carrossel/images.jpg"), checkbox "Limpar" para remover, e opção "Modificar" para trocar. As 3 imagens (1 vídeo MP4 + 2 JPGs) ficam visíveis. **Campo URL no "Editar botão selecionado"** — novo campo opcional que cria automaticamente um Conteúdo tipo "link" quando preenchido. Detalhes no histórico item 20.
 - **Leva anterior (2026-07-12 — "parte 5")**: **Editar botão selecionado no Painel Central** — ao marcar 1 botão na árvore, aparece seção verde "Editar botão selecionado" com nome, descrição, ícone (FA + upload de imagem), e upload de anexo. AJAX carrega dados atuais; POST salva e redireciona. **Botões sem pai → "Botões novos criados"** — botões criados sem selecionar pai vão automaticamente para uma categoria raiz oculta. **CategoriaPicker dinâmico** — categorias sem subcategorias (como "Botões novos criados") agora aparecem no Django Admin e no Adicionar Arquivos. **Texto centralizado padrão** em todos os botões (.topic-btn, .card-body, subbotões). **Texto "→ Abrir para ver" removido** dos cards de subbotão. Detalhes no histórico item 19.
 - **Leva anterior (2026-07-12 — "parte 4")**: **Rodapé sticky corrigido** — em páginas com pouco conteúdo (busca vazia, categorias vazias), o rodapé agora cola no fundo da viewport em vez de "flutuar" no meio. Implementado com flexbox no body + flex: 1 no main. Histórico completo no bloco "Histórico de implementação" item 18.
 - **Leva anterior (2026-07-12 — "parte 3")**: **Busca da árvore do Painel Central corrigida** — sub-sub-botões agora aparecem quando se busca por nome, com ancestrais expandidos automaticamente. **Nova função: "Criar subárea nos botões marcados"** — permite criar subáreas (subbotões) dentro de 1 ou mais botões marcados na árvore do Painel Central, de uma vez. Detalhes no bloco item 17.
@@ -19,7 +20,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria), `conteudo/0015` (carrossel aceita vídeo — ImageField→FileField), `conteudo/0016` (texto_alinhamento/texto_fonte/texto_tamanho_fonte em Conteudo) e `painel/0002` (EstiloBotao.tamanho) precisam de `python manage.py migrate` em qualquer ambiente novo.
+- **Migrações pendentes do último commit**: `conteudo/0012` (Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area), `conteudo/0013` (icone_imagem em Conteudo), `conteudo/0014` (icone_imagem em Categoria), `conteudo/0015` (carrossel aceita vídeo — ImageField→FileField), `conteudo/0016` (texto_alinhamento/texto_fonte/texto_tamanho_fonte em Conteudo), `painel/0002` (EstiloBotao.tamanho) e **`conteudo/0019`** (Comentario: status 3 estados + resposta + data_resposta) precisam de `python manage.py migrate` em qualquer ambiente novo.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -150,7 +151,15 @@ Carrossel de imagens com passagem automática, exibido **junto com os cartazes**
 Singleton (pk=1). `nome_site`, `descricao`, `home_titulo`, `home_texto` (RichTextWidget — negrito/itálico/alinhamento/lista via `contenteditable`, salva HTML), `email_contato`, `telefone`, `endereco`, `logo`, `favicon`.
 
 ### Comentario
-Comentários com moderação (substitui o Disqus). `conteudo` (FK), `nome`, `email`, `texto`, `aprovado` (default False), `data_criacao`. Só aparecem no site após aprovação no admin; ações em lote: aprovar, reprovar/ocultar, excluir.
+Comentários moderados (3 estados, migração 0019 — 2026-07-13).
+- `conteudo` (FK CASCADE), `nome`, `email` (opcional), `texto`, `data_criacao` (auto_now_add)
+- **`status`** (CharField, choices: `pendente`/`publicado`/`recusado`, default=`pendente`) — controla visibilidade: só `publicado` aparece no site
+- **`resposta`** (TextField, blank) — resposta do administrador, exibida abaixo do comentário no site com ícone de escudo e data
+- **`data_resposta`** (DateTimeField, null/blank) — preenchida automaticamente pelo `save_model` do admin ao inserir resposta
+- **`aprovado`** (BooleanField, `editable=False`, default=False) — campo legado mantido para compatibilidade; não sincroniza com `status`
+- Property `publicado` → `self.status == 'publicado'`
+- **Comentários NÃO aparecem** em conteúdos com `tipo='link'` — verificado na view com `exibir_comentarios = conteudo.tipo != 'link'`
+- Admin: `ComentarioAdmin` com badges coloridos ⏳/✅/❌, ações em lote "Aprovar"/"Recusar", campos do visitante readonly, seção colapsável de resposta
 
 ## Modelos — app `painel`
 
@@ -352,6 +361,53 @@ Orientações Curriculares (129 docs), IFA (10 subcats), Currículo Atual dividi
 - Versão de cache: sem mudança (CSS/JS não alterados).
 - Arquivos modificados: `conteudo/admin.py` (CarrosselImagemInline widget), `templates/admin/painel_central.html` (campo URL), `painel/views.py` (`_editar_botao` com Conteudo.create).
 - Testado: carrossel admin mostra 3 arquivos com opções limpar/modificar; campo URL no painel carrega vazio, pronto para preencher com URL; POST redirecionaria com sucesso.
+
+### 2026-07-13 — Sistema de Comentários Moderados (parte 7)
+Implementado do zero com base no `Plano_Sistema_de_Comentarios_Moderados.md` (Dan). **REGRA: nenhuma funcionalidade existente foi alterada.**
+
+1. **Modelo `Comentario` expandido** (migração `conteudo/0019`):
+   - Novo campo `status` (CharField, 3 escolhas): `pendente` (default), `publicado`, `recusado`
+   - Novo campo `resposta` (TextField, blank=True): resposta do administrador exibida no site
+   - Novo campo `data_resposta` (DateTimeField, null/blank): preenchido automaticamente ao salvar resposta
+   - Campo `aprovado` (BooleanField legacy): mantido como `editable=False` para não quebrar nada
+   - Property `publicado` → `self.status == 'publicado'`
+   - Migração `0019_comentario_status_resposta.py` aplicada com sucesso
+
+2. **`ComentarioAdmin` totalmente reescrito** (`conteudo/admin.py`):
+   - `list_display`: nome, conteúdo (link), trecho do texto, `status_badge` (emoji colorido ⏳/✅/❌), `tem_resposta`, data
+   - `list_filter`: status, data_criação
+   - Ações em lote: "✅ Aprovar e publicar" → `status='publicado'`, "❌ Recusar" → `status='recusado'`
+   - Campos readonly quando editando comentário existente: nome, email, texto, conteudo, data_criacao, data_resposta
+   - Seção colapsável "Resposta do administrador" (fieldset)
+   - `save_model`: preenche `data_resposta` automaticamente quando resposta é inserida; limpa quando removida
+
+3. **View `conteudo_detalhe`** (`conteudo/views.py`):
+   - `exibir_comentarios = conteudo.tipo != 'link'` — comentários NÃO aparecem em conteúdos tipo "link"
+   - Exibe apenas `status='publicado'`
+   - Cria novos com `status='pendente'`
+   - Passa `exibir_comentarios` ao contexto do template
+
+4. **Template `conteudo_detalhe.html`**:
+   - Toda a seção de comentários dentro de `{% if exibir_comentarios %}`
+   - Badge de contagem (`<span class="comment-count-badge">N</span>`) ao lado do título
+   - Mensagem vazia com ícone: "Ainda não há comentários. Seja o primeiro!"
+   - Bloco de resposta do admin (`.comment-resposta`) com ícone `fa-shield-halved` e data
+   - Botão "Publicar Comentário" com gradiente azul e ícone fa-paper-plane
+   - Aviso discreto: "Seu comentário será publicado após aprovação da equipe"
+
+5. **CSS** (bloco "AJUSTES 2026-07-12 — Sistema de comentários" em `style.css`):
+   - `.comentarios-section` — fundo alternado `#eef1f5`
+   - `.comment-count-badge` — pílula arredondada azul com número
+   - `.comment-item` — layout flex com avatar redondo
+   - `.comment-resposta` — fundo `#e8f5e9` (verde claro), borda esquerda verde, ícone escudo
+   - `.comment-submit-btn` — botão gradiente azul com glow ao hover, ícone fa-paper-plane
+   - `.comment-empty` — texto itálico com borda pontilhada
+   - `.comment-alert` — mensagem de sucesso/erro estilizada
+   - `.comment-notice` — aviso de moderação discreto
+
+- **Versão de cache**: CSS `?v=20260713-1` (incrementado de `-8`).
+- **Arquivos modificados**: `conteudo/models.py` (Comentario expandido), `conteudo/migrations/0019_comentario_status_resposta.py` (nova migração), `conteudo/admin.py` (ComentarioAdmin reescrito), `conteudo/views.py` (exibir_comentarios + status), `templates/conteudo_detalhe.html` (seção comentários redesenhada), `static/css/style.css` (novo bloco CSS), `templates/base.html` (cache-busting `-1`).
+- **Testado**: página `/conteudo/teste-5/` mostra formulário, badge, aviso; seção ausente em `/conteudo/link-externo/` (tipo='link'); admin `/admin/conteudo/comentario/` mostra ações em lote e badges coloridos.
 
 ## Deploy
 

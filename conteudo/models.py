@@ -626,7 +626,16 @@ class ConfiguracaoSite(models.Model):
 
 
 class Comentario(models.Model):
-    """Comentários dos usuários, com aprovação pelo admin antes de aparecer no site."""
+    """Comentários dos usuários, com moderação (pendente → publicado ou recusado)."""
+    PENDENTE = 'pendente'
+    PUBLICADO = 'publicado'
+    RECUSADO = 'recusado'
+    STATUS_CHOICES = [
+        (PENDENTE, '⏳ Pendente'),
+        (PUBLICADO, '✅ Publicado'),
+        (RECUSADO, '❌ Recusado'),
+    ]
+
     conteudo = models.ForeignKey(
         Conteudo, on_delete=models.CASCADE,
         related_name='comentarios', verbose_name='Conteúdo'
@@ -634,11 +643,18 @@ class Comentario(models.Model):
     nome = models.CharField('Nome', max_length=100)
     email = models.EmailField('E-mail', blank=True)
     texto = models.TextField('Comentário')
-    aprovado = models.BooleanField(
-        'Aprovado', default=False,
-        help_text='Marque para publicar o comentário no site'
+    status = models.CharField(
+        'Status', max_length=10, choices=STATUS_CHOICES, default=PENDENTE,
+        help_text='Pendente = aguardando moderação; Publicado = visível no site; Recusado = descartado.'
+    )
+    # Campo legado — mantido para compatibilidade; sincronizado com status na migration
+    aprovado = models.BooleanField('Aprovado (legado)', default=False, editable=False)
+    resposta = models.TextField(
+        'Resposta do administrador', blank=True,
+        help_text='Resposta que aparece vinculada ao comentário no site. Deixe vazio se não quiser responder.'
     )
     data_criacao = models.DateTimeField('Enviado em', auto_now_add=True)
+    data_resposta = models.DateTimeField('Respondido em', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Comentário'
@@ -647,3 +663,7 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f'{self.nome} em "{self.conteudo.titulo[:40]}"'
+
+    @property
+    def publicado(self):
+        return self.status == self.PUBLICADO

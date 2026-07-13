@@ -142,9 +142,14 @@ def conteudo_detalhe(request, slug):
         categoria=conteudo.categoria
     ).exclude(pk=conteudo.pk)[:4]
 
-    comentarios = conteudo.comentarios.filter(aprovado=True).order_by('data_criacao')
+    # Comentários só aparecem em conteúdos que não são links externos puros
+    exibir_comentarios = conteudo.tipo != 'link'
+    comentarios = (
+        conteudo.comentarios.filter(status='publicado').order_by('data_criacao')
+        if exibir_comentarios else []
+    )
 
-    if request.method == 'POST':
+    if exibir_comentarios and request.method == 'POST':
         nome = request.POST.get('nome', '').strip()
         email = request.POST.get('email', '').strip()
         texto = request.POST.get('texto', '').strip()
@@ -154,7 +159,7 @@ def conteudo_detalhe(request, slug):
                 nome=nome,
                 email=email,
                 texto=texto,
-                aprovado=False,
+                status='pendente',
             )
             messages.success(
                 request,
@@ -170,6 +175,7 @@ def conteudo_detalhe(request, slug):
         'conteudo': conteudo,
         'relacionados': relacionados,
         'comentarios': comentarios,
+        'exibir_comentarios': exibir_comentarios,
         'anexos': anexos,
     })
 

@@ -120,16 +120,17 @@
     </div>
 </section>
 
-<!-- ── Comentários ─────────────────────────────────────────────── -->
-<section class="section section-alt">
+{% if exibir_comentarios %}
+<!-- ── Comentários (só em conteúdos que não são links externos) ── -->
+<section class="section section-alt comentarios-section">
     <div class="container" style="max-width:760px;">
 
-        <h2 class="section-title">
+        <h2 class="section-title" style="font-size:1.1rem;">
             <span class="title-icon"><i class="fas fa-comments"></i></span>
             Comentários
+            {% if comentarios %}<span class="comment-count-badge">{{ comentarios|length }}</span>{% endif %}
         </h2>
 
-        <!-- Mensagens de feedback -->
         {% for msg in messages %}
         <div class="comment-alert comment-alert-{{ msg.tags }}">
             <i class="fas fa-{% if msg.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
@@ -137,34 +138,52 @@
         </div>
         {% endfor %}
 
-        <!-- Lista de comentários aprovados -->
         {% if comentarios %}
         <div class="comment-list">
             {% for c in comentarios %}
             <div class="comment-item">
                 <div class="comment-avatar">
-                    <i class="fas fa-user"></i>
+                    <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="comment-body">
                     <div class="comment-header">
-                        <strong>{{ c.nome }}</strong>
-                        <span class="comment-date">{{ c.data_criacao|date:"d/m/Y \à\s H:i" }}</span>
+                        <strong class="comment-nome">{{ c.nome }}</strong>
+                        <span class="comment-date">
+                            <i class="fas fa-clock" style="font-size:10px;opacity:.6;"></i>
+                            {{ c.data_criacao|date:"d/m/Y \à\s H:i" }}
+                        </span>
                     </div>
-                    <p>{{ c.texto|linebreaksbr }}</p>
+                    <p class="comment-texto">{{ c.texto|linebreaksbr }}</p>
+                    {% if c.resposta %}
+                    <div class="comment-resposta">
+                        <div class="comment-resposta-header">
+                            <i class="fas fa-shield-halved"></i>
+                            <strong>Resposta da equipe</strong>
+                            {% if c.data_resposta %}
+                            <span class="comment-date">{{ c.data_resposta|date:"d/m/Y" }}</span>
+                            {% endif %}
+                        </div>
+                        <p>{{ c.resposta|linebreaksbr }}</p>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <p class="comment-empty">Seja o primeiro a comentar!</p>
+        <p class="comment-empty">
+            <i class="fas fa-comment-slash" style="opacity:.4;margin-right:6px;"></i>
+            Ainda não há comentários. Seja o primeiro!
+        </p>
         {% endif %}
 
-        <!-- Formulário de novo comentário -->
         <div class="comment-form-box">
-            <h3><i class="fas fa-pen-to-square"></i> Deixe seu comentário</h3>
+            <h3 style="font-size:.95rem;margin-bottom:8px;">
+                <i class="fas fa-pen-to-square"></i> Deixe seu comentário
+            </h3>
             <p class="comment-notice">
-                <i class="fas fa-info-circle"></i>
-                Seu comentário será publicado após aprovação.
+                <i class="fas fa-shield-check"></i>
+                Seu comentário será publicado após aprovação da equipe.
             </p>
             <form method="post" class="comment-form">
                 {% csrf_token %}
@@ -172,25 +191,26 @@
                     <div class="form-group">
                         <label for="nome">Nome <span class="required">*</span></label>
                         <input type="text" id="nome" name="nome" required maxlength="100"
-                               placeholder="Seu nome">
+                               placeholder="Seu nome completo">
                     </div>
                     <div class="form-group">
-                        <label for="email">E-mail <span style="color:#9ca3af; font-size:12px;">(opcional)</span></label>
+                        <label for="email">E-mail <span style="color:#9ca3af;font-size:11px;">(opcional, não publicado)</span></label>
                         <input type="email" id="email" name="email" maxlength="200"
                                placeholder="seu@email.com">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="texto">Comentário <span class="required">*</span></label>
-                    <textarea id="texto" name="texto" rows="4" required
-                              placeholder="Escreva seu comentário aqui..."></textarea>
+                    <textarea id="texto" name="texto" rows="3" required
+                              placeholder="Escreva aqui sua dúvida, sugestão ou comentário..."></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-paper-plane"></i> Enviar comentário
+                <button type="submit" class="comment-submit-btn">
+                    <i class="fas fa-paper-plane"></i> Publicar Comentário
                 </button>
             </form>
         </div>
 
     </div>
 </section>
+{% endif %}
 {% endblock %}

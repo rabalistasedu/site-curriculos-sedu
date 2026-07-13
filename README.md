@@ -2,10 +2,11 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) — Espírito Santo.
 
-## ⚡ Status Atual (2026-07-11)
+## ⚡ Status Atual (2026-07-13)
 
-✅ **Site funcional** — 231+ conteúdos migrados, 10 categorias, 42+ subcategorias  
-✅ **Admin completo** — Django Admin + 3 painéis customizados (Organizador, Painel de Arquivos, Painel Administrativo Completo)  
+✅ **Site funcional e responsivo** — 365+ conteúdos migrados, 10 categorias, 42+ subcategorias  
+✅ **Admin completo** — Django Admin + 5 painéis customizados (Organizador, Painel de Arquivos, Painel Central, Painel de Botões da Barra)  
+✅ **Sistema de comentários moderados** — 3 estados, resposta do admin, visual moderno  
 ✅ **Deploy em progresso** — ngrok (demo) → `curriculo.sedu.es.gov.br/curriculo/` (produção final)
 
 ## 🚀 Quick Start
@@ -32,15 +33,17 @@ python manage.py runserver 8001
 
 Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (admin)
 
-## 📋 Mudanças Recentes (2026-07-11)
+## 📋 Mudanças Recentes (2026-07-12 a 2026-07-13)
 
-### 4 Pedidos Implementados
-1. **Ícone personalizado** — upload de imagem (PNG/JPG/SVG/ICO) para cada conteúdo, sem fundo
-2. **Cards de conteúdo menores** — grid compactado 180px, visual mais limpo
-3. **Tamanho dos botões** — select no Painel Central (Pequeno/Médio/Grande) aplica a botão + subbotões
-4. **Tipo de conteúdo** — select inteligente (Documento/Vídeo/Post/Link) que mostra/oculta campos
+### 7 Partes de Implementação (18 features/bugs total)
+1. ✅ **Bugs de layout** — navegação mobile, carrossel dividido, rodapé flutuante, anexos invisíveis
+2. ✅ **Edição inline** — "Editar botão selecionado" com AJAX + criação de subáreas em lote
+3. ✅ **Carrossel admin** — mostra arquivo atual + checkbox "Limpar" + opção "Modificar"
+4. ✅ **Campo URL no painel** — cria links automáticos dentro de botões
+5. ✅ **Sistema de comentários** — 3 estados (pendente/publicado/recusado), resposta do admin, não aparece em links
+6. ✅ **Bugfixes UX** — busca árvore 3+ níveis, rodapé sticky, CategoriaPicker dinâmico
 
-**Migrações novas**: `conteudo.0013` (icone_imagem) + `painel.0002` (tamanho)
+**Migrações novas**: `conteudo.0012-0019`, `painel.0002`
 
 → Veja **[CONTEXTO_ATUAL.md](CONTEXTO_ATUAL.md)** para detalhes completos
 
@@ -48,14 +51,14 @@ Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (adm
 
 ```
 conteudo/               → App principal (models, views, admin, forms, widgets)
-painel/                 → Painel Central Administrativo
-templates/              → HTML5 (home, categoria, conteudo, busca, admin)
+painel/                 → Painel Central Administrativo (Telas 1 e 2)
+templates/              → HTML5 (base, home, categoria, conteudo, busca, admin)
 static/
-  ├─ css/style.css      → Design system (atualizado ?v=20260711-3)
+  ├─ css/style.css      → Design system (atualizado ?v=20260713-1)
   ├─ js/main.js         → Interações (slider, menu, carrossel)
-  └─ img/               → Logo, brasão, ícones
-db.sqlite3              → Banco SQLite (231+ docs)
-CLAUDE.md               → Documentação técnica completa
+  └─ img/               → Brasão, logos, ícones
+db.sqlite3              → Banco SQLite (365+ docs)
+CLAUDE.md               → Documentação técnica completa (v5 — 2026-07-13)
 ```
 
 ## 🎯 Modelos Principais
@@ -120,7 +123,7 @@ venv\Scripts\python.exe ngrok_compartilhar.py
 2. **Conteúdos apontam para URLs externas** — PDFs estão no WordPress, Google Drive, SEDU.
 3. **Cache do navegador** — ao mudar CSS, força recarregamento: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
 4. **GitHub** — sempre use o `.bat` "Subir GitHub SEDU" para enviar (ele faz pull automático).
-5. **Novo em 2026-07-11** — migrações 0013 e 0002 aplicadas; senha admin local alterada para teste (veja CONTEXTO_ATUAL.md).
+5. **Migrações aplicadas** — todas de 0012 a 0019; superusers: `ridan` (Sedu@2026) e `rabalista`.
 
 ## 👤 Usuário Principal
 
@@ -144,5 +147,5 @@ venv\Scripts\python.exe ngrok_compartilhar.py
 
 ---
 
-**Última atualização**: 2026-07-11  
-**Versão CSS/JS**: `?v=20260711-3` / `?v=20260711-1`
+**Última atualização**: 2026-07-13  
+**Versão CSS**: `?v=20260713-1` | **Versão JS**: `?v=20260711-1`

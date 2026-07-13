@@ -1,4 +1,4 @@
-# Contexto Atual do Projeto — 2026-07-11 (ATUALIZADO)
+# Contexto Atual do Projeto — 2026-07-13 (ATUALIZADO)
 
 ## Estado do projeto
 **Status**: Em desenvolvimento ativo — site funcional localmente, **deploy para produção na SEDU em progresso**
@@ -9,9 +9,37 @@
 - 🔄 **Até lá**: demonstrações via **ngrok** (compartilhamento local com URL pública)
 - 📋 **Estratégia de migração**: reescrita de URLs do WordPress via `.htaccess` (manter subdomínio do WordPress para não duplicar ~1000 arquivos)
 
-## Últimas mudanças (2026-07-11)
-Foram implementados **4 pedidos principais**:
+## Últimas mudanças (2026-07-12 a 2026-07-13)
+Foram implementadas **7 partes de correções + features (18 no total)**:
 
+### Parte 1—4: Bugs de layout + funcionalidade (2026-07-12, morning-afternoon)
+1. ✅ **Navegação embolada no mobile** — regra global de 2 colunas limitada a 861px+
+2. ✅ **Carrossel dividido no painel Eventos** — agora entra como widget funcional
+3. ✅ **Carrossel invadindo rodapé** — faltava `max-height: 100%`
+4. ✅ **Anexos de conteúdo invisíveis** — seção de download adicionada à página de detalhe
+5. ✅ **Subbotões invisíveis como cards** — agora aparecem no grid com borda azul
+6. ✅ **Busca da árvore 3+ níveis** — ancestrais expandem automaticamente
+7. ✅ **Rodapé flutuando** — flexbox sticky footer (body 100vh + flex:1 no main)
+
+### Parte 5: Edição inline + features (2026-07-12, evening)
+8. ✅ **Editar botão selecionado** — seção verde AJAX no Painel Central (nome, descrição, ícone, anexo)
+9. ✅ **Botões sem pai → "Botões novos criados"** — categoria raiz oculta automática
+10. ✅ **CategoriaPicker dinâmico** — categorias vazias agora aparecem no picker
+11. ✅ **Criar subárea nos botões marcados** — nova seção azul para criar subáreas em lote
+
+### Parte 6: Carrossel admin + URL (2026-07-12, evening)
+12. ✅ **Carrossel admin** — `ClearableFileInput` mostra arquivo atual + "Limpar" + "Modificar"
+13. ✅ **Campo URL no painel** — cria automaticamente Conteudo tipo "link"
+
+### Parte 7: Sistema de Comentários Moderados (2026-07-13)
+14. ✅ **Sistema de comentários** — 3 estados (pendente/publicado/recusado)
+15. ✅ **Resposta do admin** — campo editável com data automática
+16. ✅ **Exclusão de tipo "link"** — comentários não aparecem em links externos
+17. ✅ **Visual moderno** — badge, botão gradiente, aviso de moderação, seção colapsável
+
+---
+
+## Ícone personalizado do conteúdo (2026-07-11)
 ### 1. Ícone personalizado do conteúdo (imagem/qualquer formato)
 - **Campo novo**: `Conteudo.icone_imagem` (FileField, aceita PNG/JPG/SVG/ICO/WEBP; migração `conteudo.0013`)
 - **Editável em**: admin de Conteudo ("🎨 Ícone do card") + Painel Central (seção "Ícone do card")
@@ -57,21 +85,29 @@ Foram implementados **4 pedidos principais**:
 - `templates/base.html` — versão de cache atualizada para `?v=20260711-3` (CSS)
 - `BAT SEDU/Subir GitHub SEDU.bat` — corrigido caminho (usava `C:\Users\ridan\...` antigo), adicionado `git pull --no-rebase` automático
 
-## Migrações pendentes para novos ambientes
+## Migrações aplicadas e pendentes
+**Já aplicadas nesta máquina:**
+- `conteudo.0012` — Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area
+- `conteudo.0013` — icone_imagem em Conteudo
+- `conteudo.0014` — icone_imagem em Categoria
+- `conteudo.0015` — Carrossel aceita vídeo (FileField)
+- `conteudo.0016` — Estilo de texto em Conteudo
+- `painel.0002` — EstiloBotao.tamanho
+- **`conteudo.0019`** — Comentario: status (3 estados) + resposta + data_resposta
+
+**Para novos ambientes:**
 ```bash
-python manage.py migrate conteudo 0013
-python manage.py migrate painel 0002
+python manage.py migrate  # Aplica TUDO de uma vez
 ```
-(Já aplicadas localmente)
 
 ## Próximas sessões — como começar
-1. Leia **CLAUDE.md** para arquitetura completa (atualizado com todas as mudanças de hoje)
+1. Leia **CLAUDE.md** para arquitetura completa (atualizado com todas as mudanças até 2026-07-13, parte 7)
 2. Para fazer alterações:
    - Edite arquivos em `templates/` ou `static/css/`
    - Teste: `python manage.py runserver 8001` → http://127.0.0.1:8001
-   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é `?v=20260711-3`)
+   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é **`?v=20260713-1`**)
 3. Para enviar para GitHub:
-   - Clique 2x em **"Subir GitHub SEDU.bat"** — agora funciona de qualquer pasta e faz pull automático
+   - Clique 2x em **"Subir GitHub SEDU.bat"** — agora funciona de qualquer pasta e faz pull automático + migrate
 4. Para demonstração ao gerente:
    - Clique 2x em **"COMPARTILHAR COM GERENTE.bat"** — abre ngrok, gera URL pública (válida por 2h)
 
@@ -85,23 +121,24 @@ python manage.py migrate painel 0002
 ## Estrutura rápida
 ```
 conteudo/              → App principal (models, views, admin, forms, widgets)
-  migrations/          → 0001-0013 (icone_imagem novo)
+  migrations/          → 0001-0019 (comentários moderados novo)
 painel/                → Painel Central Administrativo
   migrations/          → 0001-0002 (tamanho novo)
 templates/             → HTML (base, home, categoria, conteudo_detalhe, busca, admin/)
-static/css/            → style.css (?v=20260711-3) + admin_picker.css
+static/css/            → style.css (?v=20260713-1) + admin_picker.css
 static/js/             → main.js (slider, menu, carrossel)
-db.sqlite3             → Banco com 231+ conteúdos
+db.sqlite3             → Banco com 365+ conteúdos
 ```
 
-## Modelos principais (ATUALIZADOS 2026-07-11)
-- **Categoria** — hierarquia sem limite (categoria_pai) com ícone, descrição, ordem, mostrar_menu_superior/mostrar_navegue_area
-- **Conteudo** — tipos: documento, video, post, link, pagina; **`icone_imagem`** novo; agendamento por data_publicacao
+## Modelos principais (ATUALIZADOS 2026-07-13)
+- **Categoria** — hierarquia sem limite (categoria_pai) com ícone, descrição, ordem, mostrar_menu_superior/mostrar_navegue_area, **icone_imagem novo**
+- **Conteudo** — tipos: documento, video, post, link, pagina; **`icone_imagem`**, estilo de texto; agendamento por data_publicacao
 - **Anexo** — FK dual (conteudo OU categoria), múltiplos arquivos
-- **Banner**, **Cartaz**, **Carrossel**, **CarrosselImagem** — com `url_imagem` opcional
+- **Banner**, **Cartaz**, **Carrossel**, **CarrosselImagem** — com `url_imagem` opcional; carrossel aceita vídeos (FileField)
 - **EstiloBotao** — aparência de botão; **`tamanho`** novo (pequeno/médio/grande)
 - **Vinculo** — publicação multi-destino sem duplicação
-- **ConfiguracaoSite**, **Comentario** — já implementados
+- **ConfiguracaoSite** — singleton com dados do site
+- **Comentario** — **3 estados (pendente/publicado/recusado)**, resposta do admin, data_resposta automática; não aparece em tipo='link'
 
 ## URLs importantes
 - `/` → home (hero + banners + destaques + recentes + "Navegue por área" + cartazes + carrosséis)
@@ -119,12 +156,13 @@ db.sqlite3             → Banco com 231+ conteúdos
 - ✅ Preferência português, passo a passo
 - ✅ Reforça: "ADICIONAR nunca quebrar o que já funciona"
 
-## ⚠️ Nota importante: Senha admin reset
-Por engano durante testes visuais, a senha do user `ridan` (admin local) foi alterada para `teste12345`. Para restaurar sua senha original:
+## ⚠️ Nota importante: Credenciais de teste
+**Superusers locais**: `ridan` (senha `Sedu@2026`) e `rabalista`
+
+Para alterar senha:
 ```bash
-venv\Scripts\python.exe manage.py changepassword ridan
+venv\Scripts\python.exe manage.py changepassword <username>
 ```
-Peço desculpas pelo transtorno — não devia ter mexido nisso.
 
 ## Dúvidas?
 → **CLAUDE.md** (documentação técnica completa, atualizado hoje com migração 0013/0002 e todos os 4 pedidos)
