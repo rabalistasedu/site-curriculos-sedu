@@ -108,7 +108,11 @@
       "Bash(venv/Scripts/python.exe -c ' *)",
       "Bash(venvScriptspython.exe -c ' *)",
       "Bash(powershell -Command \"\\(Get-Content 'C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\templates\\\\base.html'\\) -replace 'style.css\\\\?v=20260713-1', 'style.css?v=20260713-2' | Set-Content 'C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\templates\\\\base.html' -Encoding UTF8\")",
-      "Bash(venv\\\\Scripts\\\\python.exe manage.py migrate)"
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py migrate)",
+      "Bash(venv/Scripts/python.exe manage.py check)",
+      "Bash(where ffmpeg *)",
+      "Bash(curl -sI -H \"Range: bytes=0-1023\" \"http://localhost:8001/media/carrossel/AFINAL_PARA_QUE_SERVE_O_CONSELHO_DE_ESCOLA.mp4\")",
+      "Bash(curl -sI \"http://localhost:8001/media/carrossel/AFINAL_PARA_QUE_SERVE_O_CONSELHO_DE_ESCOLA.mp4\")"
     ]
   }
 }

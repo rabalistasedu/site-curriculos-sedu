@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from conteudo.admin_views import (
     organizar_view, adicionar_arquivos_view, api_subcategorias_itens,
     barra_superior_view,
 )
+from conteudo.media_views import serve_media
 
 urlpatterns = [
     path('admin/painel-central/', include('painel.urls')),
@@ -17,7 +18,9 @@ urlpatterns = [
     path('', include('conteudo.urls')),
 ]
 
-# Servir arquivos de mídia em desenvolvimento
+# Servir arquivos de mídia com suporte a Range Requests (necessário para vídeo via ngrok)
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += [
+        re_path(r'^media/(?P<path>.*)$', serve_media),
+    ]
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

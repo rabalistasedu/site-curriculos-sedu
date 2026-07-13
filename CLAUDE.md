@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v6 — atualizado em 2026-07-13)
+# Site Currículos SEDU — Contexto do Projeto (v7 — atualizado em 2026-07-13 — Parte 9)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 365+ conteúdos migrados do WordPress no `db.sqlite3` local.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
+- **Leva mais recente (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
+- **Leva anterior (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
 - **Leva anterior (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
 - **Leva anterior (2026-07-12 — "parte 6")**: **Carrossel admin melhorado** — agora exibe o arquivo atual ("Atualmente: carrossel/images.jpg"), checkbox "Limpar" para remover, e opção "Modificar" para trocar. As 3 imagens (1 vídeo MP4 + 2 JPGs) ficam visíveis. **Campo URL no "Editar botão selecionado"** — novo campo opcional que cria automaticamente um Conteúdo tipo "link" quando preenchido. Detalhes no histórico item 20.
 - **Leva anterior (2026-07-12 — "parte 5")**: **Editar botão selecionado no Painel Central** — ao marcar 1 botão na árvore, aparece seção verde "Editar botão selecionado" com nome, descrição, ícone (FA + upload de imagem), e upload de anexo. AJAX carrega dados atuais; POST salva e redireciona. **Botões sem pai → "Botões novos criados"** — botões criados sem selecionar pai vão automaticamente para uma categoria raiz oculta. **CategoriaPicker dinâmico** — categorias sem subcategorias (como "Botões novos criados") agora aparecem no Django Admin e no Adicionar Arquivos. **Texto centralizado padrão** em todos os botões (.topic-btn, .card-body, subbotões). **Texto "→ Abrir para ver" removido** dos cards de subbotão. Detalhes no histórico item 19.
@@ -42,6 +43,8 @@ conteudo/                # App principal do site
   models.py              # Categoria, Conteudo, Anexo, Banner, Cartaz, Carrossel,
                          #   CarrosselImagem, ConfiguracaoSite, Comentario
   views.py               # home (com carrosséis), categoria_detalhe, conteudo_detalhe, busca
+  media_views.py         # serve_media: view com suporte a HTTP Range Requests (206 Partial Content)
+                         #   para streaming de vídeo via ngrok
   admin.py               # Admin customizado: badges, widgets visuais, moderação,
                          #   inlines de Anexo e CarrosselImagem
   admin_views.py         # organizar_view (/admin/organizar/) e adicionar_arquivos_view
@@ -461,6 +464,42 @@ Implementado fluxo completo de respostas aninhadas e votação AJAX. **REGRA: ne
 - **Versão de cache**: CSS `?v=20260713-2` (incrementado de `-1`).
 - **Arquivos modificados**: `conteudo/models.py` (parent + votos), `conteudo/migrations/0020_comentario_parent_votos.py` (nova migração), `conteudo/urls.py` (nova rota votar_comentario), `conteudo/views.py` (prefetch respostas, parent_id no POST, view votar_comentario), `conteudo/admin.py` (coluna eh_resposta, votos_badge, parent no fieldset), `templates/conteudo_detalhe.html` (botões 👍/👎, formulário inline, respostas aninhadas, JS AJAX), `static/css/style.css` (novo bloco de estilos), `templates/base.html` (cache-busting `-2`).
 - **Testado**: página `/conteudo/teste-5/` com comentário publicado + resposta: botões 👍/👎 funcionam via AJAX (contadores incrementam); "Responder" abre/fecha formulário inline; respostas aninhadas aparecem recuadas com label "↩ resposta"; cada resposta tem seus próprios 👍/👎.
+
+### 2026-07-13 — ngrok UTF-8 + Video Streaming via Range Requests (parte 9)
+Corrigidos **2 problemas críticos** com compartilhamento via ngrok. **REGRA: apenas adições, nada quebrado.**
+
+1. **Double-encoding UTF-8 nos templates** (descoberto durante testes):
+   - **Problema**: commit `82f5b92` ("codigo") salvou `templates/base.html`, `painel_central.html` e `painel_conteudos.html` com double-encoding UTF-8 (caracteres como "CurrÃ­culo", "EDUCAÃ‡ÃƒO" em vez de "Currículo", "EDUCAÇÃO").
+   - **Causa**: editor de texto em outro computador (provavelmente Notepad/VSCode sem UTF-8 configurado) reabriu e re-salvou os arquivos em Latin-1, criando mojibake.
+   - **Solução**: restaurados 3 templates do `HEAD~1` (commit anterior correto). Verificação completa: nenhum outro arquivo estava corrompido.
+   - **Resultado**: site agora exibe "Currículo do Espírito Santo" e "Educação Básica" corretamente em localhost E via ngrok.
+
+2. **Vídeo do carrossel não carregava via ngrok** (37MB, timeout/proxy issues):
+   - **Problema**: Django dev server (`runserver`) não suporta HTTP Range Requests (206 Partial Content) nativamente. Browsers modernos pedem vídeos em chunks — sem Range Requests, ngrok/proxies têm timeout.
+   - **Solução**: nova view Django `serve_media` em `conteudo/media_views.py` com suporte completo a Range Requests:
+     - `HTTP 200` para requisição normal (serve vídeo inteiro)
+     - `HTTP 206 Partial Content` para Range Requests (serve apenas bytes solicitados)
+     - Streaming em chunks de 8KB (não sobrecarrega memória)
+     - Header `ngrok-skip-browser-warning: true` (pula aviso do ngrok)
+   - **URLs modificadas**: `curriculo_sedu/urls.py` agora roteia `/media/*` para `serve_media` em vez de `static()`.
+   - **Resultado**: vídeo agora carrega normalmente via ngrok (testado com curl: `206 Partial Content` funcionando).
+
+3. **Automação de testes e launcher** (2026-07-13):
+   - `teste_ngrok.py` — script Python que valida antes de compartilhar (Django ok? Vídeo existe? UTF-8 correto?)
+   - `BAT SEDU\INICIAR COM NGROK.bat` — launcher um-clique que: inicia Django + roda testes + compartilha ngrok
+   - `BAT SEDU\COMPARTILHAR COM GERENTE.bat` — melhorado com `PYTHONIOENCODING=utf-8` + fallback para Python script
+   - `NGROK_COMPARTILHAR.md` — guia em português com 3 opções de uso
+
+4. **Documentação**:
+   - `RESUMO_FIXES_2026_07_13.md` — resumo técnico completo
+   - `README.md` — reescrito com tudo atualizado
+   - Memory: `ngrok_fixes.md` — para futuras sessões
+
+- **Versão de cache**: CSS `?v=20260713-2` (sem mudança de CSS).
+- **Arquivos adicionados**: `conteudo/media_views.py` (nova view com Range Requests), `teste_ngrok.py` (validação), `BAT SEDU\INICIAR COM NGROK.bat` (launcher), `NGROK_COMPARTILHAR.md` (guia), `RESUMO_FIXES_2026_07_13.md` (resumo técnico).
+- **Arquivos modificados**: `curriculo_sedu/urls.py` (router `/media/` → `serve_media`), `BAT SEDU\COMPARTILHAR COM GERENTE.bat` (UTF-8 + Python fallback), `README.md` (reescrito), `db.sqlite3` (vídeo path atualizado).
+- **Arquivos restaurados**: `templates/base.html`, `templates/admin/painel_central.html`, `templates/admin/painel_conteudos.html` (do `HEAD~1`, desfazendo double-encoding).
+- **Testado localmente**: Range Requests funcionando (`206 Partial Content`), site com UTF-8 correto, vídeo 37MB acessível.
 
 ## Deploy
 
