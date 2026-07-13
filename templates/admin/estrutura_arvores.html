@@ -885,16 +885,54 @@ const EA = {
     },
 
     abrirCriar(paiId) {
-        const nome = prompt('Nome do novo botão:');
-        if (!nome || !nome.trim()) return;
+        const paiNome = paiId ? this._encontrarNome(this.dados, paiId) : null;
+        const titulo = paiId ? `Criar subbotão dentro de "${paiNome}"` : 'Criar novo botão raiz';
+        let html = `<h3><i class="fas fa-plus-circle" style="color:var(--ea-success)"></i> ${titulo}</h3>`;
+        html += `<div class="ea-campo"><label>Nome do botão *</label><input type="text" id="criarNome" placeholder="Ex: Documentos Orientadores"></div>`;
+        html += `<div class="ea-campo"><label>URL / Link (opcional)</label><input type="url" id="criarUrl" placeholder="https://..."></div>`;
+        html += `<div class="ea-campo"><label>Anexos / Arquivos (opcional, vários)</label><input type="file" id="criarAnexos" multiple></div>`;
+        html += `<div class="ea-campo"><label>Ícone Font Awesome (opcional)</label><input type="text" id="criarIcone" placeholder="fas fa-folder-open" value="fas fa-folder-open"></div>`;
+        html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download.</p>`;
+        html += `<div style="display:flex;gap:8px;justify-content:flex-end">
+            <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
+            <button class="ea-btn-sm ea-btn-success" onclick="EA.confirmarCriar(${paiId ? paiId : 'null'})"><i class="fas fa-check"></i> Criar</button>
+        </div>`;
+        document.getElementById('eaModal').innerHTML = html;
+        document.getElementById('eaModalBg').classList.add('show');
+        setTimeout(() => document.getElementById('criarNome')?.focus(), 100);
+    },
+
+    async confirmarCriar(paiId) {
+        const nome = document.getElementById('criarNome')?.value?.trim();
+        if (!nome) { this.toast('Nome é obrigatório.', 'error'); return; }
+        const url = document.getElementById('criarUrl')?.value?.trim();
+        const anexos = document.getElementById('criarAnexos')?.files;
+        const icone = document.getElementById('criarIcone')?.value?.trim();
+
         const fd = new FormData();
         fd.append('action', 'criar');
-        fd.append('nome', nome.trim());
+        fd.append('nome', nome);
         if (paiId) fd.append('pai_id', paiId);
-        this._post(fd).then(r => {
-            if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
-            else this.toast(r.error, 'error');
-        });
+        if (icone) fd.append('icone', icone);
+        if (url) fd.append('url_conteudo', url);
+        if (anexos) { for (const f of anexos) fd.append('arquivos_anexo', f); }
+
+        this.fecharModal();
+        const r = await this._post(fd);
+        if (r.ok) {
+            this.toast(r.msg, 'success');
+            await this.recarregar();
+            if (r.id) this.selecionar(r.id);
+        } else this.toast(r.error, 'error');
+    },
+
+    _encontrarNome(nos, id) {
+        for (const n of nos) {
+            if (n.id == id) return n.nome;
+            const found = this._encontrarNome(n.filhos || [], id);
+            if (found) return found;
+        }
+        return null;
     },
 
     abrirCriarFilho() {
@@ -932,6 +970,13 @@ const EA = {
 
     fecharModal() {
         document.getElementById('eaModalBg').classList.remove('show');
+        document.getElementById('eaModal').innerHTML = `
+            <h3 id="eaModalTitulo"></h3>
+            <p id="eaModalMsg"></p>
+            <div class="ea-modal-btns">
+                <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
+                <button class="ea-btn-sm ea-btn-danger" id="eaModalConfirm">Confirmar</button>
+            </div>`;
     },
 
     // ── Mover ────────────────────────────────────────
@@ -972,14 +1017,6 @@ const EA = {
 
     async confirmarMover(id) {
         this.fecharModal();
-        // Restore modal to default structure
-        document.getElementById('eaModal').innerHTML = `
-            <h3 id="eaModalTitulo"></h3>
-            <p id="eaModalMsg"></p>
-            <div class="ea-modal-btns">
-                <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
-                <button class="ea-btn-sm ea-btn-danger" id="eaModalConfirm">Confirmar</button>
-            </div>`;
         const fd = new FormData();
         fd.append('action', 'mover');
         fd.append('id', id);

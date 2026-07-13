@@ -99,19 +99,16 @@ def categoria_detalhe(request, slug):
             'banners': banners_cat,
         })
 
-    # Conteúdos desta categoria e das subcategorias — inclui também os
-    # publicados aqui por vínculo (Painel Central), sem duplicar.
-    # ordem=0 significa "sem posição definida" → vai para o final (9999)
-    # ordem=1,2,3... aparece primeiro, nessa sequência
+    # Conteúdos SOMENTE desta categoria (não das subcategorias — elas aparecem
+    # como cards/subbotões e seus conteúdos ficam dentro delas, sem duplicar).
     from painel.models import Vinculo
-    cats = [categoria] + list(subcategorias)
+    cats = [categoria]
     conteudos = Conteudo.objects.publicados().filter(
         Q(categoria__in=cats) | Q(vinculos__categoria__in=cats)
     ).distinct().order_by(
         Case(When(ordem=0, then=Value(9999)), default=F('ordem'), output_field=IntegerField()),
         '-data_publicacao'
     )
-    # Conteúdos marcados como vibrantes/pulsantes nestes locais
     pulsantes = set(Vinculo.objects.filter(
         categoria__in=cats, pulsante=True
     ).values_list('conteudo_id', flat=True))

@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v8 — atualizado em 2026-07-13 — Parte 10)
+# Site Currículos SEDU — Contexto do Projeto (v9 — atualizado em 2026-07-13 — Parte 11)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 121 botões (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores NOVO**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
+- **Leva mais recente (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
+- **Leva anterior (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
 - **Leva anterior (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
 - **Leva anterior (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
 - **Leva anterior (2026-07-13 — "parte 7")**: **Sistema de Comentários Moderados** — 3 estados: pendente/publicado/recusado. Campo de resposta do administrador exibido abaixo do comentário no site. Comentários NÃO aparecem em conteúdos tipo "link". Visual moderno com badge de contagem, aviso de moderação, botão gradiente. Admin totalmente reescrito com ações em lote (aprovar/recusar), badges coloridos de status, campos readonly para dados do visitante. Migração `conteudo/0019` aplicada. Detalhes no histórico item 21.
@@ -334,6 +335,39 @@ Implementado painel administrativo completo e independente para gerenciar a hier
 - Template novo `estrutura_arvores.html`
 - **Nenhuma alteração** a rotas públicas, models, admin, templates do site público, ou funcionalidades existentes
 - Conteúdo público (`/`) totalmente intacto
+
+### 2026-07-13 — Correção crítica de duplicação + Modal da Estrutura (parte 11)
+
+**Bug crítico corrigido**: conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai.
+
+**Problema**: quando o Dan criava um botão (categoria) com URL via Estrutura de Árvores, o sistema criava um Conteudo dentro daquele botão. Mas a view `categoria_detalhe` buscava conteúdos da categoria **E de todas as subcategorias** (`cats = [categoria] + list(subcategorias)`), então o conteúdo aparecia:
+- Como card/link dentro do subbotão ✓
+- **E também como card solto na página do pai** ✗ (duplicação visual)
+
+**Solução**: mudar `categoria_detalhe` para buscar conteúdos **somente da própria categoria**, não de subcategorias. As subcategorias já aparecem como cards (subbotões) — seus conteúdos ficam dentro delas.
+- Linha ~107 em `conteudo/views.py`: `cats = [categoria]` (removido `+ list(subcategorias)`)
+- Filtro mantém os Vínculos normalmente (`Q(vinculos__categoria__in=cats)`)
+- Página-índice ("Documentos Curriculares") não foi afetada (usa caminho separado)
+
+**Melhorias complementares:**
+1. **Modal da Estrutura de Árvores restaura HTML** — `fecharModal()` agora restaura sempre o HTML original (`eaModalTitulo`, `eaModalMsg`, `eaModalConfirm`), evitando corrupção ao abrir mover/excluir consecutivamente
+2. **Formulário de criação com URL + múltiplos arquivos** — `abrirCriar()` substitui `prompt()` por modal completo, aceita `criarUrl` (input type="url") e `criarAnexos` (input type="file" multiple)
+3. **Limpeza de lixo de testes** — excluídos 2 conteúdos "Link: ..." do banco (IDs 598, 599) criados durante testes anteriores
+4. **Título do conteúdo criado por URL** — mudado de `f'Link: {nome}'` para simplesmente `nome` (sem prefixo confuso)
+
+**Arquivos modificados:**
+- `conteudo/views.py` — linha ~107: `cats = [categoria]` (removido subcategorias do filtro)
+- `conteudo/arvore_views.py` — `_api_criar()`: título sem "Link: " prefixo
+- `templates/admin/estrutura_arvores.html` — funções JS atualizadas: `fecharModal()` restaura HTML, `abrirCriar()` modal completo
+
+**Testado:**
+- Página `/categoria/orientacoes-curriculares/`: 16 subbotões visíveis, 0 conteúdos duplicados (antes: 16 subbotões + N conteúdos duplicados)
+- Páginas `/categoria/curriculo-atual/`, `/categoria/documentos-curriculares/`: HTTP 200, layout correto
+- Exclusão de botões: funciona (modal intacto após fecharModal)
+- Mover botão: funciona (modal intacto após fecharModal)
+- Criar com URL: cria Conteudo tipo "link" corretamente (sem prefixo "Link:")
+
+**Compatibilidade 100%**: ZERO alterações quebradas — todos os outros painéis (Painel Central, Organizador, etc.) continuam funcionando normalmente.
 
 ### Base do projeto (junho/2026)
 Estrutura Django completa; migração de 102 conteúdos + textos introdutórios do WordPress; admin com widgets visuais; comentários com moderação; banners por área; agendamento de publicação; cartazes laterais; responsividade completa; busca sem acento; deploy de teste no PythonAnywhere.

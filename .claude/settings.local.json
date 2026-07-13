@@ -112,7 +112,14 @@
       "Bash(venv/Scripts/python.exe manage.py check)",
       "Bash(where ffmpeg *)",
       "Bash(curl -sI -H \"Range: bytes=0-1023\" \"http://localhost:8001/media/carrossel/AFINAL_PARA_QUE_SERVE_O_CONSELHO_DE_ESCOLA.mp4\")",
-      "Bash(curl -sI \"http://localhost:8001/media/carrossel/AFINAL_PARA_QUE_SERVE_O_CONSELHO_DE_ESCOLA.mp4\")"
+      "Bash(curl -sI \"http://localhost:8001/media/carrossel/AFINAL_PARA_QUE_SERVE_O_CONSELHO_DE_ESCOLA.mp4\")",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py runserver 8001 --noreload)",
+      "Bash(timeout 3)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8001/)",
+      "PowerShell(Start-Process -FilePath \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\venv\\\\Scripts\\\\python.exe\" -ArgumentList \"manage.py\",\"runserver\",\"8001\",\"--noreload\" -WorkingDirectory \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\" -WindowStyle Hidden; Start-Sleep -Seconds 3; \\(Invoke-WebRequest -Uri \"http://127.0.0.1:8001/\" -UseBasicParsing -TimeoutSec 5\\).StatusCode)",
+      "PowerShell(\\(Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/orientacoes-curriculares/\" -UseBasicParsing -TimeoutSec 5\\).StatusCode)",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/orientacoes-curriculares/\" -UseBasicParsing -TimeoutSec 10; $html = $r.Content; $matches = [regex]::Matches\\($html, 'content-card'\\); \"Cards encontrados: $\\($matches.Count\\)\"; $linkMatches = [regex]::Matches\\($html, 'Link:'\\); \"Ocorrencias de 'Link:': $\\($linkMatches.Count\\)\"; $subMatches = [regex]::Matches\\($html, 'content-card--subbotao'\\); \"Subbotões: $\\($subMatches.Count\\)\")",
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/documentos-curriculares/\" -UseBasicParsing -TimeoutSec 10; \"Documentos Curriculares: HTTP $\\($r.StatusCode\\)\"; $r2 = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/curriculo-atual/\" -UseBasicParsing -TimeoutSec 10; $html2 = $r2.Content; $cards2 = [regex]::Matches\\($html2, 'content-card'\\); $subs2 = [regex]::Matches\\($html2, 'content-card--subbotao'\\); \"Currículo Atual: HTTP $\\($r2.StatusCode\\), cards=$\\($cards2.Count\\), subbotões=$\\($subs2.Count\\)\")"
     ]
   }
 }

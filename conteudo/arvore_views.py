@@ -219,7 +219,7 @@ def _api_conteudos(request):
 
 
 def _api_criar(request):
-    """Cria um novo nó na árvore."""
+    """Cria um novo nó na árvore, opcionalmente com conteúdo (URL ou arquivo)."""
     nome = request.POST.get('nome', '').strip()
     pai_id = request.POST.get('pai_id', '').strip()
     icone = request.POST.get('icone', '').strip()
@@ -243,12 +243,37 @@ def _api_criar(request):
     if icone_img:
         cat.icone_imagem.save(icone_img.name, icone_img, save=True)
 
+    msg = f'"{nome}" criado com sucesso.'
+
+    url_conteudo = request.POST.get('url_conteudo', '').strip()
+    if url_conteudo:
+        Conteudo.objects.create(
+            titulo=nome,
+            slug=_slug_unico(Conteudo, nome),
+            tipo='link',
+            url_externa=url_conteudo,
+            categoria=cat,
+            status='publicado',
+            data_publicacao=timezone.now(),
+        )
+        msg += f' Link associado.'
+
+    arquivos = request.FILES.getlist('arquivos_anexo')
+    for arq in arquivos:
+        Anexo.objects.create(
+            categoria=cat,
+            arquivo=arq,
+            nome=arq.name,
+        )
+    if arquivos:
+        msg += f' {len(arquivos)} anexo(s) adicionado(s).'
+
     return JsonResponse({
         'ok': True,
         'id': cat.pk,
         'nome': cat.nome,
         'slug': cat.slug,
-        'msg': f'"{nome}" criado com sucesso.',
+        'msg': msg,
     })
 
 
