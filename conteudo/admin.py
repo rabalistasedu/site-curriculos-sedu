@@ -94,11 +94,19 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                 'Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.'
             ),
         }),
+        ('🔗 URL de acesso externo', {
+            'fields': ('url_externa',),
+            'classes': ('collapse',),
+            'description': 'Se preenchido, ao clicar neste botão o visitante será '
+                           'direcionado para este endereço externo em vez de abrir '
+                           'a página interna da categoria.',
+        }),
         ('📍 Onde este botão aparece na página inicial', {
-            'fields': ('mostrar_menu_superior', 'mostrar_navegue_area'),
+            'fields': ('mostrar_menu_superior', 'mostrar_navegue_area', 'mostrar_conteudos_recentes'),
             'description': 'Estas opções valem para botões do nível principal: '
                            'controlam a barra azul do topo (e a lista "Navegação" '
-                           'do rodapé) e a seção "Navegue por área" da home.',
+                           'do rodapé), a seção "Navegue por área" e "Conteúdos '
+                           'Recentes" da home.',
         }),
     )
 
@@ -363,7 +371,7 @@ class BannerAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
-    list_display = ['nome', 'conteudo_link', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
+    list_display = ['nome', 'conteudo_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
     list_filter = ['status', 'data_criacao']
     search_fields = ['nome', 'email', 'texto', 'conteudo__titulo']
     ordering = ['-data_criacao']
@@ -441,6 +449,26 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             obj.votos_positivos, obj.votos_negativos
         )
     votos_badge.short_description = 'Votos'
+
+    def local_comentario(self, obj):
+        cat = obj.conteudo.categoria
+        if cat:
+            return format_html(
+                '<span style="font-size:11px;color:#475569;">{}</span>',
+                cat.nome
+            )
+        return format_html('<span style="color:#9ca3af;">—</span>')
+    local_comentario.short_description = 'Local'
+
+    def ir_para_comentario(self, obj):
+        return format_html(
+            '<a href="/conteudo/{}/#comentarios" target="_blank" '
+            'style="background:#2d5a8e;color:#fff;padding:3px 10px;border-radius:4px;'
+            'font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;">'
+            '<i class="fas fa-arrow-up-right-from-square"></i> Ir</a>',
+            obj.conteudo.slug
+        )
+    ir_para_comentario.short_description = 'Ver no site'
 
     actions = ['aprovar_selecionados', 'recusar_selecionados', 'excluir_selecionados']
 

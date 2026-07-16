@@ -44,7 +44,7 @@
 
         <nav class="nav">
             {% for cat in menu_categorias %}
-            <a href="{% url 'conteudo:categoria' cat.slug %}" class="nav-link">
+            <a href="{% if cat.link_externo %}{{ cat.link_externo }}{% else %}{% url 'conteudo:categoria' cat.slug %}{% endif %}" class="nav-link" title="{{ cat.nome }}"{% if cat.link_externo %} target="_blank" rel="noopener"{% endif %}>
                 {% if cat.icone %}<i class="{{ cat.icone }}"></i>{% endif %}
                 {{ cat.nome }}
             </a>
@@ -80,20 +80,27 @@
 <footer class="footer">
     <div class="container footer-inner">
         <div class="footer-info">
-            <h3>GERÊNCIA DE CURRÍCULO DA EDUCAÇÃO BÁSICA (GECEB)</h3>
+            <h3>{{ config.rodape_col1_titulo|default:"GERÊNCIA DE CURRÍCULO DA EDUCAÇÃO BÁSICA (GECEB)" }}</h3>
+            {% if config.rodape_col1_html %}{{ config.rodape_col1_html|safe }}{% else %}
             <p><i class="fas fa-envelope"></i> {{ config.email_contato }}</p>
             <p><i class="fas fa-phone"></i> {{ config.telefone }}</p>
+            {% endif %}
         </div>
         <div class="footer-info">
-            <h3>SECRETARIA DA EDUCAÇÃO (SEDU)</h3>
+            <h3>{{ config.rodape_col2_titulo|default:"SECRETARIA DA EDUCAÇÃO (SEDU)" }}</h3>
+            {% if config.rodape_col2_html %}{{ config.rodape_col2_html|safe }}{% else %}
             <p><i class="fas fa-map-marker-alt"></i> {{ config.endereco|linebreaksbr }}</p>
+            {% endif %}
         </div>
         <div class="footer-links">
-            <h3>Navegação</h3>
+            <h3>{{ config.rodape_col3_titulo|default:"Navegação" }}</h3>
+            {% if config.rodape_col3_html %}{{ config.rodape_col3_html|safe }}{% else %}
             {% for cat in menu_categorias %}
             <a href="{% url 'conteudo:categoria' cat.slug %}">{{ cat.nome }}</a>
             {% endfor %}
+            {% endif %}
         </div>
+        {% if config.rodape_imagem %}<div class="footer-info" style="display:flex;align-items:center;justify-content:center;"><img src="{{ config.rodape_imagem.url }}" alt="Logo" style="max-height:50px;"></div>{% endif %}
     </div>
     {# Botão discreto de volta à home — acima da barra do cadeado, colado à direita; pulsa fora da home #}
     <div class="container footer-voltar-wrap">
@@ -105,7 +112,7 @@
     </div>
     <div class="footer-bottom">
         <div class="container footer-bottom-inner">
-            <p>&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo</p>
+            <p>{% if config.rodape_copyright %}{{ config.rodape_copyright }}{% else %}&copy; {{ config.nome_site }} — Secretaria de Estado da Educação do Espírito Santo{% endif %}</p>
             <a href="/admin/" class="admin-access-btn" title="Área administrativa">
                 <i class="fas fa-lock"></i>
             </a>

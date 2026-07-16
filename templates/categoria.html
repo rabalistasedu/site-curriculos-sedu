@@ -53,9 +53,11 @@
         {% endif %}
         <div class="topic-grid">
             {% for botao in botoes %}
-            <a href="{% url 'conteudo:categoria' botao.slug %}"
+            <a href="{% if botao.link_externo %}{{ botao.link_externo }}{% else %}{% url 'conteudo:categoria' botao.slug %}{% endif %}"
                class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}{% if botao.estilo.classe_tamanho %} {{ botao.estilo.classe_tamanho }}{% endif %}"
-               {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}>
+               {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}
+               {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ botao.nome }}">
                 <span class="topic-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
                     {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
                     {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
@@ -70,9 +72,11 @@
         {% if subcategorias %}
         <div class="subcategories">
             {% for sub in subcategorias %}
-            <a href="{% url 'conteudo:categoria' sub.slug %}"
+            <a href="{% if sub.link_externo %}{{ sub.link_externo }}{% else %}{% url 'conteudo:categoria' sub.slug %}{% endif %}"
                class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}{% if sub.estilo.classe_tamanho %} {{ sub.estilo.classe_tamanho }}{% endif %}"
-               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
+               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}
+               {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ sub.nome }}">
                 {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado">
                 {% elif sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
                 {{ sub.nome }}
@@ -101,7 +105,7 @@
             <h3 class="anexos-titulo"><i class="fas fa-paperclip"></i> Arquivos para download</h3>
             <div class="anexos-lista">
                 {% for anexo in anexos_categoria %}
-                <a href="{{ anexo.arquivo.url }}" class="anexo-item" target="_blank" rel="noopener">
+                <a href="{{ anexo.arquivo.url }}" class="anexo-item" target="_blank" rel="noopener" title="{{ anexo.nome_exibicao }}">
                     <span class="anexo-icone">
                         {% if anexo.extensao == 'PDF' %}<i class="fas fa-file-pdf"></i>
                         {% elif anexo.extensao == 'DOCX' or anexo.extensao == 'DOC' %}<i class="fas fa-file-word"></i>
@@ -128,9 +132,11 @@
         {% if subcategorias or conteudos %}
         <div class="content-grid">
             {% for sub in subcategorias %}
-            <a href="{% url 'conteudo:categoria' sub.slug %}"
+            <a href="{% if sub.link_externo %}{{ sub.link_externo }}{% else %}{% url 'conteudo:categoria' sub.slug %}{% endif %}"
                class="content-card content-card--subbotao{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
-               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}>
+               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}
+               {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ sub.nome }}">
                 <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}">
                     {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado">
                     {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
@@ -144,7 +150,8 @@
             {% for item in conteudos %}
             <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
                class="content-card{% if item.pk in pulsantes %} btn-pulse{% endif %}"
-               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
+               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ item.titulo|default:item.get_tipo_display }}">
                 {% if item.imagem_destaque %}
                 <div class="card-image">
                     <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">

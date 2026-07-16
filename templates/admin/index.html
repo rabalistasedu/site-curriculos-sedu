@@ -93,6 +93,38 @@
     </a>
 </div>
 
+<!-- Banner do Editor de Rodapé -->
+<div style="background: linear-gradient(135deg, #374151 0%, #111827 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-pen-ruler" style="margin-right: 8px;"></i>
+            Editor do Rodape
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #d1d5db;">
+            Edite textos, links, imagens, icones e a organizacao das colunas do rodape do site.
+        </p>
+    </div>
+    <a href="{% url 'admin_editor_rodape' %}" style="background: #fff; color: #374151; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-pen-to-square"></i> Editar Rodape
+    </a>
+</div>
+
+<!-- Banner da Central de Inteligência do Portal -->
+<div style="background: linear-gradient(135deg, #e11d48 0%, #881337 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
+            Central de Inteligência do Portal
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #ffe4e6;">
+            Estatísticas completas de utilização do portal: acessos, downloads, buscas, rankings, gráficos e relatórios.
+        </p>
+    </div>
+    <a href="{% url 'inteligencia:dashboard' %}" style="background: #fff; color: #e11d48; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-chart-pie"></i> Abrir Central de Inteligência
+    </a>
+</div>
+
 <!-- A lista de apps não é repetida aqui: ela já aparece na barra lateral
      esquerda do admin (nav sidebar). Os banners acima dão acesso rápido
      aos painéis visuais. -->

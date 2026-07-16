@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
 from django.db.models import Q
-from .models import Categoria, Conteudo, Anexo
+from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite
 
 
 @staff_member_required
@@ -70,6 +70,54 @@ def organizar_view(request):
             messages.success(request, 'Ordem salva com sucesso!')
             return redirect(f'/admin/organizar/?cat={origem_cat}')
 
+        elif action == 'criar_destaque':
+            titulo = request.POST.get('dest_titulo', '').strip()
+            url_ext = request.POST.get('dest_url', '').strip()
+            arquivo = request.FILES.get('dest_arquivo')
+            if not titulo and not arquivo and not url_ext:
+                messages.error(request, 'Preencha pelo menos um campo (titulo, arquivo ou URL).')
+                return redirect('/admin/organizar/')
+            slug = slugify(titulo or 'destaque')
+            original_slug = slug
+            n = 1
+            while Conteudo.objects.filter(slug=slug).exists():
+                slug = f'{original_slug}-{n}'
+                n += 1
+            tipo = 'link' if url_ext else ('documento' if arquivo else 'post')
+            c = Conteudo.objects.create(
+                titulo=titulo or 'Destaque',
+                slug=slug,
+                tipo=tipo,
+                url_externa=url_ext,
+                arquivo=arquivo or '',
+                status='publicado',
+                destaque=True,
+                ordem=0,
+            )
+            messages.success(request, f'Destaque "{c.titulo}" criado com sucesso!')
+            return redirect('/admin/organizar/')
+
+        elif action == 'toggle_destaque':
+            dest_id = request.POST.get('dest_id')
+            if dest_id:
+                try:
+                    c = Conteudo.objects.get(pk=dest_id)
+                    c.destaque = not c.destaque
+                    c.save(update_fields=['destaque'])
+                    estado = 'ativado' if c.destaque else 'desativado'
+                    messages.success(request, f'Destaque "{c.titulo}" {estado}.')
+                except Conteudo.DoesNotExist:
+                    pass
+            return redirect('/admin/organizar/')
+
+        elif action == 'excluir_destaque':
+            dest_id = request.POST.get('dest_id')
+            if dest_id:
+                deleted, _ = Conteudo.objects.filter(pk=dest_id, destaque=True).delete()
+                if deleted:
+                    messages.success(request, 'Destaque excluido.')
+            return redirect('/admin/organizar/')
+
     if cat_id:
         categoria = get_object_or_404(Categoria, pk=cat_id)
         subcategorias = categoria.subcategorias.filter(ativa=True).order_by('ordem', 'nome')
@@ -126,9 +174,12 @@ def organizar_view(request):
                 'sub_count': len(subs),
             })
 
+        destaques = Conteudo.objects.filter(destaque=True).order_by('-data_publicacao')
+
         context = {
             'title': 'Organizador de Conteúdo',
             'categorias': cat_data,
+            'destaques': destaques,
             'categoria': None,
             'is_app_index': True,
             'has_permission': True,
@@ -260,7 +311,8 @@ def adicionar_arquivos_view(request):
 
 @staff_member_required
 def api_subcategorias_itens(request):
-    """API JSON para listar subcategorias e seus itens, e excluir itens."""
+    """API JSON para listar subcategorias e seus itens, excluir itens,
+    excluir grupos e duplicar itens."""
 
     if request.method == 'GET':
         cat_id = request.GET.get('cat_id')
@@ -323,6 +375,53 @@ def api_subcategorias_itens(request):
         elif action == 'delete_conteudo' and item_id:
             deleted, _ = Conteudo.objects.filter(pk=item_id).delete()
             return JsonResponse({'ok': True, 'deleted': deleted})
+        elif action == 'delete_grupo' and item_id:
+            try:
+                grupo = Categoria.objects.get(pk=item_id)
+            except Categoria.DoesNotExist:
+                return JsonResponse({'error': 'Grupo não encontrado'}, status=404)
+            n_conteudos = Conteudo.objects.filter(categoria=grupo).count()
+            n_anexos = Anexo.objects.filter(categoria=grupo).count()
+            n_sub = grupo.subcategorias.count()
+            if n_conteudos > 0 or n_anexos > 0 or n_sub > 0:
+                Conteudo.objects.filter(categoria=grupo).update(categoria=None)
+                Anexo.objects.filter(categoria=grupo).delete()
+            grupo.delete()
+            return JsonResponse({
+                'ok': True,
+                'conteudos_orfaos': n_conteudos,
+                'anexos_excluidos': n_anexos,
+            })
+        elif action == 'duplicar_conteudo' and item_id:
+            try:
+                orig = Conteudo.objects.get(pk=item_id)
+            except Conteudo.DoesNotExist:
+                return JsonResponse({'error': 'Conteúdo não encontrado'}, status=404)
+            orig.pk = None
+            orig.slug = ''
+            orig.titulo = f'{orig.titulo} (cópia)'
+            orig.save()
+            for anexo in Anexo.objects.filter(conteudo_id=item_id):
+                Anexo.objects.create(
+                    conteudo=orig,
+                    arquivo=anexo.arquivo,
+                    nome=anexo.nome,
+                    ordem=anexo.ordem,
+                )
+            return JsonResponse({'ok': True, 'new_id': orig.pk})
+        elif action == 'duplicar_anexo' and item_id:
+            try:
+                orig = Anexo.objects.get(pk=item_id)
+            except Anexo.DoesNotExist:
+                return JsonResponse({'error': 'Anexo não encontrado'}, status=404)
+            Anexo.objects.create(
+                conteudo=orig.conteudo,
+                categoria=orig.categoria,
+                arquivo=orig.arquivo,
+                nome=f'{orig.nome} (cópia)' if orig.nome else '',
+                ordem=orig.ordem,
+            )
+            return JsonResponse({'ok': True})
 
         return JsonResponse({'error': 'ação desconhecida'}, status=400)
 
@@ -364,6 +463,37 @@ def barra_superior_view(request):
     return render(request, 'admin/barra_superior.html', {
         'title': 'Botões da barra superior',
         'principais': principais,
+        'has_permission': True,
+        'is_app_index': True,
+    })
+
+
+@staff_member_required
+def editor_rodape_view(request):
+    config = ConfiguracaoSite.get_config()
+
+    if request.method == 'POST':
+        config.rodape_col1_titulo = request.POST.get('col1_titulo', '').strip()
+        config.rodape_col1_html = request.POST.get('col1_html', '').strip()
+        config.rodape_col2_titulo = request.POST.get('col2_titulo', '').strip()
+        config.rodape_col2_html = request.POST.get('col2_html', '').strip()
+        config.rodape_col3_titulo = request.POST.get('col3_titulo', '').strip()
+        config.rodape_col3_html = request.POST.get('col3_html', '').strip()
+        config.rodape_copyright = request.POST.get('copyright', '').strip()
+        config.email_contato = request.POST.get('email', '').strip() or config.email_contato
+        config.telefone = request.POST.get('telefone', '').strip() or config.telefone
+        config.endereco = request.POST.get('endereco', '').strip() or config.endereco
+        if 'rodape_imagem' in request.FILES:
+            config.rodape_imagem = request.FILES['rodape_imagem']
+        if request.POST.get('limpar_imagem'):
+            config.rodape_imagem = None
+        config.save()
+        messages.success(request, 'Rodape atualizado com sucesso!')
+        return redirect('admin_editor_rodape')
+
+    return render(request, 'admin/editor_rodape.html', {
+        'title': 'Editor do Rodape',
+        'config': config,
         'has_permission': True,
         'is_app_index': True,
     })

@@ -575,10 +575,13 @@ function renderSubcats() {
     for (var i = 0; i < subcatsData.length; i++) {
         var sub = subcatsData[i];
         var sel = (selectedSubcatId == sub.id) ? ' selected' : '';
-        html += '<button type="button" class="aa-subcat-chip' + sel + '" data-id="' + sub.id + '" onclick="selectSubcat(' + sub.id + ')">';
+        html += '<span style="display:inline-flex;align-items:center;gap:0;">';
+        html += '<button type="button" class="aa-subcat-chip' + sel + '" data-id="' + sub.id + '" onclick="selectSubcat(' + sub.id + ')" style="border-radius:20px 0 0 20px;padding-right:10px;">';
         html += '<i class="fas fa-folder-open"></i> ' + escapeHtml(sub.nome);
         html += ' <span class="aa-chip-count">' + sub.count + '</span>';
         html += '</button>';
+        html += '<button type="button" onclick="deleteGrupo(' + sub.id + ',\'' + escapeHtml(sub.nome).replace(/'/g, "\\'") + '\',' + sub.count + ')" title="Excluir grupo" style="background:#fee2e2;color:#dc2626;border:2px solid #fecaca;border-left:none;border-radius:0 20px 20px 0;padding:8px 10px;cursor:pointer;font-size:12px;transition:background .2s;"><i class="fas fa-trash"></i></button>';
+        html += '</span>';
     }
     html += '</div>';
     container.innerHTML = html;
@@ -663,6 +666,8 @@ function loadItems(subcatId) {
             html += '<i class="fas fa-pen"></i> <span class="aa-action-label">Editar</span></a>';
         }
 
+        html += '<button type="button" class="aa-btn-edit" title="Duplicar este item" onclick="duplicateItem(\'' + item.tipo_item + '\', ' + item.id + ')" style="border-color:#c4b5fd;background:#f5f3ff;color:#7c3aed;">';
+        html += '<i class="fas fa-copy"></i> <span class="aa-action-label">Duplicar</span></button>';
         html += '<button type="button" class="aa-btn-delete" title="Excluir este item" onclick="deleteItem(\'' + item.tipo_item + '\', ' + item.id + ')">';
         html += '<i class="fas fa-trash"></i> <span class="aa-action-label">Excluir</span></button>';
         html += '</div></div>';
@@ -672,6 +677,58 @@ function loadItems(subcatId) {
     container.style.display = 'block';
     container.innerHTML = html;
     container.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+function deleteGrupo(grupoId, nome, count) {
+    var msg = 'Excluir o grupo "' + nome + '"?';
+    if (count > 0) {
+        msg += '\n\nEste grupo possui ' + count + ' item(ns).\nOs conteúdos serão desvinculados (recuperáveis no Painel Central).\nOs anexos serão excluídos permanentemente.';
+    }
+    if (!confirm(msg)) return;
+
+    fetch('/admin/api/subcategorias/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'delete_grupo', id: grupoId })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            subcatsData = subcatsData.filter(function(s) { return s.id !== grupoId; });
+            if (selectedSubcatId === grupoId) clearSubcatSelection();
+            renderSubcats();
+            var info = 'Grupo excluído!';
+            if (data.conteudos_orfaos > 0) info += ' ' + data.conteudos_orfaos + ' conteúdo(s) desvinculado(s).';
+            alert(info);
+        } else {
+            alert('Erro: ' + (data.error || 'falha ao excluir'));
+        }
+    })
+    .catch(function() { alert('Erro de conexão.'); });
+}
+
+function duplicateItem(tipoItem, id) {
+    var action = (tipoItem === 'anexo') ? 'duplicar_anexo' : 'duplicar_conteudo';
+
+    fetch('/admin/api/subcategorias/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: action, id: id })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            if (selectedSubcatId) loadSubcategorias(document.querySelector('[name=categoria]:checked').value);
+            alert('Item duplicado com sucesso!');
+        }
+    })
+    .catch(function() { alert('Erro ao duplicar.'); });
 }
 
 function deleteItem(tipoItem, id) {

@@ -85,17 +85,28 @@ class Categoria(models.Model):
         related_name='subcategorias', verbose_name='Categoria pai'
     )
     mostrar_menu_superior = models.BooleanField(
-        'Aparecer na barra superior do site', default=True,
+        'Aparecer na barra superior do site', default=False,
         help_text='Se marcado, o botão aparece na barra azul do topo da página '
                   'inicial e na lista "Navegação" do rodapé. Se desmarcado, some '
                   'dessas duas barras (mas a página da categoria continua existindo). '
                   'Vale apenas para botões do nível principal.'
     )
     mostrar_navegue_area = models.BooleanField(
-        'Aparecer no "Navegue por área"', default=True,
+        'Aparecer no "Navegue por área"', default=False,
         help_text='Se marcado, o botão aparece na seção "Navegue por área" da '
                   'página inicial. Se desmarcado, não aparece lá. '
                   'Vale apenas para botões do nível principal.'
+    )
+    url_externa = models.URLField(
+        'URL / Link de acesso externo', max_length=500, blank=True,
+        help_text='Opcional. Se preenchido, ao clicar neste botão o visitante '
+                  'será direcionado para este endereço externo em vez de abrir '
+                  'a página interna da categoria.'
+    )
+    mostrar_conteudos_recentes = models.BooleanField(
+        'Aparecer em Conteúdos Recentes', default=False,
+        help_text='Se marcado, os conteúdos desta categoria poderão aparecer '
+                  'automaticamente na área "Conteúdos Recentes" da página inicial.'
     )
 
     class Meta:
@@ -119,6 +130,16 @@ class Categoria(models.Model):
         if self.icone:
             return self.icone
         return icone_por_texto(self.nome, fallback='fas fa-folder-open')
+
+    @property
+    def link_externo(self):
+        """URL externa pronta para uso no href, com schema garantido."""
+        url = (self.url_externa or '').strip()
+        if not url:
+            return ''
+        if '://' in url or url.startswith(('mailto:', 'tel:', '//', '#', '/')):
+            return url
+        return 'https://' + url
 
 
 class TipoConteudo(models.TextChoices):
@@ -607,6 +628,14 @@ class ConfiguracaoSite(models.Model):
     )
     logo = models.ImageField('Logo', upload_to='config/', blank=True, null=True)
     favicon = models.ImageField('Favicon', upload_to='config/', blank=True, null=True)
+    rodape_col1_titulo = models.CharField('Rodape: titulo coluna 1', max_length=200, blank=True, default='GERENCIA DE CURRICULO DA EDUCACAO BASICA (GECEB)')
+    rodape_col1_html = models.TextField('Rodape: conteudo coluna 1 (HTML)', blank=True)
+    rodape_col2_titulo = models.CharField('Rodape: titulo coluna 2', max_length=200, blank=True, default='SECRETARIA DA EDUCACAO (SEDU)')
+    rodape_col2_html = models.TextField('Rodape: conteudo coluna 2 (HTML)', blank=True)
+    rodape_col3_titulo = models.CharField('Rodape: titulo coluna 3', max_length=200, blank=True, default='Navegacao')
+    rodape_col3_html = models.TextField('Rodape: conteudo coluna 3 (HTML)', blank=True, help_text='Se vazio, exibe links automaticos das categorias do menu.')
+    rodape_copyright = models.CharField('Rodape: texto copyright', max_length=300, blank=True)
+    rodape_imagem = models.ImageField('Rodape: imagem/logo', upload_to='config/', blank=True, null=True)
 
     class Meta:
         verbose_name = 'Configuração do site'

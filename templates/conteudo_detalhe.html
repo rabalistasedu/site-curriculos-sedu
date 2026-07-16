@@ -79,7 +79,7 @@
                 <h3 class="anexos-titulo"><i class="fas fa-paperclip"></i> Arquivos para download</h3>
                 <div class="anexos-lista">
                     {% for anexo in anexos %}
-                    <a href="{{ anexo.arquivo.url }}" class="anexo-item" target="_blank" rel="noopener">
+                    <a href="{{ anexo.arquivo.url }}" class="anexo-item" target="_blank" rel="noopener" title="{{ anexo.nome_exibicao }}">
                         <span class="anexo-icone">
                             {% if anexo.extensao == 'PDF' %}<i class="fas fa-file-pdf"></i>
                             {% elif anexo.extensao == 'DOCX' or anexo.extensao == 'DOC' %}<i class="fas fa-file-word"></i>

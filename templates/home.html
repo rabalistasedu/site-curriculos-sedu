@@ -47,7 +47,8 @@
             {% for item in destaques %}
             <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
                class="content-card"
-               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
+               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ item.titulo|default:item.get_tipo_display }}">
                 {% if item.imagem_destaque %}
                 <div class="card-image" style="background-image:url('{{ item.imagem_destaque.url }}')">
                     <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
@@ -120,7 +121,7 @@
 
         <!-- Botão "Currículo Atual" centralizado acima das duas colunas -->
         <div class="curriculo-atual-topo">
-            <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured">
+            <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured" title="Currículo Atual">
                 <div class="category-icon">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
@@ -143,7 +144,8 @@
                     {% for item in recentes %}
                     <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
                        class="list-item"
-                       {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}>
+                       {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}
+                       title="{{ item.titulo|default:item.get_tipo_display }}">
                         <div class="list-icon{% if item.icone_imagem %} sem-fundo{% endif %}">
                             {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
                             {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
@@ -173,9 +175,11 @@
                 </h2>
                 <div class="areas-list">
                     {% for cat in categorias %}
-                    <a href="{% url 'conteudo:categoria' cat.slug %}"
+                    <a href="{% if cat.link_externo %}{{ cat.link_externo }}{% else %}{% url 'conteudo:categoria' cat.slug %}{% endif %}"
                        class="area-card{% if cat.estilo.pulsante %} btn-pulse{% endif %}{% if cat.estilo.classe_tamanho %} {{ cat.estilo.classe_tamanho }}{% endif %}"
-                       {% if cat.estilo %}style="{{ cat.estilo.css_inline }}"{% endif %}>
+                       {% if cat.estilo %}style="{{ cat.estilo.css_inline }}"{% endif %}
+                       {% if cat.link_externo %}target="_blank" rel="noopener"{% endif %}
+                       title="{{ cat.nome }}">
                         <div class="category-icon{% if cat.icone_imagem %} sem-fundo{% endif %}">
                             {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
                             {% else %}<i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>{% endif %}

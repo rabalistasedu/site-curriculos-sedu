@@ -699,6 +699,11 @@ const EA = {
                 <div class="ea-campo"><label>Nome</label><input type="text" id="edNome" value="${this._esc(d.nome)}"></div>
                 <div class="ea-campo"><label>Descrição</label><textarea id="edDesc">${this._esc(d.descricao)}</textarea></div>
                 <div class="ea-campo"><label>Ordem</label><input type="number" id="edOrdem" value="${d.ordem}" min="0"></div>
+                ${!d.pai_id ? '' : `<div style="background:#fef3c7;border:1px solid #fbbf24;color:#92400e;border-radius:8px;padding:8px 12px;font-size:12px;margin-bottom:10px;">
+                    <i class="fas fa-triangle-exclamation"></i> "${this._esc(d.nome)}" é um <strong>subbotão</strong> (está dentro de "${this._esc(d.pai_nome)}").
+                    Os campos abaixo (Menu superior / Navegue por área) só têm efeito visível em <strong>botões raiz</strong> — em subbotões, o site salva o valor mas
+                    não aparece na barra superior nem na home, pois essas duas seções só listam botões do nível principal.
+                </div>`}
                 <div class="ea-campo">
                     <label>Menu superior</label>
                     <select id="edMenuSup"><option value="1" ${d.mostrar_menu_superior ? 'selected' : ''}>Sim</option><option value="0" ${!d.mostrar_menu_superior ? 'selected' : ''}>Não</option></select>

@@ -12,6 +12,7 @@
             <span class="pc-nome">{{ no.cat.nome }}</span>
         </label>
         {% if no.n_conteudos %}<span class="pc-badge">{{ no.n_conteudos }}</span>{% endif %}
+        {% if no.cat.categoria_pai_id == None %}{% if no.cat.mostrar_menu_superior %}<span class="pc-vis-badge pc-vis-menu" title="Na barra superior">M</span>{% endif %}{% if no.cat.mostrar_navegue_area %}<span class="pc-vis-badge pc-vis-area" title="No Navegue por Área">N</span>{% endif %}{% endif %}
         <a class="pc-ver" href="/categoria/{{ no.cat.slug }}/" target="_blank" rel="noopener" title="Ver no site"><i class="fas fa-arrow-up-right-from-square"></i></a>
     </div>
     {% if no.filhos %}

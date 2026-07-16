@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
@@ -154,6 +154,8 @@ def _criar_no(request):
         categoria_pai=pai,
         icone=request.POST.get('novo_icone', '').strip() or 'fas fa-folder-open',
         ativa=True,
+        mostrar_menu_superior=False,
+        mostrar_navegue_area=False,
     )
     onde = f'dentro de "{pai.nome}"'
     messages.success(request, f'Botão "{nome}" criado {onde}.')
@@ -206,6 +208,8 @@ def _criar_subareas(request):
             categoria_pai=pai,
             icone='fas fa-folder-open',
             ativa=True,
+            mostrar_menu_superior=False,
+            mostrar_navegue_area=False,
         )
         criados.append(f'"{nome}" dentro de "{pai.nome}"')
     messages.success(
@@ -225,6 +229,10 @@ def _dados_botao(request):
         'icone': cat.icone or '',
         'n_anexos': cat.anexos.count(),
         'n_conteudos': Conteudo.objects.filter(categoria=cat).count(),
+        'mostrar_menu_superior': cat.mostrar_menu_superior,
+        'mostrar_navegue_area': cat.mostrar_navegue_area,
+        'pai_id': cat.categoria_pai_id,
+        'pai_nome': cat.categoria_pai.nome if cat.categoria_pai else None,
     })
 
 
@@ -249,6 +257,13 @@ def _editar_botao(request):
     icone_img = request.FILES.get('editar_icone_imagem')
     if icone_img:
         cat.icone_imagem.save(icone_img.name, icone_img, save=False)
+
+    vis_menu = request.POST.get('editar_vis_menu', '')
+    if vis_menu in ('sim', 'nao'):
+        cat.mostrar_menu_superior = (vis_menu == 'sim')
+    vis_area = request.POST.get('editar_vis_area', '')
+    if vis_area in ('sim', 'nao'):
+        cat.mostrar_navegue_area = (vis_area == 'sim')
 
     cat.save()
 
@@ -389,6 +404,38 @@ def _publicar(request):
             n += 1
         if n:
             feitos.append(f'{n} arquivo(s) anexado(s) em {len(destinos)} local(is)')
+
+    # 2b. Destaque / Conteúdos recentes para os conteúdos JÁ PUBLICADOS nos
+    #     botões marcados (só quando NÃO foi criado um conteúdo novo — se foi,
+    #     o destaque/recente já foi aplicado a ELE no bloco 1). Isso corrige o
+    #     caso de marcar um botão, ativar "Destaque"/"Conteúdos recentes" e
+    #     salvar sem preencher título/link/arquivo — antes disso não tinha
+    #     nenhum efeito (checkbox "morto"); agora aplica a todo conteúdo já
+    #     publicado ali (categoria primária OU vínculo extra).
+    if not conteudo_criado and (destaque or recente):
+        existentes = Conteudo.objects.filter(
+            Q(categoria__in=destinos) | Q(vinculos__categoria__in=destinos)
+        ).distinct()
+        n_afetados = existentes.count()
+        if n_afetados:
+            if destaque:
+                existentes.update(destaque=True)
+            if recente:
+                existentes.update(recente=True)
+            partes = []
+            if destaque:
+                partes.append('destaque')
+            if recente:
+                partes.append('conteúdos recentes')
+            feitos.append(
+                f'{n_afetados} conteúdo(s) já publicado(s) em {len(destinos)} '
+                f'botão(ões) marcado(s) como {" e ".join(partes)}'
+            )
+        else:
+            feitos.append(
+                'Nenhum conteúdo publicado nos botões marcados ainda — '
+                'crie um conteúdo (título/link/arquivo) para usar destaque/recentes.'
+            )
 
     # 3. Texto da área (Post acima dos botões) → descrição das categorias
     if texto_area:

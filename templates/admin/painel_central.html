@@ -14,7 +14,7 @@
     .pc-busca { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; margin-bottom: 12px; }
     ul.pc-arvore, ul.pc-filhos { list-style: none; margin: 0; padding: 0; }
     ul.pc-filhos { margin-left: 20px; border-left: 2px solid #eef2f7; padding-left: 6px; }
-    .pc-linha { display: flex; align-items: center; gap: 6px; padding: 4px 2px; border-radius: 6px; }
+    .pc-linha { display: flex; align-items: center; gap: 6px; padding: 4px 2px; border-radius: 6px; position: relative; }
     .pc-linha:hover { background: #f1f5fb; }
     .pc-toggle { border: none; background: none; cursor: pointer; width: 20px; color: #64748b; font-size: 12px; padding: 0; }
     .pc-toggle-vazio { display: inline-block; width: 20px; }
@@ -22,6 +22,9 @@
     .pc-check i { color: #2d5a8e; width: 16px; text-align: center; }
     .pc-check input { accent-color: #2d5a8e; width: 15px; height: 15px; }
     .pc-badge { background: #eef2f7; color: #475569; border-radius: 10px; font-size: 11px; padding: 1px 7px; font-weight: 600; }
+    .pc-vis-badge { font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: 700; letter-spacing: .3px; }
+    .pc-vis-menu { background: #dbeafe; color: #1d4ed8; }
+    .pc-vis-area { background: #d1fae5; color: #059669; }
     .pc-ver { color: #94a3b8; font-size: 11px; text-decoration: none; padding: 2px 4px; }
     .pc-ver:hover { color: #2d5a8e; }
     .pc-novo { margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 12px; }
@@ -146,6 +149,31 @@
                 <input type="text" name="editar_icone" id="pc-editar-icone" placeholder="Ex.: fas fa-book" style="background:#fff;">
                 <label style="font-size:12px;font-weight:600;color:#374151;">Ícone personalizado (imagem):</label>
                 <input type="file" name="editar_icone_imagem" accept="image/*,.ico" style="font-size:12px;margin-bottom:8px;">
+                <div id="pc-editar-aviso-sub" style="display:none;background:#fef3c7;border:1px solid #fbbf24;color:#92400e;border-radius:8px;padding:8px 12px;font-size:11px;margin:10px 0;">
+                    <i class="fas fa-triangle-exclamation"></i> Este botão é um <strong>subbotão</strong> (está dentro de
+                    "<span id="pc-editar-aviso-pai"></span>"). Os campos "Barra Superior" e "Navegue por Área" abaixo só têm
+                    efeito visível em <strong>botões raiz</strong> (nível principal) — em subbotões, o site salva o valor,
+                    mas ele não aparece nem some da barra superior nem da home, pois essas duas seções só listam botões do
+                    nível principal.
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;">
+                    <div>
+                        <label style="font-size:12px;font-weight:600;color:#374151;">Barra Superior:</label>
+                        <select name="editar_vis_menu" id="pc-editar-vis-menu" style="width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff;">
+                            <option value="">— Não alterar —</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px;font-weight:600;color:#374151;">Navegue por Área:</label>
+                        <select name="editar_vis_area" id="pc-editar-vis-area" style="width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff;">
+                            <option value="">— Não alterar —</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="pc-editar-anexos-info" style="font-size:11px;color:#6b7280;margin-bottom:6px;"></div>
                 <label style="font-size:12px;font-weight:600;color:#374151;">Adicionar anexo:</label>
                 <input type="file" name="editar_anexo" style="font-size:12px;margin-bottom:8px;">
@@ -680,6 +708,15 @@
                 document.getElementById('pc-editar-nome').value = d.nome || '';
                 document.getElementById('pc-editar-descricao').value = d.descricao || '';
                 document.getElementById('pc-editar-icone').value = d.icone || '';
+                document.getElementById('pc-editar-vis-menu').value = d.mostrar_menu_superior ? 'sim' : 'nao';
+                document.getElementById('pc-editar-vis-area').value = d.mostrar_navegue_area ? 'sim' : 'nao';
+                var avisoSub = document.getElementById('pc-editar-aviso-sub');
+                if (d.pai_id) {
+                    document.getElementById('pc-editar-aviso-pai').textContent = d.pai_nome || '';
+                    avisoSub.style.display = '';
+                } else {
+                    avisoSub.style.display = 'none';
+                }
                 var info = '';
                 if (d.n_anexos > 0) {
                     info = '<i class="fas fa-paperclip"></i> ' + d.n_anexos + ' anexo(s) neste botão. ';

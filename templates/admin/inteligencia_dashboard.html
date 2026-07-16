@@ -1,0 +1,761 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root {
+    --intel-primary: #e11d48;
+    --intel-primary-dark: #881337;
+    --intel-primary-light: #ffe4e6;
+    --intel-bg: #f8fafc;
+    --intel-surface: #ffffff;
+    --intel-text: #1e293b;
+    --intel-text-muted: #64748b;
+    --intel-border: #e2e8f0;
+    --intel-blue: #2d5a8e;
+    --intel-blue-light: #dbeafe;
+    --intel-green: #059669;
+    --intel-green-light: #d1fae5;
+    --intel-amber: #d97706;
+    --intel-amber-light: #fef3c7;
+    --intel-purple: #7c3aed;
+    --intel-purple-light: #ede9fe;
+    --intel-red: #dc2626;
+    --intel-red-light: #fee2e2;
+    --intel-cyan: #0891b2;
+}
+* { box-sizing: border-box; }
+.intel-wrap { max-width: 1440px; margin: 0 auto; padding: 0 12px; font-family: 'Inter', -apple-system, sans-serif; }
+.intel-header { background: linear-gradient(135deg, var(--intel-primary) 0%, var(--intel-primary-dark) 100%); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; color: #fff; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+.intel-header h1 { margin: 0 0 2px; font-size: 20px; font-weight: 700; }
+.intel-header p { margin: 0; opacity: 0.85; font-size: 13px; }
+.intel-header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.intel-btn-export { background: rgba(255,255,255,0.95); color: var(--intel-primary-dark); padding: 8px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: transform .1s; }
+.intel-btn-export:hover { transform: scale(1.03); }
+
+/* Filtros */
+.intel-filtros { background: var(--intel-surface); border: 1px solid var(--intel-border); border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.intel-filtro-btn { padding: 6px 14px; border: 1px solid var(--intel-border); border-radius: 6px; font-size: 12px; font-weight: 500; background: var(--intel-bg); color: var(--intel-text); cursor: pointer; text-decoration: none; transition: all .15s; }
+.intel-filtro-btn:hover { border-color: var(--intel-primary); color: var(--intel-primary); }
+.intel-filtro-btn.ativo { background: var(--intel-primary); color: #fff; border-color: var(--intel-primary); }
+.intel-filtro-sep { width: 1px; height: 24px; background: var(--intel-border); margin: 0 4px; }
+.intel-filtro-date { padding: 5px 10px; border: 1px solid var(--intel-border); border-radius: 6px; font-size: 12px; }
+.intel-filtro-submit { padding: 6px 14px; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; background: var(--intel-blue); color: #fff; cursor: pointer; }
+
+/* Indicadores */
+.intel-indicadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+.intel-card { background: var(--intel-surface); border: 1px solid var(--intel-border); border-radius: 10px; padding: 16px; text-align: center; transition: box-shadow .15s; }
+.intel-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.intel-card-icon { font-size: 22px; margin-bottom: 6px; }
+.intel-card-valor { font-size: 26px; font-weight: 700; color: var(--intel-text); line-height: 1.1; }
+.intel-card-label { font-size: 11px; color: var(--intel-text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.intel-card-online { border-left: 3px solid var(--intel-green); }
+.intel-card-online .intel-card-icon { color: var(--intel-green); }
+.intel-card-online .intel-card-valor { color: var(--intel-green); }
+
+/* Seções */
+.intel-secao { background: var(--intel-surface); border: 1px solid var(--intel-border); border-radius: 10px; padding: 16px 18px; margin-bottom: 20px; }
+.intel-secao-titulo { font-size: 15px; font-weight: 700; color: var(--intel-text); margin: 0 0 12px; display: flex; align-items: center; gap: 8px; }
+.intel-secao-titulo i { color: var(--intel-primary); font-size: 16px; }
+.intel-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.intel-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+/* Tabelas */
+.intel-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.intel-table th { text-align: left; padding: 8px 10px; background: var(--intel-bg); color: var(--intel-text-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--intel-border); }
+.intel-table td { padding: 8px 10px; border-bottom: 1px solid var(--intel-border); color: var(--intel-text); }
+.intel-table tr:hover td { background: var(--intel-bg); }
+.intel-table .pos { width: 36px; text-align: center; font-weight: 700; color: var(--intel-primary); }
+.intel-table .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+.intel-table .muted { color: var(--intel-text-muted); font-size: 12px; }
+.intel-empty { text-align: center; color: var(--intel-text-muted); padding: 24px; font-style: italic; font-size: 13px; }
+
+/* Gráficos */
+.intel-chart-wrap { position: relative; height: 280px; }
+.intel-chart-controls { display: flex; gap: 6px; margin-bottom: 10px; }
+.intel-chart-btn { padding: 4px 10px; border: 1px solid var(--intel-border); border-radius: 4px; font-size: 11px; background: var(--intel-bg); cursor: pointer; color: var(--intel-text-muted); }
+.intel-chart-btn.ativo { background: var(--intel-blue); color: #fff; border-color: var(--intel-blue); }
+
+/* Comentários stats */
+.intel-coment-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
+.intel-coment-stat { text-align: center; padding: 12px; border-radius: 8px; }
+.intel-coment-stat .valor { font-size: 24px; font-weight: 700; }
+.intel-coment-stat .label { font-size: 11px; text-transform: uppercase; margin-top: 2px; }
+
+/* Tabs */
+.intel-tabs { display: flex; gap: 0; margin-bottom: 12px; }
+.intel-tab { padding: 8px 16px; border: 1px solid var(--intel-border); background: var(--intel-bg); cursor: pointer; font-size: 12px; font-weight: 500; }
+.intel-tab:first-child { border-radius: 6px 0 0 6px; }
+.intel-tab:last-child { border-radius: 0 6px 6px 0; }
+.intel-tab.ativo { background: var(--intel-primary); color: #fff; border-color: var(--intel-primary); }
+.intel-tab-content { display: none; }
+.intel-tab-content.ativo { display: block; }
+
+/* Alertas badge */
+.intel-alerta-badge { background: var(--intel-red); color: #fff; border-radius: 10px; padding: 2px 8px; font-size: 11px; font-weight: 700; }
+
+/* Doughnut container */
+.intel-doughnut-wrap { display: flex; align-items: center; gap: 20px; }
+.intel-doughnut-canvas { width: 180px !important; height: 180px !important; }
+.intel-doughnut-legend { flex: 1; font-size: 13px; }
+.intel-doughnut-legend div { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.intel-doughnut-legend .dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+/* Responsive */
+@media (max-width: 980px) {
+    .intel-grid2, .intel-grid3 { grid-template-columns: 1fr; }
+    .intel-coment-grid { grid-template-columns: repeat(2, 1fr); }
+    .intel-indicadores { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+@media (max-width: 600px) {
+    .intel-indicadores { grid-template-columns: repeat(2, 1fr); }
+    .intel-coment-grid { grid-template-columns: 1fr 1fr; }
+    .intel-header { padding: 16px; }
+    .intel-header h1 { font-size: 17px; }
+}
+</style>
+{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1 style="display:none;">{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<div class="intel-wrap">
+
+<!-- Header -->
+<div class="intel-header">
+    <div>
+        <h1><i class="fas fa-chart-line"></i> Central de Inteligência do Portal</h1>
+        <p>Estatísticas completas de utilização do Portal Currículo</p>
+    </div>
+    <div class="intel-header-actions">
+        <a href="{% url 'inteligencia:exportar_excel' %}?periodo={{ periodo_atual }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="intel-btn-export">
+            <i class="fas fa-file-excel"></i> Excel
+        </a>
+        <a href="{% url 'inteligencia:exportar_pdf' %}?periodo={{ periodo_atual }}&data_inicio={{ data_inicio }}&data_fim={{ data_fim }}" class="intel-btn-export">
+            <i class="fas fa-file-pdf"></i> PDF
+        </a>
+    </div>
+</div>
+
+<!-- Filtros de período -->
+<div class="intel-filtros">
+    <i class="fas fa-calendar-alt" style="color:var(--intel-text-muted);font-size:14px;"></i>
+    {% for valor, label in filtros_periodo %}
+    <a href="?periodo={{ valor }}" class="intel-filtro-btn {% if periodo_atual == valor %}ativo{% endif %}">{{ label }}</a>
+    {% endfor %}
+    <div class="intel-filtro-sep"></div>
+    <form method="get" style="display:flex;gap:6px;align-items:center;">
+        <input type="date" name="data_inicio" value="{{ data_inicio }}" class="intel-filtro-date">
+        <span style="color:var(--intel-text-muted);font-size:12px;">até</span>
+        <input type="date" name="data_fim" value="{{ data_fim }}" class="intel-filtro-date">
+        <button type="submit" class="intel-filtro-submit"><i class="fas fa-filter"></i> Filtrar</button>
+    </form>
+</div>
+
+<!-- Indicadores -->
+<div class="intel-indicadores">
+    <div class="intel-card intel-card-online">
+        <div class="intel-card-icon"><i class="fas fa-circle" style="animation:pulse 2s infinite;"></i></div>
+        <div class="intel-card-valor">{{ ind.usuarios_online }}</div>
+        <div class="intel-card-label">Online agora</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-blue);"><i class="fas fa-user-clock"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_hoje }}</div>
+        <div class="intel-card-label">Visitantes hoje</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-blue);"><i class="fas fa-calendar-week"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_semana }}</div>
+        <div class="intel-card-label">Visitantes semana</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-blue);"><i class="fas fa-calendar"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_mes }}</div>
+        <div class="intel-card-label">Visitantes mês</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-purple);"><i class="fas fa-calendar-days"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_ano }}</div>
+        <div class="intel-card-label">Visitantes ano</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-primary);"><i class="fas fa-users"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_total }}</div>
+        <div class="intel-card-label">Total geral</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-cyan);"><i class="fas fa-fingerprint"></i></div>
+        <div class="intel-card-valor">{{ ind.visitantes_unicos }}</div>
+        <div class="intel-card-label">Visitantes únicos</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-amber);"><i class="fas fa-file-lines"></i></div>
+        <div class="intel-card-valor">{{ ind.paginas_visitadas }}</div>
+        <div class="intel-card-label">Páginas visitadas</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-green);"><i class="fas fa-download"></i></div>
+        <div class="intel-card-valor">{{ ind.downloads_total }}</div>
+        <div class="intel-card-label">Downloads</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-purple);"><i class="fas fa-search"></i></div>
+        <div class="intel-card-valor">{{ ind.buscas_total }}</div>
+        <div class="intel-card-label">Pesquisas</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-amber);"><i class="fas fa-comments"></i></div>
+        <div class="intel-card-valor">{{ ind.comentarios_total }}</div>
+        <div class="intel-card-label">Comentários</div>
+    </div>
+    <div class="intel-card">
+        <div class="intel-card-icon" style="color:var(--intel-primary);"><i class="fas fa-file-alt"></i></div>
+        <div class="intel-card-valor">{{ ind.conteudos_total }}</div>
+        <div class="intel-card-label">Conteúdos</div>
+    </div>
+</div>
+
+<!-- Gráficos principais -->
+<div class="intel-grid2">
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-chart-area"></i> Acessos por período</div>
+        <div class="intel-chart-controls">
+            <button class="intel-chart-btn ativo" onclick="INTEL.trocarAgrupamento('acessos','dia',this)">Dia</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('acessos','semana',this)">Semana</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('acessos','mes',this)">Mês</button>
+        </div>
+        <div class="intel-chart-wrap"><canvas id="chart-acessos"></canvas></div>
+    </div>
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-download"></i> Downloads por período</div>
+        <div class="intel-chart-controls">
+            <button class="intel-chart-btn ativo" onclick="INTEL.trocarAgrupamento('downloads','dia',this)">Dia</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('downloads','semana',this)">Semana</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('downloads','mes',this)">Mês</button>
+        </div>
+        <div class="intel-chart-wrap"><canvas id="chart-downloads"></canvas></div>
+    </div>
+</div>
+
+<div class="intel-grid2">
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-search"></i> Pesquisas por período</div>
+        <div class="intel-chart-controls">
+            <button class="intel-chart-btn ativo" onclick="INTEL.trocarAgrupamento('buscas','dia',this)">Dia</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('buscas','semana',this)">Semana</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('buscas','mes',this)">Mês</button>
+        </div>
+        <div class="intel-chart-wrap"><canvas id="chart-buscas"></canvas></div>
+    </div>
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-chart-line"></i> Crescimento do portal</div>
+        <div class="intel-chart-controls">
+            <button class="intel-chart-btn ativo" onclick="INTEL.trocarAgrupamento('crescimento','dia',this)">Dia</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('crescimento','semana',this)">Semana</button>
+            <button class="intel-chart-btn" onclick="INTEL.trocarAgrupamento('crescimento','mes',this)">Mês</button>
+        </div>
+        <div class="intel-chart-wrap"><canvas id="chart-crescimento"></canvas></div>
+    </div>
+</div>
+
+<!-- Rankings -->
+<div class="intel-grid2">
+    <!-- Ranking dos Botões -->
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-trophy"></i> Ranking dos Botões</div>
+        {% if ranking_botoes %}
+        <table class="intel-table">
+            <thead><tr><th class="pos">#</th><th>Botão</th><th class="num">Acessos</th><th class="muted">Último</th></tr></thead>
+            <tbody>
+            {% for item in ranking_botoes %}
+            <tr><td class="pos">{{ forloop.counter }}</td><td>{{ item.nome }}</td><td class="num">{{ item.total }}</td><td class="muted">{{ item.ultimo }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Nenhum dado registrado ainda</div>{% endif %}
+    </div>
+    <!-- Ranking dos Subbotões -->
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-layer-group"></i> Ranking dos Subbotões</div>
+        {% if ranking_subbotoes %}
+        <table class="intel-table">
+            <thead><tr><th class="pos">#</th><th>Subbotão</th><th>Pai</th><th class="num">Acessos</th><th class="muted">Último</th></tr></thead>
+            <tbody>
+            {% for item in ranking_subbotoes %}
+            <tr><td class="pos">{{ forloop.counter }}</td><td>{{ item.nome }}</td><td class="muted">{{ item.pai }}</td><td class="num">{{ item.total }}</td><td class="muted">{{ item.ultimo }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Nenhum dado registrado ainda</div>{% endif %}
+    </div>
+</div>
+
+<div class="intel-grid2">
+    <!-- Ranking dos Documentos -->
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-file-alt"></i> Documentos mais acessados</div>
+        {% if ranking_documentos %}
+        <table class="intel-table">
+            <thead><tr><th class="pos">#</th><th>Documento</th><th>Tipo</th><th class="num">Views</th><th class="muted">Último</th></tr></thead>
+            <tbody>
+            {% for item in ranking_documentos %}
+            <tr><td class="pos">{{ forloop.counter }}</td><td>{{ item.nome|truncatewords:8 }}</td><td class="muted">{{ item.tipo }}</td><td class="num">{{ item.total }}</td><td class="muted">{{ item.ultimo }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Nenhum dado registrado ainda</div>{% endif %}
+    </div>
+    <!-- Documentos mais baixados -->
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-cloud-arrow-down"></i> Documentos mais baixados</div>
+        {% if ranking_downloads %}
+        <table class="intel-table">
+            <thead><tr><th class="pos">#</th><th>Arquivo</th><th>Tipo</th><th class="num">Downloads</th></tr></thead>
+            <tbody>
+            {% for item in ranking_downloads %}
+            <tr><td class="pos">{{ forloop.counter }}</td><td>{{ item.nome_arquivo|truncatewords:6 }}</td><td class="muted">{{ item.extensao }}</td><td class="num">{{ item.total }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Nenhum dado registrado ainda</div>{% endif %}
+    </div>
+</div>
+
+<!-- Pesquisas internas -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-magnifying-glass-chart"></i> Pesquisas mais realizadas</div>
+    {% if ranking_buscas %}
+    <table class="intel-table">
+        <thead><tr><th class="pos">#</th><th>Termo pesquisado</th><th class="num">Pesquisas</th><th class="muted">Última</th></tr></thead>
+        <tbody>
+        {% for item in ranking_buscas %}
+        <tr><td class="pos">{{ forloop.counter }}</td><td>"{{ item.termo }}"</td><td class="num">{{ item.total }}</td><td class="muted">{{ item.ultimo }}</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="intel-empty">Nenhuma pesquisa registrada ainda</div>{% endif %}
+</div>
+
+<!-- Comentários -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-comments"></i> Comentários</div>
+    <div class="intel-coment-grid">
+        <div class="intel-coment-stat" style="background:var(--intel-green-light);">
+            <div class="valor" style="color:var(--intel-green);">{{ stats_comentarios.publicados }}</div>
+            <div class="label" style="color:var(--intel-green);">Publicados</div>
+        </div>
+        <div class="intel-coment-stat" style="background:var(--intel-amber-light);">
+            <div class="valor" style="color:var(--intel-amber);">{{ stats_comentarios.pendentes }}</div>
+            <div class="label" style="color:var(--intel-amber);">Pendentes</div>
+        </div>
+        <div class="intel-coment-stat" style="background:var(--intel-red-light);">
+            <div class="valor" style="color:var(--intel-red);">{{ stats_comentarios.recusados }}</div>
+            <div class="label" style="color:var(--intel-red);">Recusados</div>
+        </div>
+        <div class="intel-coment-stat" style="background:var(--intel-purple-light);">
+            <div class="valor" style="color:var(--intel-purple);">{{ stats_comentarios.respondidos }}</div>
+            <div class="label" style="color:var(--intel-purple);">Respondidos</div>
+        </div>
+    </div>
+</div>
+
+<!-- Dispositivos + Navegadores + Origem -->
+<div class="intel-grid3">
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-desktop"></i> Dispositivos</div>
+        {% if ranking_dispositivos %}
+        <div class="intel-doughnut-wrap">
+            <canvas id="chart-dispositivos" class="intel-doughnut-canvas"></canvas>
+            <div class="intel-doughnut-legend" id="legend-dispositivos"></div>
+        </div>
+        {% else %}<div class="intel-empty">Sem dados</div>{% endif %}
+    </div>
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-globe"></i> Navegadores</div>
+        {% if ranking_navegadores %}
+        <div class="intel-doughnut-wrap">
+            <canvas id="chart-navegadores" class="intel-doughnut-canvas"></canvas>
+            <div class="intel-doughnut-legend" id="legend-navegadores"></div>
+        </div>
+        {% else %}<div class="intel-empty">Sem dados</div>{% endif %}
+    </div>
+    <div class="intel-secao">
+        <div class="intel-secao-titulo"><i class="fas fa-share-nodes"></i> Origem dos acessos</div>
+        {% if ranking_referrer %}
+        <table class="intel-table">
+            <thead><tr><th>Origem</th><th class="num">Acessos</th><th class="num">%</th></tr></thead>
+            <tbody>
+            {% for item in ranking_referrer %}
+            <tr><td>{{ item.nome }}</td><td class="num">{{ item.total }}</td><td class="num">{{ item.percentual }}%</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Sem dados</div>{% endif %}
+    </div>
+</div>
+
+<!-- Áreas do currículo -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-graduation-cap"></i> Ranking por área do currículo</div>
+    {% if ranking_areas %}
+    <table class="intel-table">
+        <thead><tr><th class="pos">#</th><th>Área</th><th class="num">Acessos</th><th class="num">%</th></tr></thead>
+        <tbody>
+        {% for item in ranking_areas %}
+        <tr><td class="pos">{{ forloop.counter }}</td><td>{{ item.nome }}</td><td class="num">{{ item.total }}</td><td class="num">{{ item.percentual }}%</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="intel-empty">Nenhum dado registrado ainda</div>{% endif %}
+</div>
+
+<!-- Documentos sem acesso -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-triangle-exclamation"></i> Documentos sem acesso</div>
+    <div class="intel-tabs">
+        <div class="intel-tab ativo" onclick="INTEL.trocarTab(this, 'tab-nunca')">Nunca acessados ({{ docs_nunca|length }})</div>
+        <div class="intel-tab" onclick="INTEL.trocarTab(this, 'tab-30d')">Sem acesso 30+ dias ({{ docs_30|length }})</div>
+        <div class="intel-tab" onclick="INTEL.trocarTab(this, 'tab-90d')">Sem acesso 90+ dias ({{ docs_90|length }})</div>
+    </div>
+    <div id="tab-nunca" class="intel-tab-content ativo">
+        {% if docs_nunca %}
+        <table class="intel-table">
+            <thead><tr><th>Título</th><th>Tipo</th><th class="muted">Publicação</th></tr></thead>
+            <tbody>
+            {% for d in docs_nunca %}
+            <tr><td><a href="/conteudo/{{ d.slug }}/" target="_blank">{{ d.titulo|truncatewords:10 }}</a></td><td class="muted">{{ d.tipo }}</td><td class="muted">{{ d.data_publicacao|date:"d/m/Y" }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Todos os documentos foram acessados!</div>{% endif %}
+    </div>
+    <div id="tab-30d" class="intel-tab-content">
+        {% if docs_30 %}
+        <table class="intel-table">
+            <thead><tr><th>Título</th><th>Tipo</th><th class="muted">Publicação</th></tr></thead>
+            <tbody>
+            {% for d in docs_30 %}
+            <tr><td><a href="/conteudo/{{ d.slug }}/" target="_blank">{{ d.titulo|truncatewords:10 }}</a></td><td class="muted">{{ d.tipo }}</td><td class="muted">{{ d.data_publicacao|date:"d/m/Y" }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Todos os documentos foram acessados nos últimos 30 dias!</div>{% endif %}
+    </div>
+    <div id="tab-90d" class="intel-tab-content">
+        {% if docs_90 %}
+        <table class="intel-table">
+            <thead><tr><th>Título</th><th>Tipo</th><th class="muted">Publicação</th></tr></thead>
+            <tbody>
+            {% for d in docs_90 %}
+            <tr><td><a href="/conteudo/{{ d.slug }}/" target="_blank">{{ d.titulo|truncatewords:10 }}</a></td><td class="muted">{{ d.tipo }}</td><td class="muted">{{ d.data_publicacao|date:"d/m/Y" }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<div class="intel-empty">Todos os documentos foram acessados nos últimos 90 dias!</div>{% endif %}
+    </div>
+</div>
+
+<!-- Ranking de Banners -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-images"></i> Ranking de Acesso aos Banners</div>
+    {% if ranking_banners %}
+    <table class="intel-table">
+        <thead><tr><th class="pos">#</th><th>Banner</th><th class="num">Impressões</th><th>Link</th></tr></thead>
+        <tbody>
+        {% for b in ranking_banners %}
+        <tr>
+            <td class="pos">{{ forloop.counter }}</td>
+            <td>{{ b.titulo }}</td>
+            <td class="num">{{ b.impressoes }}</td>
+            <td class="muted" style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{% if b.link %}<a href="{{ b.link }}" target="_blank" rel="noopener" style="color:var(--intel-blue);">{{ b.link|truncatechars:40 }}</a>{% else %}—{% endif %}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="intel-empty">Nenhum banner ativo no momento.</div>{% endif %}
+</div>
+
+<!-- Ranking da Área Destaque -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-star"></i> Ranking da Área Destaque</div>
+    {% if ranking_destaques %}
+    <table class="intel-table">
+        <thead><tr><th class="pos">#</th><th>Conteúdo</th><th>Tipo</th><th class="num">Impressões</th><th class="num">Cliques</th><th class="num">CTR</th><th>Último acesso</th></tr></thead>
+        <tbody>
+        {% for d in ranking_destaques %}
+        <tr>
+            <td class="pos">{{ forloop.counter }}</td>
+            <td><a href="/conteudo/{{ d.slug }}/" target="_blank" style="color:var(--intel-blue);">{{ d.titulo|truncatewords:8 }}</a></td>
+            <td class="muted">{{ d.tipo }}</td>
+            <td class="num">{{ d.impressoes }}</td>
+            <td class="num" style="font-weight:700;color:var(--intel-primary);">{{ d.cliques }}</td>
+            <td class="num">{{ d.ctr }}%</td>
+            <td class="muted">{{ d.ultimo|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}<div class="intel-empty">Nenhum conteúdo marcado como destaque.</div>{% endif %}
+</div>
+
+<!-- Alertas -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo" style="justify-content:space-between;">
+        <span><i class="fas fa-bell"></i> Alertas
+        {% if alertas_count %}<span style="background:var(--intel-red);color:#fff;padding:2px 8px;border-radius:10px;font-size:12px;margin-left:8px;">{{ alertas_count }}</span>{% endif %}</span>
+        {% if alertas_count %}
+        <button onclick="INTEL.resolverTodos()" style="background:var(--intel-green);color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" title="Marcar todos como resolvidos"><i class="fas fa-check-double"></i> Selecionar Todos como Resolvidos</button>
+        {% endif %}
+    </div>
+    {% if alertas %}
+    <div id="alertasGrid" style="display:grid;gap:10px;">
+        {% for a in alertas %}
+        <div class="intel-alerta-card" id="alerta-{{ a.pk }}" style="background:var(--intel-surface);border:1px solid var(--intel-border);border-radius:8px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;border-left:4px solid {% if a.tipo == 'sem_acesso' %}var(--intel-amber){% elif a.tipo == 'link_quebrado' %}var(--intel-red){% elif a.tipo == 'arquivo_ausente' %}var(--intel-red){% elif a.tipo == 'pico_acesso' %}var(--intel-purple){% else %}var(--intel-blue){% endif %};">
+            <div style="font-size:20px;margin-top:2px;">
+                {% if a.tipo == 'sem_acesso' %}<i class="fas fa-eye-slash" style="color:var(--intel-amber)"></i>
+                {% elif a.tipo == 'link_quebrado' %}<i class="fas fa-link-slash" style="color:var(--intel-red)"></i>
+                {% elif a.tipo == 'arquivo_ausente' %}<i class="fas fa-file-circle-xmark" style="color:var(--intel-red)"></i>
+                {% elif a.tipo == 'pico_acesso' %}<i class="fas fa-chart-line" style="color:var(--intel-purple)"></i>
+                {% else %}<i class="fas fa-circle-info" style="color:var(--intel-blue)"></i>{% endif %}
+            </div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-weight:600;font-size:13px;color:var(--intel-text);">{{ a.titulo }}</div>
+                <div style="font-size:12px;color:var(--intel-text-muted);margin-top:3px;">{{ a.descricao|truncatewords:30 }}</div>
+                <div style="font-size:11px;color:var(--intel-text-muted);margin-top:4px;">
+                    <i class="fas fa-clock"></i> {{ a.criado_em|date:"d/m/Y H:i" }}
+                    {% if a.tipo == 'sem_acesso' %}<span style="background:var(--intel-amber-light);color:var(--intel-amber);padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:600;">Sem acesso</span>
+                    {% elif a.tipo == 'link_quebrado' %}<span style="background:var(--intel-red-light);color:var(--intel-red);padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:600;">Link quebrado</span>
+                    {% elif a.tipo == 'arquivo_ausente' %}<span style="background:var(--intel-red-light);color:var(--intel-red);padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:600;">Arquivo ausente</span>
+                    {% elif a.tipo == 'pico_acesso' %}<span style="background:var(--intel-purple-light);color:var(--intel-purple);padding:1px 6px;border-radius:4px;margin-left:6px;font-weight:600;">Pico</span>{% endif %}
+                </div>
+            </div>
+            <button onclick="INTEL.resolverAlerta({{ a.pk }})" style="background:var(--intel-green);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;" title="Marcar como resolvido"><i class="fas fa-check"></i> Resolver</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="intel-empty"><i class="fas fa-check-circle" style="color:var(--intel-green);margin-right:6px;"></i> Nenhum alerta ativo. Tudo certo!</div>
+    {% endif %}
+    <div style="margin-top:12px;font-size:12px;color:var(--intel-text-muted);">
+        <i class="fas fa-terminal"></i> Para gerar alertas automaticamente: <code style="background:var(--intel-bg);padding:2px 6px;border-radius:4px;">python manage.py gerar_alertas</code>
+    </div>
+</div>
+
+<!-- Localização -->
+<div class="intel-secao">
+    <div class="intel-secao-titulo"><i class="fas fa-map-location-dot"></i> Localização dos acessos</div>
+    <div class="intel-empty" style="border:2px dashed var(--intel-amber);background:var(--intel-amber-light);color:var(--intel-amber);font-style:normal;">
+        <i class="fas fa-info-circle"></i> Funcionalidade em desenvolvimento. Requer integração com banco de dados GeoIP (MaxMind GeoLite2) para identificar país, estado e município a partir do IP.
+    </div>
+</div>
+
+</div><!-- /intel-wrap -->
+
+<style>
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
+
+<script>
+var INTEL = (function() {
+    var charts = {};
+    var periodoParams = '{{ periodo_atual }}' !== '' ? 'periodo={{ periodo_atual }}' : '';
+    if ('{{ data_inicio }}' && '{{ data_fim }}') {
+        periodoParams = 'data_inicio={{ data_inicio }}&data_fim={{ data_fim }}';
+    }
+
+    var CORES = {
+        primary: '#e11d48',
+        blue: '#2d5a8e',
+        green: '#059669',
+        amber: '#d97706',
+        purple: '#7c3aed',
+        cyan: '#0891b2',
+        red: '#dc2626',
+        pink: '#ec4899',
+    };
+    var CORES_DOUGHNUT = ['#2d5a8e','#e11d48','#059669','#d97706','#7c3aed','#0891b2','#ec4899','#64748b'];
+
+    function apiUrl(action, agrupamento) {
+        return '{% url "inteligencia:api" %}?' + periodoParams + '&action=' + action + '&agrupamento=' + (agrupamento || 'dia');
+    }
+
+    function criarLineChart(canvasId, label, cor) {
+        var ctx = document.getElementById(canvasId);
+        if (!ctx) return null;
+        return new Chart(ctx, {
+            type: 'line',
+            data: { labels: [], datasets: [{
+                label: label,
+                data: [],
+                borderColor: cor,
+                backgroundColor: cor + '22',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+            }]},
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+            }
+        });
+    }
+
+    function criarBarChart(canvasId, label, cor) {
+        var ctx = document.getElementById(canvasId);
+        if (!ctx) return null;
+        return new Chart(ctx, {
+            type: 'bar',
+            data: { labels: [], datasets: [{
+                label: label,
+                data: [],
+                backgroundColor: cor + '99',
+                borderColor: cor,
+                borderWidth: 1,
+                borderRadius: 4,
+            }]},
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+            }
+        });
+    }
+
+    function atualizarChart(chart, action, agrupamento) {
+        fetch(apiUrl(action, agrupamento))
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                chart.data.labels = data.labels || [];
+                chart.data.datasets[0].data = data.dados || [];
+                chart.update();
+            });
+    }
+
+    function criarDoughnut(canvasId, legendId, dados) {
+        var ctx = document.getElementById(canvasId);
+        var legendEl = document.getElementById(legendId);
+        if (!ctx || !dados || !dados.length) return;
+
+        var labels = dados.map(function(d) { return d.nome; });
+        var values = dados.map(function(d) { return d.total; });
+        var pcts = dados.map(function(d) { return d.percentual; });
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: CORES_DOUGHNUT.slice(0, labels.length),
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                }]
+            },
+            options: {
+                responsive: false,
+                plugins: { legend: { display: false } },
+                cutout: '60%',
+            }
+        });
+
+        if (legendEl) {
+            var html = '';
+            for (var i = 0; i < labels.length; i++) {
+                html += '<div><span class="dot" style="background:' + CORES_DOUGHNUT[i] + '"></span>' +
+                    '<span>' + labels[i] + ' — <strong>' + values[i] + '</strong> (' + pcts[i] + '%)</span></div>';
+            }
+            legendEl.innerHTML = html;
+        }
+    }
+
+    function init() {
+        charts.acessos = criarLineChart('chart-acessos', 'Acessos', CORES.blue);
+        charts.downloads = criarBarChart('chart-downloads', 'Downloads', CORES.green);
+        charts.buscas = criarLineChart('chart-buscas', 'Pesquisas', CORES.purple);
+        charts.crescimento = criarLineChart('chart-crescimento', 'Conteúdos', CORES.primary);
+
+        if (charts.acessos) atualizarChart(charts.acessos, 'grafico_acessos', 'dia');
+        if (charts.downloads) atualizarChart(charts.downloads, 'grafico_downloads', 'dia');
+        if (charts.buscas) atualizarChart(charts.buscas, 'grafico_buscas', 'dia');
+        if (charts.crescimento) atualizarChart(charts.crescimento, 'grafico_crescimento', 'dia');
+
+        // Doughnut charts from server-rendered data
+        var dispData = {{ ranking_dispositivos_json }};
+        var navData = {{ ranking_navegadores_json }};
+        criarDoughnut('chart-dispositivos', 'legend-dispositivos', dispData);
+        criarDoughnut('chart-navegadores', 'legend-navegadores', navData);
+    }
+
+    function trocarAgrupamento(chartName, agrupamento, btn) {
+        var actionMap = {
+            acessos: 'grafico_acessos',
+            downloads: 'grafico_downloads',
+            buscas: 'grafico_buscas',
+            crescimento: 'grafico_crescimento',
+        };
+        var chart = charts[chartName];
+        if (!chart) return;
+
+        var siblings = btn.parentElement.querySelectorAll('.intel-chart-btn');
+        siblings.forEach(function(b) { b.classList.remove('ativo'); });
+        btn.classList.add('ativo');
+
+        atualizarChart(chart, actionMap[chartName], agrupamento);
+    }
+
+    function trocarTab(tabBtn, tabId) {
+        var parent = tabBtn.closest('.intel-secao');
+        parent.querySelectorAll('.intel-tab').forEach(function(t) { t.classList.remove('ativo'); });
+        parent.querySelectorAll('.intel-tab-content').forEach(function(c) { c.classList.remove('ativo'); });
+        tabBtn.classList.add('ativo');
+        document.getElementById(tabId).classList.add('ativo');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    function resolverAlerta(alertaId) {
+        if (!confirm('Marcar este alerta como resolvido?')) return;
+        var formData = new FormData();
+        formData.append('action', 'resolver_alerta');
+        formData.append('alerta_id', alertaId);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        fetch('{% url "inteligencia:api" %}', { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.ok) {
+                    var el = document.getElementById('alerta-' + alertaId);
+                    if (el) el.style.display = 'none';
+                } else {
+                    alert('Erro: ' + (data.error || 'desconhecido'));
+                }
+            });
+    }
+
+    function resolverTodos() {
+        if (!confirm('Marcar TODOS os alertas ativos como resolvidos?\n\nO histórico será preservado.')) return;
+        var formData = new FormData();
+        formData.append('action', 'resolver_todos');
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        fetch('{% url "inteligencia:api" %}', { method: 'POST', body: formData })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.ok) {
+                    var grid = document.getElementById('alertasGrid');
+                    if (grid) grid.innerHTML = '<div class="intel-empty"><i class="fas fa-check-circle" style="color:var(--intel-green);margin-right:6px;"></i> Todos os ' + data.resolvidos + ' alertas foram marcados como resolvidos!</div>';
+                }
+            });
+    }
+
+    return { trocarAgrupamento: trocarAgrupamento, trocarTab: trocarTab, resolverAlerta: resolverAlerta, resolverTodos: resolverTodos };
+})();
+</script>
+{% endblock %}

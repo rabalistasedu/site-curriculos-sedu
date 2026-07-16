@@ -199,6 +199,8 @@ def _api_detalhes(request):
         'pai_nome': cat.categoria_pai.nome if cat.categoria_pai else None,
         'mostrar_menu_superior': cat.mostrar_menu_superior,
         'mostrar_navegue_area': cat.mostrar_navegue_area,
+        'mostrar_conteudos_recentes': cat.mostrar_conteudos_recentes,
+        'url_externa': cat.url_externa or '',
         'data_criacao': cat.pk,  # Categoria não tem data, usamos pk como proxy
         'anexos': anexos,
         'conteudos': conteudos,
@@ -306,6 +308,14 @@ def _api_editar(request):
     vis_area = request.POST.get('mostrar_navegue_area')
     if vis_area is not None:
         cat.mostrar_navegue_area = vis_area == '1'
+
+    vis_recentes = request.POST.get('mostrar_conteudos_recentes')
+    if vis_recentes is not None:
+        cat.mostrar_conteudos_recentes = vis_recentes == '1'
+
+    url_ext = request.POST.get('url_externa_cat')
+    if url_ext is not None:
+        cat.url_externa = url_ext.strip()
 
     icone_img = request.FILES.get('icone_imagem')
     if icone_img:
