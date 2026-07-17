@@ -683,6 +683,8 @@ const EA = {
                     <div class="ea-info-item"><strong>Pai</strong> ${d.pai_nome || '(raiz)'}</div>
                     <div class="ea-info-item"><strong>Menu superior</strong> ${d.mostrar_menu_superior ? 'Sim' : 'Não'}</div>
                     <div class="ea-info-item"><strong>Navegue por área</strong> ${d.mostrar_navegue_area ? 'Sim' : 'Não'}</div>
+                    <div class="ea-info-item"><strong>Conteúdos Recentes</strong> ${d.mostrar_conteudos_recentes ? 'Sim' : 'Não'}</div>
+                    <div class="ea-info-item"><strong>URL externa</strong> ${d.url_externa ? '<a href="' + d.url_externa + '" target="_blank" style="color:var(--ea-primary)">' + d.url_externa.substring(0, 40) + (d.url_externa.length > 40 ? '…' : '') + '</a>' : '(nenhuma)'}</div>
                     <div class="ea-info-item"><strong>Subbotões</strong> ${d.n_filhos}</div>
                     <div class="ea-info-item"><strong>Ícone</strong> ${d.icone ? '<i class="' + d.icone + '"></i> ' + d.icone : '(auto)'}</div>
                 </div>
@@ -711,6 +713,14 @@ const EA = {
                 <div class="ea-campo">
                     <label>Navegue por área</label>
                     <select id="edNavArea"><option value="1" ${d.mostrar_navegue_area ? 'selected' : ''}>Sim</option><option value="0" ${!d.mostrar_navegue_area ? 'selected' : ''}>Não</option></select>
+                </div>
+                <div class="ea-campo">
+                    <label>Conteúdos Recentes</label>
+                    <select id="edRecentes"><option value="1" ${d.mostrar_conteudos_recentes ? 'selected' : ''}>Sim</option><option value="0" ${!d.mostrar_conteudos_recentes ? 'selected' : ''}>Não</option></select>
+                </div>
+                <div class="ea-campo">
+                    <label>URL externa (opcional)</label>
+                    <input type="url" id="edUrlExterna" value="${this._esc(d.url_externa || '')}" placeholder="https://exemplo.com">
                 </div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
                     <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarEdicao(${d.id})"><i class="fas fa-check"></i> Salvar</button>
@@ -870,6 +880,8 @@ const EA = {
         fd.append('ordem', document.getElementById('edOrdem').value);
         fd.append('mostrar_menu_superior', document.getElementById('edMenuSup').value);
         fd.append('mostrar_navegue_area', document.getElementById('edNavArea').value);
+        fd.append('mostrar_conteudos_recentes', document.getElementById('edRecentes').value);
+        fd.append('url_externa_cat', document.getElementById('edUrlExterna').value);
         const r = await this._post(fd);
         if (r.ok) { this.toast(r.msg, 'success'); this.recarregar(); }
         else this.toast(r.error, 'error');
@@ -897,7 +909,8 @@ const EA = {
         html += `<div class="ea-campo"><label>URL / Link (opcional)</label><input type="url" id="criarUrl" placeholder="https://..."></div>`;
         html += `<div class="ea-campo"><label>Anexos / Arquivos (opcional, vários)</label><input type="file" id="criarAnexos" multiple></div>`;
         html += `<div class="ea-campo"><label>Ícone Font Awesome (opcional)</label><input type="text" id="criarIcone" placeholder="fas fa-folder-open" value="fas fa-folder-open"></div>`;
-        html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download.</p>`;
+        html += `<div class="ea-campo"><label>OU Ícone personalizado — imagem (opcional)</label><input type="file" id="criarIconeImg" accept="image/*,.ico"></div>`;
+        html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download. Imagem de ícone tem prioridade sobre o Font Awesome.</p>`;
         html += `<div style="display:flex;gap:8px;justify-content:flex-end">
             <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
             <button class="ea-btn-sm ea-btn-success" onclick="EA.confirmarCriar(${paiId ? paiId : 'null'})"><i class="fas fa-check"></i> Criar</button>
@@ -913,12 +926,14 @@ const EA = {
         const url = document.getElementById('criarUrl')?.value?.trim();
         const anexos = document.getElementById('criarAnexos')?.files;
         const icone = document.getElementById('criarIcone')?.value?.trim();
+        const iconeImg = document.getElementById('criarIconeImg')?.files[0];
 
         const fd = new FormData();
         fd.append('action', 'criar');
         fd.append('nome', nome);
         if (paiId) fd.append('pai_id', paiId);
         if (icone) fd.append('icone', icone);
+        if (iconeImg) fd.append('icone_imagem', iconeImg);
         if (url) fd.append('url_conteudo', url);
         if (anexos) { for (const f of anexos) fd.append('arquivos_anexo', f); }
 

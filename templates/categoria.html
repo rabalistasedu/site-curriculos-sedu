@@ -128,13 +128,14 @@
         </div>
         {% endif %}
 
-        {% comment %}Subbotoes tambem aparecem como CARDS GRANDES na area principal (antes so viravam chips pequenos no topo) — assim ficam visiveis e o admin ve onde clicar para adicionar conteudo dentro.{% endcomment %}
+        {% comment %}Subbotoes aparecem como cards grandes (botoes clicaveis) na grade,
+        alem dos chips no topo. Nao ha duplicacao de conteudo: a view so traz os
+        conteudos da propria categoria, nao das subcategorias (correcao parte 11).{% endcomment %}
         {% if subcategorias or conteudos %}
         <div class="content-grid">
             {% for sub in subcategorias %}
             <a href="{% if sub.link_externo %}{{ sub.link_externo }}{% else %}{% url 'conteudo:categoria' sub.slug %}{% endif %}"
                class="content-card content-card--subbotao{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
-               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}
                {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ sub.nome }}">
                 <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}">
@@ -143,7 +144,7 @@
                 </div>
                 <div class="card-body">
                     <h3>{{ sub.nome }}</h3>
-                    {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:15 }}</p>{% endif %}
+                    {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:18 }}</p>{% endif %}
                 </div>
             </a>
             {% endfor %}

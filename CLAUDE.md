@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v9 — atualizado em 2026-07-13 — Parte 11)
+# Site Currículos SEDU — Contexto do Projeto (v10 — atualizado em 2026-07-16 — Parte 12)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 121 botões (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores NOVO**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
+- **Leva mais recente (2026-07-16 — "parte 12")**: **Estrutura de Árvores + Subbotões melhorados** — (1) campo de upload de imagem de ícone adicionado ao modal de criar botão na Estrutura de Árvores (faltava; agora dá pra criar botão com nome + URL + anexos + ícone de imagem de uma vez); (2) subbotões agora aparecem como **cards grandes clicáveis** na página de categoria (borda azul, ícone grande, selo "Botão"), além dos chips no topo. Detalhes no histórico item 26.
+- **Leva anterior (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
 - **Leva anterior (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
 - **Leva anterior (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
 - **Leva anterior (2026-07-13 — "parte 8")**: **Respostas de visitantes + Votos 👍/👎** — novo modelo `Comentario.parent` (FK self) para threads aninhadas, campos `votos_positivos`/`votos_negativos`, endpoint AJAX `/comentario/<pk>/votar/` para votação sem reload, formulário inline "Responder" que abre/fecha animado, respostas aparecem recuadas com label "↩ resposta", cada resposta passa por moderação igual ao comentário. Migração `conteudo/0020` aplicada. Detalhes no histórico item 22.
@@ -368,6 +369,36 @@ Implementado painel administrativo completo e independente para gerenciar a hier
 - Criar com URL: cria Conteudo tipo "link" corretamente (sem prefixo "Link:")
 
 **Compatibilidade 100%**: ZERO alterações quebradas — todos os outros painéis (Painel Central, Organizador, etc.) continuam funcionando normalmente.
+
+### 2026-07-16 — Estrutura de Árvores + Subbotões Melhorados (parte 12)
+
+**Duas melhorias complementares** para aperfeiçoar a criação e visualização de botões.
+
+**1. Campo de imagem de ícone adicionado ao modal de criar botão (Estrutura de Árvores)**
+
+O modal "Criar novo botão" / "Criar subbotão" tinha: Nome*, URL (opt), Anexos (opt), Ícone Font Awesome (opt). Faltava o **campo de upload de imagem de ícone** — só existia no formulário de edição. Backend já suportava `icone_imagem`.
+
+Solução: adicionado `<input type="file" id="criarIconeImg">` ao modal + JS que coleta arquivo e envia via `fd.append('icone_imagem', iconeImg)`.
+
+Resultado: ao criar botão/subbotão, preenche tudo de uma vez (nome + URL + anexos + ícone imagem).
+
+**2. Subbotões aparecem como cards grandes clicáveis**
+
+Subbotões só apareciam como chips pequenos no topo. Depois da correção da Parte 11 (que evita duplicação), é seguro trazer de volta os botões grandes.
+
+Solução: em `categoria.html`, adicionado loop renderizando subbotões como `.content-card.content-card--subbotao` (borda azul, badge "BOTÃO", descrição).
+
+Resultado: página mostra subbotões como cards grandes clicáveis + chips atalho no topo.
+
+**Arquivos modificados:**
+- `templates/admin/estrutura_arvores.html` — campo `criarIconeImg` adicionado
+- `templates/categoria.html` — subbotões como `.content-card--subbotao`
+
+**Testado:**
+- Estrutura: criação com imagem funcionando (Django test client)
+- Página: 3 subbotões em `/categoria/icone-teste/` renderizados como cards (confirmado via grep do HTML)
+
+**⚠️ Templates alterados** — reiniciar servidor (`runserver`)
 
 ### Base do projeto (junho/2026)
 Estrutura Django completa; migração de 102 conteúdos + textos introdutórios do WordPress; admin com widgets visuais; comentários com moderação; banners por área; agendamento de publicação; cartazes laterais; responsividade completa; busca sem acento; deploy de teste no PythonAnywhere.
