@@ -94,6 +94,24 @@ def organizar_view(request):
                 messages.success(request, f'{count} conteúdo(s) adicionado(s) a "{destino.nome}".')
             return redirect(f'/admin/organizar/?cat={cat_destino}')
 
+        elif action == 'excluir_conteudo':
+            conteudo_id = request.POST.get('conteudo_id')
+            origem_cat = request.POST.get('origem_cat', '')
+            if conteudo_id:
+                deleted, _ = Conteudo.objects.filter(pk=conteudo_id).delete()
+                if deleted:
+                    messages.success(request, 'Conteúdo excluído com sucesso.')
+            return redirect(f'/admin/organizar/?cat={origem_cat}')
+
+        elif action == 'excluir_anexo':
+            anexo_id = request.POST.get('anexo_id')
+            origem_cat = request.POST.get('origem_cat', '')
+            if anexo_id:
+                deleted, _ = Anexo.objects.filter(pk=anexo_id, categoria_id=origem_cat).delete()
+                if deleted:
+                    messages.success(request, 'Arquivo excluído com sucesso.')
+            return redirect(f'/admin/organizar/?cat={origem_cat}')
+
         elif action == 'salvar_ordem':
             origem_cat = request.POST.get('origem_cat', '')
             for key, value in request.POST.items():
@@ -201,6 +219,7 @@ def organizar_view(request):
         categoria = get_object_or_404(Categoria, pk=cat_id)
         subcategorias = categoria.subcategorias.filter(ativa=True).order_by('ordem', 'nome')
         conteudos = Conteudo.objects.filter(categoria=categoria).order_by('ordem', 'titulo')
+        anexos_categoria = categoria.anexos.all().order_by('ordem', 'nome')
 
         sub_data = []
         for sub in subcategorias:
@@ -229,6 +248,7 @@ def organizar_view(request):
             'categoria': categoria,
             'subcategorias': sub_data,
             'conteudos': conteudos,
+            'anexos_categoria': anexos_categoria,
             'destinos': destinos,
             'todas_subcategorias': todas_subcategorias,
             'todos_conteudos': todos_conteudos,

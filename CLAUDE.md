@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 14)
+# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 15)
 
 ## O que é este projeto
 
@@ -713,6 +713,37 @@ Corrigidos **2 problemas críticos** com compartilhamento via ngrok. **REGRA: ap
 - **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0025_mostrar_como_card.py` (migração), `conteudo/admin.py` (novo fieldset colapsável), `painel/views.py` (`_criar_subareas()` com `mostrar_como_card=False`), `templates/categoria.html` (condicional `{% if sub.mostrar_como_card %}` ao renderizar cards).
 - **Testado fim-a-ponta**: Subárea criada via "Criar subárea" → nasce com `mostrar_como_card=False` → aparece só como chip ✓. Botão criado via "Criar novo botão" → nasce com `mostrar_como_card=True` → aparece como chip + card ✓. Categoria existente pode ser ajustada no admin ✓.
 - **Compatibilidade 100%**: nenhuma mudança quebrada — todos os sistemas funcionam normalmente.
+
+### 2026-07-17 — Botões excluir no Organizador de Conteúdo (parte 15)
+
+**Problema**: no painel **Organizador de Conteúdo**, o Dan podia ver os conteúdos/URLs dentro de um botão (com opção de editar), mas não havia jeito de EXCLUIR — só mover ou editar. Idem para arquivos enviados direto pelo formulário verde "Adicionar novo arquivo ou URL" — eles viravam `Anexo` (não `Conteudo`) e nunca apareciam em lista com opção de excluir.
+
+**Solução**:
+
+1. **Coluna "Excluir" na tabela de conteúdos** (o que já estava em "Conteúdos em [botão]"):
+   - Nova coluna ao lado de "Editar" com ícone de lixeira vermelha 🗑️
+   - Clique exibe confirmação: "Excluir permanentemente '[título]'? Esta ação não pode ser desfeita."
+   - Confirmando, o conteúdo é **excluído permanentemente** (não reversível como "Mover")
+
+2. **Nova tabela "Arquivos anexados"** (logo abaixo de conteúdos):
+   - Lista TODOS os `Anexo` ligados à categoria (arquivos enviados pelo formulário verde)
+   - Cada linha: nome do arquivo (link clicável) + extensão + botão excluir 🗑️
+   - Botão excluir com confirmação igual à de conteúdos
+   - Só aparece se houver anexos
+
+3. **Backend** (`conteudo/admin_views.py`):
+   - Nova action `excluir_conteudo` — exclui conteúdo do banco (permanente)
+   - Nova action `excluir_anexo` — exclui anexo do banco (com validação de categoria para segurança)
+   - Context da view passa `anexos_categoria` ao template
+
+4. **Template** (`templates/admin/organizar.html`):
+   - Coluna "Excluir" adicionada à tabela de conteúdos (usando form inline com CSRF + confirmação JS)
+   - Nova tabela "Arquivos anexados" renderizada condicionalmente se houver anexos
+
+- **Versão de cache**: CSS/JS sem mudança (`?v=20260717-1` e `?v=20260711-1`)
+- **Arquivos modificados**: `conteudo/admin_views.py` (2 actions + contexto), `templates/admin/organizar.html` (coluna excluir + tabela anexos)
+- **Testado fim-a-ponta**: Conteúdo excluído via botão 🗑️ → permanentemente do banco ✓. Anexo subido via formulário verde → renderiza na tabela "Arquivos anexados" ✓. Anexo excluído via botão 🗑️ → permanentemente do banco ✓. Confirmação JS funciona.
+- **Compatibilidade 100%**: nenhuma mudança quebrada — funcionalidades existentes (mover, editar) continuam normais.
 
 ## Deploy
 

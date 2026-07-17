@@ -280,6 +280,7 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
                 <th style="width:80px;">Tipo</th>
                 <th style="width:110px;">Status</th>
                 <th style="width:60px;">Editar</th>
+                <th style="width:60px;">Excluir</th>
             </tr>
         </thead>
         <tbody>
@@ -305,6 +306,17 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
                     {% endif %}
                 </td>
                 <td><a href="/admin/conteudo/conteudo/{{ item.pk }}/change/" style="color:#2d5a8e;" title="Editar"><i class="fas fa-pen"></i></a></td>
+                <td>
+                    <form method="post" style="display:inline;" onsubmit="return confirm('Excluir permanentemente \'{{ item.titulo|escapejs }}\'? Esta ação não pode ser desfeita.');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="excluir_conteudo">
+                        <input type="hidden" name="conteudo_id" value="{{ item.pk }}">
+                        <input type="hidden" name="origem_cat" value="{{ categoria.pk }}">
+                        <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:15px;" title="Excluir permanentemente">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -367,6 +379,39 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
 
 {% else %}
 <div class="org-empty"><i class="fas fa-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i> Nenhum conteúdo nesta categoria.</div>
+{% endif %}
+
+{# ── Anexos (arquivos enviados direto pela categoria, sem virar Conteudo) ── #}
+{% if anexos_categoria %}
+<div class="org-section-title"><i class="fas fa-paperclip"></i> Arquivos anexados em "{{ categoria.nome }}" ({{ anexos_categoria|length }})</div>
+<table class="org-table">
+    <thead>
+        <tr>
+            <th>Arquivo</th>
+            <th style="width:100px;">Extensão</th>
+            <th style="width:60px;">Excluir</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for anexo in anexos_categoria %}
+        <tr>
+            <td><a href="{{ anexo.arquivo.url }}" target="_blank" rel="noopener" style="color:#2d5a8e;"><strong>{{ anexo.nome_exibicao }}</strong></a></td>
+            <td><span class="tipo-badge" style="background:#6b7280;">{{ anexo.extensao|upper }}</span></td>
+            <td>
+                <form method="post" style="display:inline;" onsubmit="return confirm('Excluir permanentemente o arquivo \'{{ anexo.nome_exibicao|escapejs }}\'? Esta ação não pode ser desfeita.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="excluir_anexo">
+                    <input type="hidden" name="anexo_id" value="{{ anexo.pk }}">
+                    <input type="hidden" name="origem_cat" value="{{ categoria.pk }}">
+                    <button type="submit" style="background:none;border:none;color:#dc2626;cursor:pointer;font-size:15px;" title="Excluir permanentemente">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endif %}
 
 {# ── Adicionar arquivo/URL DIRETO nesta categoria ── #}
