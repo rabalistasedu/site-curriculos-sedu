@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 15)
+# Site Currículos SEDU — Contexto do Projeto (v12 — atualizado em 2026-07-17 — Parte 16)
 
 ## O que é este projeto
 
@@ -10,7 +10,9 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 14")**: **Subáreas vs Botões: campo `mostrar_como_card` para controlar duplicação** — (1) novo campo `Categoria.mostrar_como_card` (BooleanField, padrão True) distingue botões/subbotões estruturais (aparecem como chip + card grande) de subáreas rápidas (aparecem só como chip, sem duplicar); (2) função "Criar subárea nos botões marcados" agora cria com `mostrar_como_card=False` automaticamente; (3) "Criar novo botão" cria com `mostrar_como_card=True` (padrão); (4) campo editável no Django Admin de Categoria para ajuste manual. Detalhes no histórico item 28.
+- **Leva mais recente (2026-07-17 — "parte 16")**: **Gerenciamento de Destaques: campo `destaque_gerenciado` para controlar visibilidade** — (1) novo campo `Conteudo.destaque_gerenciado` (BooleanField, migração 0026) marca "este item pertence à área de Destaques do Organizador"; (2) lista de destaques agora mostra TODOS com `destaque_gerenciado=True`, ocultos ou não (usando campo separado `destaque` para visibilidade na home); (3) checkbox "Ocultar" continua funcionando (liga/desliga `destaque`), mas **item permanece na lista de gerenciamento** para reativação posterior; (4) conteúdos criados via "Criar Destaque" nascem com `destaque_gerenciado=True`; (5) 3 destaques existentes marcados retroativamente. Detalhes no histórico item 29.
+- **Leva anterior (2026-07-17 — "parte 15")**: **Botões excluir no Organizador** — (1) coluna "Excluir" 🗑️ na tabela "Conteúdos em [botão]" com confirmação; (2) nova tabela "Arquivos anexados" mostrando todos os Anexo ligados à categoria com botão excluir; (3) ações `excluir_conteudo` e `excluir_anexo` no backend com validação de segurança. Detalhes no histórico item 28.
+- **Leva anterior (2026-07-17 — "parte 14")**: **Subáreas vs Botões: campo `mostrar_como_card` para controlar duplicação** — (1) novo campo `Categoria.mostrar_como_card` (BooleanField, padrão True) distingue botões/subbotões estruturais (aparecem como chip + card grande) de subáreas rápidas (aparecem só como chip, sem duplicar); (2) função "Criar subárea nos botões marcados" agora cria com `mostrar_como_card=False` automaticamente; (3) "Criar novo botão" cria com `mostrar_como_card=True` (padrão); (4) campo editável no Django Admin de Categoria para ajuste manual. Detalhes no histórico item 27.
 - **Leva anterior (2026-07-17 — "parte 13")**: **Currículo Atual virou botão raiz + Checkbox "Central?" para área central** — (1) Currículo Atual agora é uma categoria raiz (antes era filho de "Documentos Curriculares"), aparecendo como raiz em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior); (2) novo checkbox "Central?" no painel `/admin/barra-superior/` permite marcar QUALQUER botão raiz para aparecer na "área central" da home, ao lado da pílula "Currículo Atual"; (3) layout da home ajustado com `flex-wrap` para suportar múltiplos botões na central (quebra automaticamente se não couber). Detalhes no histórico item 27.
 - **Leva anterior (2026-07-16 — "parte 12")**: **Estrutura de Árvores + Subbotões melhorados** — (1) campo de upload de imagem de ícone adicionado ao modal de criar botão na Estrutura de Árvores (faltava; agora dá pra criar botão com nome + URL + anexos + ícone de imagem de uma vez); (2) subbotões agora aparecem como **cards grandes clicáveis** na página de categoria (borda azul, ícone grande, selo "Botão"), além dos chips no topo. Detalhes no histórico item 26.
 - **Leva anterior (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
@@ -27,7 +29,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0025` + `painel/0002`. Migração **`conteudo/0025`** (Categoria: mostrar_como_card) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0026` + `painel/0002`. Migração **`conteudo/0026`** (Conteudo: destaque_gerenciado) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -830,6 +832,48 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 - **Páginas ignoradas de propósito** (`SLUGS_IGNORAR` em `comparar_portais.py`): `sobre` (é a home do site antigo), `politica-de-cookies`, `elementor-24030` (página vazia). Páginas-hub (rpe, olimpiadas, livrodidatico...) casam com botões existentes via `ALIASES_WP_CATEGORIA`.
 - ⚠️ **O banco não viaja pelo Git**: na máquina do Dan, rodar os 3 comandos acima após `git pull` (o inventário já está versionado, então dá para pular a Fase 1 se o site antigo não mudou).
 - Categoria reserva "Portal Antigo — a classificar" (oculta da home) só é criada se algum item não tiver destino conhecido — nesta execução não foi necessária.
+
+### 2026-07-17 — Gerenciamento de Destaques: campo `destaque_gerenciado` (parte 16)
+
+**Problema resolvido**: ao ocultar um destaque (usando checkbox "Ocultar"), o item **desaparecia completamente da lista de gerenciamento** do Organizador, impedindo reativação posterior.
+
+**Root cause**: a query de destaques filtrava por `destaque=True`, então ao desmarcar esse checkbox, o item saía da lista de gerenciamento.
+
+**Solução**: novo campo **`destaque_gerenciado`** (migração `conteudo/0026`) que marca "pertence à área de Destaques" **independentemente** de estar visível (`destaque=True`) ou oculto (`destaque=False`) no momento:
+
+1. **Campo `Conteudo.destaque_gerenciado`** (BooleanField, default=False):
+   - Ligado automaticamente quando conteúdo é criado via "Criar Destaque" no Organizador
+   - Não pode ser alterado manualmente pelo usuário (é controle interno)
+   - Help text: "Marcado automaticamente para itens criados na área 'Destaques do Site' (Organizador). Mantém item visível na lista mesmo quando ocultado."
+
+2. **Query de destaques no Organizador** (`conteudo/admin_views.py`):
+   - Mudou de: `filter(destaque=True)` 
+   - Para: `filter(destaque_gerenciado=True)`
+   - Resultado: lista mostra **todos** os itens criados aqui, ocultos ou não
+
+3. **Checkbox "Ocultar"** (template `templates/admin/organizar.html`):
+   - Continua ligando/desligando `destaque` (controla visibilidade na home)
+   - MAS item permanece na lista (porque `destaque_gerenciado=True` não muda)
+   - Fluxo: marca "Ocultar" → desaparece da home, mas fica visível no Organizador para reativar depois
+
+4. **Ação `criar_destaque`** (`conteudo/admin_views.py`):
+   - Detecta arquivo: se é imagem, salva em `imagem_destaque`; senão em `arquivo`
+   - Define `destaque_gerenciado=True` automaticamente
+   - Cria com `destaque=True` (visível na home)
+
+5. **Retroativo** (não quebra banco antigo):
+   - Dados antigos: `destaque_gerenciado=False` (padrão da migração)
+   - Comando executado na sessão: marcou 3 destaques existentes com `destaque_gerenciado=True` para não sumirem
+
+**Comportamento fim-a-ponta testado**:
+- ✅ Criar destaque → nasce com `destaque_gerenciado=True` e `destaque=True` → aparece na home E na lista
+- ✅ Marcar "Ocultar" → `destaque` vira False → sumiu da home, MAS permanece na lista do Organizador
+- ✅ Desmarcar "Ocultar" (reativar) → `destaque` vira True → reaparece na home
+- ✅ Compatibilidade 100%: nenhuma quebra em outros sistemas
+
+- **Versão de cache**: CSS `?v=20260717-1` (sem mudança), JS `?v=20260711-1` (sem mudança)
+- **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0026_destaque_gerenciado.py` (nova migração), `conteudo/admin_views.py` (query + criar_destaque + toggle_destaque), `conteudo/views.py` (nenhuma alteração — home continua filtrando `destaque=True`)
+- **Testado**: criar → ocultar → permanece na lista → reativar → reaparece; 3 destaques antigos não sumiram
 
 ## O que falta / próximos passos possíveis
 

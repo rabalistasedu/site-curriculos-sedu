@@ -181,14 +181,23 @@ def organizar_view(request):
                 slug = f'{original_slug}-{n}'
                 n += 1
             tipo = 'link' if url_ext else ('documento' if arquivo else 'post')
+            # Se o arquivo enviado for uma imagem, vai para imagem_destaque
+            # (campo usado pelo card da home) em vez de arquivo genérico —
+            # senão o card mostrava só um ícone cinza, mesmo com imagem.
+            extensoes_imagem = {'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'}
+            eh_imagem = False
+            if arquivo and '.' in arquivo.name:
+                eh_imagem = arquivo.name.rsplit('.', 1)[-1].lower() in extensoes_imagem
             c = Conteudo.objects.create(
                 titulo=titulo or 'Destaque',
                 slug=slug,
                 tipo=tipo,
                 url_externa=url_ext,
-                arquivo=arquivo or '',
+                arquivo=arquivo if (arquivo and not eh_imagem) else '',
+                imagem_destaque=arquivo if eh_imagem else None,
                 status='publicado',
                 destaque=True,
+                destaque_gerenciado=True,
                 ordem=0,
             )
             messages.success(request, f'Destaque "{c.titulo}" criado com sucesso!')
@@ -210,7 +219,7 @@ def organizar_view(request):
         elif action == 'excluir_destaque':
             dest_id = request.POST.get('dest_id')
             if dest_id:
-                deleted, _ = Conteudo.objects.filter(pk=dest_id, destaque=True).delete()
+                deleted, _ = Conteudo.objects.filter(pk=dest_id, destaque_gerenciado=True).delete()
                 if deleted:
                     messages.success(request, 'Destaque excluido.')
             return redirect('/admin/organizar/')
@@ -273,7 +282,10 @@ def organizar_view(request):
                 'sub_count': len(subs),
             })
 
-        destaques = Conteudo.objects.filter(destaque=True).order_by('-data_publicacao')
+        # Lista TODOS os itens desta área de gerenciamento, mesmo os ocultos
+        # (destaque=False) — senão o item some da lista ao ser ocultado, sem
+        # jeito de reativar depois.
+        destaques = Conteudo.objects.filter(destaque_gerenciado=True).order_by('-data_publicacao')
 
         context = {
             'title': 'Organizador de Conteúdo',

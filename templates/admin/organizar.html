@@ -99,7 +99,7 @@
             <th>Titulo</th>
             <th style="width:70px;">Tipo</th>
             <th style="width:90px;">Status</th>
-            <th style="width:100px;">Ativo</th>
+            <th style="width:90px;">Ocultar</th>
             <th style="width:60px;">Editar</th>
             <th style="width:80px;">Acao</th>
         </tr>
@@ -125,15 +125,14 @@
                 {% elif d.status == 'rascunho' %}<span class="tipo-badge" style="background:#f59e0b;">Rascunho</span>
                 {% else %}<span class="tipo-badge" style="background:#6b7280;">Arquivado</span>{% endif %}
             </td>
-            <td>
+            <td style="text-align:center;">
                 <form method="post" style="display:inline;">{% csrf_token %}
                     <input type="hidden" name="action" value="toggle_destaque">
                     <input type="hidden" name="dest_id" value="{{ d.pk }}">
-                    {% if d.destaque %}
-                    <button type="submit" style="background:#10b981;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;" title="Clique para desativar"><i class="fas fa-check"></i> Ativo</button>
-                    {% else %}
-                    <button type="submit" style="background:#d1d5db;color:#374151;border:none;padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;" title="Clique para ativar"><i class="fas fa-times"></i> Inativo</button>
-                    {% endif %}
+                    <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#374151;" title="Marque para ocultar este destaque do site">
+                        <input type="checkbox" name="ocultar" onchange="this.form.submit()" {% if not d.destaque %}checked{% endif %} style="width:15px;height:15px;cursor:pointer;">
+                        Ocultar
+                    </label>
                 </form>
             </td>
             <td><a href="/admin/conteudo/conteudo/{{ d.pk }}/change/" style="color:#2d5a8e;" title="Editar"><i class="fas fa-pen"></i></a></td>

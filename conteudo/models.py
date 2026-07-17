@@ -282,6 +282,13 @@ class Conteudo(models.Model):
         'Destaque na home', default=False,
         help_text='Marque para exibir este conteúdo na página principal'
     )
+    destaque_gerenciado = models.BooleanField(
+        'Cadastrado pela área "Destaques do Site" (Organizador)', default=False,
+        help_text='Marcado automaticamente para itens criados na área "Destaques do '
+                  'Site" do Organizador de Conteúdo. Mantém o item visível na lista '
+                  'de gerenciamento mesmo quando ocultado (destaque=False), para '
+                  'poder reativar depois.'
+    )
     recente = models.BooleanField(
         'Aparecer em "Conteúdos recentes"', default=False,
         help_text='Se marcado, este item aparece na seção "Conteúdos recentes" da '
