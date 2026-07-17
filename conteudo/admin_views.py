@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
 from django.db.models import Q
-from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite
+from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao
 
 
 @staff_member_required
@@ -626,6 +626,107 @@ def editor_rodape_view(request):
     return render(request, 'admin/editor_rodape.html', {
         'title': 'Editor do Rodape',
         'config': config,
+        'has_permission': True,
+        'is_app_index': True,
+    })
+
+
+# ── Painel "Área do Site" ──────────────────────────────────────────
+# Gerencia (1) o texto/formatação dos títulos das 3 seções da home
+# (Destaques, Conteúdos recentes, Navegue por área) e (2) colunas extras
+# opcionais à esquerda/direita da faixa "Recentes + Navegue por área",
+# com botões personalizados dentro (link para categoria ou URL externa).
+
+@staff_member_required
+def area_do_site_view(request):
+    from .forms import TituloSecoesForm
+
+    config = ConfiguracaoSite.get_config()
+
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+
+        if action == 'salvar_titulos':
+            form = TituloSecoesForm(request.POST, instance=config)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Títulos das seções atualizados com sucesso!')
+            else:
+                messages.error(request, 'Não foi possível salvar os títulos.')
+            return redirect('admin_area_do_site')
+
+        elif action == 'criar_coluna':
+            titulo = request.POST.get('coluna_titulo', '').strip()
+            lado = request.POST.get('coluna_lado', 'direita')
+            if lado not in ('esquerda', 'direita'):
+                lado = 'direita'
+            ColunaExtra.objects.create(titulo=titulo or 'Nova coluna', lado=lado)
+            messages.success(request, 'Coluna criada com sucesso! Agora adicione botões dentro dela.')
+            return redirect('admin_area_do_site')
+
+        elif action == 'editar_coluna':
+            coluna_id = request.POST.get('coluna_id')
+            coluna = get_object_or_404(ColunaExtra, pk=coluna_id)
+            coluna.titulo = request.POST.get('coluna_titulo', '').strip()
+            lado = request.POST.get('coluna_lado', coluna.lado)
+            if lado in ('esquerda', 'direita'):
+                coluna.lado = lado
+            coluna.ativa = bool(request.POST.get('coluna_ativa'))
+            try:
+                coluna.ordem = int(request.POST.get('coluna_ordem', coluna.ordem))
+            except (TypeError, ValueError):
+                pass
+            coluna.save()
+            messages.success(request, f'Coluna "{coluna.titulo}" atualizada.')
+            return redirect('admin_area_do_site')
+
+        elif action == 'excluir_coluna':
+            coluna_id = request.POST.get('coluna_id')
+            deleted, _ = ColunaExtra.objects.filter(pk=coluna_id).delete()
+            if deleted:
+                messages.success(request, 'Coluna excluída com sucesso.')
+            return redirect('admin_area_do_site')
+
+        elif action == 'criar_botao':
+            coluna_id = request.POST.get('coluna_id')
+            coluna = get_object_or_404(ColunaExtra, pk=coluna_id)
+            nome = request.POST.get('botao_nome', '').strip()
+            if not nome:
+                messages.error(request, 'Informe um nome para o botão.')
+                return redirect('admin_area_do_site')
+            categoria_id = request.POST.get('botao_categoria') or None
+            categoria = Categoria.objects.filter(pk=categoria_id).first() if categoria_id else None
+            botao = ColunaExtraBotao.objects.create(
+                coluna=coluna,
+                nome=nome,
+                categoria=categoria,
+                link_externo=request.POST.get('botao_link', '').strip(),
+                icone=request.POST.get('botao_icone', '').strip() or 'fas fa-link',
+            )
+            if 'botao_icone_imagem' in request.FILES:
+                botao.icone_imagem = request.FILES['botao_icone_imagem']
+                botao.save(update_fields=['icone_imagem'])
+            messages.success(request, f'Botão "{nome}" adicionado à coluna "{coluna.titulo}".')
+            return redirect('admin_area_do_site')
+
+        elif action == 'excluir_botao':
+            botao_id = request.POST.get('botao_id')
+            deleted, _ = ColunaExtraBotao.objects.filter(pk=botao_id).delete()
+            if deleted:
+                messages.success(request, 'Botão excluído com sucesso.')
+            return redirect('admin_area_do_site')
+
+        return redirect('admin_area_do_site')
+
+    form = TituloSecoesForm(instance=config)
+    colunas = ColunaExtra.objects.all().prefetch_related('botoes')
+    categorias = Categoria.objects.filter(ativa=True).order_by('nome')
+
+    return render(request, 'admin/area_do_site.html', {
+        'title': 'Área do Site',
+        'form': form,
+        'colunas': colunas,
+        'categorias': categorias,
         'has_permission': True,
         'is_app_index': True,
     })

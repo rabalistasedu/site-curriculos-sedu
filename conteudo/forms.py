@@ -89,3 +89,16 @@ class ConfiguracaoSiteAdminForm(forms.ModelForm):
         widgets = {
             'home_texto': RichTextWidget(),
         }
+
+
+class TituloSecoesForm(forms.ModelForm):
+    """Título das 3 seções da home (Destaques / Conteúdos recentes /
+    Navegue por área) com formatação rica — painel "Área do Site"."""
+    class Meta:
+        model = ConfiguracaoSite
+        fields = ['titulo_destaques', 'titulo_recentes', 'titulo_areas']
+        widgets = {
+            'titulo_destaques': RichTextWidget(),
+            'titulo_recentes': RichTextWidget(),
+            'titulo_areas': RichTextWidget(),
+        }

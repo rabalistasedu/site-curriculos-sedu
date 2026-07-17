@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count
 from .models import (
     Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz,
-    Anexo, Carrossel, CarrosselImagem,
+    Anexo, Carrossel, CarrosselImagem, ColunaExtra, ColunaExtraBotao,
 )
 from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
 from .busca_utils import BuscaSemAcentoMixin
@@ -667,3 +667,17 @@ class ConfiguracaoSiteAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+class ColunaExtraBotaoInline(admin.TabularInline):
+    model = ColunaExtraBotao
+    extra = 1
+    fields = ('nome', 'categoria', 'link_externo', 'icone', 'icone_imagem', 'ordem')
+
+
+@admin.register(ColunaExtra)
+class ColunaExtraAdmin(admin.ModelAdmin):
+    list_display = ['titulo', 'lado', 'ativa', 'ordem']
+    list_editable = ['lado', 'ativa', 'ordem']
+    list_filter = ['lado', 'ativa']
+    inlines = [ColunaExtraBotaoInline]

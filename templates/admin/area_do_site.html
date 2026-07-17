@@ -1,0 +1,220 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block extrastyle %}
+{{ form.media }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .as-wrap { max-width: 1100px; }
+    .as-header { background: linear-gradient(135deg, #0891b2 0%, #164e63 100%); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; color: #fff; }
+    .as-header h2 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+    .as-header p { margin: 0; opacity: 0.85; font-size: 13px; }
+    .as-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+    .as-section h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .as-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+    .as-input, .as-select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
+    .as-help { font-size: 11px; color: #6b7280; margin-top: -8px; margin-bottom: 12px; }
+    .as-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+    .as-row > div { flex: 1; min-width: 220px; }
+    .as-save { background: linear-gradient(135deg, #0891b2 0%, #164e63 100%); color: #fff; border: none; padding: 11px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .as-save:hover { transform: scale(1.02); }
+    .as-alert { padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .as-coluna-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 14px; background: #f9fafb; }
+    .as-coluna-card.inativa { opacity: 0.55; }
+    .as-coluna-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .as-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .as-badge-esq { background: #dbeafe; color: #1e40af; }
+    .as-badge-dir { background: #fce7f3; color: #9d174d; }
+    .as-botoes-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .as-botao-item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+    .as-botao-item i.icone-item { color: #0891b2; width: 18px; text-align: center; }
+    .as-botao-item .destino { color: #6b7280; font-size: 11px; }
+    .as-botao-item form { margin-left: auto; }
+    .as-btn-excluir { background: none; border: none; color: #dc2626; cursor: pointer; font-size: 13px; padding: 4px; }
+    .as-btn-excluir:hover { color: #991b1b; }
+    .as-add-botao-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; padding: 12px; background: #eef2ff; border-radius: 8px; }
+    .as-add-botao-form > div { flex: 1; min-width: 140px; }
+    .as-add-botao-form label { font-size: 11px; font-weight: 600; color: #374151; display: block; margin-bottom: 3px; }
+    .as-add-botao-form input, .as-add-botao-form select { width: 100%; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 12px; }
+    .as-btn-mini { background: #0891b2; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .as-btn-mini:hover { background: #0e7490; }
+    .as-coluna-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
+    .as-coluna-footer form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .as-empty { text-align: center; padding: 30px; color: #9ca3af; font-size: 13px; }
+    .as-nova-coluna { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .as-nova-coluna > div { flex: 1; min-width: 180px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="as-wrap">
+
+{% if messages %}
+{% for message in messages %}
+<div class="as-alert">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<div class="as-header">
+    <h2><i class="fas fa-layer-group"></i> Área do Site</h2>
+    <p>Gerencie os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da página inicial — e crie colunas extras com botões personalizados ao lado delas.</p>
+</div>
+
+<!-- Títulos das 3 seções -->
+<div class="as-section">
+    <h3><i class="fas fa-heading" style="color:#0891b2;"></i> Títulos das seções da home</h3>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="salvar_titulos">
+
+        <label class="as-label">Título de "Destaques"</label>
+        {{ form.titulo_destaques }}
+
+        <label class="as-label" style="margin-top:8px;">Título de "Conteúdos recentes"</label>
+        {{ form.titulo_recentes }}
+
+        <label class="as-label" style="margin-top:8px;">Título de "Navegue por área"</label>
+        {{ form.titulo_areas }}
+
+        <button type="submit" class="as-save" style="margin-top:12px;">
+            <i class="fas fa-save"></i> Salvar títulos
+        </button>
+    </form>
+</div>
+
+<!-- Colunas extras -->
+<div class="as-section">
+    <h3><i class="fas fa-table-columns" style="color:#0891b2;"></i> Colunas extras (esquerda/direita de "Recentes" e "Navegue por área")</h3>
+    <p class="as-help" style="margin-bottom:16px;">Crie uma coluna nova para exibir ao lado de "Conteúdos recentes" e "Navegue por área" na home, com os botões que você quiser dentro dela.</p>
+
+    {% if colunas %}
+        {% for coluna in colunas %}
+        <div class="as-coluna-card{% if not coluna.ativa %} inativa{% endif %}">
+            <div class="as-coluna-head">
+                <div>
+                    <strong>{{ coluna.titulo|default:"(sem título)" }}</strong>
+                    <span class="as-badge {% if coluna.lado == 'esquerda' %}as-badge-esq{% else %}as-badge-dir{% endif %}">
+                        {{ coluna.get_lado_display }}
+                    </span>
+                    {% if not coluna.ativa %}<span class="as-badge" style="background:#fee2e2;color:#991b1b;">Inativa</span>{% endif %}
+                </div>
+            </div>
+
+            <!-- Botões da coluna -->
+            <div class="as-botoes-lista">
+                {% for botao in coluna.botoes.all %}
+                <div class="as-botao-item">
+                    {% if botao.icone_imagem %}
+                        <img src="{{ botao.icone_imagem.url }}" alt="" style="width:18px;height:18px;object-fit:contain;">
+                    {% else %}
+                        <i class="{{ botao.icone_display }} icone-item"></i>
+                    {% endif %}
+                    <span>{{ botao.nome }}</span>
+                    <span class="destino">
+                        {% if botao.link_externo %}→ {{ botao.link_externo }}
+                        {% elif botao.categoria %}→ {{ botao.categoria.nome }}
+                        {% else %}(sem destino){% endif %}
+                    </span>
+                    <form method="post" onsubmit="return confirm('Excluir o botão \'{{ botao.nome|escapejs }}\'?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="excluir_botao">
+                        <input type="hidden" name="botao_id" value="{{ botao.pk }}">
+                        <button type="submit" class="as-btn-excluir" title="Excluir botão"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </div>
+                {% empty %}
+                <p style="font-size:12px;color:#9ca3af;margin:0;">Nenhum botão nesta coluna ainda.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Adicionar botão -->
+            <form method="post" enctype="multipart/form-data" class="as-add-botao-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="criar_botao">
+                <input type="hidden" name="coluna_id" value="{{ coluna.pk }}">
+                <div>
+                    <label>Nome do botão</label>
+                    <input type="text" name="botao_nome" required placeholder="Ex.: Editais">
+                </div>
+                <div>
+                    <label>Categoria (opcional)</label>
+                    <select name="botao_categoria">
+                        <option value="">— nenhuma —</option>
+                        {% for cat in categorias %}
+                        <option value="{{ cat.pk }}">{{ cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label>OU link externo</label>
+                    <input type="url" name="botao_link" placeholder="https://...">
+                </div>
+                <div>
+                    <label>Ícone Font Awesome</label>
+                    <input type="text" name="botao_icone" placeholder="fas fa-link">
+                </div>
+                <div>
+                    <label>OU ícone (imagem)</label>
+                    <input type="file" name="botao_icone_imagem" accept="image/*">
+                </div>
+                <div style="flex:0;">
+                    <button type="submit" class="as-btn-mini"><i class="fas fa-plus"></i> Adicionar botão</button>
+                </div>
+            </form>
+
+            <!-- Editar / excluir coluna -->
+            <div class="as-coluna-footer">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="editar_coluna">
+                    <input type="hidden" name="coluna_id" value="{{ coluna.pk }}">
+                    <input type="text" name="coluna_titulo" value="{{ coluna.titulo }}" placeholder="Título da coluna" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
+                    <select name="coluna_lado" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
+                        <option value="esquerda" {% if coluna.lado == 'esquerda' %}selected{% endif %}>Esquerda</option>
+                        <option value="direita" {% if coluna.lado == 'direita' %}selected{% endif %}>Direita</option>
+                    </select>
+                    <input type="number" name="coluna_ordem" value="{{ coluna.ordem }}" style="width:60px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;" title="Ordem">
+                    <label style="font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+                        <input type="checkbox" name="coluna_ativa" {% if coluna.ativa %}checked{% endif %}> Ativa
+                    </label>
+                    <button type="submit" class="as-btn-mini"><i class="fas fa-save"></i> Salvar</button>
+                </form>
+                <form method="post" onsubmit="return confirm('Excluir a coluna \'{{ coluna.titulo|escapejs }}\' e todos os seus botões?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="excluir_coluna">
+                    <input type="hidden" name="coluna_id" value="{{ coluna.pk }}">
+                    <button type="submit" class="as-btn-excluir"><i class="fas fa-trash-alt"></i> Excluir coluna</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="as-empty">Nenhuma coluna extra criada ainda.</div>
+    {% endif %}
+
+    <!-- Criar nova coluna -->
+    <form method="post" class="as-nova-coluna" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="criar_coluna">
+        <div>
+            <label class="as-label">Título da nova coluna</label>
+            <input type="text" name="coluna_titulo" class="as-input" placeholder="Ex.: Acesso Rápido" style="margin-bottom:0;">
+        </div>
+        <div>
+            <label class="as-label">Lado</label>
+            <select name="coluna_lado" class="as-select" style="margin-bottom:0;">
+                <option value="esquerda">Esquerda</option>
+                <option value="direita" selected>Direita</option>
+            </select>
+        </div>
+        <div style="flex:0;">
+            <button type="submit" class="as-save"><i class="fas fa-plus"></i> Criar coluna</button>
+        </div>
+    </form>
+</div>
+
+</div>
+{% endblock %}

@@ -660,6 +660,13 @@ class ConfiguracaoSite(models.Model):
     rodape_copyright = models.CharField('Rodape: texto copyright', max_length=300, blank=True)
     rodape_imagem = models.ImageField('Rodape: imagem/logo', upload_to='config/', blank=True, null=True)
 
+    # Títulos das 3 seções da home (área "Destaques", "Conteúdos recentes" e
+    # "Navegue por área") — HTML rico (negrito/itálico/sublinhado/alinhamento/
+    # lista) via RichTextWidget, editável no painel "Área do Site".
+    titulo_destaques = models.TextField('Título da seção "Destaques"', blank=True, default='Destaques')
+    titulo_recentes = models.TextField('Título da seção "Conteúdos recentes"', blank=True, default='Conteúdos recentes')
+    titulo_areas = models.TextField('Título da seção "Navegue por área"', blank=True, default='Navegue por área')
+
     class Meta:
         verbose_name = 'Configuração do site'
         verbose_name_plural = 'Configuração do site'
@@ -675,6 +682,67 @@ class ConfiguracaoSite(models.Model):
     def get_config(cls):
         config, _ = cls.objects.get_or_create(pk=1)
         return config
+
+
+class ColunaExtra(models.Model):
+    """Coluna extra opcional na home, ao lado de "Conteúdos recentes" e
+    "Navegue por área" (esquerda ou direita), com botões personalizados
+    dentro — gerenciada pelo painel "Área do Site"."""
+    LADO_CHOICES = [('esquerda', 'Esquerda'), ('direita', 'Direita')]
+
+    titulo = models.CharField('Título da coluna', max_length=200, blank=True)
+    lado = models.CharField('Lado', max_length=10, choices=LADO_CHOICES, default='direita')
+    ativa = models.BooleanField('Ativa (aparece no site)', default=True)
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Coluna extra da home'
+        verbose_name_plural = 'Colunas extras da home'
+        ordering = ['ordem', 'pk']
+
+    def __str__(self):
+        return self.titulo or f'Coluna {self.pk}'
+
+
+class ColunaExtraBotao(models.Model):
+    """Um botão dentro de uma ColunaExtra — pode apontar para uma categoria
+    do site ou para um link externo."""
+    coluna = models.ForeignKey(ColunaExtra, on_delete=models.CASCADE, related_name='botoes', verbose_name='Coluna')
+    nome = models.CharField('Nome do botão', max_length=200)
+    categoria = models.ForeignKey(
+        Categoria, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='+', verbose_name='Categoria (opcional)',
+        help_text='Se escolhida, o botão abre esta categoria do site.'
+    )
+    link_externo = models.URLField(
+        'Link externo (opcional)', blank=True,
+        help_text='Se preenchido, tem prioridade sobre a categoria escolhida.'
+    )
+    icone = models.CharField('Ícone Font Awesome', max_length=100, blank=True, default='fas fa-link')
+    icone_imagem = models.FileField(
+        'Ícone personalizado (imagem)', upload_to='icones_coluna_extra/', blank=True, null=True
+    )
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Botão da coluna extra'
+        verbose_name_plural = 'Botões da coluna extra'
+        ordering = ['ordem', 'pk']
+
+    def __str__(self):
+        return self.nome
+
+    @property
+    def url(self):
+        if self.link_externo:
+            return self.link_externo
+        if self.categoria:
+            return f'/categoria/{self.categoria.slug}/'
+        return '#'
+
+    @property
+    def icone_display(self):
+        return self.icone or 'fas fa-link'
 
 
 class Comentario(models.Model):

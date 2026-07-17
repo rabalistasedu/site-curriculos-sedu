@@ -42,7 +42,7 @@
 {% if destaques %}
 <section class="section section-alt">
     <div class="container">
-        <h2 class="section-title">Destaques</h2>
+        <h2 class="section-title">{{ config.titulo_destaques|default:"Destaques"|safe }}</h2>
         <div class="content-grid destaques-grid">
             {% for item in destaques %}
             <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
@@ -147,13 +147,36 @@
             {% endfor %}
         </div>
 
+        <div class="home-split-wrap">
+
+        {% for coluna in colunas_esquerda %}
+        <aside class="home-coluna-extra">
+            <h2 class="section-title">{{ coluna.titulo }}</h2>
+            <div class="areas-list">
+                {% for botao in coluna.botoes.all %}
+                <a href="{{ botao.url }}" class="area-card"
+                   {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
+                   title="{{ botao.nome }}">
+                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                        {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
+                        {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
+                    </div>
+                    <div class="area-text">
+                        <h3>{{ botao.nome }}</h3>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </aside>
+        {% endfor %}
+
         <div class="home-split">
 
             <!-- Esquerda: Conteúdos recentes -->
             <div class="home-recentes">
                 <h2 class="section-title">
                     <span class="title-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
-                    Conteúdos recentes
+                    {{ config.titulo_recentes|default:"Conteúdos recentes"|safe }}
                 </h2>
                 {% if recentes %}
                 <div class="content-list">
@@ -187,7 +210,7 @@
             <aside class="home-areas">
                 <h2 class="section-title">
                     <span class="title-icon"><i class="fas fa-compass"></i></span>
-                    Navegue por área
+                    {{ config.titulo_areas|default:"Navegue por área"|safe }}
                 </h2>
                 <div class="areas-list">
                     {% for cat in categorias %}
@@ -208,6 +231,29 @@
                     {% endfor %}
                 </div>
             </aside>
+
+        </div>
+
+        {% for coluna in colunas_direita %}
+        <aside class="home-coluna-extra">
+            <h2 class="section-title">{{ coluna.titulo }}</h2>
+            <div class="areas-list">
+                {% for botao in coluna.botoes.all %}
+                <a href="{{ botao.url }}" class="area-card"
+                   {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
+                   title="{{ botao.nome }}">
+                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                        {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
+                        {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
+                    </div>
+                    <div class="area-text">
+                        <h3>{{ botao.nome }}</h3>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </aside>
+        {% endfor %}
 
         </div>
     </div>

@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v12 — atualizado em 2026-07-17 — Parte 16)
+# Site Currículos SEDU — Contexto do Projeto (v13 — atualizado em 2026-07-17 — Parte 17)
 
 ## O que é este projeto
 
@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores**).
+- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **7 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, **Área do Site**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 16")**: **Gerenciamento de Destaques: campo `destaque_gerenciado` para controlar visibilidade** — (1) novo campo `Conteudo.destaque_gerenciado` (BooleanField, migração 0026) marca "este item pertence à área de Destaques do Organizador"; (2) lista de destaques agora mostra TODOS com `destaque_gerenciado=True`, ocultos ou não (usando campo separado `destaque` para visibilidade na home); (3) checkbox "Ocultar" continua funcionando (liga/desliga `destaque`), mas **item permanece na lista de gerenciamento** para reativação posterior; (4) conteúdos criados via "Criar Destaque" nascem com `destaque_gerenciado=True`; (5) 3 destaques existentes marcados retroativamente. Detalhes no histórico item 29.
+- **Leva mais recente (2026-07-17 — "parte 17")**: **Novo painel "Área do Site"** — gerencia (1) o texto/formatação (negrito, itálico, sublinhado, alinhamento, lista) dos títulos das 3 seções da home ("Destaques", "Conteúdos recentes", "Navegue por área") via `ConfiguracaoSite.titulo_destaques/titulo_recentes/titulo_areas` (TextField HTML, RichTextWidget, migração 0027); (2) colunas extras opcionais à esquerda/direita da faixa "Recentes + Navegue por área" (novos modelos `ColunaExtra` e `ColunaExtraBotao`), cada uma com título e botões próprios (nome + categoria do site OU link externo + ícone FA/imagem). View `area_do_site_view` em `conteudo/admin_views.py`, template `templates/admin/area_do_site.html`, URL `/admin/area-do-site/`, banner ciano no dashboard. `home.html` envolve `.home-split` num `.home-split-wrap` flex para acomodar as colunas extras nas laterais. Detalhes no histórico item 30.
+- **Leva anterior (2026-07-17 — "parte 16")**: **Gerenciamento de Destaques: campo `destaque_gerenciado` para controlar visibilidade** — (1) novo campo `Conteudo.destaque_gerenciado` (BooleanField, migração 0026) marca "este item pertence à área de Destaques do Organizador"; (2) lista de destaques agora mostra TODOS com `destaque_gerenciado=True`, ocultos ou não (usando campo separado `destaque` para visibilidade na home); (3) checkbox "Ocultar" continua funcionando (liga/desliga `destaque`), mas **item permanece na lista de gerenciamento** para reativação posterior; (4) conteúdos criados via "Criar Destaque" nascem com `destaque_gerenciado=True`; (5) 3 destaques existentes marcados retroativamente. Detalhes no histórico item 29.
 - **Leva anterior (2026-07-17 — "parte 15")**: **Botões excluir no Organizador** — (1) coluna "Excluir" 🗑️ na tabela "Conteúdos em [botão]" com confirmação; (2) nova tabela "Arquivos anexados" mostrando todos os Anexo ligados à categoria com botão excluir; (3) ações `excluir_conteudo` e `excluir_anexo` no backend com validação de segurança. Detalhes no histórico item 28.
 - **Leva anterior (2026-07-17 — "parte 14")**: **Subáreas vs Botões: campo `mostrar_como_card` para controlar duplicação** — (1) novo campo `Categoria.mostrar_como_card` (BooleanField, padrão True) distingue botões/subbotões estruturais (aparecem como chip + card grande) de subáreas rápidas (aparecem só como chip, sem duplicar); (2) função "Criar subárea nos botões marcados" agora cria com `mostrar_como_card=False` automaticamente; (3) "Criar novo botão" cria com `mostrar_como_card=True` (padrão); (4) campo editável no Django Admin de Categoria para ajuste manual. Detalhes no histórico item 27.
 - **Leva anterior (2026-07-17 — "parte 13")**: **Currículo Atual virou botão raiz + Checkbox "Central?" para área central** — (1) Currículo Atual agora é uma categoria raiz (antes era filho de "Documentos Curriculares"), aparecendo como raiz em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior); (2) novo checkbox "Central?" no painel `/admin/barra-superior/` permite marcar QUALQUER botão raiz para aparecer na "área central" da home, ao lado da pílula "Currículo Atual"; (3) layout da home ajustado com `flex-wrap` para suportar múltiplos botões na central (quebra automaticamente se não couber). Detalhes no histórico item 27.
@@ -29,7 +30,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0026` + `painel/0002`. Migração **`conteudo/0026`** (Conteudo: destaque_gerenciado) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0027` + `painel/0002`. Migração **`conteudo/0027`** (ColunaExtra/ColunaExtraBotao + títulos das seções da home) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -213,6 +214,9 @@ Comentários moderados (3 estados, migração 0019 — 2026-07-13).
    - Correção de layout (2026-07-11): selects com altura fixa 36px (texto não corta mais — era o bug do campo "Fonte"), `min-width: 0` nos filhos de `.pc-grid2/.pc-grid3`, grades viram 1 coluna abaixo de 980px.
 
 5. **Botões da Barra Superior** (`/admin/barra-superior/`, cartão ciano no dashboard) — tela simples para marcar quais botões principais aparecem na barra azul do topo (grava `mostrar_menu_superior` — vale também para o rodapé), mudar a ordem e criar/editar/excluir botões. Pedido do Dan de 2026-07-11: a barra exibe fixos Documentos Curriculares, Programas, Projetos Integradores, Olimpíadas e Institucional.
+6. **Editor do Rodapé** (`/admin/editor-rodape/`, cartão cinza no dashboard) — edita textos, links, ícones e imagens das 3 colunas do rodapé + copyright + contato/endereço.
+7. **Estrutura de Árvores** (`/admin/estrutura-arvores/`, banner âmbar) — ver seção dedicada acima (histórico item 24).
+8. **Área do Site** (`/admin/area-do-site/`, banner ciano no dashboard, parte 17 — 2026-07-17) — (a) formata (negrito/itálico/sublinhado/alinhamento/lista) os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da home via `RichTextWidget`; (b) cria colunas extras (`ColunaExtra`) à esquerda ou direita da faixa "Recentes + Navegue por área", cada uma com botões próprios (`ColunaExtraBotao` — nome + categoria do site OU link externo + ícone).
 
 ## Comportamentos importantes do front-end
 
@@ -832,6 +836,38 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 - **Páginas ignoradas de propósito** (`SLUGS_IGNORAR` em `comparar_portais.py`): `sobre` (é a home do site antigo), `politica-de-cookies`, `elementor-24030` (página vazia). Páginas-hub (rpe, olimpiadas, livrodidatico...) casam com botões existentes via `ALIASES_WP_CATEGORIA`.
 - ⚠️ **O banco não viaja pelo Git**: na máquina do Dan, rodar os 3 comandos acima após `git pull` (o inventário já está versionado, então dá para pular a Fase 1 se o site antigo não mudou).
 - Categoria reserva "Portal Antigo — a classificar" (oculta da home) só é criada se algum item não tiver destino conhecido — nesta execução não foi necessária.
+
+### 2026-07-17 — Novo painel "Área do Site" (parte 17)
+
+**Pedido do Dan**: gerenciar a área onde ficam escritos "Destaques", "Conteúdos recentes" e "Navegue por área" — formatar esses textos com todos os recursos de formatação, e poder criar uma nova coluna (esquerda ou direita das duas existentes) com botões personalizados dentro.
+
+**1. Títulos das 3 seções com formatação rica** (migração `conteudo/0027`):
+   - Novos campos em `ConfiguracaoSite`: `titulo_destaques`, `titulo_recentes`, `titulo_areas` (TextField, HTML, default = texto atual)
+   - Editados via `RichTextWidget` já existente no projeto (mesmo editor usado em `home_texto`) — barra com negrito, itálico, sublinhado, alinhar esquerda/centro/direita, lista com marcadores, limpar formatação
+   - Novo form `TituloSecoesForm` em `conteudo/forms.py`
+   - `home.html` renderiza `{{ config.titulo_destaques|default:"Destaques"|safe }}` (e equivalentes) no lugar do texto fixo antigo
+
+**2. Colunas extras com botões personalizados** (2 novos modelos):
+   - `ColunaExtra`: `titulo`, `lado` (esquerda/direita), `ativa`, `ordem`
+   - `ColunaExtraBotao`: `coluna` (FK), `nome`, `categoria` (FK opcional — abre categoria do site) OU `link_externo` (URL, tem prioridade), `icone` (Font Awesome), `icone_imagem` (upload), `ordem`
+   - Quantas colunas o Dan quiser, em qualquer lado, cada uma com quantos botões quiser
+   - Registrado também no Django Admin (`ColunaExtraAdmin` com inline de botões) como caminho alternativo
+
+**3. Painel "Área do Site"** (`/admin/area-do-site/`, banner ciano no dashboard):
+   - View `area_do_site_view` em `conteudo/admin_views.py` — actions: `salvar_titulos`, `criar_coluna`, `editar_coluna`, `excluir_coluna`, `criar_botao`, `excluir_botao`
+   - Template `templates/admin/area_do_site.html` — seção 1 com os 3 editores ricos; seção 2 lista as colunas existentes (cada uma com seus botões, formulário para adicionar botão, formulário para editar/mover de lado/ativar-desativar, botão excluir) + formulário para criar nova coluna
+   - URL registrada em `curriculo_sedu/urls.py`
+
+**4. Home renderiza as colunas extras** (`templates/home.html` + `conteudo/views.py`):
+   - `home()` busca `ColunaExtra.objects.filter(ativa=True)` e separa em `colunas_esquerda`/`colunas_direita`
+   - `.home-split` (que já continha "Recentes" + "Navegue por área") foi envolvido por um novo `.home-split-wrap` (flex) — colunas da esquerda entram ANTES do `.home-split`, colunas da direita entram DEPOIS
+   - Cada coluna extra renderiza como `.home-coluna-extra` com os botões em formato `.area-card` (mesmo visual dos cards de "Navegue por área")
+   - CSS novo (`AJUSTES 2026-07-17 — Área do Site`): `.home-split-wrap` em flex com gap 32px; responsivo — empilha em coluna única abaixo de 1024px
+
+- **Versão de cache**: CSS `?v=20260717-2` (incrementado de `-1`), JS sem mudança (`?v=20260711-1`)
+- **Arquivos modificados**: `conteudo/models.py` (3 campos em ConfiguracaoSite + modelos ColunaExtra/ColunaExtraBotao), `conteudo/migrations/0027_colunaextra_configuracaosite_titulo_areas_and_more.py` (nova migração), `conteudo/forms.py` (TituloSecoesForm), `conteudo/admin_views.py` (area_do_site_view), `conteudo/admin.py` (ColunaExtraAdmin + inline), `conteudo/views.py` (home() busca colunas extras), `templates/admin/area_do_site.html` (novo), `templates/admin/index.html` (banner), `templates/home.html` (títulos via config + colunas extras), `static/css/style.css` (bloco novo), `templates/base.html` (cache-busting `-2`), `curriculo_sedu/urls.py` (rota nova)
+- **Testado fim-a-ponta** (via Django test client E interface real no navegador): título com `<strong>` salvo e renderizado em negrito na home ✓; coluna criada aparece do lado escolhido ✓; botão apontando para categoria gera URL correta (`/categoria/<slug>/`) ✓; botão aparece na home dentro da coluna ✓; editar coluna (mudar de lado) funciona ✓; excluir botão e excluir coluna funcionam (cascade) ✓; layout flex sem sobreposição (`getBoundingClientRect` confirmado) ✓
+- **Compatibilidade 100%**: nenhuma mudança quebrada — se nenhuma coluna extra existir, a home renderiza exatamente como antes (só o `.home-split-wrap` envolve o `.home-split`, sem efeito visual quando vazio)
 
 ### 2026-07-17 — Gerenciamento de Destaques: campo `destaque_gerenciado` (parte 16)
 

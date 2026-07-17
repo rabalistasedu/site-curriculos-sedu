@@ -3,7 +3,7 @@ from django.db.models import Q, Case, When, Value, IntegerField, F, Prefetch
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel
+from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel, ColunaExtra
 
 
 def home(request):
@@ -47,6 +47,12 @@ def home(request):
     carrosseis_esq = [c for c in carrosseis if c.lado == 'esquerdo']
     carrosseis_dir = [c for c in carrosseis if c.lado == 'direito']
 
+    # Colunas extras opcionais ao lado de "Conteúdos recentes" e "Navegue
+    # por área" (painel "Área do Site").
+    colunas_extras = ColunaExtra.objects.filter(ativa=True).prefetch_related('botoes')
+    colunas_esquerda = [c for c in colunas_extras if c.lado == 'esquerda']
+    colunas_direita = [c for c in colunas_extras if c.lado == 'direita']
+
     return render(request, 'home.html', {
         'categorias': categorias,
         'botoes_area_central': botoes_area_central,
@@ -57,6 +63,8 @@ def home(request):
         'cartazes_dir': cartazes_dir,
         'carrosseis_esq': carrosseis_esq,
         'carrosseis_dir': carrosseis_dir,
+        'colunas_esquerda': colunas_esquerda,
+        'colunas_direita': colunas_direita,
     })
 
 
