@@ -134,7 +134,10 @@
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_subarea_card.py)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8001/categoria/icone-teste/)",
       "Bash(PYTHONIOENCODING=utf-8 nohup venv/Scripts/python.exe manage.py runserver 127.0.0.1:8001 --noreload)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/)"
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_destaque_fixes.py)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py makemigrations conteudo --name destaque_gerenciado)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_destaque_persiste.py)"
     ]
   }
 }
