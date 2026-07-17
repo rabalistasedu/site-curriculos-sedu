@@ -137,7 +137,21 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://127.0.0.1:8001/)",
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_destaque_fixes.py)",
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py makemigrations conteudo --name destaque_gerenciado)",
-      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_destaque_persiste.py)"
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_destaque_persiste.py)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py makemigrations conteudo)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py check)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_area_do_site.py)",
+      "Bash(taskkill //F //IM python.exe)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_icones_secao.py)",
+      "Bash(rm -f test_icones_secao.py)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_coluna_icone.py)",
+      "Bash(rm -f test_coluna_icone.py)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_botao_arvore.py)",
+      "Bash(rm -f test_botao_arvore.py)",
+      "Bash(rm -f \"media/anexos/2026/07/anexo_rapido.png\")",
+      "Bash(rmdir \"media/icones_coluna_extra\")",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_botao_raiz.py)",
+      "Bash(rm -f test_botao_raiz.py)"
     ]
   }
 }
