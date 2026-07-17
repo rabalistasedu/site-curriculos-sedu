@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v14 — atualizado em 2026-07-17 — Parte 18)
+# Site Currículos SEDU — Contexto do Projeto (v15 — atualizado em 2026-07-17 — Parte 19)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **7 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, **Área do Site**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 18")**: **Ícones das 3 seções da home** — painel "Área do Site" ganhou seletor de ícone para "Destaques", "Conteúdos recentes" e "Navegue por área": escolha entre os ícones padrão do site (IconPicker, mesma grade usada em Conteúdo/Categoria) OU envie uma imagem em qualquer formato — a imagem sempre é exibida com **fundo transparente** (classe `.title-icon.sem-fundo` + `object-fit:contain`), sem prejudicar a estética do site. Novos campos em `ConfiguracaoSite`: `icone_destaques/icone_recentes/icone_areas` (Font Awesome) + `icone_destaques_imagem/icone_recentes_imagem/icone_areas_imagem` (upload, prioridade sobre o FA). Migração 0028. Detalhes no histórico item 31.
+- **Leva mais recente (2026-07-17 — "parte 19")**: **Ícone também nas colunas extras** — a criação/edição de coluna extra (painel "Área do Site") ganhou o mesmo seletor de ícone das 3 seções fixas (Font Awesome via IconPicker OU upload de imagem, sempre com fundo transparente). Novos campos `ColunaExtra.icone`/`icone_imagem` (migração 0029). O ícone aparece antes do título de cada coluna extra na home. Detalhes no histórico item 32.
+- **Leva anterior (2026-07-17 — "parte 18")**: **Ícones das 3 seções da home** — painel "Área do Site" ganhou seletor de ícone para "Destaques", "Conteúdos recentes" e "Navegue por área": escolha entre os ícones padrão do site (IconPicker, mesma grade usada em Conteúdo/Categoria) OU envie uma imagem em qualquer formato — a imagem sempre é exibida com **fundo transparente** (classe `.title-icon.sem-fundo` + `object-fit:contain`), sem prejudicar a estética do site. Novos campos em `ConfiguracaoSite`: `icone_destaques/icone_recentes/icone_areas` (Font Awesome) + `icone_destaques_imagem/icone_recentes_imagem/icone_areas_imagem` (upload, prioridade sobre o FA). Migração 0028. Detalhes no histórico item 31.
 - **Leva anterior (2026-07-17 — "parte 17")**: **Novo painel "Área do Site"** — gerencia (1) o texto/formatação (negrito, itálico, sublinhado, alinhamento, lista) dos títulos das 3 seções da home ("Destaques", "Conteúdos recentes", "Navegue por área") via `ConfiguracaoSite.titulo_destaques/titulo_recentes/titulo_areas` (TextField HTML, RichTextWidget, migração 0027); (2) colunas extras opcionais à esquerda/direita da faixa "Recentes + Navegue por área" (novos modelos `ColunaExtra` e `ColunaExtraBotao`), cada uma com título e botões próprios (nome + categoria do site OU link externo + ícone FA/imagem). View `area_do_site_view` em `conteudo/admin_views.py`, template `templates/admin/area_do_site.html`, URL `/admin/area-do-site/`, banner ciano no dashboard. `home.html` envolve `.home-split` num `.home-split-wrap` flex para acomodar as colunas extras nas laterais. Detalhes no histórico item 30.
 - **Leva anterior (2026-07-17 — "parte 16")**: **Gerenciamento de Destaques: campo `destaque_gerenciado` para controlar visibilidade** — (1) novo campo `Conteudo.destaque_gerenciado` (BooleanField, migração 0026) marca "este item pertence à área de Destaques do Organizador"; (2) lista de destaques agora mostra TODOS com `destaque_gerenciado=True`, ocultos ou não (usando campo separado `destaque` para visibilidade na home); (3) checkbox "Ocultar" continua funcionando (liga/desliga `destaque`), mas **item permanece na lista de gerenciamento** para reativação posterior; (4) conteúdos criados via "Criar Destaque" nascem com `destaque_gerenciado=True`; (5) 3 destaques existentes marcados retroativamente. Detalhes no histórico item 29.
 - **Leva anterior (2026-07-17 — "parte 15")**: **Botões excluir no Organizador** — (1) coluna "Excluir" 🗑️ na tabela "Conteúdos em [botão]" com confirmação; (2) nova tabela "Arquivos anexados" mostrando todos os Anexo ligados à categoria com botão excluir; (3) ações `excluir_conteudo` e `excluir_anexo` no backend com validação de segurança. Detalhes no histórico item 28.
@@ -31,7 +32,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0028` + `painel/0002`. Migração **`conteudo/0028`** (ícones das 3 seções da home) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0029` + `painel/0002`. Migração **`conteudo/0029`** (ícone em ColunaExtra) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -895,6 +896,29 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 - **Arquivos modificados**: `conteudo/models.py` (6 campos novos em ConfiguracaoSite), `conteudo/migrations/0028_configuracaosite_icone_areas_and_more.py` (nova migração), `conteudo/forms.py` (TituloSecoesForm com IconPicker), `conteudo/admin_views.py` (area_do_site_view trata uploads/remoção de imagem), `templates/admin/area_do_site.html` (blocos de ícone por seção), `templates/home.html` (ícone dinâmico nas 3 seções), `static/css/style.css` (`.title-icon.sem-fundo`), `templates/base.html` (cache-busting `-3`)
 - **Testado fim-a-ponta**: escolher ícone FA (fa-star) para Destaques → aparece na home ✓; enviar imagem PNG para Recentes → aparece com prioridade sobre o FA, classe `sem-fundo` aplicada ✓; remover a imagem enviada (checkbox) → volta ao ícone FA padrão (`fa-wand-magic-sparkles`) ✓
 - **Compatibilidade 100%**: com os campos vazios (banco antigo), os ícones padrão (`fa-wand-magic-sparkles`/`fa-compass`) continuam aparecendo exatamente como antes; "Destaques" continua sem ícone até o Dan escolher um
+
+### 2026-07-17 — Ícone também nas colunas extras (parte 19)
+
+**Pedido do Dan**: ao criar uma nova coluna extra (painel "Área do Site"), também precisava da opção de escolher ícone padrão ou anexar arquivo — só existia isso para os botões dentro da coluna, não para o título da coluna em si.
+
+**1. Novos campos em `ColunaExtra`** (migração `conteudo/0029`):
+   - `icone` (CharField, Font Awesome)
+   - `icone_imagem` (FileField, `icones_secao/`, qualquer formato) — prioridade sobre `icone`
+
+**2. Formulário "Criar nova coluna"**: ganhou campo de texto para o ícone Font Awesome + campo de upload de imagem, lado a lado com título/lado.
+
+**3. Formulário "Editar coluna" (rodapé de cada card de coluna)**: mesmos dois campos + checkbox "Remover imagem" (só aparece se já houver imagem enviada). Form ganhou `enctype="multipart/form-data"`.
+
+**4. Cabeçalho de cada coluna no painel**: mostra o ícone atual (imagem ou Font Awesome) ao lado do título, antes dos badges de lado/ativa.
+
+**5. `admin_views.py`** (`area_do_site_view`): `criar_coluna` agora lê `coluna_icone` do POST e trata `coluna_icone_imagem` de `request.FILES`; `editar_coluna` faz o mesmo + trata `limpar_coluna_icone_imagem` para remover.
+
+**6. `home.html`**: cada coluna extra (`.home-coluna-extra`) agora renderiza o ícone antes do título, mesmo padrão das 3 seções fixas — `<span class="title-icon sem-fundo">` com imagem (`.icone-personalizado`, `object-fit:contain`) OU `<span class="title-icon">` com `<i>` Font Awesome, fundo transparente garantido pela mesma classe `.title-icon.sem-fundo` do CSS da Parte 18.
+
+- **Versão de cache**: CSS `?v=20260717-4` (incrementado de `-3`), JS sem mudança
+- **Arquivos modificados**: `conteudo/models.py` (2 campos novos em ColunaExtra), `conteudo/migrations/0029_colunaextra_icone_colunaextra_icone_imagem.py` (nova migração), `conteudo/admin_views.py` (criar_coluna/editar_coluna tratam ícone), `templates/admin/area_do_site.html` (campos de ícone nos 2 formulários + preview no cabeçalho), `templates/home.html` (ícone antes do título de cada coluna extra), `templates/base.html` (cache-busting `-4`)
+- **Testado fim-a-ponta**: criar coluna com ícone FA (`fas fa-star`) → aparece na home ✓; editar coluna enviando imagem → tem prioridade sobre o FA, aparece com fundo transparente ✓; remover a imagem enviada → volta ao ícone FA ✓
+- **Compatibilidade 100%**: colunas extras existentes sem ícone continuam renderizando só o título, sem nenhum ícone (comportamento anterior preservado)
 
 ### 2026-07-17 — Gerenciamento de Destaques: campo `destaque_gerenciado` (parte 16)
 

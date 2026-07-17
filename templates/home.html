@@ -158,7 +158,14 @@
 
         {% for coluna in colunas_esquerda %}
         <aside class="home-coluna-extra">
-            <h2 class="section-title">{{ coluna.titulo }}</h2>
+            <h2 class="section-title">
+                {% if coluna.icone_imagem %}
+                <span class="title-icon sem-fundo"><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
+                {% elif coluna.icone %}
+                <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
+                {% endif %}
+                {{ coluna.titulo }}
+            </h2>
             <div class="areas-list">
                 {% for botao in coluna.botoes.all %}
                 <a href="{{ botao.url }}" class="area-card"
@@ -251,7 +258,14 @@
 
         {% for coluna in colunas_direita %}
         <aside class="home-coluna-extra">
-            <h2 class="section-title">{{ coluna.titulo }}</h2>
+            <h2 class="section-title">
+                {% if coluna.icone_imagem %}
+                <span class="title-icon sem-fundo"><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
+                {% elif coluna.icone %}
+                <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
+                {% endif %}
+                {{ coluna.titulo }}
+            </h2>
             <div class="areas-list">
                 {% for botao in coluna.botoes.all %}
                 <a href="{{ botao.url }}" class="area-card"

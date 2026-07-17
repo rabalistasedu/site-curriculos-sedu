@@ -702,6 +702,11 @@ class ColunaExtra(models.Model):
     LADO_CHOICES = [('esquerda', 'Esquerda'), ('direita', 'Direita')]
 
     titulo = models.CharField('Título da coluna', max_length=200, blank=True)
+    icone = models.CharField('Ícone do título (padrão do site)', max_length=100, blank=True)
+    icone_imagem = models.FileField(
+        'Ícone do título (imagem)', upload_to='icones_secao/', blank=True, null=True,
+        help_text='Qualquer formato. Tem prioridade sobre o ícone padrão e aparece sempre com fundo transparente.'
+    )
     lado = models.CharField('Lado', max_length=10, choices=LADO_CHOICES, default='direita')
     ativa = models.BooleanField('Ativa (aparece no site)', default=True)
     ordem = models.PositiveIntegerField('Ordem', default=0)

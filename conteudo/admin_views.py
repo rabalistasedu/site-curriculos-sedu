@@ -666,7 +666,14 @@ def area_do_site_view(request):
             lado = request.POST.get('coluna_lado', 'direita')
             if lado not in ('esquerda', 'direita'):
                 lado = 'direita'
-            ColunaExtra.objects.create(titulo=titulo or 'Nova coluna', lado=lado)
+            coluna = ColunaExtra.objects.create(
+                titulo=titulo or 'Nova coluna',
+                lado=lado,
+                icone=request.POST.get('coluna_icone', '').strip(),
+            )
+            if 'coluna_icone_imagem' in request.FILES:
+                coluna.icone_imagem = request.FILES['coluna_icone_imagem']
+                coluna.save(update_fields=['icone_imagem'])
             messages.success(request, 'Coluna criada com sucesso! Agora adicione botões dentro dela.')
             return redirect('admin_area_do_site')
 
@@ -674,6 +681,7 @@ def area_do_site_view(request):
             coluna_id = request.POST.get('coluna_id')
             coluna = get_object_or_404(ColunaExtra, pk=coluna_id)
             coluna.titulo = request.POST.get('coluna_titulo', '').strip()
+            coluna.icone = request.POST.get('coluna_icone', '').strip()
             lado = request.POST.get('coluna_lado', coluna.lado)
             if lado in ('esquerda', 'direita'):
                 coluna.lado = lado
@@ -682,6 +690,10 @@ def area_do_site_view(request):
                 coluna.ordem = int(request.POST.get('coluna_ordem', coluna.ordem))
             except (TypeError, ValueError):
                 pass
+            if 'coluna_icone_imagem' in request.FILES:
+                coluna.icone_imagem = request.FILES['coluna_icone_imagem']
+            elif request.POST.get('limpar_coluna_icone_imagem'):
+                coluna.icone_imagem = None
             coluna.save()
             messages.success(request, f'Coluna "{coluna.titulo}" atualizada.')
             return redirect('admin_area_do_site')
