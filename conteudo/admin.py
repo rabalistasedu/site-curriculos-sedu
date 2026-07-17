@@ -109,6 +109,14 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                            'Atual"), a seção "Navegue por área" e "Conteúdos '
                            'Recentes" da home.',
         }),
+        ('🗂️ Como aparece na página do botão pai (subcategorias)', {
+            'fields': ('mostrar_como_card',),
+            'classes': ('collapse',),
+            'description': 'Vale só quando este botão é subcategoria de outro. '
+                           'Marcado: aparece como chip no topo E como card grande '
+                           'clicável no meio da página do pai. Desmarcado: aparece '
+                           'somente como chip no topo, sem duplicar.',
+        }),
     )
 
     def total_conteudos(self, obj):

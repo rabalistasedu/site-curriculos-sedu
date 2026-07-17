@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 13)
+# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 14)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 13")**: **Currículo Atual virou botão raiz + Checkbox "Central?" para área central** — (1) Currículo Atual agora é uma categoria raiz (antes era filho de "Documentos Curriculares"), aparecendo como raiz em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior); (2) novo checkbox "Central?" no painel `/admin/barra-superior/` permite marcar QUALQUER botão raiz para aparecer na "área central" da home, ao lado da pílula "Currículo Atual"; (3) layout da home ajustado com `flex-wrap` para suportar múltiplos botões na central (quebra automaticamente se não couber). Detalhes no histórico item 27.
+- **Leva mais recente (2026-07-17 — "parte 14")**: **Subáreas vs Botões: campo `mostrar_como_card` para controlar duplicação** — (1) novo campo `Categoria.mostrar_como_card` (BooleanField, padrão True) distingue botões/subbotões estruturais (aparecem como chip + card grande) de subáreas rápidas (aparecem só como chip, sem duplicar); (2) função "Criar subárea nos botões marcados" agora cria com `mostrar_como_card=False` automaticamente; (3) "Criar novo botão" cria com `mostrar_como_card=True` (padrão); (4) campo editável no Django Admin de Categoria para ajuste manual. Detalhes no histórico item 28.
+- **Leva anterior (2026-07-17 — "parte 13")**: **Currículo Atual virou botão raiz + Checkbox "Central?" para área central** — (1) Currículo Atual agora é uma categoria raiz (antes era filho de "Documentos Curriculares"), aparecendo como raiz em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior); (2) novo checkbox "Central?" no painel `/admin/barra-superior/` permite marcar QUALQUER botão raiz para aparecer na "área central" da home, ao lado da pílula "Currículo Atual"; (3) layout da home ajustado com `flex-wrap` para suportar múltiplos botões na central (quebra automaticamente se não couber). Detalhes no histórico item 27.
 - **Leva anterior (2026-07-16 — "parte 12")**: **Estrutura de Árvores + Subbotões melhorados** — (1) campo de upload de imagem de ícone adicionado ao modal de criar botão na Estrutura de Árvores (faltava; agora dá pra criar botão com nome + URL + anexos + ícone de imagem de uma vez); (2) subbotões agora aparecem como **cards grandes clicáveis** na página de categoria (borda azul, ícone grande, selo "Botão"), além dos chips no topo. Detalhes no histórico item 26.
 - **Leva anterior (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
 - **Leva anterior (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
@@ -26,7 +27,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0024` + `painel/0002`. Migração **`conteudo/0024`** (Categoria: mostrar_area_central) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0025` + `painel/0002`. Migração **`conteudo/0025`** (Categoria: mostrar_como_card) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -57,7 +58,7 @@ conteudo/                # App principal do site
   widgets.py             # CategoriaPicker (3 níveis), IconPicker, RichTextWidget
   busca_utils.py         # Busca sem acento (filtrar_por_texto, BuscaSemAcentoMixin)
   context_processors.py  # site_config (config + menu_categorias, filtrado por mostrar_menu_superior)
-  migrations/            # 0001 inicial → 0024 (mostrar_area_central em Categoria)
+  migrations/            # 0001 inicial → 0025 (mostrar_como_card em Categoria)
   management/commands/   # ver seção "Management commands"
 painel/                  # App do Painel Central Administrativo (2026-07-10)
   models.py              # Vinculo (publicação multi-destino), EstiloBotao (aparência por botão)
@@ -684,6 +685,34 @@ Corrigidos **2 problemas críticos** com compartilhamento via ngrok. **REGRA: ap
 - **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0024_mostrar_area_central.py` (migração), `conteudo/views.py` (botoes_area_central), `conteudo/admin_views.py` (dual checkboxes POST), `templates/home.html` (loop botoes_area_central, flex-wrap), `templates/admin/barra_superior.html` (checkbox na_central), `static/css/style.css` (.curriculo-atual-topo flex-wrap, .area-card-central opacity), `templates/base.html` (cache-busting), `conteudo/admin.py` (fieldset).
 - **Testado fim-a-ponta**: Home 200 OK, Currículo Atual como raiz em todas as árvores, POST Barra Superior salvando checkbox (302 redirect), Programas marcado = aparece na área central da home, remover marca = desaparece, "Documentos Curriculares" não duplica Currículo Atual, pílula principal sempre visível.
 - **Compatibilidade 100%**: zero mudanças quebradas — todos os outros sistemas funcionam normalmente.
+
+### 2026-07-17 — Subáreas vs Botões: campo `mostrar_como_card` (parte 14)
+
+**Problema identificado**: função "Criar subárea nos botões marcados" criava subcategorias que apareciam duplicadas — como chip no topo E como card grande no meio da página do pai, causando informação redundante. Solução: novo campo de modelo para diferenciar "botões estruturais" (aparecem nos dois lugares) de "subáreas rápidas" (aparecem só como chip).
+
+1. **Novo field: `Categoria.mostrar_como_card`** (BooleanField, default=True, migração `conteudo/0025`):
+   - Vale apenas para subcategorias (botões dentro de outro botão)
+   - `True` (padrão): aparece como chip no topo E como card grande clicável no meio
+   - `False`: aparece SOMENTE como chip no topo (sem duplicar)
+   - Editável no Django Admin na seção colapsável "🗂️ Como aparece na página do botão pai"
+
+2. **"Criar subárea nos botões marcados"** agora cria com `mostrar_como_card=False`:
+   - Subáreas rápidas criadas via esta função aparecem só como chip (não duplicam)
+   - Funcionava assim conceitualmente desde a Parte 12, mas agora tem controle explícito
+
+3. **"Criar novo botão"** (tanto Painel Central quanto Estrutura de Árvores) cria com `mostrar_como_card=True`:
+   - Botões estruturais (pensados como subbotões de verdade) aparecem como chip + card
+   - Comportamento padrão = máxima visibilidade
+
+4. **Compatibilidade com banco antigo**:
+   - Categorias existentes herdam `mostrar_como_card=True` (comportamento que já tinham)
+   - Possível corrigir retroativamente no admin caso necessário
+
+- **Versão de cache**: CSS sem mudança (`?v=20260717-1`), JS sem mudança (`?v=20260711-1`)
+- **Migração**: `conteudo/0025_mostrar_como_card.py` (adiciona field `mostrar_como_card` a Categoria, default=True)
+- **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0025_mostrar_como_card.py` (migração), `conteudo/admin.py` (novo fieldset colapsável), `painel/views.py` (`_criar_subareas()` com `mostrar_como_card=False`), `templates/categoria.html` (condicional `{% if sub.mostrar_como_card %}` ao renderizar cards).
+- **Testado fim-a-ponta**: Subárea criada via "Criar subárea" → nasce com `mostrar_como_card=False` → aparece só como chip ✓. Botão criado via "Criar novo botão" → nasce com `mostrar_como_card=True` → aparece como chip + card ✓. Categoria existente pode ser ajustada no admin ✓.
+- **Compatibilidade 100%**: nenhuma mudança quebrada — todos os sistemas funcionam normalmente.
 
 ## Deploy
 

@@ -116,6 +116,14 @@ class Categoria(models.Model):
         help_text='Se marcado, os conteúdos desta categoria poderão aparecer '
                   'automaticamente na área "Conteúdos Recentes" da página inicial.'
     )
+    mostrar_como_card = models.BooleanField(
+        'Mostrar como card grande na página do pai', default=True,
+        help_text='Vale apenas para subcategorias (botões dentro de outro botão). '
+                  'Se marcado, aparece como chip no topo E como card grande clicável '
+                  'no meio da página do pai. Se desmarcado, aparece SOMENTE como chip '
+                  'no topo (sem duplicar). Subáreas criadas pela função "Criar subárea '
+                  'nos botões marcados" já nascem desmarcadas, por padrão.'
+    )
 
     class Meta:
         verbose_name = 'Categoria'

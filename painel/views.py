@@ -240,6 +240,7 @@ def _criar_subareas(request):
             ativa=True,
             mostrar_menu_superior=False,
             mostrar_navegue_area=False,
+            mostrar_como_card=False,
             url_externa=url_ext,
         )
         if icone_img:
