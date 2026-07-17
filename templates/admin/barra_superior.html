@@ -31,25 +31,33 @@
     <h1><i class="fas fa-window-maximize"></i> Botões da barra superior</h1>
     <div class="bs-hint">
         Marque quais botões principais aparecem na <strong>barra azul do topo do site</strong>
-        (e na lista "Navegação" do rodapé). A ordem define a posição da esquerda para a
-        direita. Botões desmarcados continuam existindo normalmente — só saem da barra.
-        Se não couberem todos na tela, os excedentes vão para o menu "⋯" automaticamente.
+        (e na lista "Navegação" do rodapé) e/ou na <strong>área central da página inicial</strong>,
+        ao lado do botão "Currículo Atual". As duas opções são independentes — pode marcar
+        uma, outra, as duas ou nenhuma. A ordem vale para os dois lugares e define a posição
+        da esquerda para a direita. Botões desmarcados continuam existindo normalmente —
+        só saem do lugar desmarcado. Se não couberem todos na barra, os excedentes vão
+        para o menu "⋯" automaticamente.
     </div>
 
     <form method="post">
         {% csrf_token %}
         <table class="bs-tabela">
             <tr>
-                <th style="width:90px;">Na barra?</th>
+                <th style="width:80px;">Na barra?</th>
+                <th style="width:80px;">Central?</th>
                 <th>Botão</th>
                 <th style="width:80px;">Ordem</th>
                 <th style="width:200px;">Ações</th>
             </tr>
             {% for cat in principais %}
-            <tr {% if not cat.mostrar_menu_superior %}class="bs-off"{% endif %}>
+            <tr {% if not cat.mostrar_menu_superior and not cat.mostrar_area_central %}class="bs-off"{% endif %}>
                 <td style="text-align:center;">
                     <input type="checkbox" name="na_barra" value="{{ cat.pk }}"
                            {% if cat.mostrar_menu_superior %}checked{% endif %}>
+                </td>
+                <td style="text-align:center;">
+                    <input type="checkbox" name="na_central" value="{{ cat.pk }}"
+                           {% if cat.mostrar_area_central %}checked{% endif %}>
                 </td>
                 <td>
                     {% if cat.icone %}<i class="{{ cat.icone }}" style="margin-right:6px;color:#1e5fae;"></i>{% endif %}

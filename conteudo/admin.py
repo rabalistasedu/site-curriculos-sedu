@@ -102,10 +102,11 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                            'a página interna da categoria.',
         }),
         ('📍 Onde este botão aparece na página inicial', {
-            'fields': ('mostrar_menu_superior', 'mostrar_navegue_area', 'mostrar_conteudos_recentes'),
+            'fields': ('mostrar_menu_superior', 'mostrar_area_central', 'mostrar_navegue_area', 'mostrar_conteudos_recentes'),
             'description': 'Estas opções valem para botões do nível principal: '
                            'controlam a barra azul do topo (e a lista "Navegação" '
-                           'do rodapé), a seção "Navegue por área" e "Conteúdos '
+                           'do rodapé), a área central (ao lado do "Currículo '
+                           'Atual"), a seção "Navegue por área" e "Conteúdos '
                            'Recentes" da home.',
         }),
     )

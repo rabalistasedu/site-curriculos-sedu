@@ -126,7 +126,10 @@
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_criar_botao.py)",
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe -c ' *)",
       "Bash(curl -s -u ridan:Sedu@2026 http://127.0.0.1:8001/admin/estrutura-arvores/)",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py makemigrations conteudo --name mostrar_area_central)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe manage.py migrate conteudo)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_area_central.py)"
     ]
   }
 }

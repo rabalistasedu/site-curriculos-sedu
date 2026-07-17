@@ -119,7 +119,9 @@
 
     <div class="container">
 
-        <!-- Botão "Currículo Atual" centralizado acima das duas colunas -->
+        <!-- Botão "Currículo Atual" centralizado acima das duas colunas,
+             junto com os botões marcados para a área central (painel
+             "Botões da Barra Superior" — checkbox "Central?") -->
         <div class="curriculo-atual-topo">
             <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured" title="Currículo Atual">
                 <div class="category-icon">
@@ -129,6 +131,20 @@
                     <h3>Currículo Atual</h3>
                 </div>
             </a>
+            {% for botao in botoes_area_central %}
+            <a href="{% if botao.link_externo %}{{ botao.link_externo }}{% else %}{% url 'conteudo:categoria' botao.slug %}{% endif %}"
+               class="area-card area-card-featured area-card-central{% if botao.estilo.pulsante %} btn-pulse{% endif %}"
+               {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
+               title="{{ botao.nome }}">
+                <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                    {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
+                    {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
+                </div>
+                <div class="area-text">
+                    <h3>{{ botao.nome }}</h3>
+                </div>
+            </a>
+            {% endfor %}
         </div>
 
         <div class="home-split">

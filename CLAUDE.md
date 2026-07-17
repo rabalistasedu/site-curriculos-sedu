@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v10 — atualizado em 2026-07-16 — Parte 12)
+# Site Currículos SEDU — Contexto do Projeto (v11 — atualizado em 2026-07-17 — Parte 13)
 
 ## O que é este projeto
 
@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 121 botões (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores NOVO**).
+- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **6 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, **Estrutura de Árvores**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-16 — "parte 12")**: **Estrutura de Árvores + Subbotões melhorados** — (1) campo de upload de imagem de ícone adicionado ao modal de criar botão na Estrutura de Árvores (faltava; agora dá pra criar botão com nome + URL + anexos + ícone de imagem de uma vez); (2) subbotões agora aparecem como **cards grandes clicáveis** na página de categoria (borda azul, ícone grande, selo "Botão"), além dos chips no topo. Detalhes no histórico item 26.
+- **Leva mais recente (2026-07-17 — "parte 13")**: **Currículo Atual virou botão raiz + Checkbox "Central?" para área central** — (1) Currículo Atual agora é uma categoria raiz (antes era filho de "Documentos Curriculares"), aparecendo como raiz em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior); (2) novo checkbox "Central?" no painel `/admin/barra-superior/` permite marcar QUALQUER botão raiz para aparecer na "área central" da home, ao lado da pílula "Currículo Atual"; (3) layout da home ajustado com `flex-wrap` para suportar múltiplos botões na central (quebra automaticamente se não couber). Detalhes no histórico item 27.
+- **Leva anterior (2026-07-16 — "parte 12")**: **Estrutura de Árvores + Subbotões melhorados** — (1) campo de upload de imagem de ícone adicionado ao modal de criar botão na Estrutura de Árvores (faltava; agora dá pra criar botão com nome + URL + anexos + ícone de imagem de uma vez); (2) subbotões agora aparecem como **cards grandes clicáveis** na página de categoria (borda azul, ícone grande, selo "Botão"), além dos chips no topo. Detalhes no histórico item 26.
 - **Leva anterior (2026-07-13 — "parte 11")**: **Correção crítica de duplicação + Modal da Estrutura de Árvores** — conteúdos criados dentro de subbotões **não aparecem mais duplicados** na página do pai (view `categoria_detalhe` agora busca somente conteúdos da própria categoria, não de subcategorias). Modal de exclusão/mover restaura HTML corretamente, evitando corrupção. Formulário de criação com URL + múltiplos anexos funcionando. Lixo de testes (conteúdos "Link: ...") excluído. Detalhes no histórico item 25.
 - **Leva anterior (2026-07-13 — "parte 10")**: **Novo módulo "Estrutura de Árvores"** — painel administrativo completo para gerenciar a hierarquia do site. Árvore interativa com 121 nós (profundidade ilimitada), busca instantânea sem acento, expandir/recolher, filtros, drag-and-drop para mover nós, CRUD completo (criar/editar/excluir botões), gerenciamento de conteúdo e anexos, biblioteca de ícones Font Awesome (96 ícones) + upload permanente de ícones personalizados (SVG, PNG, JPG, JPEG, WEBP, ICO), **ZERO alterações a funcionalidades existentes**. Views: `conteudo/arvore_views.py` (views + API AJAX). Template: `templates/admin/estrutura_arvores.html`. URLs: `/admin/estrutura-arvores/` e `/admin/estrutura-arvores/api/`. Dashboard: novo banner âmbar no índice admin. Função adicional: botão de excluir conteúdo (lixeira vermelha) ao lado de editar em cada linha da lista. Detalhes no histórico item 24.
 - **Leva anterior (2026-07-13 — "parte 9")**: **ngrok UTF-8 + Video Streaming corrigido** — templates restaurados do commit anterior (último commit 82f5b92 tinha double-encoding UTF-8), vídeo renomeado para ASCII-only, nova view Django `serve_media` com suporte a HTTP Range Requests (206 Partial Content) para streaming via ngrok, scripts de teste e launcher automáticos. Detalhes no histórico item 23.
@@ -25,7 +26,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0020` + `painel/0002`. Migração **`conteudo/0020`** (Comentario: parent + votos_positivos + votos_negativos) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0024` + `painel/0002`. Migração **`conteudo/0024`** (Categoria: mostrar_area_central) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -56,7 +57,7 @@ conteudo/                # App principal do site
   widgets.py             # CategoriaPicker (3 níveis), IconPicker, RichTextWidget
   busca_utils.py         # Busca sem acento (filtrar_por_texto, BuscaSemAcentoMixin)
   context_processors.py  # site_config (config + menu_categorias, filtrado por mostrar_menu_superior)
-  migrations/            # 0001 inicial → 0014 (icone_imagem em Categoria)
+  migrations/            # 0001 inicial → 0024 (mostrar_area_central em Categoria)
   management/commands/   # ver seção "Management commands"
 painel/                  # App do Painel Central Administrativo (2026-07-10)
   models.py              # Vinculo (publicação multi-destino), EstiloBotao (aparência por botão)
@@ -644,6 +645,45 @@ Corrigidos **2 problemas críticos** com compartilhamento via ngrok. **REGRA: ap
 - **Arquivos modificados**: `curriculo_sedu/urls.py` (router `/media/` → `serve_media`), `BAT SEDU\COMPARTILHAR COM GERENTE.bat` (UTF-8 + Python fallback), `README.md` (reescrito), `db.sqlite3` (vídeo path atualizado).
 - **Arquivos restaurados**: `templates/base.html`, `templates/admin/painel_central.html`, `templates/admin/painel_conteudos.html` (do `HEAD~1`, desfazendo double-encoding).
 - **Testado localmente**: Range Requests funcionando (`206 Partial Content`), site com UTF-8 correto, vídeo 37MB acessível.
+
+### 2026-07-17 — Currículo Atual como botão raiz + Checkbox "Central?" (parte 13)
+
+**Estrutural: hierarquia refatorada para colocar "Currículo Atual" no topo do site como categoria raiz independente.**
+
+1. **"Currículo Atual" virou botão raiz** (decisão do Dan):
+   - Antes: era subcategoria de "Documentos Curriculares" (categoria_pai FK apontava para "Documentos Curriculares")
+   - Agora: `categoria_pai=None` (é raiz, como "Documentos Curriculares", "Programas", etc.)
+   - Consequência esperada: sumiu da listagem "Documentos Curriculares" (que só mostra itens com `categoria_pai != None`)
+   - Aparece como **raiz em TODAS as árvores**: Estrutura de Árvores, Painel Central, Organizador, Barra Superior
+   - Mantém seus 8 subbotões (etapas), suporte completo a subáreas/anexos/URL (igual a qualquer botão raiz)
+   - Fields `mostrar_menu_superior=False` e `mostrar_navegue_area=False` (evita aparecer na barra azul/Navegue por área — usa apenas a pílula central especial)
+
+2. **Novo checkbox "Central?" no painel `/admin/barra-superior/`**:
+   - Adicionado novo field `Categoria.mostrar_area_central` (BooleanField, default=False, migração `conteudo/0024`)
+   - Dois checkboxes independentes: "Na barra?" (`mostrar_menu_superior`) e "Central?" (`mostrar_area_central`)
+   - Qualquer botão raiz pode ser marcado para aparecer na área central (não apenas Currículo Atual)
+   - Ordem usa o mesmo field "Ordem" existente em ambos os locais
+   - View `barra_superior_view` atualizada para salvar ambos os fields em lote
+
+3. **Área central na home** (`templates/home.html`):
+   - Nova div `.curriculo-atual-topo` com `display: flex; flex-wrap: wrap; justify-content: center; gap: 12px`
+   - Renderiza a pílula "Currículo Atual" (sempre) + loop de botões com `mostrar_area_central=True` (excluindo Currículo Atual para não duplicar)
+   - Botões secundários ganham classe `.area-card-central` com `opacity: 0.94` (visualmente distintos do principal)
+   - Quebra automática se não couber (flex-wrap)
+
+4. **Admin de Categoria** (`conteudo/admin.py`):
+   - Fieldset "📍 Onde este botão aparece" agora inclui 3 checkboxes: `mostrar_menu_superior`, `mostrar_navegue_area`, `mostrar_area_central`
+   - Field `mostrar_area_central` ativo apenas para categorias raiz (validação manual possível futura)
+
+5. **Context e view**:
+   - `conteudo/views.py` `home()`: query `botoes_area_central` busca raiz com `mostrar_area_central=True`, exclui 'curriculo-atual'
+   - Passa ao template em contexto
+
+- **Versão de cache**: CSS `?v=20260717-1` (mudança de layout flex-wrap para central), JS mantém `?v=20260711-1`
+- **Migração**: `conteudo/0024_mostrar_area_central.py` (adiciona field `mostrar_area_central` a Categoria)
+- **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0024_mostrar_area_central.py` (migração), `conteudo/views.py` (botoes_area_central), `conteudo/admin_views.py` (dual checkboxes POST), `templates/home.html` (loop botoes_area_central, flex-wrap), `templates/admin/barra_superior.html` (checkbox na_central), `static/css/style.css` (.curriculo-atual-topo flex-wrap, .area-card-central opacity), `templates/base.html` (cache-busting), `conteudo/admin.py` (fieldset).
+- **Testado fim-a-ponta**: Home 200 OK, Currículo Atual como raiz em todas as árvores, POST Barra Superior salvando checkbox (302 redirect), Programas marcado = aparece na área central da home, remover marca = desaparece, "Documentos Curriculares" não duplica Currículo Atual, pílula principal sempre visível.
+- **Compatibilidade 100%**: zero mudanças quebradas — todos os outros sistemas funcionam normalmente.
 
 ## Deploy
 

@@ -533,24 +533,29 @@ def barra_superior_view(request):
         categoria_pai__isnull=True).order_by('ordem', 'nome')
 
     if request.method == 'POST':
-        marcados = set(request.POST.getlist('na_barra'))
+        marcados_barra = set(request.POST.getlist('na_barra'))
+        marcados_central = set(request.POST.getlist('na_central'))
         alterados = 0
         for cat in principais:
-            novo = str(cat.pk) in marcados
+            novo_barra = str(cat.pk) in marcados_barra
+            novo_central = str(cat.pk) in marcados_central
             try:
                 nova_ordem = int(request.POST.get(f'ordem_{cat.pk}', cat.ordem))
             except (TypeError, ValueError):
                 nova_ordem = cat.ordem
-            if cat.mostrar_menu_superior != novo or cat.ordem != nova_ordem:
-                cat.mostrar_menu_superior = novo
+            if (cat.mostrar_menu_superior != novo_barra
+                    or cat.mostrar_area_central != novo_central
+                    or cat.ordem != nova_ordem):
+                cat.mostrar_menu_superior = novo_barra
+                cat.mostrar_area_central = novo_central
                 cat.ordem = nova_ordem
-                cat.save(update_fields=['mostrar_menu_superior', 'ordem'])
+                cat.save(update_fields=['mostrar_menu_superior', 'mostrar_area_central', 'ordem'])
                 alterados += 1
         if alterados:
             messages.success(
                 request,
-                f'{alterados} botão(ões) atualizado(s). A barra superior do '
-                'site já reflete a mudança.')
+                f'{alterados} botão(ões) atualizado(s). A barra superior e a '
+                'área central do site já refletem a mudança.')
         else:
             messages.info(request, 'Nada mudou.')
         return redirect('admin_barra_superior')

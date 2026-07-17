@@ -97,6 +97,14 @@ class Categoria(models.Model):
                   'página inicial. Se desmarcado, não aparece lá. '
                   'Vale apenas para botões do nível principal.'
     )
+    mostrar_area_central = models.BooleanField(
+        'Aparecer na área central (ao lado do Currículo Atual)', default=False,
+        help_text='Se marcado, o botão aparece centralizado na página inicial, '
+                  'ao lado do botão "Currículo Atual". Independente da barra '
+                  'superior — pode marcar um, outro, os dois ou nenhum. A ordem '
+                  'de exibição usa o mesmo campo "Ordem no menu". '
+                  'Vale apenas para botões do nível principal.'
+    )
     url_externa = models.URLField(
         'URL / Link de acesso externo', max_length=500, blank=True,
         help_text='Opcional. Se preenchido, ao clicar neste botão o visitante '

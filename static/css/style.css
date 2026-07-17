@@ -1635,10 +1635,15 @@ img { max-width: 100%; height: auto; display: block; }
 }
 
 /* 5) Botão "Currículo Atual" centralizado ACIMA das duas colunas
-      (Conteúdos recentes + Navegue por área) — pedido de 2026-07-11 */
+      (Conteúdos recentes + Navegue por área) — pedido de 2026-07-11.
+      Depois (2026-07-17) ganhou companhia: botões marcados como "área
+      central" no painel "Botões da Barra Superior" aparecem ao lado dele,
+      na mesma linha (quebra se não couber). */
 .curriculo-atual-topo {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 12px;
     margin: 0 0 22px;
 }
 .curriculo-atual-topo .area-card-featured {
@@ -1649,6 +1654,10 @@ img { max-width: 100%; height: auto; display: block; }
     padding: 10px 34px;
     gap: 10px;
     border-radius: 999px;
+}
+.curriculo-atual-topo .area-card-central {
+    padding: 10px 26px;
+    opacity: 0.94;
 }
 
 /* 6) "Conteúdos recentes" no MESMO formato dos quadrados de

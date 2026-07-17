@@ -11,6 +11,13 @@ def home(request):
     categorias = Categoria.objects.filter(
         ativa=True, categoria_pai__isnull=True, mostrar_navegue_area=True
     )
+    # Botões marcados para aparecer na área central, ao lado do "Currículo
+    # Atual" (painel "Botões da Barra Superior" — checkbox "Central?").
+    # Currículo Atual já é exibido separadamente (pílula fixa) — excluído
+    # daqui para nunca duplicar, mesmo que o checkbox seja marcado nele.
+    botoes_area_central = Categoria.objects.filter(
+        ativa=True, categoria_pai__isnull=True, mostrar_area_central=True
+    ).exclude(slug='curriculo-atual').order_by('ordem', 'nome')
     # Apenas banners sem categoria específica aparecem na home
     banners = Banner.objects.filter(ativo=True, categoria__isnull=True)
     destaques = Conteudo.objects.publicados().filter(destaque=True)[:6]
@@ -42,6 +49,7 @@ def home(request):
 
     return render(request, 'home.html', {
         'categorias': categorias,
+        'botoes_area_central': botoes_area_central,
         'banners': banners,
         'destaques': destaques,
         'recentes': recentes,
