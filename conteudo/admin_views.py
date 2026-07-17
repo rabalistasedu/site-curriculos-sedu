@@ -21,6 +21,9 @@ def organizar_view(request):
             nome = request.POST.get('nome', '').strip()
             pai_id = request.POST.get('categoria_pai_id')
             icone = request.POST.get('icone', '').strip()
+            icone_img = request.FILES.get('icone_imagem')
+            url_externa = request.POST.get('url_externa', '').strip()
+            arquivos = request.FILES.getlist('arquivos')
             if nome and pai_id:
                 pai = get_object_or_404(Categoria, pk=pai_id)
                 slug = slugify(nome)
@@ -29,14 +32,47 @@ def organizar_view(request):
                 while Categoria.objects.filter(slug=slug).exists():
                     slug = f'{original_slug}-{counter}'
                     counter += 1
-                Categoria.objects.create(
+                nova = Categoria.objects.create(
                     nome=nome,
                     slug=slug,
                     categoria_pai=pai,
                     icone=icone or 'fas fa-folder',
                     ativa=True,
+                    url_externa=url_externa,
                 )
-                messages.success(request, f'Subcategoria "{nome}" criada com sucesso!')
+                if icone_img:
+                    nova.icone_imagem.save(icone_img.name, icone_img, save=True)
+
+                # URL preenchida também vira Conteudo tipo=link dentro do botão
+                if url_externa:
+                    slug_link = slugify(nome)[:50] or 'link'
+                    original_link = slug_link
+                    n = 1
+                    while Conteudo.objects.filter(slug=slug_link).exists():
+                        slug_link = f'{original_link}-{n}'
+                        n += 1
+                    Conteudo.objects.create(
+                        titulo=nome,
+                        slug=slug_link,
+                        tipo='link',
+                        url_externa=url_externa,
+                        categoria=nova,
+                        status='publicado',
+                    )
+
+                # Arquivos viram anexos da nova subcategoria
+                for arq in arquivos:
+                    Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
+
+                extras = []
+                if icone_img:
+                    extras.append('ícone imagem')
+                if url_externa:
+                    extras.append('URL')
+                if arquivos:
+                    extras.append(f'{len(arquivos)} arquivo(s)')
+                sufixo = f' (+ {", ".join(extras)})' if extras else ''
+                messages.success(request, f'Subcategoria "{nome}" criada com sucesso{sufixo}!')
             return redirect(f'/admin/organizar/?cat={pai_id}')
 
         elif action == 'mover':
@@ -69,6 +105,49 @@ def organizar_view(request):
                         pass
             messages.success(request, 'Ordem salva com sucesso!')
             return redirect(f'/admin/organizar/?cat={origem_cat}')
+
+        elif action == 'criar_conteudo_aqui':
+            # Adiciona arquivos e/ou URL diretamente à categoria selecionada.
+            cat_destino = request.POST.get('cat_destino')
+            titulo = request.POST.get('novo_titulo', '').strip()
+            url_ext = request.POST.get('novo_url', '').strip()
+            arquivos = request.FILES.getlist('novo_arquivos')
+            if not cat_destino:
+                messages.error(request, 'Categoria destino não informada.')
+                return redirect('/admin/organizar/')
+            destino = get_object_or_404(Categoria, pk=cat_destino)
+            if not (arquivos or url_ext):
+                messages.error(request, 'Envie pelo menos um arquivo ou informe uma URL.')
+                return redirect(f'/admin/organizar/?cat={cat_destino}')
+
+            criados = 0
+            if url_ext:
+                nome_link = titulo or url_ext
+                slug_link = slugify(nome_link)[:50] or 'link'
+                original = slug_link
+                n = 1
+                while Conteudo.objects.filter(slug=slug_link).exists():
+                    slug_link = f'{original}-{n}'
+                    n += 1
+                Conteudo.objects.create(
+                    titulo=nome_link,
+                    slug=slug_link,
+                    tipo='link',
+                    url_externa=url_ext,
+                    categoria=destino,
+                    status='publicado',
+                )
+                criados += 1
+
+            for arq in arquivos:
+                Anexo.objects.create(categoria=destino, arquivo=arq, nome=arq.name)
+                criados += 1
+
+            messages.success(
+                request,
+                f'{criados} item(ns) adicionado(s) a "{destino.nome}".'
+            )
+            return redirect(f'/admin/organizar/?cat={cat_destino}')
 
         elif action == 'criar_destaque':
             titulo = request.POST.get('dest_titulo', '').strip()
@@ -198,8 +277,8 @@ def adicionar_arquivos_view(request):
         subcategoria_id = request.POST.get('subcategoria_id', '').strip()
         nome_grupo = request.POST.get('nome_grupo', '').strip()
 
-        if not categoria_id or (not nome_grupo and not subcategoria_id):
-            messages.error(request, 'Selecione uma categoria e escolha ou crie um grupo.')
+        if not categoria_id:
+            messages.error(request, 'Selecione uma categoria (botão).')
             return redirect('/admin/adicionar-arquivos/')
 
         categoria_pai = get_object_or_404(Categoria, pk=categoria_id)
@@ -207,7 +286,7 @@ def adicionar_arquivos_view(request):
         if subcategoria_id:
             subcategoria = get_object_or_404(Categoria, pk=subcategoria_id)
             created = False
-        else:
+        elif nome_grupo:
             slug = slugify(nome_grupo)
             if not slug:
                 slug = 'grupo'
@@ -232,6 +311,10 @@ def adicionar_arquivos_view(request):
                 subcategoria.nome = nome_grupo
                 subcategoria.categoria_pai = categoria_pai
                 subcategoria.save()
+        else:
+            # Sem grupo: anexa direto ao botão selecionado
+            subcategoria = categoria_pai
+            created = False
 
         file_count = 0
         link_count = 0
@@ -271,22 +354,34 @@ def adicionar_arquivos_view(request):
                 link_count += 1
 
         total = file_count + link_count
+        direto_no_botao = (subcategoria.pk == categoria_pai.pk)
         if total:
             parts = []
             if file_count:
                 parts.append(f'{file_count} arquivo(s)')
             if link_count:
                 parts.append(f'{link_count} link(s)')
-            messages.success(
-                request,
-                f'✅ {" e ".join(parts)} adicionado(s) a "{subcategoria.nome}" '
-                f'(dentro de "{categoria_pai.nome}")!'
-            )
+            if direto_no_botao:
+                messages.success(
+                    request,
+                    f'✅ {" e ".join(parts)} adicionado(s) diretamente a "{categoria_pai.nome}"!'
+                )
+            else:
+                messages.success(
+                    request,
+                    f'✅ {" e ".join(parts)} adicionado(s) a "{subcategoria.nome}" '
+                    f'(dentro de "{categoria_pai.nome}")!'
+                )
         elif created:
             messages.success(
                 request,
                 f'✅ Grupo "{subcategoria.nome}" criado dentro de '
                 f'"{categoria_pai.nome}" (sem itens por enquanto).'
+            )
+        elif direto_no_botao:
+            messages.warning(
+                request,
+                'Nenhum arquivo ou link enviado.'
             )
         else:
             messages.info(

@@ -148,7 +148,11 @@ def _criar_no(request):
                 'mostrar_navegue_area': False,
             },
         )
-    Categoria.objects.create(
+    url_ext = request.POST.get('novo_url_externa', '').strip()
+    icone_img = request.FILES.get('novo_icone_imagem')
+    arquivos = request.FILES.getlist('novo_arquivos')
+
+    nova = Categoria.objects.create(
         nome=nome,
         slug=_slug_unico(Categoria, nome),
         categoria_pai=pai,
@@ -156,9 +160,32 @@ def _criar_no(request):
         ativa=True,
         mostrar_menu_superior=False,
         mostrar_navegue_area=False,
+        url_externa=url_ext,
     )
+    if icone_img:
+        nova.icone_imagem.save(icone_img.name, icone_img, save=True)
+    if url_ext:
+        Conteudo.objects.create(
+            titulo=nome,
+            slug=_slug_unico(Conteudo, nome),
+            tipo='link',
+            url_externa=url_ext,
+            categoria=nova,
+            status='publicado',
+        )
+    for arq in arquivos:
+        Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
+
+    extras = []
+    if icone_img:
+        extras.append('ícone imagem')
+    if url_ext:
+        extras.append('URL')
+    if arquivos:
+        extras.append(f'{len(arquivos)} arquivo(s)')
+    sufixo = f' (+ {", ".join(extras)})' if extras else ''
     onde = f'dentro de "{pai.nome}"'
-    messages.success(request, f'Botão "{nome}" criado {onde}.')
+    messages.success(request, f'Botão "{nome}" criado {onde}{sufixo}.')
     return redirect('painel:central')
 
 
@@ -200,6 +227,9 @@ def _criar_subareas(request):
             'Marque na árvore o(s) botão(ões) dentro dos quais a subárea será criada.'
         )
         return redirect('painel:central')
+    url_ext = request.POST.get('subarea_url_externa', '').strip()
+    icone_img = request.FILES.get('subarea_icone_imagem')
+    arquivos = request.FILES.getlist('subarea_arquivos')
     criados = []
     for pai in pais:
         nova = Categoria.objects.create(
@@ -210,7 +240,23 @@ def _criar_subareas(request):
             ativa=True,
             mostrar_menu_superior=False,
             mostrar_navegue_area=False,
+            url_externa=url_ext,
         )
+        if icone_img:
+            icone_img.seek(0)
+            nova.icone_imagem.save(icone_img.name, icone_img, save=True)
+        if url_ext:
+            Conteudo.objects.create(
+                titulo=nome,
+                slug=_slug_unico(Conteudo, nome),
+                tipo='link',
+                url_externa=url_ext,
+                categoria=nova,
+                status='publicado',
+            )
+        for arq in arquivos:
+            arq.seek(0)
+            Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
         criados.append(f'"{nome}" dentro de "{pai.nome}"')
     messages.success(
         request,
@@ -231,6 +277,8 @@ def _dados_botao(request):
         'n_conteudos': Conteudo.objects.filter(categoria=cat).count(),
         'mostrar_menu_superior': cat.mostrar_menu_superior,
         'mostrar_navegue_area': cat.mostrar_navegue_area,
+        'mostrar_conteudos_recentes': cat.mostrar_conteudos_recentes,
+        'url_externa': cat.url_externa or '',
         'pai_id': cat.categoria_pai_id,
         'pai_nome': cat.categoria_pai.nome if cat.categoria_pai else None,
     })
@@ -264,6 +312,11 @@ def _editar_botao(request):
     vis_area = request.POST.get('editar_vis_area', '')
     if vis_area in ('sim', 'nao'):
         cat.mostrar_navegue_area = (vis_area == 'sim')
+    vis_recentes = request.POST.get('editar_vis_recentes', '')
+    if vis_recentes in ('sim', 'nao'):
+        cat.mostrar_conteudos_recentes = (vis_recentes == 'sim')
+    url_ext = request.POST.get('editar_url_externa', '').strip()
+    cat.url_externa = url_ext
 
     cat.save()
 
@@ -485,18 +538,37 @@ def _publicar(request):
     #    (barra superior do site / seção "Navegue por área")
     vis_menu = request.POST.get('vis_menu', '')
     vis_area = request.POST.get('vis_area', '')
-    if vis_menu in ('sim', 'nao') or vis_area in ('sim', 'nao'):
+    vis_recentes = request.POST.get('vis_recentes', '')
+    url_ext_cat = request.POST.get('url_externa_cat', '').strip()
+    if vis_menu in ('sim', 'nao') or vis_area in ('sim', 'nao') or vis_recentes in ('sim', 'nao') or url_ext_cat:
+        fields_to_update = []
+        if vis_menu in ('sim', 'nao'):
+            fields_to_update.append('mostrar_menu_superior')
+        if vis_area in ('sim', 'nao'):
+            fields_to_update.append('mostrar_navegue_area')
+        if vis_recentes in ('sim', 'nao'):
+            fields_to_update.append('mostrar_conteudos_recentes')
+        if url_ext_cat:
+            fields_to_update.append('url_externa')
         for d in destinos:
             if vis_menu in ('sim', 'nao'):
                 d.mostrar_menu_superior = (vis_menu == 'sim')
             if vis_area in ('sim', 'nao'):
                 d.mostrar_navegue_area = (vis_area == 'sim')
-            d.save(update_fields=['mostrar_menu_superior', 'mostrar_navegue_area'])
+            if vis_recentes in ('sim', 'nao'):
+                d.mostrar_conteudos_recentes = (vis_recentes == 'sim')
+            if url_ext_cat:
+                d.url_externa = url_ext_cat
+            d.save(update_fields=fields_to_update)
         partes = []
         if vis_menu in ('sim', 'nao'):
             partes.append('barra superior: ' + ('aparece' if vis_menu == 'sim' else 'não aparece'))
         if vis_area in ('sim', 'nao'):
             partes.append('Navegue por área: ' + ('aparece' if vis_area == 'sim' else 'não aparece'))
+        if vis_recentes in ('sim', 'nao'):
+            partes.append('Conteúdos Recentes: ' + ('aparece' if vis_recentes == 'sim' else 'não aparece'))
+        if url_ext_cat:
+            partes.append(f'URL externa definida')
         feitos.append(f'Visibilidade de {len(destinos)} botão(ões) atualizada ({"; ".join(partes)})')
 
     if feitos:

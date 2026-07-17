@@ -176,6 +176,72 @@ def gerar_excel(inicio, fim):
         ws10.cell(row=i, column=4, value=f"{item['percentual']}%")
     auto_width(ws10)
 
+    # 11. Ranking Banners
+    ws11 = wb.create_sheet('Ranking Banners')
+    add_header(ws11, ['#', 'Banner', 'Link', 'Impressões'])
+    for i, item in enumerate(services.ranking_banners(inicio, fim), 2):
+        ws11.cell(row=i, column=1, value=i-1)
+        ws11.cell(row=i, column=2, value=item['titulo'])
+        ws11.cell(row=i, column=3, value=item['link'])
+        ws11.cell(row=i, column=4, value=item['impressoes'])
+    auto_width(ws11)
+
+    # 12. Ranking Destaques
+    ws12 = wb.create_sheet('Ranking Destaques')
+    add_header(ws12, ['#', 'Conteúdo', 'Tipo', 'Impressões', 'Cliques', 'CTR (%)', 'Último'])
+    for i, item in enumerate(services.ranking_destaques(inicio, fim), 2):
+        ws12.cell(row=i, column=1, value=i-1)
+        ws12.cell(row=i, column=2, value=item['titulo'])
+        ws12.cell(row=i, column=3, value=item['tipo'])
+        ws12.cell(row=i, column=4, value=item['impressoes'])
+        ws12.cell(row=i, column=5, value=item['cliques'])
+        ws12.cell(row=i, column=6, value=item['ctr'])
+        ws12.cell(row=i, column=7, value=item['ultimo'])
+    auto_width(ws12)
+
+    # 13. Documentos sem Acesso
+    ws13 = wb.create_sheet('Documentos sem Acesso')
+    ws13.cell(row=1, column=1, value='Documentos SEM NENHUM acesso').font = Font(bold=True, size=12, color='E11D48')
+    row = 3
+    add_header_row = ['#', 'Título', 'Tipo', 'Publicado em']
+
+    def _write_secao_docs(ws, row, titulo, docs):
+        ws.cell(row=row, column=1, value=titulo).font = Font(bold=True, size=11, color='2D5A8E')
+        row += 1
+        for col, h in enumerate(add_header_row, 1):
+            cell = ws.cell(row=row, column=col, value=h)
+            cell.font = header_font
+            cell.fill = header_fill
+            cell.alignment = Alignment(horizontal='center')
+        row += 1
+        for i, doc in enumerate(docs, 1):
+            ws.cell(row=row, column=1, value=i)
+            ws.cell(row=row, column=2, value=doc.get('titulo', ''))
+            ws.cell(row=row, column=3, value=doc.get('tipo', ''))
+            dp = doc.get('data_publicacao')
+            ws.cell(row=row, column=4, value=dp.strftime('%d/%m/%Y') if dp else '')
+            row += 1
+        return row + 1
+
+    row = _write_secao_docs(ws13, row, 'Nunca acessados', services.documentos_sem_acesso(dias=None))
+    row = _write_secao_docs(ws13, row, 'Sem acesso há 30 dias', services.documentos_sem_acesso(dias=30))
+    row = _write_secao_docs(ws13, row, 'Sem acesso há 90 dias', services.documentos_sem_acesso(dias=90))
+    auto_width(ws13)
+
+    # 14. Alertas
+    ws14 = wb.create_sheet('Alertas')
+    add_header(ws14, ['#', 'Tipo', 'Título', 'Descrição', 'Data', 'Status'])
+    from .models import AlertaInteligencia
+    alertas = AlertaInteligencia.objects.all().order_by('-criado_em')[:200]
+    for i, a in enumerate(alertas, 2):
+        ws14.cell(row=i, column=1, value=i-1)
+        ws14.cell(row=i, column=2, value=a.get_tipo_display() if hasattr(a, 'get_tipo_display') else a.tipo)
+        ws14.cell(row=i, column=3, value=a.titulo or '')
+        ws14.cell(row=i, column=4, value=a.descricao or '')
+        ws14.cell(row=i, column=5, value=a.criado_em.strftime('%d/%m/%Y %H:%M') if a.criado_em else '')
+        ws14.cell(row=i, column=6, value='Resolvido' if a.resolvido else 'Pendente')
+    auto_width(ws14)
+
     data_str = timezone.now().strftime('%Y-%m-%d')
     response = HttpResponse(
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -289,6 +355,17 @@ def gerar_pdf(inicio, fim):
         t.setStyle(table_style_base)
         elements.append(t)
 
+    # Ranking Subbotões
+    ranking_sub = services.ranking_subbotoes(inicio, fim)
+    if ranking_sub:
+        elements.append(Paragraph('Ranking dos Subbotões', styles['IntelSection']))
+        data = [['#', 'Subbotão', 'Pai', 'Acessos', 'Último']]
+        for i, item in enumerate(ranking_sub, 1):
+            data.append([str(i), item['nome'], item['pai'], str(item['total']), item['ultimo']])
+        t = Table(data, colWidths=[10*mm, 65*mm, 45*mm, 25*mm, 35*mm])
+        t.setStyle(table_style_base)
+        elements.append(t)
+
     # Ranking Documentos
     ranking_docs = services.ranking_documentos(inicio, fim)
     if ranking_docs:
@@ -380,6 +457,73 @@ def gerar_pdf(inicio, fim):
         for i, item in enumerate(areas, 1):
             data.append([str(i), item['nome'], str(item['total']), f"{item['percentual']}%"])
         t = Table(data, colWidths=[10*mm, 80*mm, 40*mm, 35*mm])
+        t.setStyle(table_style_base)
+        elements.append(t)
+
+    # Ranking Banners
+    banners = services.ranking_banners(inicio, fim)
+    if banners:
+        elements.append(Paragraph('Ranking de Acesso aos Banners', styles['IntelSection']))
+        data = [['#', 'Banner', 'Impressões']]
+        for i, item in enumerate(banners, 1):
+            titulo = item['titulo'][:60] + ('...' if len(item['titulo']) > 60 else '')
+            data.append([str(i), titulo, str(item['impressoes'])])
+        t = Table(data, colWidths=[10*mm, 120*mm, 35*mm])
+        t.setStyle(table_style_base)
+        elements.append(t)
+
+    # Ranking Destaques
+    destaques = services.ranking_destaques(inicio, fim)
+    if destaques:
+        elements.append(Paragraph('Ranking da Área Destaque', styles['IntelSection']))
+        data = [['#', 'Conteúdo', 'Tipo', 'Impr.', 'Cliques', 'CTR %']]
+        for i, item in enumerate(destaques, 1):
+            titulo = item['titulo'][:40] + ('...' if len(item['titulo']) > 40 else '')
+            data.append([str(i), titulo, item['tipo'], str(item['impressoes']),
+                         str(item['cliques']), f"{item['ctr']}"])
+        t = Table(data, colWidths=[10*mm, 65*mm, 30*mm, 20*mm, 25*mm, 20*mm])
+        t.setStyle(table_style_base)
+        elements.append(t)
+
+    # Documentos sem acesso
+    docs_nunca = services.documentos_sem_acesso(dias=None)
+    docs_30 = services.documentos_sem_acesso(dias=30)
+    docs_90 = services.documentos_sem_acesso(dias=90)
+
+    def _tabela_docs_sem_acesso(titulo, docs):
+        if not docs:
+            return
+        elements.append(Paragraph(titulo, styles['IntelSection']))
+        data = [['#', 'Título', 'Tipo', 'Publicado em']]
+        for i, doc in enumerate(docs[:30], 1):
+            nome = doc.get('titulo', '')[:50] + ('...' if len(doc.get('titulo', '')) > 50 else '')
+            dp = doc.get('data_publicacao')
+            data.append([str(i), nome, doc.get('tipo', ''),
+                         dp.strftime('%d/%m/%Y') if dp else ''])
+        t = Table(data, colWidths=[10*mm, 90*mm, 30*mm, 35*mm])
+        t.setStyle(table_style_base)
+        elements.append(t)
+
+    _tabela_docs_sem_acesso('Documentos Nunca Acessados', docs_nunca)
+    _tabela_docs_sem_acesso('Documentos sem Acesso há 30 dias', docs_30)
+    _tabela_docs_sem_acesso('Documentos sem Acesso há 90 dias', docs_90)
+
+    # Alertas
+    from .models import AlertaInteligencia
+    alertas = list(AlertaInteligencia.objects.all().order_by('-criado_em')[:100])
+    if alertas:
+        elements.append(Paragraph('Alertas da Central de Inteligência', styles['IntelSection']))
+        data = [['#', 'Tipo', 'Título', 'Data', 'Status']]
+        for i, a in enumerate(alertas, 1):
+            titulo = (a.titulo or '')[:55] + ('...' if len(a.titulo or '') > 55 else '')
+            data.append([
+                str(i),
+                a.get_tipo_display() if hasattr(a, 'get_tipo_display') else a.tipo,
+                titulo,
+                a.criado_em.strftime('%d/%m/%Y') if a.criado_em else '',
+                'Resolvido' if a.resolvido else 'Pendente',
+            ])
+        t = Table(data, colWidths=[10*mm, 35*mm, 80*mm, 25*mm, 25*mm])
         t.setStyle(table_style_base)
         elements.append(t)
 

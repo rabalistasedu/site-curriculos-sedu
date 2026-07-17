@@ -119,7 +119,14 @@
       "PowerShell(Start-Process -FilePath \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\venv\\\\Scripts\\\\python.exe\" -ArgumentList \"manage.py\",\"runserver\",\"8001\",\"--noreload\" -WorkingDirectory \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\" -WindowStyle Hidden; Start-Sleep -Seconds 3; \\(Invoke-WebRequest -Uri \"http://127.0.0.1:8001/\" -UseBasicParsing -TimeoutSec 5\\).StatusCode)",
       "PowerShell(\\(Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/orientacoes-curriculares/\" -UseBasicParsing -TimeoutSec 5\\).StatusCode)",
       "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/orientacoes-curriculares/\" -UseBasicParsing -TimeoutSec 10; $html = $r.Content; $matches = [regex]::Matches\\($html, 'content-card'\\); \"Cards encontrados: $\\($matches.Count\\)\"; $linkMatches = [regex]::Matches\\($html, 'Link:'\\); \"Ocorrencias de 'Link:': $\\($linkMatches.Count\\)\"; $subMatches = [regex]::Matches\\($html, 'content-card--subbotao'\\); \"Subbotões: $\\($subMatches.Count\\)\")",
-      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/documentos-curriculares/\" -UseBasicParsing -TimeoutSec 10; \"Documentos Curriculares: HTTP $\\($r.StatusCode\\)\"; $r2 = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/curriculo-atual/\" -UseBasicParsing -TimeoutSec 10; $html2 = $r2.Content; $cards2 = [regex]::Matches\\($html2, 'content-card'\\); $subs2 = [regex]::Matches\\($html2, 'content-card--subbotao'\\); \"Currículo Atual: HTTP $\\($r2.StatusCode\\), cards=$\\($cards2.Count\\), subbotões=$\\($subs2.Count\\)\")"
+      "PowerShell($r = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/documentos-curriculares/\" -UseBasicParsing -TimeoutSec 10; \"Documentos Curriculares: HTTP $\\($r.StatusCode\\)\"; $r2 = Invoke-WebRequest -Uri \"http://127.0.0.1:8001/categoria/curriculo-atual/\" -UseBasicParsing -TimeoutSec 10; $html2 = $r2.Content; $cards2 = [regex]::Matches\\($html2, 'content-card'\\); $subs2 = [regex]::Matches\\($html2, 'content-card--subbotao'\\); \"Currículo Atual: HTTP $\\($r2.StatusCode\\), cards=$\\($cards2.Count\\), subbotões=$\\($subs2.Count\\)\")",
+      "Bash(venv/Scripts/python.exe test_criar_botao.py)",
+      "Bash(venv/Scripts/pip.exe show *)",
+      "Bash(venv/Scripts/pip.exe list *)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_criar_botao.py)",
+      "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe -c ' *)",
+      "Bash(curl -s -u ridan:Sedu@2026 http://127.0.0.1:8001/admin/estrutura-arvores/)",
+      "Bash(git reset *)"
     ]
   }
 }

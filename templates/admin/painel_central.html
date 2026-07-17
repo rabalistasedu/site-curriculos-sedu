@@ -89,7 +89,7 @@
         <!-- Criar novo botão / subbotão (dentro de qualquer botão, em qualquer nível) -->
         <div class="pc-novo">
             <h3 class="pc-titulo-col"><i class="fas fa-plus-circle"></i> Criar novo botão</h3>
-            <form method="post" action="{% url 'painel:central' %}">
+            <form method="post" action="{% url 'painel:central' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="criar_no">
                 <input type="text" name="novo_nome" placeholder="Nome do novo botão" required>
@@ -104,6 +104,23 @@
                     Para criar um botão DENTRO de outro botão, escolha o botão "pai" na lista acima
                     (todos os níveis aparecem).
                 </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#374151;">Imagem do ícone (opcional)</label>
+                        <input type="file" name="novo_icone_imagem" accept="image/*,.ico,.svg"
+                               style="width:100%;font-size:11px;padding:4px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#374151;">URL externa (opcional)</label>
+                        <input type="url" name="novo_url_externa" placeholder="https://exemplo.com"
+                               style="width:100%;font-size:12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;">
+                    </div>
+                </div>
+                <div style="margin:0 0 8px;">
+                    <label style="font-size:11px;font-weight:600;color:#374151;">Arquivos (múltiplos — opcional)</label>
+                    <input type="file" name="novo_arquivos" multiple
+                           style="width:100%;font-size:11px;padding:4px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;">
+                </div>
                 <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;">
                     <i class="fas fa-plus"></i> Criar botão
                 </button>
@@ -113,7 +130,7 @@
         {% comment %}Criar subarea/subbotao DENTRO dos botoes marcados (2026-07-12). Atalho: em vez de ir no formulario "Criar novo botao" e escolher o pai manualmente, marque um botao na arvore acima e digite o nome do subbotao aqui — ele vira subbotao do(s) botao(oes) marcado(s).{% endcomment %}
         <div class="pc-novo" style="background:#eff6ff;border-radius:8px;padding:10px 12px;margin-top:14px;border:1px solid #bfdbfe;">
             <h3 class="pc-titulo-col" style="color:#1d4ed8;"><i class="fas fa-sitemap"></i> Criar subárea nos botões marcados</h3>
-            <form method="post" action="{% url 'painel:central' %}" id="form-subarea">
+            <form method="post" action="{% url 'painel:central' %}" id="form-subarea" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="criar_subareas">
                 <div id="pc-subarea-ids"></div>
@@ -122,6 +139,23 @@
                     Marque na árvore acima UM ou mais botões e digite o nome da subárea que vai
                     aparecer DENTRO de cada um. Ex.: marque "Projetos Integradores" e crie subáreas
                     como "Documentos Gerais", "Ciências da Natureza", etc.
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;">
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#1d4ed8;">Imagem do ícone (opcional)</label>
+                        <input type="file" name="subarea_icone_imagem" accept="image/*,.ico,.svg"
+                               style="width:100%;font-size:11px;padding:4px;border:1px solid #93c5fd;border-radius:6px;background:#fff;">
+                    </div>
+                    <div>
+                        <label style="font-size:11px;font-weight:600;color:#1d4ed8;">URL externa (opcional)</label>
+                        <input type="url" name="subarea_url_externa" placeholder="https://exemplo.com"
+                               style="width:100%;font-size:12px;padding:6px 8px;border:1px solid #93c5fd;border-radius:6px;background:#fff;">
+                    </div>
+                </div>
+                <div style="margin:0 0 8px;">
+                    <label style="font-size:11px;font-weight:600;color:#1d4ed8;">Arquivos (múltiplos — opcional)</label>
+                    <input type="file" name="subarea_arquivos" multiple
+                           style="width:100%;font-size:11px;padding:4px;border:1px solid #93c5fd;border-radius:6px;background:#fff;">
                 </div>
                 <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);">
                     <i class="fas fa-plus"></i> Criar subárea dentro dos marcados
@@ -172,6 +206,20 @@
                             <option value="sim">Sim</option>
                             <option value="nao">Não</option>
                         </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px 0;">
+                    <div>
+                        <label style="font-size:12px;font-weight:600;color:#374151;">Conteúdos Recentes:</label>
+                        <select name="editar_vis_recentes" id="pc-editar-vis-recentes" style="width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff;">
+                            <option value="">— Não alterar —</option>
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px;font-weight:600;color:#374151;">URL externa:</label>
+                        <input type="url" name="editar_url_externa" id="pc-editar-url-externa" placeholder="https://exemplo.com" style="width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px;background:#fff;">
                     </div>
                 </div>
                 <div id="pc-editar-anexos-info" style="font-size:11px;color:#6b7280;margin-bottom:6px;"></div>
@@ -447,6 +495,20 @@
                             </select>
                             <div class="ajuda">Seção da página inicial com os botões das áreas. Vale para botões do nível principal.</div>
                         </div>
+                        <div class="pc-campo">
+                            <label>Conteúdos aparecem em "Recentes"</label>
+                            <select name="vis_recentes">
+                                <option value="">— Não alterar —</option>
+                                <option value="sim">Sim — conteúdos aparecem em Recentes</option>
+                                <option value="nao">Não — conteúdos não aparecem</option>
+                            </select>
+                            <div class="ajuda">Se marcado, os conteúdos desta categoria aparecem automaticamente na seção "Conteúdos Recentes" da home.</div>
+                        </div>
+                    </div>
+                    <div class="pc-campo" style="margin-top:10px;">
+                        <label>URL externa do botão (opcional)</label>
+                        <input type="url" name="url_externa_cat" placeholder="https://exemplo.com" style="width:100%;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;">
+                        <div class="ajuda">Se preenchido, ao clicar neste botão o visitante será direcionado para este endereço externo em vez de abrir a página interna.</div>
                     </div>
                 </div>
             </div>
@@ -710,6 +772,8 @@
                 document.getElementById('pc-editar-icone').value = d.icone || '';
                 document.getElementById('pc-editar-vis-menu').value = d.mostrar_menu_superior ? 'sim' : 'nao';
                 document.getElementById('pc-editar-vis-area').value = d.mostrar_navegue_area ? 'sim' : 'nao';
+                document.getElementById('pc-editar-vis-recentes').value = d.mostrar_conteudos_recentes ? 'sim' : 'nao';
+                document.getElementById('pc-editar-url-externa').value = d.url_externa || '';
                 var avisoSub = document.getElementById('pc-editar-aviso-sub');
                 if (d.pai_id) {
                     document.getElementById('pc-editar-aviso-pai').textContent = d.pai_nome || '';

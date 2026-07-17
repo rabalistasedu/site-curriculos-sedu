@@ -195,9 +195,11 @@
     <a href="/admin/conteudo/conteudo/add/" class="org-btn org-btn-success"><i class="fas fa-plus"></i> Criar conteúdo novo</a>
 </div>
 
-{# ── Subcategorias ── #}
-{% if subcategorias or not categoria.categoria_pai %}
-<div class="org-section-title"><i class="fas fa-sitemap"></i> Subcategorias de "{{ categoria.nome }}"</div>
+{% comment %}Botoes de dentro — sempre disponivel em QUALQUER nivel (raiz, subbotao,
+sub-subbotao...). Antes o bloco tinha a condicao "{% templatetag openblock %} if subcategorias or not
+categoria.categoria_pai {% templatetag closeblock %}", que escondia o formulario de criar dentro de um
+subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
+<div class="org-section-title"><i class="fas fa-sitemap"></i> Botões dentro de "{{ categoria.nome }}"</div>
 {% if subcategorias %}
 <div class="org-grid">
     {% for item in subcategorias %}
@@ -214,15 +216,47 @@
 {% else %}
 <div class="org-empty" style="margin-bottom:12px;">Nenhuma subcategoria criada ainda.</div>
 {% endif %}
-<form method="post" class="org-form-inline" style="margin-bottom:24px;">
+<form method="post" enctype="multipart/form-data" style="margin-bottom:24px;background:#eff6ff;border:2px solid #3b82f6;border-radius:10px;padding:14px;">
     {% csrf_token %}
     <input type="hidden" name="action" value="criar_subcategoria">
     <input type="hidden" name="categoria_pai_id" value="{{ categoria.pk }}">
-    <input type="text" name="nome" placeholder="Nome da nova subcategoria..." required>
-    <input type="text" name="icone" placeholder="Ícone (ex: fas fa-book)" value="fas fa-folder" style="min-width:160px;">
-    <button type="submit" class="org-btn org-btn-success"><i class="fas fa-plus"></i> Criar subcategoria</button>
+    <div style="font-weight:700;color:#1e40af;margin-bottom:10px;font-size:14px;">
+        <i class="fas fa-plus-circle"></i> Criar novo botão dentro de "{{ categoria.nome }}"
+    </div>
+    <p style="font-size:12px;color:#1e40af;margin:0 0 10px 0;">
+        Você pode adicionar <strong>ícone (Font Awesome ou imagem)</strong>, uma <strong>URL externa</strong> e <strong>arquivos</strong> — todos opcionais.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">Nome do botão *</label>
+            <input type="text" name="nome" placeholder="Ex: Documentos 2026" required
+                   style="width:100%;padding:8px 10px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">Ícone Font Awesome (opcional)</label>
+            <input type="text" name="icone" placeholder="fas fa-book" value="fas fa-folder"
+                   style="width:100%;padding:8px 10px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">Imagem do ícone (opcional)</label>
+            <input type="file" name="icone_imagem" accept="image/*,.ico,.svg"
+                   style="width:100%;padding:6px;border:1px solid #93c5fd;border-radius:6px;background:#fff;font-size:12px;">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">URL externa (opcional)</label>
+            <input type="url" name="url_externa" placeholder="https://exemplo.com"
+                   style="width:100%;padding:8px 10px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;">
+        </div>
+        <div style="grid-column:1/-1;">
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">Arquivos (múltiplos, qualquer formato — opcional)</label>
+            <input type="file" name="arquivos" multiple
+                   style="width:100%;padding:6px;border:1px solid #93c5fd;border-radius:6px;background:#fff;font-size:12px;">
+        </div>
+    </div>
+    <button type="submit" class="org-btn org-btn-success" style="margin-top:12px;">
+        <i class="fas fa-plus"></i> Criar botão dentro de "{{ categoria.nome }}"
+    </button>
 </form>
-{% endif %}
 
 {# ── Conteúdos nesta categoria (com ordem editável) ── #}
 <div class="org-section-title"><i class="fas fa-file-alt"></i> Conteúdos em "{{ categoria.nome }}" ({{ conteudos|length }})</div>
@@ -334,6 +368,39 @@
 {% else %}
 <div class="org-empty"><i class="fas fa-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i> Nenhum conteúdo nesta categoria.</div>
 {% endif %}
+
+{# ── Adicionar arquivo/URL DIRETO nesta categoria ── #}
+<div class="org-search-box" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);border:2px solid #10b981;">
+    <h3 style="color:#065f46;"><i class="fas fa-cloud-upload-alt"></i> Adicionar novo arquivo ou URL a "{{ categoria.nome }}"</h3>
+    <p style="font-size:12px;color:#065f46;margin:4px 0 12px;">
+        Envie <strong>arquivos</strong> (qualquer formato) e/ou informe uma <strong>URL</strong>. Você pode usar as duas opções ao mesmo tempo.
+    </p>
+    <form method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="criar_conteudo_aqui">
+        <input type="hidden" name="cat_destino" value="{{ categoria.pk }}">
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#065f46;">Título (opcional):</label>
+            <input type="text" name="novo_titulo" placeholder="Ex: Guia 2026 (usa o nome do arquivo/URL se vazio)"
+                   style="width:100%;padding:8px 10px;border:1px solid #6ee7b7;border-radius:6px;font-size:13px;">
+        </div>
+        <div>
+            <label style="font-size:12px;font-weight:600;color:#065f46;">URL externa (opcional):</label>
+            <input type="url" name="novo_url" placeholder="https://drive.google.com/... ou qualquer link"
+                   style="width:100%;padding:8px 10px;border:1px solid #6ee7b7;border-radius:6px;font-size:13px;">
+        </div>
+        <div style="grid-column:1/-1;">
+            <label style="font-size:12px;font-weight:600;color:#065f46;">Arquivos (múltiplos, qualquer formato):</label>
+            <input type="file" name="novo_arquivos" multiple
+                   style="width:100%;padding:6px;border:1px solid #6ee7b7;border-radius:6px;background:#fff;font-size:13px;">
+        </div>
+        <div style="grid-column:1/-1;">
+            <button type="submit" class="org-btn" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;">
+                <i class="fas fa-plus"></i> Adicionar a "{{ categoria.nome }}"
+            </button>
+        </div>
+    </form>
+</div>
 
 {# ── Buscar / adicionar conteúdos existentes ── #}
 <div class="org-search-box">

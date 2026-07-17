@@ -422,12 +422,12 @@
             {{ picker_html }}
         </div>
 
-        <!-- PASSO 2: Escolher ou criar grupo -->
+        <!-- PASSO 2: Escolher ou criar grupo (OPCIONAL) -->
         <div class="aa-section" id="step2Section">
-            <h2><span class="aa-step">2</span> Escolha um grupo existente ou crie um novo</h2>
+            <h2><span class="aa-step">2</span> Escolha um grupo existente ou crie um novo <span style="font-size:12px;font-weight:400;color:#6b7280;">(opcional)</span></h2>
             <p class="aa-hint">
-                Se o grupo (botão) já existe, clique nele para adicionar mais itens dentro.
-                Se quer criar um novo, digite o nome abaixo.
+                <strong>Deixe em branco</strong> para anexar arquivos/links <strong>diretamente ao botão selecionado no passo 1</strong>.
+                Ou escolha um grupo existente / crie um novo se preferir organizar em subgrupos.
             </p>
 
             <div id="subcatsContainer">
@@ -436,10 +436,10 @@
                 </div>
             </div>
 
-            <div class="aa-divider">ou criar novo</div>
+            <div class="aa-divider">ou criar novo grupo (opcional)</div>
 
             <input type="text" name="nome_grupo" id="nomeGrupoInput" class="aa-input"
-                   placeholder="Ex: Material de Apoio, Documentos 2026">
+                   placeholder="Ex: Material de Apoio, Documentos 2026 (deixe vazio para anexar direto ao botão)">
         </div>
 
         <!-- LISTA DE ITENS DO GRUPO SELECIONADO (seção própria) -->
@@ -845,13 +845,13 @@ function removeRow(btn) {
     }
 }
 
-// Validação: exige subcategoria_id OU nome_grupo
+// Validação: exige apenas que uma categoria esteja selecionada.
+// O grupo (passo 2) é opcional — se vazio, anexa direto ao botão do passo 1.
 document.getElementById('mainForm').addEventListener('submit', function(e) {
-    var subId = document.getElementById('subcategoriaIdInput').value;
-    var nome = document.getElementById('nomeGrupoInput').value.trim();
-    if (!subId && !nome) {
+    var catRadio = document.querySelector('input[name="categoria"]:checked');
+    if (!catRadio) {
         e.preventDefault();
-        alert('Selecione um grupo existente OU digite o nome de um novo grupo no passo 2.');
+        alert('Selecione uma categoria (botão) no passo 1.');
     }
 });
 </script>
