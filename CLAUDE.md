@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v16 — atualizado em 2026-07-17 — Parte 20)
+# Site Currículos SEDU — Contexto do Projeto (v17 — atualizado em 2026-07-17 — Parte 21)
 
 ## O que é este projeto
 
@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **7 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, **Área do Site**).
+- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **9 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência) — agora com **acesso delegável por usuário/grupo** via Autenticação e Autorização.
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 20")**: **Botões da "Área do Site" podem virar botões completos do site** — no formulário "Adicionar botão" de cada coluna extra, novo checkbox "Criar como botão completo do site (aparece nas árvores de botões)": quando marcado (e sem escolher uma categoria já existente), cria de fato uma `Categoria` nova, aninhada em "Botões novos criados" (mesmo bucket oculto já usado pelo Painel Central/Estrutura de Árvores quando nenhum pai é escolhido) — a partir daí o botão aparece em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior) e aceita tudo que os outros botões aceitam (conteúdos, subbotões, anexos). Também ganhou campos de **URL rápida** e **anexos rápidos** para preencher o botão (novo ou existente) sem precisar abrir a árvore separadamente — mesmo padrão já usado em "Criar subcategoria" do Organizador. Comportamento padrão (checkbox desmarcado) continua **idêntico a antes** — zero mudanças no fluxo existente. Detalhes no histórico item 33.
+- **Leva mais recente (2026-07-17 — "parte 21")**: **Delegação de acesso aos painéis administrativos** — cada um dos 8 painéis personalizados (Organizador, Adicionar Arquivos, Painel Central, Barra Superior, Estrutura de Árvores, Editor do Rodapé, Área do Site, Central de Inteligência) ganhou uma permissão própria do Django (`Meta.permissions` em `ConfiguracaoSite`/`Vinculo`/`AlertaInteligencia`), controlável nativamente em **Admin → Autenticação e Autorização → Usuários/Grupos**, sem UI nova. Antes, qualquer usuário "membro da equipe" (`is_staff`) acessava todos os painéis igualmente; agora o Dan pode marcar exatamente quais painéis cada usuário (ou grupo) enxerga e acessa. Superusuário sempre tem acesso total; os 3 usuários atuais (`ridan`, `rabalista`, `kayode`) são todos superusuários, então **nada mudou para quem já usa o sistema** — o controle só passa a valer para novos usuários staff não-superusuário que o Dan criar. Dashboard esconde o banner de painéis sem permissão; acessar a URL direto sem permissão retorna 403. Ver seção dedicada "Delegação de acesso aos painéis administrativos" e histórico item 34.
+- **Leva anterior (2026-07-17 — "parte 20")**: **Botões da "Área do Site" podem virar botões completos do site** — no formulário "Adicionar botão" de cada coluna extra, novo checkbox "Criar como botão completo do site (aparece nas árvores de botões)": quando marcado (e sem escolher uma categoria já existente), cria de fato uma `Categoria` nova, aninhada em "Botões novos criados" (mesmo bucket oculto já usado pelo Painel Central/Estrutura de Árvores quando nenhum pai é escolhido) — a partir daí o botão aparece em TODAS as árvores (Estrutura de Árvores, Painel Central, Organizador, Barra Superior) e aceita tudo que os outros botões aceitam (conteúdos, subbotões, anexos). Também ganhou campos de **URL rápida** e **anexos rápidos** para preencher o botão (novo ou existente) sem precisar abrir a árvore separadamente — mesmo padrão já usado em "Criar subcategoria" do Organizador. Comportamento padrão (checkbox desmarcado) continua **idêntico a antes** — zero mudanças no fluxo existente. Detalhes no histórico item 33.
 - **Leva anterior (2026-07-17 — "parte 19")**: **Ícone também nas colunas extras** — a criação/edição de coluna extra (painel "Área do Site") ganhou o mesmo seletor de ícone das 3 seções fixas (Font Awesome via IconPicker OU upload de imagem, sempre com fundo transparente). Novos campos `ColunaExtra.icone`/`icone_imagem` (migração 0029). O ícone aparece antes do título de cada coluna extra na home. Detalhes no histórico item 32.
 - **Leva anterior (2026-07-17 — "parte 18")**: **Ícones das 3 seções da home** — painel "Área do Site" ganhou seletor de ícone para "Destaques", "Conteúdos recentes" e "Navegue por área": escolha entre os ícones padrão do site (IconPicker, mesma grade usada em Conteúdo/Categoria) OU envie uma imagem em qualquer formato — a imagem sempre é exibida com **fundo transparente** (classe `.title-icon.sem-fundo` + `object-fit:contain`), sem prejudicar a estética do site. Novos campos em `ConfiguracaoSite`: `icone_destaques/icone_recentes/icone_areas` (Font Awesome) + `icone_destaques_imagem/icone_recentes_imagem/icone_areas_imagem` (upload, prioridade sobre o FA). Migração 0028. Detalhes no histórico item 31.
 - **Leva anterior (2026-07-17 — "parte 17")**: **Novo painel "Área do Site"** — gerencia (1) o texto/formatação (negrito, itálico, sublinhado, alinhamento, lista) dos títulos das 3 seções da home ("Destaques", "Conteúdos recentes", "Navegue por área") via `ConfiguracaoSite.titulo_destaques/titulo_recentes/titulo_areas` (TextField HTML, RichTextWidget, migração 0027); (2) colunas extras opcionais à esquerda/direita da faixa "Recentes + Navegue por área" (novos modelos `ColunaExtra` e `ColunaExtraBotao`), cada uma com título e botões próprios (nome + categoria do site OU link externo + ícone FA/imagem). View `area_do_site_view` em `conteudo/admin_views.py`, template `templates/admin/area_do_site.html`, URL `/admin/area-do-site/`, banner ciano no dashboard. `home.html` envolve `.home-split` num `.home-split-wrap` flex para acomodar as colunas extras nas laterais. Detalhes no histórico item 30.
@@ -33,7 +34,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0029` + `painel/0002`. Migração **`conteudo/0029`** (ícone em ColunaExtra) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0030` + `painel/0002-0003` + `inteligencia/0002`. Migração **`conteudo/0030`** (permissões dos painéis) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -220,6 +221,35 @@ Comentários moderados (3 estados, migração 0019 — 2026-07-13).
 6. **Editor do Rodapé** (`/admin/editor-rodape/`, cartão cinza no dashboard) — edita textos, links, ícones e imagens das 3 colunas do rodapé + copyright + contato/endereço.
 7. **Estrutura de Árvores** (`/admin/estrutura-arvores/`, banner âmbar) — ver seção dedicada acima (histórico item 24).
 8. **Área do Site** (`/admin/area-do-site/`, banner ciano no dashboard, partes 17-18 — 2026-07-17) — (a) formata (negrito/itálico/sublinhado/alinhamento/lista) os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da home via `RichTextWidget`; (b) escolhe o ÍCONE de cada uma dessas 3 seções — padrão do site (IconPicker) OU imagem enviada em qualquer formato, sempre com fundo transparente; (c) cria colunas extras (`ColunaExtra`) à esquerda ou direita da faixa "Recentes + Navegue por área", cada uma com botões próprios (`ColunaExtraBotao` — nome + categoria do site OU link externo + ícone).
+9. **Central de Inteligência do Portal** (`/admin/inteligencia/`, banner vermelho no dashboard, app `inteligencia`) — estatísticas de uso do portal: acessos, downloads, buscas, rankings de botões/subbotões/documentos, dispositivos/navegadores/referrer, alertas (documento sem acesso, link quebrado, pico de acesso), exportação Excel/PDF. Não documentado em detalhe neste arquivo (fora do escopo das "partes" numeradas) — ver `inteligencia/models.py`, `inteligencia/services.py`, `inteligencia/views.py` para detalhes de implementação.
+
+## Delegação de acesso aos painéis administrativos (parte 21 — 2026-07-17)
+
+Cada um dos 8 painéis acima (1-9, exceto o Django Admin nativo) agora tem uma **permissão própria do Django**, controlável na tela nativa **Autenticação e Autorização** (`/admin/auth/`), sem precisar de código novo para delegar acesso.
+
+**Como usar** (Admin → Autenticação e Autorização):
+- **Usuários → (escolher usuário) → seção "Permissões do usuário"**: marcar as permissões desejadas, com o rótulo `Pode acessar: <nome do painel>` (aparecem junto às permissões padrão dos models `Configuração do site`, `Vínculo de publicação` e `Alerta`).
+- **Recomendado**: criar **Grupos** (ex.: "Editor de Conteúdo") com um conjunto de permissões marcadas, e depois só atribuir usuários ao grupo — mais rápido que marcar caixinha por usuário toda vez.
+- O usuário também precisa ter **"Membro da equipe" (`is_staff`) marcado**, senão nem entra no `/admin/` (requisito que já existia, não mudou).
+- **Superusuário sempre vê e acessa todos os painéis**, independente de qualquer permissão marcada ou não.
+- **Usuários novos começam sem nenhum dos 8 acessos** (seguro por padrão) até alguém marcar explicitamente.
+
+**As 8 permissões e para onde apontam:**
+
+| Permissão (`app.codename`) | Painel |
+|---|---|
+| `conteudo.pode_acessar_organizador` | Organizador de Conteúdo |
+| `conteudo.pode_acessar_adicionar_arquivos` | Adicionar Arquivos |
+| `painel.pode_acessar_painel_central` | Painel Administrativo Completo (Telas 1 e 2) |
+| `conteudo.pode_acessar_barra_superior` | Botões da Barra Superior |
+| `conteudo.pode_acessar_estrutura_arvores` | Estrutura de Árvores |
+| `conteudo.pode_acessar_editor_rodape` | Editor do Rodapé |
+| `conteudo.pode_acessar_area_do_site` | Área do Site |
+| `inteligencia.pode_acessar_inteligencia` | Central de Inteligência do Portal |
+
+**Implementação**: `Meta.permissions` em `ConfiguracaoSite` (conteudo, 6 permissões), `Vinculo` (painel, 1) e `AlertaInteligencia` (inteligencia, 1) — migrações `conteudo/0030`, `painel/0003`, `inteligencia/0002` (só `AlterModelOptions`, nenhuma coluna de tabela alterada). Decorator `exige_permissao_painel(codename)` em `conteudo/permissoes.py`, empilhado junto ao `@staff_member_required` já existente em cada view (sem substituir nada). Dashboard (`templates/admin/index.html`) esconde o banner de qualquer painel que o usuário logado não tenha permissão de acessar (`{% if perms.app.codename %}`), mas a segurança de verdade está nas views — acessar a URL direto sem permissão sempre retorna 403.
+
+**Testado fim-a-ponta** (via Django test client): usuário staff sem superusuário e sem nenhuma permissão → dashboard sem nenhum dos 8 banners, todas as 8 URLs retornam 403; concedida 1 permissão (Organizador) → só aquele banner aparece, só aquela URL abre (200), as outras 7 continuam em 403; superusuário (`ridan`) → todos os 8 banners e todas as 8 URLs continuam funcionando normalmente (zero regressão para contas existentes, já que os 3 usuários atuais — `ridan`, `rabalista`, `kayode` — são todos superusuários).
 
 ## Comportamentos importantes do front-end
 
@@ -985,6 +1015,36 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 - **Arquivos modificados**: `conteudo/models.py` (novo field), `conteudo/migrations/0026_destaque_gerenciado.py` (nova migração), `conteudo/admin_views.py` (query + criar_destaque + toggle_destaque), `conteudo/views.py` (nenhuma alteração — home continua filtrando `destaque=True`)
 - **Testado**: criar → ocultar → permanece na lista → reativar → reaparece; 3 destaques antigos não sumiram
 
+### 2026-07-17 — Delegação de acesso aos painéis administrativos (parte 21)
+
+**Pedido do Dan**: dentro do painel administrativo, na área nativa "Autenticação e Autorização", poder delegar para usuários existentes e novos usuários **quem pode acessar qual painel** — sem quebrar o que já funciona.
+
+**Situação anterior**: todos os 8 painéis personalizados (Organizador, Adicionar Arquivos, Painel Central, Barra Superior, Estrutura de Árvores, Editor do Rodapé, Área do Site, Central de Inteligência) só checavam `@staff_member_required` — qualquer usuário "membro da equipe" acessava todos igualmente, sem granularidade nenhuma.
+
+**Solução**: 8 novas permissões customizadas do Django (uma por painel), usando `Meta.permissions` — as mesmas que já aparecem nativamente na tela de Usuário/Grupo em Autenticação e Autorização, junto com add/change/delete/view padrão. Zero tabela nova, zero campo novo — só uma lista extra dentro do `Meta` de um model que já existia em cada app.
+
+1. **Permissões registradas** (`Meta.permissions`):
+   - `conteudo.ConfiguracaoSite` (singleton de config do site) ganhou 6: `pode_acessar_organizador`, `pode_acessar_adicionar_arquivos`, `pode_acessar_barra_superior`, `pode_acessar_editor_rodape`, `pode_acessar_area_do_site`, `pode_acessar_estrutura_arvores`
+   - `painel.Vinculo` ganhou 1: `pode_acessar_painel_central`
+   - `inteligencia.AlertaInteligencia` ganhou 1: `pode_acessar_inteligencia`
+   - Migrações `conteudo/0030`, `painel/0003`, `inteligencia/0002` — só `AlterModelOptions`, nenhuma coluna de tabela alterada.
+
+2. **Novo helper `conteudo/permissoes.py`**: decorator `exige_permissao_painel(codename)` que levanta `PermissionDenied` (→ 403 automático do Django) se `request.user.has_perm(codename)` for falso. Superusuário sempre passa (comportamento nativo do Django).
+
+3. **12 views protegidas** (decorator empilhado junto ao `@staff_member_required` já existente, sem remover nada):
+   - `conteudo/admin_views.py`: `organizar_view`, `api_subcategorias_itens` (API AJAX do Adicionar Arquivos), `adicionar_arquivos_view`, `barra_superior_view`, `editor_rodape_view`, `area_do_site_view`
+   - `conteudo/arvore_views.py`: `estrutura_arvores_view`, `arvore_api`
+   - `painel/views.py`: `painel_central_view` (Tela 1), `conteudos_view` (Tela 2) — mesma permissão para as duas telas
+   - `inteligencia/views.py`: `dashboard_view`, `dashboard_api`, `exportar_excel_view`, `exportar_pdf_view`
+
+4. **Dashboard** (`templates/admin/index.html`): cada um dos 8 banners agora está dentro de `{% if perms.app.codename %}...{% endif %}` — some da tela quem não tem a permissão (cosmético; a segurança de verdade está nas views, que sempre retornam 403 se a URL for acessada direto sem permissão).
+
+**Como o Dan usa**: Admin → Autenticação e Autorização → Usuários → (escolher usuário) → seção "Permissões do usuário" → marcar as permissões com rótulo "Pode acessar: ...". Ou criar um Grupo com um conjunto de permissões e atribuir usuários a ele (mais prático para papéis recorrentes). O usuário também precisa ter "Membro da equipe" marcado (requisito que já existia).
+
+- **Testado fim-a-ponta** (Django test client): usuário staff de teste sem superusuário e sem nenhuma permissão → dashboard com 0 dos 8 banners, as 8 URLs retornam 403 ✓; concedida a permissão do Organizador → só aquele banner aparece, `/admin/organizar/` abre (200), as outras 7 URLs continuam em 403 ✓; usuário de teste removido ao final ✓. Superusuário `ridan` (via `force_login`) → todos os 8 banners visíveis e todas as 8 URLs continuam em 200 — **zero regressão** ✓.
+- **Compatibilidade 100%**: os 3 usuários existentes (`ridan`, `rabalista`, `kayode`) são todos superusuários, então **nenhum perde acesso** com esta mudança — o controle granular só passa a valer para novos usuários staff não-superusuário que o Dan criar a partir de agora (que nascem sem nenhum dos 8 acessos, seguro por padrão). Nenhuma URL, template (fora do `{% if %}` cosmético) ou lógica interna de view foi alterada.
+- **Arquivos modificados**: `conteudo/models.py` (Meta.permissions em ConfiguracaoSite), `painel/models.py` (Meta.permissions em Vinculo), `inteligencia/models.py` (Meta.permissions em AlertaInteligencia), `conteudo/migrations/0030_alter_configuracaosite_options.py`, `painel/migrations/0003_alter_vinculo_options.py`, `inteligencia/migrations/0002_alter_alertainteligencia_options.py` (novas migrações), `conteudo/permissoes.py` (novo arquivo — decorator), `conteudo/admin_views.py` + `conteudo/arvore_views.py` + `painel/views.py` + `inteligencia/views.py` (decorator aplicado, 12 views), `templates/admin/index.html` (8 banners com `{% if perms %}`).
+
 ## O que falta / próximos passos possíveis
 
 - [ ] Refinamentos visuais conforme feedback do Dan e aprovação do chefe
@@ -1009,3 +1069,4 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 10. **Push rejeitado ("fetch first" / "remote contains work")** → houve commit em outro computador ou pelo site do GitHub. Solução: `git pull --no-rebase origin main`, resolver conflitos se houver, e `git push`. O `.bat` "Subir GitHub SEDU" já faz o pull automaticamente antes do push (corrigido em 2026-07-11).
 11. **Comentário de template `{# ... #}` NÃO pode ter quebra de linha** — o Django só suporta `{# #}` em UMA linha; se quebrar, o texto do comentário aparece LITERALMENTE na página (aconteceu em 2026-07-11 com o botão do rodapé e o VLibras — o Dan viu "coisas estranhas escritas" no site). Para comentários longos, usar `{% comment %}...{% endcomment %}`.
 12. **Cuidado com o `.gitignore` em outros computadores**: em 2026-07-11 um commit feito em outra máquina ("codigo ngrok") substituiu por acidente o `.gitignore` inteiro pelo do venv (`*` — ignorar tudo). Foi corrigido no merge `2faca8e` mantendo a versão completa. Se o `.gitignore` aparecer com uma linha só (`*`), restaurar do histórico: `git checkout 2faca8e -- .gitignore`.
+13. **Usuário staff criado mas não consegue acessar NENHUM painel personalizado** (desde a parte 21) → não é bug, é o comportamento esperado: usuários novos (não-superusuário) nascem sem nenhuma das 8 permissões de painel. Marcar as permissões desejadas em Autenticação e Autorização → Usuários → (usuário) → "Permissões do usuário", ou colocar o usuário num Grupo que já tenha as permissões marcadas. Ver seção "Delegação de acesso aos painéis administrativos".

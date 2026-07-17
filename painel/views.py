@@ -22,6 +22,7 @@ from django.utils.text import slugify
 
 from conteudo.models import Categoria, Conteudo, Anexo
 from conteudo.widgets import IconPicker
+from conteudo.permissoes import exige_permissao_painel
 from .models import Vinculo, EstiloBotao
 
 
@@ -91,6 +92,7 @@ CAMPOS_ESTILO = ('cor_fundo', 'cor_texto', 'fonte', 'tamanho_fonte', 'alinhament
 # ── Tela 1: Painel Administrativo Completo ────────────────────────────
 
 @staff_member_required
+@exige_permissao_painel('painel.pode_acessar_painel_central')
 def painel_central_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')
@@ -587,6 +589,7 @@ def _publicar(request):
 # ── Tela 2: Conteúdo para modificar ou configurar ─────────────────────
 
 @staff_member_required
+@exige_permissao_painel('painel.pode_acessar_painel_central')
 def conteudos_view(request):
     if request.method == 'POST':
         action = request.POST.get('action')

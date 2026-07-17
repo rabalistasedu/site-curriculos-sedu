@@ -7,9 +7,11 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.db.models import Q
 from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao
+from .permissoes import exige_permissao_painel
 
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_organizador')
 def organizar_view(request):
     cat_id = request.GET.get('cat')
     busca = request.GET.get('busca', '').strip()
@@ -300,6 +302,7 @@ def organizar_view(request):
 
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_adicionar_arquivos')
 def adicionar_arquivos_view(request):
     """Painel para adicionar arquivos a uma categoria do site.
     Fluxo: escolher categoria → dar nome ao grupo (subcategoria) → subir arquivos."""
@@ -437,6 +440,7 @@ def adicionar_arquivos_view(request):
 
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_adicionar_arquivos')
 def api_subcategorias_itens(request):
     """API JSON para listar subcategorias e seus itens, excluir itens,
     excluir grupos e duplicar itens."""
@@ -560,6 +564,7 @@ def api_subcategorias_itens(request):
 # azul do topo, mudar a ordem, e atalhos para criar/editar/excluir botões.
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_barra_superior')
 def barra_superior_view(request):
     principais = Categoria.objects.filter(
         categoria_pai__isnull=True).order_by('ordem', 'nome')
@@ -601,6 +606,7 @@ def barra_superior_view(request):
 
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_editor_rodape')
 def editor_rodape_view(request):
     config = ConfiguracaoSite.get_config()
 
@@ -638,6 +644,7 @@ def editor_rodape_view(request):
 # com botões personalizados dentro (link para categoria ou URL externa).
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_area_do_site')
 def area_do_site_view(request):
     from .forms import TituloSecoesForm
 

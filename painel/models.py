@@ -38,6 +38,9 @@ class Vinculo(models.Model):
         verbose_name_plural = 'Vínculos de publicação'
         unique_together = [('conteudo', 'categoria')]
         ordering = ['categoria', 'ordem']
+        permissions = [
+            ('pode_acessar_painel_central', 'Pode acessar: Painel Administrativo Completo'),
+        ]
 
     def __str__(self):
         return f'{self.conteudo.titulo[:40]} → {self.categoria.nome}'

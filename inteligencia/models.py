@@ -94,6 +94,9 @@ class AlertaInteligencia(models.Model):
         verbose_name = 'Alerta'
         verbose_name_plural = 'Alertas'
         ordering = ['-criado_em']
+        permissions = [
+            ('pode_acessar_inteligencia', 'Pode acessar: Central de Inteligência'),
+        ]
 
     def __str__(self):
         status = '✅' if self.resolvido else '⚠️'

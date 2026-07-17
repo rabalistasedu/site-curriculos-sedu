@@ -681,6 +681,14 @@ class ConfiguracaoSite(models.Model):
     class Meta:
         verbose_name = 'Configuração do site'
         verbose_name_plural = 'Configuração do site'
+        permissions = [
+            ('pode_acessar_organizador', 'Pode acessar: Organizador de Conteúdo'),
+            ('pode_acessar_adicionar_arquivos', 'Pode acessar: Adicionar Arquivos'),
+            ('pode_acessar_barra_superior', 'Pode acessar: Botões da Barra Superior'),
+            ('pode_acessar_editor_rodape', 'Pode acessar: Editor do Rodapé'),
+            ('pode_acessar_area_do_site', 'Pode acessar: Área do Site'),
+            ('pode_acessar_estrutura_arvores', 'Pode acessar: Estrutura de Árvores'),
+        ]
 
     def __str__(self):
         return self.nome_site

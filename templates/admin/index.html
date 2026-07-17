@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% block content %}
+{% if perms.conteudo.pode_acessar_organizador %}
 <!-- Banner do Organizador de Conteúdo -->
 <div style="background: linear-gradient(135deg, #1e5fae 0%, #0f2d5c 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -28,7 +29,9 @@
         <i class="fas fa-folder-tree"></i> Abrir Organizador
     </a>
 </div>
+{% endif %}
 
+{% if perms.conteudo.pode_acessar_adicionar_arquivos %}
 <!-- Banner do Adicionar Arquivos -->
 <div style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -44,7 +47,9 @@
         <i class="fas fa-file-circle-plus"></i> Abrir Painel de Arquivos
     </a>
 </div>
+{% endif %}
 
+{% if perms.painel.pode_acessar_painel_central %}
 <!-- Banner do Painel Administrativo Completo -->
 <div style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -60,7 +65,9 @@
         <i class="fas fa-table-columns"></i> Abrir Painel Completo
     </a>
 </div>
+{% endif %}
 
+{% if perms.conteudo.pode_acessar_barra_superior %}
 <!-- Banner da Barra Superior -->
 <div style="background: linear-gradient(135deg, #0e7490 0%, #164e63 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -76,7 +83,9 @@
         <i class="fas fa-sliders"></i> Gerir Barra Superior
     </a>
 </div>
+{% endif %}
 
+{% if perms.conteudo.pode_acessar_estrutura_arvores %}
 <!-- Banner da Estrutura de Árvores -->
 <div style="background: linear-gradient(135deg, #d97706 0%, #92400e 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -92,7 +101,9 @@
         <i class="fas fa-diagram-project"></i> Abrir Estrutura
     </a>
 </div>
+{% endif %}
 
+{% if perms.conteudo.pode_acessar_editor_rodape %}
 <!-- Banner do Editor de Rodapé -->
 <div style="background: linear-gradient(135deg, #374151 0%, #111827 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -108,7 +119,9 @@
         <i class="fas fa-pen-to-square"></i> Editar Rodape
     </a>
 </div>
+{% endif %}
 
+{% if perms.conteudo.pode_acessar_area_do_site %}
 <!-- Banner da Área do Site -->
 <div style="background: linear-gradient(135deg, #0891b2 0%, #164e63 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -124,7 +137,9 @@
         <i class="fas fa-sliders"></i> Abrir Área do Site
     </a>
 </div>
+{% endif %}
 
+{% if perms.inteligencia.pode_acessar_inteligencia %}
 <!-- Banner da Central de Inteligência do Portal -->
 <div style="background: linear-gradient(135deg, #e11d48 0%, #881337 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
     <div style="color: #fff;">
@@ -140,6 +155,7 @@
         <i class="fas fa-chart-pie"></i> Abrir Central de Inteligência
     </a>
 </div>
+{% endif %}
 
 <!-- A lista de apps não é repetida aqui: ela já aparece na barra lateral
      esquerda do admin (nav sidebar). Os banners acima dão acesso rápido

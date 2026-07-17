@@ -19,6 +19,7 @@ from django.utils.text import slugify
 from django.views.decorators.http import require_POST
 
 from .models import Categoria, Conteudo, Anexo
+from .permissoes import exige_permissao_painel
 
 
 def _slug_unico(modelo, base):
@@ -115,6 +116,7 @@ def _listar_icones_enviados():
 # ── View principal ──────────────────────────────────────────────────────
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_estrutura_arvores')
 def estrutura_arvores_view(request):
     """Tela principal do módulo Estrutura de Árvores."""
     arvore = _montar_arvore_completa()
@@ -134,6 +136,7 @@ def estrutura_arvores_view(request):
 # ── API AJAX ────────────────────────────────────────────────────────────
 
 @staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_estrutura_arvores')
 def arvore_api(request):
     """Endpoint API para operações AJAX na árvore."""
     if request.method == 'GET':

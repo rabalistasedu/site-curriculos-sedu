@@ -151,7 +151,9 @@
       "Bash(rm -f \"media/anexos/2026/07/anexo_rapido.png\")",
       "Bash(rmdir \"media/icones_coluna_extra\")",
       "Bash(PYTHONIOENCODING=utf-8 venv/Scripts/python.exe test_botao_raiz.py)",
-      "Bash(rm -f test_botao_raiz.py)"
+      "Bash(rm -f test_botao_raiz.py)",
+      "Bash(venvScriptspython -c ' *)",
+      "Bash(venv/Scripts/python -c ' *)"
     ]
   }
 }

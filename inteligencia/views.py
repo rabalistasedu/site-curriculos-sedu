@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.safestring import mark_safe
+from conteudo.permissoes import exige_permissao_painel
 from . import services
 
 
@@ -14,6 +15,7 @@ def _parse_periodo(request):
 
 
 @staff_member_required
+@exige_permissao_painel('inteligencia.pode_acessar_inteligencia')
 def dashboard_view(request):
     inicio, fim = _parse_periodo(request)
     periodo = request.GET.get('periodo', '30dias')
@@ -82,6 +84,7 @@ def dashboard_view(request):
 
 
 @staff_member_required
+@exige_permissao_painel('inteligencia.pode_acessar_inteligencia')
 def dashboard_api(request):
     action = request.GET.get('action', '')
     inicio, fim = _parse_periodo(request)
@@ -119,6 +122,7 @@ def dashboard_api(request):
 
 
 @staff_member_required
+@exige_permissao_painel('inteligencia.pode_acessar_inteligencia')
 def exportar_excel_view(request):
     from .exportar import gerar_excel
     inicio, fim = _parse_periodo(request)
@@ -126,6 +130,7 @@ def exportar_excel_view(request):
 
 
 @staff_member_required
+@exige_permissao_painel('inteligencia.pode_acessar_inteligencia')
 def exportar_pdf_view(request):
     from .exportar import gerar_pdf
     inicio, fim = _parse_periodo(request)
