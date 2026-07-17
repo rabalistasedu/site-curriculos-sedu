@@ -42,7 +42,14 @@
 {% if destaques %}
 <section class="section section-alt">
     <div class="container">
-        <h2 class="section-title">{{ config.titulo_destaques|default:"Destaques"|safe }}</h2>
+        <h2 class="section-title">
+            {% if config.icone_destaques_imagem %}
+            <span class="title-icon sem-fundo"><img src="{{ config.icone_destaques_imagem.url }}" alt="" class="icone-personalizado"></span>
+            {% elif config.icone_destaques %}
+            <span class="title-icon"><i class="{{ config.icone_destaques }}"></i></span>
+            {% endif %}
+            {{ config.titulo_destaques|default:"Destaques"|safe }}
+        </h2>
         <div class="content-grid destaques-grid">
             {% for item in destaques %}
             <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
@@ -175,7 +182,11 @@
             <!-- Esquerda: Conteúdos recentes -->
             <div class="home-recentes">
                 <h2 class="section-title">
-                    <span class="title-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
+                    {% if config.icone_recentes_imagem %}
+                    <span class="title-icon sem-fundo"><img src="{{ config.icone_recentes_imagem.url }}" alt="" class="icone-personalizado"></span>
+                    {% else %}
+                    <span class="title-icon"><i class="{{ config.icone_recentes|default:'fas fa-wand-magic-sparkles' }}"></i></span>
+                    {% endif %}
                     {{ config.titulo_recentes|default:"Conteúdos recentes"|safe }}
                 </h2>
                 {% if recentes %}
@@ -209,7 +220,11 @@
             <!-- Direita: Navegue por área -->
             <aside class="home-areas">
                 <h2 class="section-title">
-                    <span class="title-icon"><i class="fas fa-compass"></i></span>
+                    {% if config.icone_areas_imagem %}
+                    <span class="title-icon sem-fundo"><img src="{{ config.icone_areas_imagem.url }}" alt="" class="icone-personalizado"></span>
+                    {% else %}
+                    <span class="title-icon"><i class="{{ config.icone_areas|default:'fas fa-compass' }}"></i></span>
+                    {% endif %}
                     {{ config.titulo_areas|default:"Navegue por área"|safe }}
                 </h2>
                 <div class="areas-list">

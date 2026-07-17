@@ -351,6 +351,14 @@ img { max-width: 100%; height: auto; display: block; }
     font-size: 15px;
     vertical-align: middle;
 }
+/* Ícone personalizado (imagem) das seções da home — sem fundo colorido,
+   para não atrapalhar a estética do site (painel "Área do Site") */
+.title-icon.sem-fundo {
+    background: none;
+}
+.title-icon .icone-personalizado {
+    padding: 0;
+}
 /* Cards de área em grid 2 colunas na coluna da direita — scrollbar só quando necessário */
 .areas-list {
     display: grid;

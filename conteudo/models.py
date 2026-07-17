@@ -667,6 +667,17 @@ class ConfiguracaoSite(models.Model):
     titulo_recentes = models.TextField('Título da seção "Conteúdos recentes"', blank=True, default='Conteúdos recentes')
     titulo_areas = models.TextField('Título da seção "Navegue por área"', blank=True, default='Navegue por área')
 
+    # Ícones das 3 seções — Font Awesome (padrões do site, via IconPicker) OU
+    # imagem enviada em qualquer formato (a imagem tem prioridade e é exibida
+    # sempre com fundo transparente, via classe "sem-fundo" + object-fit:contain,
+    # para não atrapalhar a estética do site).
+    icone_destaques = models.CharField('Ícone de "Destaques" (padrão do site)', max_length=100, blank=True)
+    icone_destaques_imagem = models.FileField('Ícone de "Destaques" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+    icone_recentes = models.CharField('Ícone de "Conteúdos recentes" (padrão do site)', max_length=100, blank=True, default='fas fa-wand-magic-sparkles')
+    icone_recentes_imagem = models.FileField('Ícone de "Conteúdos recentes" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+    icone_areas = models.CharField('Ícone de "Navegue por área" (padrão do site)', max_length=100, blank=True, default='fas fa-compass')
+    icone_areas_imagem = models.FileField('Ícone de "Navegue por área" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+
     class Meta:
         verbose_name = 'Configuração do site'
         verbose_name_plural = 'Configuração do site'

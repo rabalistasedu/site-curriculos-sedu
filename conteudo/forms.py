@@ -3,6 +3,7 @@ from .models import Banner, Conteudo, Categoria, ConfiguracaoSite
 from .widgets import CategoriaPicker, IconPicker, RichTextWidget
 
 
+
 class BannerAdminForm(forms.ModelForm):
     class Meta:
         model = Banner
@@ -92,13 +93,21 @@ class ConfiguracaoSiteAdminForm(forms.ModelForm):
 
 
 class TituloSecoesForm(forms.ModelForm):
-    """Título das 3 seções da home (Destaques / Conteúdos recentes /
-    Navegue por área) com formatação rica — painel "Área do Site"."""
+    """Título + ícone das 3 seções da home (Destaques / Conteúdos recentes /
+    Navegue por área) — painel "Área do Site". As imagens de ícone
+    (icone_*_imagem) são tratadas manualmente na view, fora deste form."""
     class Meta:
         model = ConfiguracaoSite
-        fields = ['titulo_destaques', 'titulo_recentes', 'titulo_areas']
+        fields = [
+            'titulo_destaques', 'icone_destaques',
+            'titulo_recentes', 'icone_recentes',
+            'titulo_areas', 'icone_areas',
+        ]
         widgets = {
             'titulo_destaques': RichTextWidget(),
             'titulo_recentes': RichTextWidget(),
             'titulo_areas': RichTextWidget(),
+            'icone_destaques': IconPicker(),
+            'icone_recentes': IconPicker(),
+            'icone_areas': IconPicker(),
         }

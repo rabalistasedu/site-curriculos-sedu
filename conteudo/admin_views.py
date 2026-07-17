@@ -649,8 +649,14 @@ def area_do_site_view(request):
         if action == 'salvar_titulos':
             form = TituloSecoesForm(request.POST, instance=config)
             if form.is_valid():
-                form.save()
-                messages.success(request, 'Títulos das seções atualizados com sucesso!')
+                obj = form.save(commit=False)
+                for campo in ('icone_destaques_imagem', 'icone_recentes_imagem', 'icone_areas_imagem'):
+                    if campo in request.FILES:
+                        setattr(obj, campo, request.FILES[campo])
+                    elif request.POST.get(f'limpar_{campo}'):
+                        setattr(obj, campo, None)
+                obj.save()
+                messages.success(request, 'Títulos e ícones das seções atualizados com sucesso!')
             else:
                 messages.error(request, 'Não foi possível salvar os títulos.')
             return redirect('admin_area_do_site')

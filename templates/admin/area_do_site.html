@@ -40,6 +40,10 @@
     .as-add-botao-form label { font-size: 11px; font-weight: 600; color: #374151; display: block; margin-bottom: 3px; }
     .as-add-botao-form input, .as-add-botao-form select { width: 100%; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 12px; }
     .as-btn-mini { background: #0891b2; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .as-icone-bloco { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px; margin-bottom: 16px; background: #fafafa; }
+    .as-icone-atual { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 10px; }
+    .as-icone-atual img { width: 32px; height: 32px; object-fit: contain; background: repeating-conic-gradient(#e5e7eb 0% 25%, #fff 0% 50%) 50% / 10px 10px; border-radius: 4px; }
+    .as-icone-atual label { font-size: 11px; color: #6b7280; display: flex; align-items: center; gap: 4px; cursor: pointer; }
     .as-btn-mini:hover { background: #0e7490; }
     .as-coluna-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
     .as-coluna-footer form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -63,24 +67,61 @@
     <p>Gerencie os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da página inicial — e crie colunas extras com botões personalizados ao lado delas.</p>
 </div>
 
-<!-- Títulos das 3 seções -->
+<!-- Títulos + ícones das 3 seções -->
 <div class="as-section">
-    <h3><i class="fas fa-heading" style="color:#0891b2;"></i> Títulos das seções da home</h3>
-    <form method="post">
+    <h3><i class="fas fa-heading" style="color:#0891b2;"></i> Títulos e ícones das seções da home</h3>
+    <p class="as-help" style="margin-bottom:16px;">Escolha um ícone padrão do site OU envie uma imagem sua (qualquer formato) — a imagem sempre aparece com fundo transparente, sem prejudicar a estética do site.</p>
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="hidden" name="action" value="salvar_titulos">
 
-        <label class="as-label">Título de "Destaques"</label>
-        {{ form.titulo_destaques }}
+        <div class="as-icone-bloco">
+            <label class="as-label">Título de "Destaques"</label>
+            {{ form.titulo_destaques }}
+            <label class="as-label" style="margin-top:10px;">Ícone de "Destaques"</label>
+            {% if config.icone_destaques_imagem %}
+            <div class="as-icone-atual">
+                <img src="{{ config.icone_destaques_imagem.url }}" alt="">
+                <label><input type="checkbox" name="limpar_icone_destaques_imagem" value="1"> Remover imagem</label>
+            </div>
+            {% endif %}
+            {{ form.icone_destaques }}
+            <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
+            <input type="file" name="icone_destaques_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+        </div>
 
-        <label class="as-label" style="margin-top:8px;">Título de "Conteúdos recentes"</label>
-        {{ form.titulo_recentes }}
+        <div class="as-icone-bloco">
+            <label class="as-label">Título de "Conteúdos recentes"</label>
+            {{ form.titulo_recentes }}
+            <label class="as-label" style="margin-top:10px;">Ícone de "Conteúdos recentes"</label>
+            {% if config.icone_recentes_imagem %}
+            <div class="as-icone-atual">
+                <img src="{{ config.icone_recentes_imagem.url }}" alt="">
+                <label><input type="checkbox" name="limpar_icone_recentes_imagem" value="1"> Remover imagem</label>
+            </div>
+            {% endif %}
+            {{ form.icone_recentes }}
+            <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
+            <input type="file" name="icone_recentes_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+        </div>
 
-        <label class="as-label" style="margin-top:8px;">Título de "Navegue por área"</label>
-        {{ form.titulo_areas }}
+        <div class="as-icone-bloco">
+            <label class="as-label">Título de "Navegue por área"</label>
+            {{ form.titulo_areas }}
+            <label class="as-label" style="margin-top:10px;">Ícone de "Navegue por área"</label>
+            {% if config.icone_areas_imagem %}
+            <div class="as-icone-atual">
+                <img src="{{ config.icone_areas_imagem.url }}" alt="">
+                <label><input type="checkbox" name="limpar_icone_areas_imagem" value="1"> Remover imagem</label>
+            </div>
+            {% endif %}
+            {{ form.icone_areas }}
+            <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
+            <input type="file" name="icone_areas_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+        </div>
 
         <button type="submit" class="as-save" style="margin-top:12px;">
-            <i class="fas fa-save"></i> Salvar títulos
+            <i class="fas fa-save"></i> Salvar títulos e ícones
         </button>
     </form>
 </div>

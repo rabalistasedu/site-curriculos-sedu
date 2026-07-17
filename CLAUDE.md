@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v13 — atualizado em 2026-07-17 — Parte 17)
+# Site Currículos SEDU — Contexto do Projeto (v14 — atualizado em 2026-07-17 — Parte 18)
 
 ## O que é este projeto
 
@@ -10,7 +10,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 - O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **7 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, **Área do Site**).
 - **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-17 — "parte 17")**: **Novo painel "Área do Site"** — gerencia (1) o texto/formatação (negrito, itálico, sublinhado, alinhamento, lista) dos títulos das 3 seções da home ("Destaques", "Conteúdos recentes", "Navegue por área") via `ConfiguracaoSite.titulo_destaques/titulo_recentes/titulo_areas` (TextField HTML, RichTextWidget, migração 0027); (2) colunas extras opcionais à esquerda/direita da faixa "Recentes + Navegue por área" (novos modelos `ColunaExtra` e `ColunaExtraBotao`), cada uma com título e botões próprios (nome + categoria do site OU link externo + ícone FA/imagem). View `area_do_site_view` em `conteudo/admin_views.py`, template `templates/admin/area_do_site.html`, URL `/admin/area-do-site/`, banner ciano no dashboard. `home.html` envolve `.home-split` num `.home-split-wrap` flex para acomodar as colunas extras nas laterais. Detalhes no histórico item 30.
+- **Leva mais recente (2026-07-17 — "parte 18")**: **Ícones das 3 seções da home** — painel "Área do Site" ganhou seletor de ícone para "Destaques", "Conteúdos recentes" e "Navegue por área": escolha entre os ícones padrão do site (IconPicker, mesma grade usada em Conteúdo/Categoria) OU envie uma imagem em qualquer formato — a imagem sempre é exibida com **fundo transparente** (classe `.title-icon.sem-fundo` + `object-fit:contain`), sem prejudicar a estética do site. Novos campos em `ConfiguracaoSite`: `icone_destaques/icone_recentes/icone_areas` (Font Awesome) + `icone_destaques_imagem/icone_recentes_imagem/icone_areas_imagem` (upload, prioridade sobre o FA). Migração 0028. Detalhes no histórico item 31.
+- **Leva anterior (2026-07-17 — "parte 17")**: **Novo painel "Área do Site"** — gerencia (1) o texto/formatação (negrito, itálico, sublinhado, alinhamento, lista) dos títulos das 3 seções da home ("Destaques", "Conteúdos recentes", "Navegue por área") via `ConfiguracaoSite.titulo_destaques/titulo_recentes/titulo_areas` (TextField HTML, RichTextWidget, migração 0027); (2) colunas extras opcionais à esquerda/direita da faixa "Recentes + Navegue por área" (novos modelos `ColunaExtra` e `ColunaExtraBotao`), cada uma com título e botões próprios (nome + categoria do site OU link externo + ícone FA/imagem). View `area_do_site_view` em `conteudo/admin_views.py`, template `templates/admin/area_do_site.html`, URL `/admin/area-do-site/`, banner ciano no dashboard. `home.html` envolve `.home-split` num `.home-split-wrap` flex para acomodar as colunas extras nas laterais. Detalhes no histórico item 30.
 - **Leva anterior (2026-07-17 — "parte 16")**: **Gerenciamento de Destaques: campo `destaque_gerenciado` para controlar visibilidade** — (1) novo campo `Conteudo.destaque_gerenciado` (BooleanField, migração 0026) marca "este item pertence à área de Destaques do Organizador"; (2) lista de destaques agora mostra TODOS com `destaque_gerenciado=True`, ocultos ou não (usando campo separado `destaque` para visibilidade na home); (3) checkbox "Ocultar" continua funcionando (liga/desliga `destaque`), mas **item permanece na lista de gerenciamento** para reativação posterior; (4) conteúdos criados via "Criar Destaque" nascem com `destaque_gerenciado=True`; (5) 3 destaques existentes marcados retroativamente. Detalhes no histórico item 29.
 - **Leva anterior (2026-07-17 — "parte 15")**: **Botões excluir no Organizador** — (1) coluna "Excluir" 🗑️ na tabela "Conteúdos em [botão]" com confirmação; (2) nova tabela "Arquivos anexados" mostrando todos os Anexo ligados à categoria com botão excluir; (3) ações `excluir_conteudo` e `excluir_anexo` no backend com validação de segurança. Detalhes no histórico item 28.
 - **Leva anterior (2026-07-17 — "parte 14")**: **Subáreas vs Botões: campo `mostrar_como_card` para controlar duplicação** — (1) novo campo `Categoria.mostrar_como_card` (BooleanField, padrão True) distingue botões/subbotões estruturais (aparecem como chip + card grande) de subáreas rápidas (aparecem só como chip, sem duplicar); (2) função "Criar subárea nos botões marcados" agora cria com `mostrar_como_card=False` automaticamente; (3) "Criar novo botão" cria com `mostrar_como_card=True` (padrão); (4) campo editável no Django Admin de Categoria para ajuste manual. Detalhes no histórico item 27.
@@ -30,7 +31,7 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0027` + `painel/0002`. Migração **`conteudo/0027`** (ColunaExtra/ColunaExtraBotao + títulos das seções da home) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0028` + `painel/0002`. Migração **`conteudo/0028`** (ícones das 3 seções da home) é a mais recente.
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -216,7 +217,7 @@ Comentários moderados (3 estados, migração 0019 — 2026-07-13).
 5. **Botões da Barra Superior** (`/admin/barra-superior/`, cartão ciano no dashboard) — tela simples para marcar quais botões principais aparecem na barra azul do topo (grava `mostrar_menu_superior` — vale também para o rodapé), mudar a ordem e criar/editar/excluir botões. Pedido do Dan de 2026-07-11: a barra exibe fixos Documentos Curriculares, Programas, Projetos Integradores, Olimpíadas e Institucional.
 6. **Editor do Rodapé** (`/admin/editor-rodape/`, cartão cinza no dashboard) — edita textos, links, ícones e imagens das 3 colunas do rodapé + copyright + contato/endereço.
 7. **Estrutura de Árvores** (`/admin/estrutura-arvores/`, banner âmbar) — ver seção dedicada acima (histórico item 24).
-8. **Área do Site** (`/admin/area-do-site/`, banner ciano no dashboard, parte 17 — 2026-07-17) — (a) formata (negrito/itálico/sublinhado/alinhamento/lista) os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da home via `RichTextWidget`; (b) cria colunas extras (`ColunaExtra`) à esquerda ou direita da faixa "Recentes + Navegue por área", cada uma com botões próprios (`ColunaExtraBotao` — nome + categoria do site OU link externo + ícone).
+8. **Área do Site** (`/admin/area-do-site/`, banner ciano no dashboard, partes 17-18 — 2026-07-17) — (a) formata (negrito/itálico/sublinhado/alinhamento/lista) os títulos das seções "Destaques", "Conteúdos recentes" e "Navegue por área" da home via `RichTextWidget`; (b) escolhe o ÍCONE de cada uma dessas 3 seções — padrão do site (IconPicker) OU imagem enviada em qualquer formato, sempre com fundo transparente; (c) cria colunas extras (`ColunaExtra`) à esquerda ou direita da faixa "Recentes + Navegue por área", cada uma com botões próprios (`ColunaExtraBotao` — nome + categoria do site OU link externo + ícone).
 
 ## Comportamentos importantes do front-end
 
@@ -868,6 +869,32 @@ python manage.py importar_remanescentes       # FASE 4: importa SÓ o que falta 
 - **Arquivos modificados**: `conteudo/models.py` (3 campos em ConfiguracaoSite + modelos ColunaExtra/ColunaExtraBotao), `conteudo/migrations/0027_colunaextra_configuracaosite_titulo_areas_and_more.py` (nova migração), `conteudo/forms.py` (TituloSecoesForm), `conteudo/admin_views.py` (area_do_site_view), `conteudo/admin.py` (ColunaExtraAdmin + inline), `conteudo/views.py` (home() busca colunas extras), `templates/admin/area_do_site.html` (novo), `templates/admin/index.html` (banner), `templates/home.html` (títulos via config + colunas extras), `static/css/style.css` (bloco novo), `templates/base.html` (cache-busting `-2`), `curriculo_sedu/urls.py` (rota nova)
 - **Testado fim-a-ponta** (via Django test client E interface real no navegador): título com `<strong>` salvo e renderizado em negrito na home ✓; coluna criada aparece do lado escolhido ✓; botão apontando para categoria gera URL correta (`/categoria/<slug>/`) ✓; botão aparece na home dentro da coluna ✓; editar coluna (mudar de lado) funciona ✓; excluir botão e excluir coluna funcionam (cascade) ✓; layout flex sem sobreposição (`getBoundingClientRect` confirmado) ✓
 - **Compatibilidade 100%**: nenhuma mudança quebrada — se nenhuma coluna extra existir, a home renderiza exatamente como antes (só o `.home-split-wrap` envolve o `.home-split`, sem efeito visual quando vazio)
+
+### 2026-07-17 — Ícones das 3 seções da home (parte 18)
+
+**Pedido do Dan**: escolher os ícones dos textos "Navegue por área", "Destaques" e "Conteúdo recente" entre os padrões do site, como também anexar qualquer formato de imagem, sempre com fundo transparente para não atrapalhar a estética.
+
+**1. Novos campos em `ConfiguracaoSite`** (migração `conteudo/0028`):
+   - `icone_destaques`, `icone_recentes` (default `fas fa-wand-magic-sparkles`), `icone_areas` (default `fas fa-compass`) — classe Font Awesome
+   - `icone_destaques_imagem`, `icone_recentes_imagem`, `icone_areas_imagem` (FileField, `icones_secao/`, qualquer formato) — tem prioridade sobre o ícone Font Awesome quando preenchida
+
+**2. Form `TituloSecoesForm`** (`conteudo/forms.py`): os 3 campos de ícone FA usam o `IconPicker` já existente no projeto (mesma grade de ícones usada em Conteúdo/Categoria). Os campos de imagem são tratados manualmente na view (fora do ModelForm), junto com checkboxes "Remover imagem" (`limpar_icone_X_imagem`).
+
+**3. Painel "Área do Site"** (`templates/admin/area_do_site.html`): cada uma das 3 seções (Destaques/Recentes/Áreas) ganhou um bloco com: título (RichTextWidget), grade de ícones padrão (IconPicker), preview do ícone/imagem atual (com fundo quadriculado para visualizar transparência) + checkbox remover, e campo de upload de nova imagem. Form principal agora é `enctype="multipart/form-data"`.
+
+**4. Renderização (`templates/home.html`)**: em cada uma das 3 seções, se há imagem enviada (`icone_X_imagem`), renderiza `<img class="icone-personalizado">` dentro de `<span class="title-icon sem-fundo">` (fundo removido); senão, renderiza o ícone Font Awesome escolhido (ou o padrão do site, se nenhum foi escolhido).
+
+**5. CSS** (`static/css/style.css`, junto ao bloco `.title-icon`):
+   ```css
+   .title-icon.sem-fundo { background: none; }
+   .title-icon .icone-personalizado { padding: 0; }
+   ```
+   Reutiliza a classe `.icone-personalizado` (já usada em botões/cards de conteúdo) que aplica `object-fit: contain` — a imagem nunca é cortada e nunca ganha fundo colorido atrás, mantendo a estética do site.
+
+- **Versão de cache**: CSS `?v=20260717-3` (incrementado de `-2`), JS sem mudança
+- **Arquivos modificados**: `conteudo/models.py` (6 campos novos em ConfiguracaoSite), `conteudo/migrations/0028_configuracaosite_icone_areas_and_more.py` (nova migração), `conteudo/forms.py` (TituloSecoesForm com IconPicker), `conteudo/admin_views.py` (area_do_site_view trata uploads/remoção de imagem), `templates/admin/area_do_site.html` (blocos de ícone por seção), `templates/home.html` (ícone dinâmico nas 3 seções), `static/css/style.css` (`.title-icon.sem-fundo`), `templates/base.html` (cache-busting `-3`)
+- **Testado fim-a-ponta**: escolher ícone FA (fa-star) para Destaques → aparece na home ✓; enviar imagem PNG para Recentes → aparece com prioridade sobre o FA, classe `sem-fundo` aplicada ✓; remover a imagem enviada (checkbox) → volta ao ícone FA padrão (`fa-wand-magic-sparkles`) ✓
+- **Compatibilidade 100%**: com os campos vazios (banco antigo), os ícones padrão (`fa-wand-magic-sparkles`/`fa-compass`) continuam aparecendo exatamente como antes; "Destaques" continua sem ícone até o Dan escolher um
 
 ### 2026-07-17 — Gerenciamento de Destaques: campo `destaque_gerenciado` (parte 16)
 
