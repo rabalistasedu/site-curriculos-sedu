@@ -719,23 +719,13 @@ def area_do_site_view(request):
             icone_img = request.FILES.get('botao_icone_imagem')
 
             # "Criar um botão completo do site": sem escolher uma categoria já
-            # existente, cria uma categoria de verdade (nested em "Botões
-            # novos criados", mesmo comportamento do Painel Central/Estrutura
-            # de Árvores quando nenhum pai é escolhido) — a partir daí o
-            # botão aparece em TODAS as árvores (Estrutura de Árvores, Painel
-            # Central, Organizador, Barra Superior) e aceita tudo que os
-            # outros botões aceitam (conteúdos, subbotões, anexos, etc.).
+            # existente, cria uma categoria RAIZ de verdade (categoria_pai=None,
+            # igual a "Currículo Atual" e qualquer outro botão principal) — a
+            # partir daí o botão aparece em TODAS as árvores (Estrutura de
+            # Árvores, Painel Central, Organizador, Barra Superior) como raiz
+            # e aceita tudo que os outros botões aceitam (conteúdos,
+            # subbotões, anexos, etc.).
             if not categoria and criar_botao_completo:
-                pai_oculto, _ = Categoria.objects.get_or_create(
-                    slug='botoes-novos-criados',
-                    defaults={
-                        'nome': 'Botões novos criados',
-                        'icone': 'fas fa-plus-circle',
-                        'ativa': True,
-                        'mostrar_menu_superior': False,
-                        'mostrar_navegue_area': False,
-                    },
-                )
                 slug = slugify(nome)
                 original_slug = slug
                 counter = 1
@@ -745,7 +735,7 @@ def area_do_site_view(request):
                 categoria = Categoria.objects.create(
                     nome=nome,
                     slug=slug,
-                    categoria_pai=pai_oculto,
+                    categoria_pai=None,
                     icone=icone_texto or 'fas fa-folder-open',
                     ativa=True,
                     mostrar_menu_superior=False,
