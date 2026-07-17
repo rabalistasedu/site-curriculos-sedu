@@ -44,6 +44,9 @@
     .as-icone-atual { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 10px; }
     .as-icone-atual img { width: 32px; height: 32px; object-fit: contain; background: repeating-conic-gradient(#e5e7eb 0% 25%, #fff 0% 50%) 50% / 10px 10px; border-radius: 4px; }
     .as-icone-atual label { font-size: 11px; color: #6b7280; display: flex; align-items: center; gap: 4px; cursor: pointer; }
+    .as-botao-arvore-toggle { flex-basis: 100%; padding: 6px 0; }
+    .as-botao-arvore-extra { flex-basis: 100%; display: flex; gap: 8px; flex-wrap: wrap; padding: 10px; background: #ecfeff; border: 1px dashed #0891b2; border-radius: 8px; }
+    .as-botao-arvore-extra > div { flex: 1; min-width: 160px; }
     .as-btn-mini:hover { background: #0e7490; }
     .as-coluna-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
     .as-coluna-footer form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -186,7 +189,7 @@
                     <input type="text" name="botao_nome" required placeholder="Ex.: Editais">
                 </div>
                 <div>
-                    <label>Categoria (opcional)</label>
+                    <label>Categoria já existente (opcional)</label>
                     <select name="botao_categoria">
                         <option value="">— nenhuma —</option>
                         {% for cat in categorias %}
@@ -195,7 +198,7 @@
                     </select>
                 </div>
                 <div>
-                    <label>OU link externo</label>
+                    <label>OU link externo simples</label>
                     <input type="url" name="botao_link" placeholder="https://...">
                 </div>
                 <div>
@@ -205,6 +208,23 @@
                 <div>
                     <label>OU ícone (imagem)</label>
                     <input type="file" name="botao_icone_imagem" accept="image/*">
+                </div>
+                <div class="as-botao-arvore-toggle">
+                    <label style="display:flex;align-items:center;gap:5px;font-weight:700;color:#0891b2;">
+                        <input type="checkbox" name="botao_criar_arvore" value="1" onchange="document.getElementById('arvore-extra-{{ coluna.pk }}').style.display=this.checked?'flex':'none'">
+                        Criar como botão completo do site (aparece nas árvores de botões)
+                    </label>
+                </div>
+                <div id="arvore-extra-{{ coluna.pk }}" class="as-botao-arvore-extra" style="display:none;">
+                    <p class="as-help" style="width:100%;margin:0 0 6px;">Deixe "Categoria já existente" vazia acima — um botão novo será criado, aparecendo na Estrutura de Árvores, Painel Central, Organizador e Barra Superior, pronto para receber conteúdos, subbotões e anexos como qualquer outro botão do site.</p>
+                    <div>
+                        <label>URL dentro do botão (opcional)</label>
+                        <input type="url" name="botao_url_rapida" placeholder="https://...">
+                    </div>
+                    <div>
+                        <label>Anexos dentro do botão (opcional)</label>
+                        <input type="file" name="botao_anexos_rapidos" multiple>
+                    </div>
                 </div>
                 <div style="flex:0;">
                     <button type="submit" class="as-btn-mini"><i class="fas fa-plus"></i> Adicionar botão</button>

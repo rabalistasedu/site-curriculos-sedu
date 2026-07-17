@@ -714,15 +714,79 @@ def area_do_site_view(request):
                 return redirect('admin_area_do_site')
             categoria_id = request.POST.get('botao_categoria') or None
             categoria = Categoria.objects.filter(pk=categoria_id).first() if categoria_id else None
+            criar_botao_completo = bool(request.POST.get('botao_criar_arvore'))
+            icone_texto = request.POST.get('botao_icone', '').strip()
+            icone_img = request.FILES.get('botao_icone_imagem')
+
+            # "Criar um botão completo do site": sem escolher uma categoria já
+            # existente, cria uma categoria de verdade (nested em "Botões
+            # novos criados", mesmo comportamento do Painel Central/Estrutura
+            # de Árvores quando nenhum pai é escolhido) — a partir daí o
+            # botão aparece em TODAS as árvores (Estrutura de Árvores, Painel
+            # Central, Organizador, Barra Superior) e aceita tudo que os
+            # outros botões aceitam (conteúdos, subbotões, anexos, etc.).
+            if not categoria and criar_botao_completo:
+                pai_oculto, _ = Categoria.objects.get_or_create(
+                    slug='botoes-novos-criados',
+                    defaults={
+                        'nome': 'Botões novos criados',
+                        'icone': 'fas fa-plus-circle',
+                        'ativa': True,
+                        'mostrar_menu_superior': False,
+                        'mostrar_navegue_area': False,
+                    },
+                )
+                slug = slugify(nome)
+                original_slug = slug
+                counter = 1
+                while Categoria.objects.filter(slug=slug).exists():
+                    slug = f'{original_slug}-{counter}'
+                    counter += 1
+                categoria = Categoria.objects.create(
+                    nome=nome,
+                    slug=slug,
+                    categoria_pai=pai_oculto,
+                    icone=icone_texto or 'fas fa-folder-open',
+                    ativa=True,
+                    mostrar_menu_superior=False,
+                    mostrar_navegue_area=False,
+                )
+                if icone_img:
+                    icone_img.seek(0)
+                    categoria.icone_imagem.save(icone_img.name, icone_img, save=True)
+
+            # URL / anexos rápidos — preenchem o botão (novo ou já existente)
+            # sem precisar abrir a árvore de botões separadamente.
+            url_rapida = request.POST.get('botao_url_rapida', '').strip()
+            if categoria and url_rapida:
+                slug_link = slugify(nome)[:50] or 'link'
+                original_link = slug_link
+                n = 1
+                while Conteudo.objects.filter(slug=slug_link).exists():
+                    slug_link = f'{original_link}-{n}'
+                    n += 1
+                Conteudo.objects.create(
+                    titulo=nome,
+                    slug=slug_link,
+                    tipo='link',
+                    url_externa=url_rapida,
+                    categoria=categoria,
+                    status='publicado',
+                )
+            if categoria:
+                for arq in request.FILES.getlist('botao_anexos_rapidos'):
+                    Anexo.objects.create(categoria=categoria, arquivo=arq, nome=arq.name)
+
             botao = ColunaExtraBotao.objects.create(
                 coluna=coluna,
                 nome=nome,
                 categoria=categoria,
-                link_externo=request.POST.get('botao_link', '').strip(),
-                icone=request.POST.get('botao_icone', '').strip() or 'fas fa-link',
+                link_externo=request.POST.get('botao_link', '').strip() if not categoria else '',
+                icone=icone_texto or 'fas fa-link',
             )
-            if 'botao_icone_imagem' in request.FILES:
-                botao.icone_imagem = request.FILES['botao_icone_imagem']
+            if icone_img:
+                icone_img.seek(0)
+                botao.icone_imagem = icone_img
                 botao.save(update_fields=['icone_imagem'])
             messages.success(request, f'Botão "{nome}" adicionado à coluna "{coluna.titulo}".')
             return redirect('admin_area_do_site')
