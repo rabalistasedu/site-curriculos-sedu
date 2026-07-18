@@ -162,7 +162,20 @@
       "Bash(dir *.md)",
       "Bash(venv/Scripts/python manage.py makemigrations conteudo)",
       "Bash(venv/Scripts/python manage.py migrate conteudo)",
-      "Bash(venv/Scripts/python \"/c/Users/RABALI~1/AppData/Local/Temp/claude/C--ridan-Claude-Projects-Site-Curriculos-SEDU/29405347-a47b-4f24-8aab-acdd5c7f2b02/scratchpad/gen_preview.py\")"
+      "Bash(venv/Scripts/python \"/c/Users/RABALI~1/AppData/Local/Temp/claude/C--ridan-Claude-Projects-Site-Curriculos-SEDU/29405347-a47b-4f24-8aab-acdd5c7f2b02/scratchpad/gen_preview.py\")",
+      "Bash(docker --version)",
+      "Bash(docker compose *)",
+      "Read(//tmp/**)",
+      "Bash(echo \"exit=$?\")",
+      "PowerShell(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\"; docker compose exec -T web tar czf - -C /app/media . > \"$env:TEMP\\\\teste_media.tar.gz\"; Write-Host \"ExitCode: $LASTEXITCODE\"; Get-Item \"$env:TEMP\\\\teste_media.tar.gz\" | Select-Object Length)",
+      "PowerShell(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\"; cmd /c 'docker compose exec -T web tar czf - -C /app/media . > \"%TEMP%\\\\teste_media_cmd.tar.gz\"'; Write-Host \"ExitCode: $LASTEXITCODE\"; Get-Item \"$env:TEMP\\\\teste_media_cmd.tar.gz\" | Select-Object Length)",
+      "PowerShell(docker compose exec -T web sh -c \"du -sh /app/media && find /app/media -type f | wc -l\")",
+      "Bash(tar tzf *)",
+      "PowerShell(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\"; cmd /c 'docker compose exec -T db pg_dump -U curriculo_sedu curriculo_sedu > \"%TEMP%\\\\teste_db_cmd.sql\"'; Write-Host \"ExitCode: $LASTEXITCODE\"; Get-Item \"$env:TEMP\\\\teste_db_cmd.sql\" | Select-Object Length)",
+      "PowerShell(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\"; cmd /c '\"BAT SEDU\\\\BACKUP DOCKER COMPLETO.bat\" < NUL > \"%TEMP%\\\\backup_log.txt\" 2>&1'; Write-Host \"ExitCode: $LASTEXITCODE\"; Get-Content \"$env:TEMP\\\\backup_log.txt\")",
+      "Bash(unzip -l \"docker_backups/backup_20260718_140924/codigo_projeto.zip\")",
+      "Bash(awk '{print $1, $4}')",
+      "Bash(unzip -l \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\docker_backups\\\\backup_20260718_140924\\\\codigo_projeto.zip\")"
     ]
   }
 }

@@ -229,3 +229,6 @@ BKPbat/
 
 # Dump temporario usado para espelhar o banco local no Docker (dados sensiveis)
 dump_local.json
+
+# Backups completos do Docker (banco + midia + codigo) - contem dados, nao versionar
+docker_backups/

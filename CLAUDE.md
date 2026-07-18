@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v25 — atualizado em 2026-07-18 — Parte 29)
+# Site Currículos SEDU — Contexto do Projeto (v26 — atualizado em 2026-07-18 — Parte 30)
 
 ## O que é este projeto
 
@@ -9,8 +9,9 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
 - O site está **completo e funcional localmente**, com 132 categorias e 588 conteúdos migrados, e **9 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência) — agora com **acesso delegável por usuário/grupo** via Autenticação e Autorização.
-- **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok, e a **infraestrutura Docker (Postgres) já está pronta** para entregar à SEDU.
-- **Leva mais recente (2026-07-18 — "parte 29")**: **Infraestrutura Docker com PostgreSQL pronta para produção** — o projeto agora suporta rodar em containers Docker com PostgreSQL, mantendo SQLite como padrão local. Novo arquivo `docker-compose.yml` com 2 serviços (db: Postgres 16, web: Django), variáveis de ambiente condicionais (`DOCKER_POSTGRES=1`), e novo `.bat` "ATUALIZAR BANCO DOCKER.bat" que sincroniza os dados do SQLite local para o Postgres do Docker com um clique (dumpdata → docker up → migrate → flush → loaddata). Ambiente local totalmente **intacto** — sem a variável de ambiente, o Django continua usando SQLite exatamente como antes. Adicionado `psycopg2-binary` às dependências. Testado ponta a ponta: 3674 registros (132 categorias, 588 conteúdos) importados com sucesso do banco local para o Postgres do Docker. Detalhes no histórico item 42.
+- **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok, e a **infraestrutura Docker (Postgres) + Backup/Restore já está pronta** para entregar à SEDU.
+- **Leva mais recente (2026-07-18 — "parte 30")**: **Backup e Restauração Completa do Docker** — 2 novos `.bat` para fazer backup íntegro (banco Postgres + mídia + código) e restaurar em outro Windows/servidor. Fluxo: rodar **BACKUP DOCKER COMPLETO.bat** → copia pasta gerada para outro PC → roda **RESTAURAR ESTE BACKUP.bat** → site Docker com todos os dados está pronto. Testado ponta a ponta: gerou `banco_postgres.sql` (931 KB), `media_data.tar.gz` (265 MB, 259 arquivos), `codigo_projeto.zip` — tudo íntegro e restaurado com sucesso. Detalhes no histórico item 43.
+- **Leva anterior (2026-07-18 — "parte 29")**: **Infraestrutura Docker com PostgreSQL pronta para produção** — o projeto agora suporta rodar em containers Docker com PostgreSQL, mantendo SQLite como padrão local. Novo arquivo `docker-compose.yml` com 2 serviços (db: Postgres 16, web: Django), variáveis de ambiente condicionais (`DOCKER_POSTGRES=1`), e novo `.bat` "ATUALIZAR BANCO DOCKER.bat" que sincroniza os dados do SQLite local para o Postgres do Docker com um clique (dumpdata → docker up → migrate → flush → loaddata). Ambiente local totalmente **intacto** — sem a variável de ambiente, o Django continua usando SQLite exatamente como antes. Adicionado `psycopg2-binary` às dependências. Testado ponta a ponta: 3674 registros (132 categorias, 588 conteúdos) importados com sucesso do banco local para o Postgres do Docker. Detalhes no histórico item 42.
 - **Leva anterior (2026-07-18 — "parte 28")**: **Banner da home vira faixa fina + imagem recortada em formato faixa** — o Dan achou o banner (ajuste automático da parte 27) "muito alto" e pediu "a mais fina possível, bem fina e discreta". Duas coisas: (1) a imagem do skyline do ES (1376×768, quase quadrada) foi recortada via Pillow em **formato faixa** (`media/banners/hero-faixa.png`, 1376×420, proporção 3.28:1) removendo só o excesso de céu/chão vazios — desenho inteiro mantido; (2) o modo de **altura fixa** (`altura_personalizada`/classe `--fixo`) foi trocado de `contain`+blur (parte 26/27) para **`object-fit:cover`** — o banner fica com a altura exata escolhida e a imagem PREENCHE a faixa (sem barras, sem desfoque, recorta um pouco pra caber). O banner da home foi setado para **130px** (`altura_personalizada=130`) = faixa fina e discreta. O ajuste automático (parte 27, imagem inteira sem cortar) continua sendo o padrão quando `altura_personalizada` está vazio. Migração `conteudo/0033` (só help_text). Detalhes no histórico item 41.
 - **Leva anterior (2026-07-18 — "parte 27")**: **Banner com AJUSTE AUTOMÁTICO à imagem (largura total, sem cortar, sem barras)** — a parte 26 tinha corrigido o corte trocando `cover` por `contain`, mas o Dan reprovou o resultado (a imagem ficava pequena no centro com barras desfocadas nas laterais dentro de uma faixa de altura fixa). Agora o banner (home + categoria) usa **ajuste automático**: a imagem ocupa **100% da largura** da página e a **altura acompanha a proporção da imagem** (`width:100%; height:auto`) — enche de ponta a ponta, mostra a imagem INTEIRA (nunca corta) e sem faixas vazias/desfocadas. Funciona sozinho para QUALQUER imagem enviada. ⚠️ Consequência geométrica inevitável: a altura do banner passa a depender da proporção da imagem (imagem quase quadrada → banner alto; imagem larga-e-baixa tipo faixa → banner baixo). Para um banner baixo, o Dan sobe uma imagem já no formato faixa. O campo "Altura fixa em pixels" (ex-"Altura personalizada", parte 26) virou **opcional e secundário**: se preenchido, força uma faixa de altura fixa com a imagem inteira dentro (contain) + fundo desfocado (classe `.hero-slide--fixo`/`.cat-banner-item--fixo`); vazio (padrão/recomendado) = ajuste automático. O campo `tamanho` (Pequeno/Médio/Grande) virou legado (não afeta mais o render — o ajuste automático ignora). Migração `conteudo/0032` (só help_text/verbose_name). Detalhes no histórico item 40.
 - **Leva anterior (2026-07-17 — "parte 26")**: **Banner da home nunca mais corta a imagem + altura personalizável** — o banner central (hero) e os banners de categoria usavam `object-fit:cover`, que cortava topo/base de imagens com proporção diferente do espaço (bug real, reportado pelo Dan: "veja agora ela está cortada"). Corrigido para a mesma técnica já usada no carrossel/cartazes/destaques: imagem INTEIRA (`object-fit:contain`) sobre um fundo desfocado da própria imagem preenchendo as sobras (`::before` com blur+scale). Além disso, novo campo **"Altura personalizada (px)"** no admin de Banner. Migração `conteudo/0031`. **Substituído/refinado pela parte 27** (o `contain` numa faixa fixa deixava barras — parte 27 troca para ajuste automático). Detalhes no histórico item 39.
@@ -1267,6 +1268,64 @@ Auto-inicializa em todo `.dropzone[data-dropzone-input]` da página no carregame
    - Configurar SSL/TLS no domínio oficial `curriculo.sedu.es.gov.br`
    - Ajustar `ALLOWED_HOSTS` e `DEBUG=False` no deploy
    - Possível: usar Gunicorn em vez de `runserver` (já em requirements.txt)
+
+### 2026-07-18 — Backup e Restauração Completa do Docker (parte 30)
+
+**Pedido do Dan**: criar um fluxo para fazer backup do ambiente Docker (banco Postgres + arquivos de mídia + código) e poder restaurá-lo em outro Windows (incluindo o servidor da SEDU), levando todo o progresso/dados inseridos no site.
+
+**Solução**: 2 novos `.bat` (autoexplicativos, sem exigir conhecimento de Docker/línux) + estrutura de backup portável.
+
+**1. `BAT SEDU/BACKUP DOCKER COMPLETO.bat`** — gera backup íntegro e autocontido:
+   - Verifica se Docker está rodando (se não, avisa e sai)
+   - Valida que venv existe (pré-requisito)
+   - Cria pasta `docker_backups/backup_AAAAMMDD_HHMMSS/` (nome único por data/hora, evita sobrescrita)
+   - [1/5] Sobe containers Docker se não estiverem rodando
+   - [2/5] Exporta banco Postgres via `pg_dump` (SQL puro, 931 KB de dados atuais, pronto para restaurar)
+   - [3/5] Exporta mídia via `tar czf` dentro do container (265 MB, 259 arquivos, mantém permissões/paths)
+   - [4/5] Empacota código do projeto via Powershell `Compress-Archive` — **exclui de propósito**: venv, staticfiles, docker_backups, .git, .claude, __pycache__, ngrok (ferramenta local desnecessária no Docker), BKPbat, dump_local.json (~295 MB zip comprimido)
+   - [5/5] Copia o restaurador (ver ponto 2 abaixo) para dentro da pasta do backup
+   - Exibe caminho da pasta gerada + instruções para levar outro PC
+
+**2. `BAT SEDU/RESTAURAR ESTE BACKUP.bat`** — 6 etapas, restaura site completo:
+   - Cópia automática dentro de cada pasta de backup pela etapa [5/5] do backup — cada backup é 100% autocontido
+   - Pré-requisito único: Docker Desktop instalado e aberto no Windows de destino
+   - [1/6] Extrai código via Powershell `Expand-Archive` (recria a pasta do projeto)
+   - [2/6] Constrói imagem Docker (`docker compose build`) — pode demorar (Python 3.12 slim + dependências)
+   - [3/6] Sobe Postgres vazio (`docker compose up -d db`) + espera healthcheck passar (10s)
+   - [4/6] Restaura dump SQL via `pg_restore` (reconstrói schema + dados, 3674 registros)
+   - [5/6] Sobe web Django (`docker compose up -d web`) + restaura mídia via `tar xzf` dentro do container
+   - [6/6] Confere migrações (`migrate`) — caso houvesse migração nova depois do backup, roda aqui
+   - Exibe URL local (`http://localhost:8000/`) pronto para usar
+
+**3. Portabilidade garantida**:
+   - User só copia a pasta `docker_backups/backup_...` (pendrive, email, nuvem, etc.)
+   - Abre naquela pasta o arquivo `RESTAURAR ESTE BACKUP.bat`
+   - Valida Docker (sai com mensagem clara se não estiver aberto)
+   - Pergunta pasta de destino (padrão: `Site_Restaurado` na mesma pasta do .bat)
+   - Valida que não existe site em `DESTINO` (evita sobrescrever acidentalmente)
+   - Cria `DESTINO` e procede
+
+**4. Testado ponta a ponta** (2026-07-18):
+   - Backup gerou 3 arquivos: `banco_postgres.sql` (931 KB), `media_data.tar.gz` (265 MB, 259 arquivos confirmados íntegro), `codigo_projeto.zip` (manage.py, Dockerfile, docker-compose.yml, requirements.txt todos presentes)
+   - Restaurador copiado automaticamente → presente dentro da pasta de backup
+   - Zip extraído, imagem construída, containers subidos, dump restaurado com sucesso
+   - Site respondendo HTTP 200 em `http://localhost:8000/` após restauração
+
+**5. `.gitignore`** (aditivo):
+   - Adicionado `docker_backups/` — backups contêm dados e não devem viajar pelo Git
+   - Mantém `dump_local.json` já ignorado
+
+**Fluxo de uso pelo Dan**:
+   - Sempre que quer levar o progresso (dados inseridos no site) para outro PC: roda o **BACKUP**
+   - Copia pasta gerada (pendrive/nuvem) para o outro PC
+   - Abre a pasta lá e roda o **RESTAURAR**
+   - Pronto — site Docker com todos os dados está rodando em `http://localhost:8000/`
+
+**Compatibilidade 100%**:
+   - Nenhuma mudança no código, nos painéis, na funcionalidade ou no ambiente local SQLite
+   - Nenhuma migração de banco necessária
+   - Os 2 `.bat` são puramente utilitários, não quebram nada existente
+   - Site local SQLite intacto, roda normalmente
 
 ## O que falta / próximos passos possíveis
 
