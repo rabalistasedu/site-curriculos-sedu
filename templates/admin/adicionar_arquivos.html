@@ -257,6 +257,17 @@
 .aa-file-table input[type="text"]:focus,
 .aa-file-table input[type="url"]:focus { border-color: #2d5a8e; }
 
+.dropzone {
+    border: 2px dashed #cbd5e1; border-radius: 8px; padding: 16px 10px; text-align: center;
+    cursor: pointer; background: #f9fafb; color: #6b7280; font-size: 12.5px; margin-bottom: 12px;
+    transition: border-color .15s, background .15s, color .15s;
+}
+.dropzone i { display: block; font-size: 20px; margin-bottom: 6px; color: #94a3b8; }
+.dropzone:hover { border-color: #2d5a8e; color: #2d5a8e; }
+.dropzone:hover i { color: #2d5a8e; }
+.dropzone.dropzone-ativa { border-color: #2d5a8e; background: #eef2f7; color: #1e3a5f; }
+.dropzone.dropzone-ativa i { color: #1e3a5f; }
+
 .aa-ou {
     text-align: center;
     font-size: 11px;
@@ -452,6 +463,11 @@
                 Para cada item, escolha <strong>uma</strong> das opções: subir um arquivo do seu computador
                 <strong>OU</strong> colar um link externo (Google Drive, site, YouTube, etc.).
             </p>
+
+            <div class="dropzone" id="dzArquivosTabela">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <span id="dzArquivosTabelaTexto">Arraste vários arquivos aqui para preencher as linhas de uma vez (ou use os campos abaixo)</span>
+            </div>
 
             <table class="aa-file-table" id="fileTable">
                 <thead>
@@ -820,7 +836,7 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-function addRow() {
+function addRow(arquivo) {
     var tbody = document.getElementById('fileRows');
     var tr = document.createElement('tr');
     tr.innerHTML =
@@ -835,8 +851,51 @@ function addRow() {
         '<div class="aa-nome-hint">Nome que aparece no site (obrigatório para links)</div></td>' +
         '<td><button type="button" class="aa-remove-btn" onclick="removeRow(this)" title="Remover"><i class="fas fa-times"></i></button></td>';
     tbody.appendChild(tr);
+    if (arquivo) {
+        var fileInput = tr.querySelector('input[type=file]');
+        var dt = new DataTransfer();
+        dt.items.add(arquivo);
+        fileInput.files = dt.files;
+    }
     rowCount++;
+    return tr;
 }
+
+// ── Arrastar-e-soltar vários arquivos de uma vez (preenche as linhas) ──
+(function () {
+    var dz = document.getElementById('dzArquivosTabela');
+    if (!dz) return;
+    dz.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        dz.classList.add('dropzone-ativa');
+    });
+    dz.addEventListener('dragleave', function () {
+        dz.classList.remove('dropzone-ativa');
+    });
+    dz.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dz.classList.remove('dropzone-ativa');
+        var soltos = e.dataTransfer.files;
+        if (!soltos || !soltos.length) return;
+        for (var i = 0; i < soltos.length; i++) {
+            // Usa a 1ª linha vazia disponível (sem arquivo nem URL) antes de criar uma nova.
+            var linhaVazia = null;
+            var linhas = document.querySelectorAll('#fileRows tr');
+            for (var j = 0; j < linhas.length; j++) {
+                var fi = linhas[j].querySelector('input[type=file]');
+                var ui = linhas[j].querySelector('input[type=url]');
+                if (fi && !fi.files.length && ui && !ui.value.trim()) { linhaVazia = linhas[j]; break; }
+            }
+            if (linhaVazia) {
+                var dt = new DataTransfer();
+                dt.items.add(soltos[i]);
+                linhaVazia.querySelector('input[type=file]').files = dt.files;
+            } else {
+                addRow(soltos[i]);
+            }
+        }
+    });
+})();
 
 function removeRow(btn) {
     var tbody = document.getElementById('fileRows');

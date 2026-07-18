@@ -154,7 +154,8 @@
       "Bash(rm -f test_botao_raiz.py)",
       "Bash(venvScriptspython -c ' *)",
       "Bash(venv/Scripts/python -c ' *)",
-      "Bash(venv/Scripts/python manage.py check)"
+      "Bash(venv/Scripts/python manage.py check)",
+      "Bash(venv/Scripts/python manage.py makemigrations --check --dry-run)"
     ]
   }
 }

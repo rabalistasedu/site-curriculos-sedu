@@ -53,6 +53,16 @@
     .pc-anexo-linha { display: grid; grid-template-columns: 1fr 1fr 34px; gap: 8px; margin-bottom: 8px; align-items: center; }
     .pc-anexo-rm { border: none; background: #fee2e2; color: #b91c1c; border-radius: 6px; height: 32px; cursor: pointer; font-weight: 700; }
     .pc-add-anexo { background: none; border: 1px dashed #2d5a8e; color: #2d5a8e; border-radius: 6px; padding: 7px 14px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .dropzone {
+        border: 2px dashed #cbd5e1; border-radius: 8px; padding: 14px 10px; text-align: center;
+        cursor: pointer; background: #f8fafc; color: #6b7280; font-size: 12px; margin-bottom: 8px;
+        transition: border-color .15s, background .15s, color .15s;
+    }
+    .dropzone i { display: block; font-size: 18px; margin-bottom: 5px; color: #94a3b8; }
+    .dropzone:hover { border-color: #2d5a8e; color: #2d5a8e; }
+    .dropzone:hover i { color: #2d5a8e; }
+    .dropzone.dropzone-ativa { border-color: #2d5a8e; background: #eef4fb; color: #1e3a5f; }
+    .dropzone.dropzone-ativa i { color: #1e3a5f; }
     .pc-chk { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1a1a2e; margin-bottom: 8px; cursor: pointer; }
     .pc-chk input { accent-color: #2d5a8e; width: 15px; height: 15px; }
     .pc-salvar { background: linear-gradient(135deg, #059669, #047857); color: #fff; border: none; border-radius: 8px; padding: 13px 34px; font-size: 15px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; }
@@ -118,8 +128,11 @@
                 </div>
                 <div style="margin:0 0 8px;">
                     <label style="font-size:11px;font-weight:600;color:#374151;">Arquivos (múltiplos — opcional)</label>
-                    <input type="file" name="novo_arquivos" multiple
-                           style="width:100%;font-size:11px;padding:4px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;">
+                    <div class="dropzone" id="dzNovoArquivos" data-dropzone-input="novoArquivosInput" data-dropzone-texto="dzNovoArquivosTexto">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <span id="dzNovoArquivosTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+                    </div>
+                    <input type="file" name="novo_arquivos" id="novoArquivosInput" multiple style="display:none">
                 </div>
                 <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;">
                     <i class="fas fa-plus"></i> Criar botão
@@ -154,8 +167,11 @@
                 </div>
                 <div style="margin:0 0 8px;">
                     <label style="font-size:11px;font-weight:600;color:#1d4ed8;">Arquivos (múltiplos — opcional)</label>
-                    <input type="file" name="subarea_arquivos" multiple
-                           style="width:100%;font-size:11px;padding:4px;border:1px solid #93c5fd;border-radius:6px;background:#fff;">
+                    <div class="dropzone" id="dzSubareaArquivos" data-dropzone-input="subareaArquivosInput" data-dropzone-texto="dzSubareaArquivosTexto" style="border-color:#93c5fd;">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <span id="dzSubareaArquivosTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+                    </div>
+                    <input type="file" name="subarea_arquivos" id="subareaArquivosInput" multiple style="display:none">
                 </div>
                 <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);">
                     <i class="fas fa-plus"></i> Criar subárea dentro dos marcados
@@ -223,8 +239,12 @@
                     </div>
                 </div>
                 <div id="pc-editar-anexos-info" style="font-size:11px;color:#6b7280;margin-bottom:6px;"></div>
-                <label style="font-size:12px;font-weight:600;color:#374151;">Adicionar anexo:</label>
-                <input type="file" name="editar_anexo" style="font-size:12px;margin-bottom:8px;">
+                <label style="font-size:12px;font-weight:600;color:#374151;">Adicionar anexo(s):</label>
+                <div class="dropzone" id="dzEditarAnexo" data-dropzone-input="editarAnexoInput" data-dropzone-texto="dzEditarAnexoTexto">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    <span id="dzEditarAnexoTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+                </div>
+                <input type="file" name="editar_anexo" id="editarAnexoInput" multiple style="display:none">
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <button type="submit" class="pc-salvar" style="padding:9px 20px;font-size:13px;background:linear-gradient(135deg,#22c55e,#15803d);">
                         <i class="fas fa-save"></i> Salvar alterações
@@ -333,6 +353,10 @@
                         PDF, Word, Excel, PowerPoint, vídeo, imagem, ZIP... Com título preenchido, os arquivos
                         entram dentro do conteúdo; sem título, viram "Arquivos para download" de cada botão marcado.
                     </p>
+                    <div class="dropzone" id="dzAnexosConteudo" style="margin-bottom:10px;">
+                        <i class="fas fa-cloud-arrow-up"></i>
+                        <span id="dzAnexosConteudoTexto">Arraste vários arquivos aqui para adicionar de uma vez (ou use as linhas abaixo)</span>
+                    </div>
                     <div id="pc-anexos">
                         <div class="pc-anexo-linha">
                             <input type="file" name="arquivo_0">
@@ -668,15 +692,57 @@
 
     // ── Linhas dinâmicas de anexos ──
     var idx = 1;
-    document.getElementById('pc-add-anexo').addEventListener('click', function () {
+    function criarLinhaAnexo(arquivo) {
         var div = document.createElement('div');
         div.className = 'pc-anexo-linha';
         div.innerHTML = '<input type="file" name="arquivo_' + idx + '">' +
             '<input type="text" name="nome_' + idx + '" placeholder="Nome amigável (opcional)">' +
             '<button type="button" class="pc-anexo-rm" title="Remover linha">×</button>';
         document.getElementById('pc-anexos').appendChild(div);
+        if (arquivo) {
+            var fileInput = div.querySelector('input[type=file]');
+            var dt = new DataTransfer();
+            dt.items.add(arquivo);
+            fileInput.files = dt.files;
+        }
         idx++;
+        return div;
+    }
+    document.getElementById('pc-add-anexo').addEventListener('click', function () {
+        criarLinhaAnexo();
     });
+
+    // ── Arrastar-e-soltar vários arquivos de uma vez ──
+    (function () {
+        var dz = document.getElementById('dzAnexosConteudo');
+        dz.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dz.classList.add('dropzone-ativa');
+        });
+        dz.addEventListener('dragleave', function () {
+            dz.classList.remove('dropzone-ativa');
+        });
+        dz.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dz.classList.remove('dropzone-ativa');
+            var soltos = e.dataTransfer.files;
+            if (!soltos || !soltos.length) return;
+            // Usa a 1ª linha vazia (padrão arquivo_0) se ela ainda não tiver arquivo escolhido.
+            var linhas = document.querySelectorAll('.pc-anexo-linha');
+            var primeiraVazia = linhas.length === 1 && !linhas[0].querySelector('input[type=file]').files.length
+                ? linhas[0] : null;
+            for (var i = 0; i < soltos.length; i++) {
+                if (primeiraVazia) {
+                    var dt = new DataTransfer();
+                    dt.items.add(soltos[i]);
+                    primeiraVazia.querySelector('input[type=file]').files = dt.files;
+                    primeiraVazia = null;
+                } else {
+                    criarLinhaAnexo(soltos[i]);
+                }
+            }
+        });
+    })();
     document.getElementById('pc-anexos').addEventListener('click', function (e) {
         if (e.target.classList.contains('pc-anexo-rm')) {
             var linhas = document.querySelectorAll('.pc-anexo-linha');
@@ -813,4 +879,5 @@
 })();
 </script>
 <script src="{% static 'js/filtro_select.js' %}"></script>
+<script src="{% static 'js/dropzone.js' %}"></script>
 {% endblock %}

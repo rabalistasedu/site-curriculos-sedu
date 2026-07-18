@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{{ title }}{% endblock %}
 {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
@@ -51,6 +51,14 @@
     .as-coluna-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
     .as-coluna-footer form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .as-empty { text-align: center; padding: 30px; color: #9ca3af; font-size: 13px; }
+    .dropzone {
+        border: 2px dashed #a5f3fc; border-radius: 8px; padding: 12px 10px; text-align: center;
+        cursor: pointer; background: #fff; color: #6b7280; font-size: 11.5px; margin-bottom: 6px;
+        transition: border-color .15s, background .15s, color .15s;
+    }
+    .dropzone i { display: block; font-size: 16px; margin-bottom: 4px; color: #0891b2; }
+    .dropzone:hover { border-color: #0891b2; color: #0891b2; }
+    .dropzone.dropzone-ativa { border-color: #0891b2; background: #ecfeff; color: #0e7490; }
     .as-nova-coluna { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
     .as-nova-coluna > div { flex: 1; min-width: 180px; }
 </style>
@@ -223,7 +231,11 @@
                     </div>
                     <div>
                         <label>Anexos dentro do botão (opcional)</label>
-                        <input type="file" name="botao_anexos_rapidos" multiple>
+                        <div class="dropzone" id="dzBotaoAnexos{{ coluna.pk }}" data-dropzone-input="botaoAnexosInput{{ coluna.pk }}" data-dropzone-texto="dzBotaoAnexosTexto{{ coluna.pk }}">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span id="dzBotaoAnexosTexto{{ coluna.pk }}">Arraste arquivos aqui ou clique (vários)</span>
+                        </div>
+                        <input type="file" name="botao_anexos_rapidos" id="botaoAnexosInput{{ coluna.pk }}" multiple style="display:none">
                     </div>
                 </div>
                 <div style="flex:0;">
@@ -298,4 +310,5 @@
 </div>
 
 </div>
+<script src="{% static 'js/dropzone.js' %}"></script>
 {% endblock %}

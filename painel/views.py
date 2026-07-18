@@ -334,8 +334,7 @@ def _editar_botao(request):
             status='publicado',
         )
 
-    anexo_file = request.FILES.get('editar_anexo')
-    if anexo_file:
+    for anexo_file in request.FILES.getlist('editar_anexo'):
         Anexo.objects.create(
             categoria=cat,
             arquivo=anexo_file,

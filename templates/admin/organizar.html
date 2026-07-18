@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n %}
+{% load i18n static %}
 
 {% block title %}{{ title }}{% endblock %}
 {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
@@ -23,6 +23,16 @@
     .org-btn-orange:hover { background:#b45309; color:#fff; }
     .org-btn-save { background:#2563eb; }
     .org-btn-save:hover { background:#1d4ed8; color:#fff; }
+    .dropzone {
+        border: 2px dashed #cbd5e1; border-radius: 8px; padding: 14px 10px; text-align: center;
+        cursor: pointer; background: #f9fafb; color: #6b7280; font-size: 12px; margin-bottom: 6px;
+        transition: border-color .15s, background .15s, color .15s;
+    }
+    .dropzone i { display: block; font-size: 18px; margin-bottom: 5px; color: #94a3b8; }
+    .dropzone:hover { border-color: #2d5a8e; color: #2d5a8e; }
+    .dropzone:hover i { color: #2d5a8e; }
+    .dropzone.dropzone-ativa { border-color: #2d5a8e; background: #eef2f7; color: #1e3a5f; }
+    .dropzone.dropzone-ativa i { color: #1e3a5f; }
     .org-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin:16px 0 24px; }
     .org-card { background:#fff; border:2px solid #e5e7eb; border-radius:8px; padding:14px 16px; text-decoration:none; color:#1a1a2e; transition:all 0.2s; display:flex; align-items:center; gap:12px; }
     .org-card:hover { border-color:#2d5a8e; box-shadow:0 2px 8px rgba(45,90,142,0.15); color:#1a1a2e; }
@@ -248,8 +258,11 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
         </div>
         <div style="grid-column:1/-1;">
             <label style="font-size:12px;font-weight:600;color:#1e40af;">Arquivos (múltiplos, qualquer formato — opcional)</label>
-            <input type="file" name="arquivos" multiple
-                   style="width:100%;padding:6px;border:1px solid #93c5fd;border-radius:6px;background:#fff;font-size:12px;">
+            <div class="dropzone" id="dzArquivosBotao" data-dropzone-input="arquivosBotaoInput" data-dropzone-texto="dzArquivosBotaoTexto" style="border-color:#93c5fd;">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <span id="dzArquivosBotaoTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+            </div>
+            <input type="file" name="arquivos" id="arquivosBotaoInput" multiple style="display:none">
         </div>
     </div>
     <button type="submit" class="org-btn org-btn-success" style="margin-top:12px;">
@@ -435,8 +448,11 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
         </div>
         <div style="grid-column:1/-1;">
             <label style="font-size:12px;font-weight:600;color:#065f46;">Arquivos (múltiplos, qualquer formato):</label>
-            <input type="file" name="novo_arquivos" multiple
-                   style="width:100%;padding:6px;border:1px solid #6ee7b7;border-radius:6px;background:#fff;font-size:13px;">
+            <div class="dropzone" id="dzNovoArquivosCat" data-dropzone-input="novoArquivosCatInput" data-dropzone-texto="dzNovoArquivosCatTexto" style="border-color:#6ee7b7;">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <span id="dzNovoArquivosCatTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+            </div>
+            <input type="file" name="novo_arquivos" id="novoArquivosCatInput" multiple style="display:none">
         </div>
         <div style="grid-column:1/-1;">
             <button type="submit" class="org-btn" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;">
@@ -514,4 +530,5 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
 function toggleAll(source) { document.querySelectorAll('.item-check').forEach(function(cb) { cb.checked = source.checked; }); }
 function toggleAllBusca(source) { document.querySelectorAll('.busca-check').forEach(function(cb) { cb.checked = source.checked; }); }
 </script>
+<script src="{% static 'js/dropzone.js' %}"></script>
 {% endblock %}
