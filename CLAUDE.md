@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v24 — atualizado em 2026-07-18 — Parte 28)
+# Site Currículos SEDU — Contexto do Projeto (v25 — atualizado em 2026-07-18 — Parte 29)
 
 ## O que é este projeto
 
@@ -8,9 +8,10 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 
 ## 🚦 Estado atual (por onde começar uma conversa nova)
 
-- O site está **completo e funcional localmente**, com 122 botões raiz (categorias hierárquicas), 538+ conteúdos migrados do WordPress, e **9 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência) — agora com **acesso delegável por usuário/grupo** via Autenticação e Autorização.
-- **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok.
-- **Leva mais recente (2026-07-18 — "parte 28")**: **Banner da home vira faixa fina + imagem recortada em formato faixa** — o Dan achou o banner (ajuste automático da parte 27) "muito alto" e pediu "a mais fina possível, bem fina e discreta". Duas coisas: (1) a imagem do skyline do ES (1376×768, quase quadrada) foi recortada via Pillow em **formato faixa** (`media/banners/hero-faixa.png`, 1376×420, proporção 3.28:1) removendo só o excesso de céu/chão vazios — desenho inteiro mantido; (2) o modo de **altura fixa** (`altura_personalizada`/classe `--fixo`) foi trocado de `contain`+blur (parte 26/27) para **`object-fit:cover`** — o banner fica com a altura exata escolhida e a imagem PREENCHE a faixa (sem barras, sem desfoque, recorta um pouco pra caber). O banner da home foi setado para **130px** (`altura_personalizada=130`) = faixa fina e discreta. O ajuste automático (parte 27, imagem inteira sem cortar) continua sendo o padrão quando `altura_personalizada` está vazio. Migração `conteudo/0033` (só help_text). Detalhes no histórico item 41.
+- O site está **completo e funcional localmente**, com 132 categorias e 588 conteúdos migrados, e **9 painéis administrativos** (Organizador, Adicionar Arquivos, Painel Central Tela 1, Tela 2, Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência) — agora com **acesso delegável por usuário/grupo** via Autenticação e Autorização.
+- **Deploy**: o PythonAnywhere foi **abandonado** (decisão de 2026-07-10). O destino final é o servidor da SEDU em `curriculo.sedu.es.gov.br`. Enquanto isso, demonstrações são feitas localmente via ngrok, e a **infraestrutura Docker (Postgres) já está pronta** para entregar à SEDU.
+- **Leva mais recente (2026-07-18 — "parte 29")**: **Infraestrutura Docker com PostgreSQL pronta para produção** — o projeto agora suporta rodar em containers Docker com PostgreSQL, mantendo SQLite como padrão local. Novo arquivo `docker-compose.yml` com 2 serviços (db: Postgres 16, web: Django), variáveis de ambiente condicionais (`DOCKER_POSTGRES=1`), e novo `.bat` "ATUALIZAR BANCO DOCKER.bat" que sincroniza os dados do SQLite local para o Postgres do Docker com um clique (dumpdata → docker up → migrate → flush → loaddata). Ambiente local totalmente **intacto** — sem a variável de ambiente, o Django continua usando SQLite exatamente como antes. Adicionado `psycopg2-binary` às dependências. Testado ponta a ponta: 3674 registros (132 categorias, 588 conteúdos) importados com sucesso do banco local para o Postgres do Docker. Detalhes no histórico item 42.
+- **Leva anterior (2026-07-18 — "parte 28")**: **Banner da home vira faixa fina + imagem recortada em formato faixa** — o Dan achou o banner (ajuste automático da parte 27) "muito alto" e pediu "a mais fina possível, bem fina e discreta". Duas coisas: (1) a imagem do skyline do ES (1376×768, quase quadrada) foi recortada via Pillow em **formato faixa** (`media/banners/hero-faixa.png`, 1376×420, proporção 3.28:1) removendo só o excesso de céu/chão vazios — desenho inteiro mantido; (2) o modo de **altura fixa** (`altura_personalizada`/classe `--fixo`) foi trocado de `contain`+blur (parte 26/27) para **`object-fit:cover`** — o banner fica com a altura exata escolhida e a imagem PREENCHE a faixa (sem barras, sem desfoque, recorta um pouco pra caber). O banner da home foi setado para **130px** (`altura_personalizada=130`) = faixa fina e discreta. O ajuste automático (parte 27, imagem inteira sem cortar) continua sendo o padrão quando `altura_personalizada` está vazio. Migração `conteudo/0033` (só help_text). Detalhes no histórico item 41.
 - **Leva anterior (2026-07-18 — "parte 27")**: **Banner com AJUSTE AUTOMÁTICO à imagem (largura total, sem cortar, sem barras)** — a parte 26 tinha corrigido o corte trocando `cover` por `contain`, mas o Dan reprovou o resultado (a imagem ficava pequena no centro com barras desfocadas nas laterais dentro de uma faixa de altura fixa). Agora o banner (home + categoria) usa **ajuste automático**: a imagem ocupa **100% da largura** da página e a **altura acompanha a proporção da imagem** (`width:100%; height:auto`) — enche de ponta a ponta, mostra a imagem INTEIRA (nunca corta) e sem faixas vazias/desfocadas. Funciona sozinho para QUALQUER imagem enviada. ⚠️ Consequência geométrica inevitável: a altura do banner passa a depender da proporção da imagem (imagem quase quadrada → banner alto; imagem larga-e-baixa tipo faixa → banner baixo). Para um banner baixo, o Dan sobe uma imagem já no formato faixa. O campo "Altura fixa em pixels" (ex-"Altura personalizada", parte 26) virou **opcional e secundário**: se preenchido, força uma faixa de altura fixa com a imagem inteira dentro (contain) + fundo desfocado (classe `.hero-slide--fixo`/`.cat-banner-item--fixo`); vazio (padrão/recomendado) = ajuste automático. O campo `tamanho` (Pequeno/Médio/Grande) virou legado (não afeta mais o render — o ajuste automático ignora). Migração `conteudo/0032` (só help_text/verbose_name). Detalhes no histórico item 40.
 - **Leva anterior (2026-07-17 — "parte 26")**: **Banner da home nunca mais corta a imagem + altura personalizável** — o banner central (hero) e os banners de categoria usavam `object-fit:cover`, que cortava topo/base de imagens com proporção diferente do espaço (bug real, reportado pelo Dan: "veja agora ela está cortada"). Corrigido para a mesma técnica já usada no carrossel/cartazes/destaques: imagem INTEIRA (`object-fit:contain`) sobre um fundo desfocado da própria imagem preenchendo as sobras (`::before` com blur+scale). Além disso, novo campo **"Altura personalizada (px)"** no admin de Banner. Migração `conteudo/0031`. **Substituído/refinado pela parte 27** (o `contain` numa faixa fixa deixava barras — parte 27 troca para ajuste automático). Detalhes no histórico item 39.
 - **Leva anterior (2026-07-17 — "parte 25")**: **"Vários links de uma vez" expandido para os outros painéis** — depois da parte 24 (só Estrutura de Árvores), o mesmo recurso (linhas dinâmicas Nome + URL, botão "+ Adicionar outro link") chegou a: **Painel Central** (3 pontos: Criar novo botão, Criar subárea nos botões marcados, Editar botão selecionado), **Organizador** (2 pontos: Criar novo botão dentro de X, Adicionar novo arquivo ou URL a X) e **Área do Site** (1 ponto: "URL dentro do botão" da seção "Criar como botão completo do site"). Todos os campos de URL única já existentes foram mantidos intactos — o recurso novo é sempre um acréscimo ao lado deles. Backend: novo helper `_criar_links_extra()` duplicado em `painel/views.py` e `conteudo/admin_views.py` (mesma lógica da `_api_associar_links` da Estrutura, adaptada a cada arquivo) — lê listas paralelas `{prefixo}_link_nome`/`{prefixo}_link_url` e cria 1 `Conteudo(tipo='link')` por linha preenchida. A validação de "Adicionar novo arquivo ou URL" no Organizador foi ajustada para não bloquear quando só os links extras (sem URL única/arquivo) forem preenchidos. Detalhes no histórico item 38.
@@ -41,7 +42,8 @@ O dono do projeto (**Dan**) não é programador — ele trabalha na SEDU e preci
 - **Última leva de mudanças (2026-07-11)**: botões da home menores/quadrados, correção dos cartazes que sumiam com zoom, menu "3 pontinhos" (⋯) na barra superior, carrossel de imagens, campos de visibilidade por botão, exclusão de botões pelo Painel Central, imagem por URL em Banner/Cartaz. Detalhes na seção "Histórico de implementação".
 - **Importação do conteúdo remanescente CONCLUÍDA (2026-07-11)**: os 134 itens que faltavam do portal antigo foram importados (91 itinerários de formação técnica, 21 ementas EM, 16 volumes do currículo, 6 diversos) — ver seção "Importação do portal antigo". A comparação portal antigo × novo agora dá FALTA: 0. ⚠️ Isso foi feito no banco DESTA máquina; na máquina do Dan é preciso rodar `python manage.py importar_remanescentes` (idempotente) após o `git pull`.
 - **Regra de ouro do Painel Central** (`Especificacao_Painel_Admin_Site_Curriculos.md`): sempre ADICIONAR funcionalidades, nunca substituir/quebrar o que já funciona. O Dan reforça isso a cada pedido.
-- **Migrações aplicadas**: `conteudo/0012-0033` + `painel/0002-0003` + `inteligencia/0002`. Migração **`conteudo/0033`** (help_text do Banner — faixa fina) é a mais recente.
+- **Migrações aplicadas**: `conteudo/0012-0033` + `painel/0002-0003` + `inteligencia/0002`. Migração **`conteudo/0033`** (help_text do Banner — faixa fina) é a mais recente. **Nenhuma migração nova na parte 29** (Docker é apenas infraestrutura, não toca modelos).
+- **Arquivos Docker novos**: `Dockerfile` (Python 3.12 slim + dependências de sistema), `docker-compose.yml` (db: Postgres 16 + volumes, web: Django com migrations automáticas), `BAT SEDU/ATUALIZAR BANCO DOCKER.bat` (sincronização local→Docker em um clique).
 - Trabalho não commitado deve ser subido pelo Dan com o `.bat` "Subir GitHub SEDU" do Desktop dele.
 
 ## Stack
@@ -1210,6 +1212,62 @@ Auto-inicializa em todo `.dropzone[data-dropzone-input]` da página no carregame
 
 **Nota**: o ajuste automático (parte 27) continua sendo o padrão quando `altura_personalizada` está vazio — imagem inteira, sem cortar, altura pela proporção. Os dois modos coexistem.
 
+### 2026-07-18 — Infraestrutura Docker com PostgreSQL (parte 29)
+
+**Pedido do Dan**: manter o ambiente local SQLite intacto, mas também ter o projeto pronto em Docker com PostgreSQL para entregar/demonstrar à SEDU a qualquer momento.
+
+**Decisão arquitetural**: banco condicional por variável de ambiente. Sem `DOCKER_POSTGRES=1` (ambiente local), Django usa SQLite exatamente como sempre foi — zero mudanças. Dentro do Docker (que seta `DOCKER_POSTGRES=1`), usa Postgres, lendo credenciais de outras variáveis de ambiente.
+
+**1. Modificações em `curriculo_sedu/settings.py` (condicional, não quebra local)**:
+   - Bloco `if os.environ.get('DOCKER_POSTGRES') == '1':` → usa Postgres (host, port, user, password, db do ambiente)
+   - `else:` → continua SQLite (comportamento 100% igual a antes)
+   - Testado: `python manage.py check` local passou sem erro nenhum — nenhum impacto no SQLite local
+
+**2. `requirements.txt`** (aditivo):
+   - Adicionado `psycopg2-binary==2.9.10` (driver Postgres)
+   - Compatível com venv local — pip ignora se não quiser instalar
+
+**3. `docker-compose.yml` (novo serviço Postgres)**:
+   - `db`: imagem `postgres:16` com volume `postgres_data` para persistência
+   - Healthcheck via `pg_isready` com retry de 10s
+   - `web`: serviço Django existente, dependente do `db`, com variáveis `DOCKER_POSTGRES=1` + credenciais Postgres
+   - Comando no `web` agora roda `python manage.py migrate` automaticamente antes do `runserver` (garante migrações aplicadas)
+   - Removida versão do docker-compose (deprecated warning do Docker)
+
+**4. Novo botão: `BAT SEDU/ATUALIZAR BANCO DOCKER.bat`** (sincronização local→Docker):
+   - Etapa 1: exporta dados locais (SQLite) para JSON via `dumpdata` com `PYTHONUTF8=1` (força UTF-8, crítico no Windows com acentos em português)
+   - Etapa 2: sobe containers Docker se não estiverem rodando (`docker compose up -d`)
+   - Etapa 3: aplica migrações no Postgres do Docker
+   - Etapa 4: limpa dados atuais (`flush --no-input`)
+   - Etapa 5: importa dump JSON no Postgres
+   - Resultado final: 100% dos dados do SQLite local (3674 registros, 132 categorias, 588 conteúdos) espelhados no Postgres do Docker
+   - Bugs corrigidos durante testes: (a) parênteses literais dentro de blocos `if` precisam de escape `^(`/`^)` no cmd.exe, (b) quebra de linha deve ser CRLF, não LF, (c) caracteres UTF-8 multibyte descarrilham o parser do cmd.exe (armadilha #12 já documentada) — todos fixos
+
+**5. `.gitignore`** (aditivo):
+   - Ignora `dump_local.json` (arquivo temporário gerado e descartável, contém dados sensíveis/senhas)
+
+**Testado ponta a ponta** (2026-07-18):
+   - Docker Desktop iniciado, `docker compose up -d --build` rodou com sucesso
+   - Postgres 16 container saudável, web container rodando
+   - Migrações (40 ao total) aplicadas sem erro no Postgres do Docker
+   - Fluxo de sincronização testado manualmente: SQLite local exportado (2MB) → Postgres do Docker
+   - `loaddata dump_local.json` importou 3674 registros com sucesso
+   - Site no Docker respondendo HTTP 200 em `http://localhost:8000/`
+   - Verificado: 132 categorias e 588 conteúdos no banco Docker batem exatamente com o local
+
+**Compatibilidade 100%**:
+   - Ambiente local SQLite intacto — nenhuma mudança visível para o Dan no seu dia a dia
+   - `.bat` existentes (INICIAR SISTEMA, ATUALIZAR BANCO) funcionam normalmente
+   - Novo `.bat` é um atalho adicional, não obrigatório
+   - Nenhuma migração de banco necessária (Docker é infraestrutura, não modelo)
+   - Quando a SEDU pedir um ambiente pronto para produção: `docker-compose.yml` + `Dockerfile` já fazem tudo
+
+**Próximos passos para produção**:
+   - Gerar `.env` com credenciais Postgres reais (não hardcodadas)
+   - Configurar SSL/TLS no domínio oficial `curriculo.sedu.es.gov.br`
+   - Ajustar `ALLOWED_HOSTS` e `DEBUG=False` no deploy
+   - Possível: usar Gunicorn em vez de `runserver` (já em requirements.txt)
+
 ## O que falta / próximos passos possíveis
 
 - [ ] Refinamentos visuais conforme feedback do Dan e aprovação do chefe
@@ -1235,3 +1293,4 @@ Auto-inicializa em todo `.dropzone[data-dropzone-input]` da página no carregame
 11. **Comentário de template `{# ... #}` NÃO pode ter quebra de linha** — o Django só suporta `{# #}` em UMA linha; se quebrar, o texto do comentário aparece LITERALMENTE na página (aconteceu em 2026-07-11 com o botão do rodapé e o VLibras — o Dan viu "coisas estranhas escritas" no site). Para comentários longos, usar `{% comment %}...{% endcomment %}`.
 12. **Cuidado com o `.gitignore` em outros computadores**: em 2026-07-11 um commit feito em outra máquina ("codigo ngrok") substituiu por acidente o `.gitignore` inteiro pelo do venv (`*` — ignorar tudo). Foi corrigido no merge `2faca8e` mantendo a versão completa. Se o `.gitignore` aparecer com uma linha só (`*`), restaurar do histórico: `git checkout 2faca8e -- .gitignore`.
 13. **Usuário staff criado mas não consegue acessar NENHUM painel personalizado** (desde a parte 21) → não é bug, é o comportamento esperado: usuários novos (não-superusuário) nascem sem nenhuma das 8 permissões de painel. Marcar as permissões desejadas em Autenticação e Autorização → Usuários → (usuário) → "Permissões do usuário", ou colocar o usuário num Grupo que já tenha as permissões marcadas. Ver seção "Delegação de acesso aos painéis administrativos".
+14. **Arquivo `.bat` criado mas não abre nada no cmd.exe** (desde a parte 29) → armadilha de sintaxe: (a) parênteses LITERAIS `(` `)`dentro de blocos `if (...)` precisam ser escapados com `^(` e `^)` no cmd.exe, senão o parser falha; (b) quebra de linha deve ser CRLF (`0d 0a`), não LF (`0a`); (c) **caracteres UTF-8 multibyte** (`—` travessão, `ç`, `ã`, `é`) descarrilham o parser do cmd.exe mesmo DENTRO DE COMENTÁRIOS `REM`, causando falha silenciosa — sempre usar ASCII puro em `.bat` (hífens simples `-` em vez de `—`, etc.). A janela abre e fecha quase instantaneamente sem mensagem visível. Solução: (1) verificar com `hexdump` ou `xxd` para confirmar LF vs CRLF; (2) procurar caracteres UTF-8 com `grep -P '[\x80-\xFF]'`; (3) testar rodando o `.bat` via Powershell com redireção de streams para capturar a mensagem de erro real do cmd.exe.

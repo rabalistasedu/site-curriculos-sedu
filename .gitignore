@@ -226,3 +226,6 @@ __marimo__/
 ngrok.exe
 ngrok/
 BKPbat/
+
+# Dump temporario usado para espelhar o banco local no Docker (dados sensiveis)
+dump_local.json

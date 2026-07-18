@@ -68,14 +68,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'curriculo_sedu.wsgi.application'
 
 # ── Banco de dados ────────────────────────────────────────────────────
-# SQLite para desenvolvimento (funciona igual no Mac e Windows)
-# Em produção, trocar para PostgreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# SQLite para desenvolvimento local (funciona igual no Mac e Windows).
+# Dentro do Docker (docker-compose.yml define DOCKER_POSTGRES=1), usa
+# PostgreSQL — sem a variável de ambiente, o comportamento é idêntico
+# ao de sempre (SQLite), então rodar localmente continua igual.
+if os.environ.get('DOCKER_POSTGRES') == '1':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'curriculo_sedu'),
+            'USER': os.environ.get('POSTGRES_USER', 'curriculo_sedu'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'curriculo_sedu'),
+            'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # ── Validação de senha ────────────────────────────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
