@@ -25,9 +25,9 @@
         <div class="cat-banner-slider">
             {% for b in banners %}
             {% if b.link %}
-            <a href="{{ b.link }}" class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem_src }}'){% if b.altura_personalizada %};min-height:{{ b.altura_personalizada }}px{% endif %}" target="_blank" rel="noopener">
+            <a href="{{ b.link }}" class="cat-banner-item {% if b.altura_personalizada %}cat-banner-item--fixo{% endif %} {% if forloop.first %}active{% endif %}"{% if b.altura_personalizada %} style="background-image:url('{{ b.imagem_src }}');height:{{ b.altura_personalizada }}px;min-height:{{ b.altura_personalizada }}px"{% endif %} target="_blank" rel="noopener">
             {% else %}
-            <div class="cat-banner-item tamanho-{{ b.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ b.imagem_src }}'){% if b.altura_personalizada %};min-height:{{ b.altura_personalizada }}px{% endif %}">
+            <div class="cat-banner-item {% if b.altura_personalizada %}cat-banner-item--fixo{% endif %} {% if forloop.first %}active{% endif %}"{% if b.altura_personalizada %} style="background-image:url('{{ b.imagem_src }}');height:{{ b.altura_personalizada }}px;min-height:{{ b.altura_personalizada }}px"{% endif %}>
             {% endif %}
                 <img src="{{ b.imagem_src }}" alt="{{ b.titulo }}"{% if b.altura_personalizada %} style="height:{{ b.altura_personalizada }}px"{% endif %}>
                 {% if b.titulo or b.subtitulo %}

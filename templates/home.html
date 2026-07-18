@@ -8,8 +8,15 @@
     {% if banners %}
     <div class="hero-slider" id="heroSlider">
         {% for banner in banners %}
-        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}'){% if banner.altura_personalizada %};min-height:{{ banner.altura_personalizada }}px{% endif %}">
-            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}"{% if banner.altura_personalizada %} style="height:{{ banner.altura_personalizada }}px"{% endif %}>
+        {% if banner.altura_personalizada %}
+        {# Altura fixa (px escolhido no admin): imagem inteira dentro da faixa + fundo desfocado #}
+        <div class="hero-slide hero-slide--fixo {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}');height:{{ banner.altura_personalizada }}px;min-height:{{ banner.altura_personalizada }}px">
+            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}" style="height:{{ banner.altura_personalizada }}px">
+        {% else %}
+        {# Ajuste automático (padrão): imagem ocupa 100% da largura, altura acompanha a proporção — enche tudo, sem cortar, sem barras #}
+        <div class="hero-slide {% if forloop.first %}active{% endif %}">
+            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}">
+        {% endif %}
             {% if banner.titulo or banner.subtitulo or banner.link %}
             <div class="hero-overlay">
                 {% if banner.titulo %}<h1>{{ banner.titulo }}</h1>{% endif %}

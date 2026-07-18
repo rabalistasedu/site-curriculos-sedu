@@ -203,19 +203,30 @@ img { max-width: 100%; height: auto; display: block; }
 .hero-slide {
     display: none;
     position: relative;
-    min-height: 400px;
+}
+.hero-slide.active { display: block; }
+
+/* PADRÃO (ajuste automático): a imagem ocupa 100% da LARGURA e a altura
+   acompanha a proporção dela — enche o banner de ponta a ponta, mostra a
+   imagem INTEIRA (nunca corta) e sem faixas vazias/desfocadas ao redor.
+   Funciona para QUALQUER imagem enviada, automaticamente. Corrigido em
+   2026-07-18: antes forçava altura fixa (cortava OU deixava barras). */
+.hero-slide img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* ALTURA FIXA (opcional — só quando o admin preenche "Altura personalizada"
+   no Banner): a imagem inteira aparece dentro da altura escolhida (contain)
+   sobre um fundo desfocado da própria imagem preenchendo as sobras — para
+   quem quer uma faixa de altura uniforme entre banners diferentes. */
+.hero-slide--fixo {
     overflow: hidden;
     background-size: cover;
     background-position: center;
 }
-.hero-slide.active { display: block; }
-/* A imagem do banner NUNCA é cortada (object-fit:contain, ajuste
-   automático) — o espaço sobrando ao redor é preenchido com um fundo
-   desfocado da própria imagem (::before, usando o background-image já
-   definido inline no .hero-slide), mesma técnica já usada no
-   carrossel/cartazes/destaques. Corrigido em 2026-07-17 — antes usava
-   object-fit:cover, que cortava topo/base de imagens mais "quadradas". */
-.hero-slide::before {
+.hero-slide--fixo::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -224,19 +235,13 @@ img { max-width: 100%; height: auto; display: block; }
     transform: scale(1.15);
     z-index: 0;
 }
-.hero-slide img {
+.hero-slide--fixo img {
     position: relative;
     z-index: 1;
-    width: 100%;
-    height: 400px;
+    height: 100%;
     object-fit: contain;
     object-position: center;
-    display: block;
 }
-.hero-slide.tamanho-pequeno { min-height: 260px; }
-.hero-slide.tamanho-pequeno img { height: 260px; }
-.hero-slide.tamanho-grande { min-height: 520px; }
-.hero-slide.tamanho-grande img { height: 520px; }
 
 .hero-overlay {
     position: absolute;
@@ -1055,15 +1060,24 @@ img { max-width: 100%; height: auto; display: block; }
     display: none;
     position: relative;
     text-decoration: none;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
 }
 .cat-banner-item.active { display: block; }
-/* A imagem NUNCA é cortada (object-fit:contain) — o espaço sobrando é
-   preenchido com um fundo desfocado da própria imagem (::before), mesma
-   técnica do .hero-slide (banner da home). Corrigido em 2026-07-17. */
-.cat-banner-item::before {
+/* PADRÃO (ajuste automático): imagem 100% da largura, altura acompanha a
+   proporção — enche de ponta a ponta, sem cortar, sem barras. Mesma
+   lógica do banner da home. Corrigido em 2026-07-18. */
+.cat-banner-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+/* ALTURA FIXA (opcional, quando o admin preenche "Altura personalizada"):
+   imagem inteira dentro da altura (contain) sobre fundo desfocado. */
+.cat-banner-item--fixo {
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+.cat-banner-item--fixo::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -1072,18 +1086,13 @@ img { max-width: 100%; height: auto; display: block; }
     transform: scale(1.15);
     z-index: 0;
 }
-.cat-banner-item img {
+.cat-banner-item--fixo img {
     position: relative;
     z-index: 1;
-    width: 100%;
+    height: 100%;
     object-fit: contain;
     object-position: center;
-    display: block;
 }
-/* Tamanhos configuráveis pelo admin */
-.cat-banner-item.tamanho-pequeno img { height: 160px; }
-.cat-banner-item.tamanho-medio img { height: 280px; }
-.cat-banner-item.tamanho-grande img { height: 440px; }
 .cat-banner-overlay {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -1148,9 +1157,8 @@ img { max-width: 100%; height: auto; display: block; }
     .search-form { flex: 1; min-width: 0; order: 2; }
     .search-input { width: 100%; }
 
-    /* Hero */
-    .hero-slide { min-height: 200px; }
-    .hero-slide img { height: 200px; }
+    /* Hero — o ajuste automático dispensa altura fixa; banners de altura
+       personalizada mantêm o valor escolhido (inline) em qualquer tela. */
     .hero-overlay { padding: 16px; }
     .hero-overlay h1 { font-size: 18px; }
     .hero-overlay p { font-size: 14px; }
@@ -1200,10 +1208,7 @@ img { max-width: 100%; height: auto; display: block; }
     .form-row { grid-template-columns: 1fr; }
     .comment-form-box { padding: 16px; }
 
-    /* Banners de categoria */
-    .cat-banner-item.tamanho-pequeno img { height: 120px; }
-    .cat-banner-item.tamanho-medio img { height: 180px; }
-    .cat-banner-item.tamanho-grande img { height: 260px; }
+    /* Banners de categoria — ajuste automático dispensa altura fixa. */
     .cat-banner-overlay { padding: 12px 16px; }
     .cat-banner-overlay h3 { font-size: 14px; }
     .cat-banner-overlay p { font-size: 12px; }
@@ -1911,21 +1916,14 @@ div[vw-access-button]:hover { opacity: 1; }
    Regra: só reposicionamento/altura — nenhuma funcionalidade alterada.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 1) Banner/hero mais BAIXO na vertical — só altura, o ajuste automático
-      da imagem (contain + fundo desfocado) é definido no bloco principal
-      do .hero-slide acima. */
-.hero-slide { min-height: 240px; }
-.hero-slide img { height: 240px; }
-.hero-slide.tamanho-pequeno { min-height: 170px; }
-.hero-slide.tamanho-pequeno img { height: 170px; }
-.hero-slide.tamanho-grande { min-height: 340px; }
-.hero-slide.tamanho-grande img { height: 340px; }
+/* 1) Banner/hero: o ajuste automático da imagem (largura 100% + altura
+      acompanhando a proporção, sem cortar nem deixar barras) é definido no
+      bloco principal do .hero-slide acima. Aqui ficam só ajustes que NÃO
+      forçam altura no modo automático (senão o corte/barra voltava). O
+      modo "altura fixa" (.hero-slide--fixo) usa o valor px escolhido no
+      admin, aplicado inline no template. */
 .hero-default { min-height: 210px; }
 .hero-overlay { padding: 24px 48px; }
-@media (max-width: 768px) {
-    .hero-slide { min-height: 150px; }
-    .hero-slide img { height: 150px; }
-}
 
 /* 2) Bloco "Currículo do Espírito Santo" (home-intro) — já fica em fluxo
       logo abaixo do banner (sobe/desce junto com QUALQUER altura de
