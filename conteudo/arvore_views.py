@@ -467,25 +467,30 @@ def _api_associar_conteudo(request):
 
 
 def _api_upload_anexo(request):
-    """Upload de anexo para uma categoria."""
+    """Upload de anexo(s) para uma categoria.
+    Aceita 1 arquivo (campo 'arquivo', comportamento original) ou vários de
+    uma vez (campo 'arquivos', usado pelo arrastar-e-soltar)."""
     cat_id = request.POST.get('id')
     cat = get_object_or_404(Categoria, pk=cat_id)
 
-    arquivo = request.FILES.get('arquivo')
-    if not arquivo:
+    arquivo_unico = request.FILES.get('arquivo')
+    arquivos = ([arquivo_unico] if arquivo_unico else []) + request.FILES.getlist('arquivos')
+    if not arquivos:
         return JsonResponse({'error': 'Nenhum arquivo enviado'}, status=400)
 
-    nome = request.POST.get('nome', '').strip() or arquivo.name
-    anexo = Anexo.objects.create(
-        categoria=cat,
-        arquivo=arquivo,
-        nome=nome,
-    )
-    return JsonResponse({
-        'ok': True,
-        'id': anexo.pk,
-        'msg': f'Anexo "{nome}" adicionado a "{cat.nome}".',
-    })
+    nome_campo = request.POST.get('nome', '').strip()
+    ids = []
+    for arq in arquivos:
+        nome = nome_campo if (nome_campo and len(arquivos) == 1) else arq.name
+        anexo = Anexo.objects.create(categoria=cat, arquivo=arq, nome=nome)
+        ids.append(anexo.pk)
+
+    if len(ids) == 1:
+        msg = f'Anexo "{nome_campo or arquivos[0].name}" adicionado a "{cat.nome}".'
+    else:
+        msg = f'{len(ids)} anexos adicionados a "{cat.nome}".'
+
+    return JsonResponse({'ok': True, 'ids': ids, 'msg': msg})
 
 
 def _api_remover_anexo(request):

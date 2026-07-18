@@ -218,6 +218,33 @@
 }
 .ea-campo textarea { min-height: 60px; resize: vertical; }
 
+.ea-dropzone {
+    border: 2px dashed var(--ea-border);
+    border-radius: 8px;
+    padding: 18px 12px;
+    text-align: center;
+    cursor: pointer;
+    background: var(--ea-bg);
+    color: var(--ea-text-muted);
+    font-size: 12.5px;
+    transition: border-color .15s, background .15s, color .15s;
+}
+.ea-dropzone i { display: block; font-size: 20px; margin-bottom: 6px; color: var(--ea-text-muted); }
+.ea-dropzone:hover { border-color: var(--ea-primary); color: var(--ea-primary); }
+.ea-dropzone:hover i { color: var(--ea-primary); }
+.ea-dropzone.ea-dropzone-ativa {
+    border-color: var(--ea-primary);
+    background: #fef3c7;
+    color: var(--ea-primary-dark);
+}
+.ea-dropzone.ea-dropzone-ativa i { color: var(--ea-primary-dark); }
+.ea-dropzone-arquivos {
+    margin-top: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ea-success);
+}
+
 .ea-info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -810,8 +837,15 @@ const EA = {
             html += '<p style="font-size:12px;color:var(--ea-text-muted)">Nenhum anexo.</p>';
         }
         html += `<hr style="margin:12px 0;border-color:var(--ea-border)">
-            <div class="ea-campo"><label>Enviar anexo</label><input type="file" id="axArquivo"></div>
-            <div class="ea-campo"><label>Nome (opcional)</label><input type="text" id="axNome" placeholder="Nome do anexo"></div>
+            <div class="ea-campo">
+                <label>Enviar anexo(s)</label>
+                <div class="ea-dropzone" id="axDropzone">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                    <span id="axDropzoneTexto">Arraste arquivos aqui ou clique para escolher (pode ser vários)</span>
+                </div>
+                <input type="file" id="axArquivo" multiple style="display:none">
+            </div>
+            <div class="ea-campo"><label>Nome (opcional, só se enviar 1 arquivo)</label><input type="text" id="axNome" placeholder="Nome do anexo"></div>
             <button class="ea-btn-sm ea-btn-success" onclick="EA.uploadAnexo(${d.id})"><i class="fas fa-upload"></i> Enviar</button>
             </div></div>`;
 
@@ -820,6 +854,10 @@ const EA = {
         // Render FA icons grid
         this._renderIconesFAGrid();
         this._renderIconesEnvGrid();
+
+        // Dropzone de anexos (arrastar-e-soltar)
+        document.getElementById('axDropzone').onclick = () => document.getElementById('axArquivo').click();
+        this._attachDropzone('axDropzone', 'axArquivo', 'axDropzoneTexto', 'Arraste arquivos aqui ou clique para escolher (pode ser vários)');
     },
 
     _esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); },
@@ -907,7 +945,14 @@ const EA = {
         let html = `<h3><i class="fas fa-plus-circle" style="color:var(--ea-success)"></i> ${titulo}</h3>`;
         html += `<div class="ea-campo"><label>Nome do botão *</label><input type="text" id="criarNome" placeholder="Ex: Documentos Orientadores"></div>`;
         html += `<div class="ea-campo"><label>URL / Link (opcional)</label><input type="url" id="criarUrl" placeholder="https://..."></div>`;
-        html += `<div class="ea-campo"><label>Anexos / Arquivos (opcional, vários)</label><input type="file" id="criarAnexos" multiple></div>`;
+        html += `<div class="ea-campo">
+            <label>Anexos / Arquivos (opcional, vários)</label>
+            <div class="ea-dropzone" id="criarAnexosDropzone">
+                <i class="fas fa-cloud-arrow-up"></i>
+                <span id="criarAnexosDropzoneTexto">Arraste arquivos aqui ou clique para escolher</span>
+            </div>
+            <input type="file" id="criarAnexos" multiple style="display:none">
+        </div>`;
         html += `<div class="ea-campo"><label>Ícone Font Awesome (opcional)</label><input type="text" id="criarIcone" placeholder="fas fa-folder-open" value="fas fa-folder-open"></div>`;
         html += `<div class="ea-campo"><label>OU Ícone personalizado — imagem (opcional)</label><input type="file" id="criarIconeImg" accept="image/*,.ico"></div>`;
         html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download. Imagem de ícone tem prioridade sobre o Font Awesome.</p>`;
@@ -918,6 +963,10 @@ const EA = {
         document.getElementById('eaModal').innerHTML = html;
         document.getElementById('eaModalBg').classList.add('show');
         setTimeout(() => document.getElementById('criarNome')?.focus(), 100);
+
+        // Dropzone de anexos (arrastar-e-soltar)
+        document.getElementById('criarAnexosDropzone').onclick = () => document.getElementById('criarAnexos').click();
+        this._attachDropzone('criarAnexosDropzone', 'criarAnexos', 'criarAnexosDropzoneTexto', 'Arraste arquivos aqui ou clique para escolher');
     },
 
     async confirmarCriar(paiId) {
@@ -1073,16 +1122,63 @@ const EA = {
 
     // ── Anexos ───────────────────────────────────────
     async uploadAnexo(catId) {
-        const arq = document.getElementById('axArquivo').files[0];
-        if (!arq) { this.toast('Selecione um arquivo.', 'error'); return; }
+        const arqs = document.getElementById('axArquivo').files;
+        if (!arqs || !arqs.length) { this.toast('Selecione ou arraste ao menos um arquivo.', 'error'); return; }
         const fd = new FormData();
         fd.append('action', 'upload_anexo');
         fd.append('id', catId);
-        fd.append('arquivo', arq);
+        for (const f of arqs) fd.append('arquivos', f);
         fd.append('nome', document.getElementById('axNome').value);
         const r = await this._post(fd);
         if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
         else this.toast(r.error, 'error');
+    },
+
+    // ── Arrastar-e-soltar (dropzone genérica) ─────────
+    // Liga eventos de drag-and-drop a uma dropzone, populando um <input type="file">
+    // via DataTransfer (funciona tanto para input simples quanto multiple).
+    _attachDropzone(dropzoneId, inputId, textoId, textoPadrao) {
+        const zona = document.getElementById(dropzoneId);
+        const input = document.getElementById(inputId);
+        if (!zona || !input) return;
+
+        const atualizarTexto = () => {
+            const txt = document.getElementById(textoId);
+            if (!txt) return;
+            const n = input.files.length;
+            txt.textContent = n === 0 ? textoPadrao
+                : n === 1 ? `1 arquivo selecionado: ${input.files[0].name}`
+                : `${n} arquivos selecionados`;
+        };
+
+        input.addEventListener('change', atualizarTexto);
+
+        zona.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            zona.classList.add('ea-dropzone-ativa');
+        });
+        zona.addEventListener('dragleave', () => {
+            zona.classList.remove('ea-dropzone-ativa');
+        });
+        zona.addEventListener('drop', (e) => {
+            e.preventDefault();
+            zona.classList.remove('ea-dropzone-ativa');
+            const arquivos = e.dataTransfer.files;
+            if (!arquivos || !arquivos.length) return;
+            if (input.multiple) {
+                const dt = new DataTransfer();
+                for (const f of input.files) dt.items.add(f);
+                for (const f of arquivos) dt.items.add(f);
+                input.files = dt.files;
+            } else {
+                const dt = new DataTransfer();
+                dt.items.add(arquivos[0]);
+                input.files = dt.files;
+            }
+            atualizarTexto();
+        });
+
+        atualizarTexto();
     },
 
     async excluirConteudo(conteudoId, catId) {
