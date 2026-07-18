@@ -321,11 +321,12 @@ class BannerAdmin(admin.ModelAdmin):
             'fields': ('titulo', 'subtitulo', 'link'),
         }),
         ('🖼️ Imagem', {
-            'fields': ('imagem', 'url_imagem', 'tamanho'),
+            'fields': ('imagem', 'url_imagem', 'tamanho', 'altura_personalizada'),
             'description': (
                 'Qualquer formato de imagem funciona (horizontal ou vertical) — '
                 'ela nunca será cortada ou distorcida. Use "Tamanho" para controlar '
-                'a altura do banner na página. Você pode subir um arquivo OU colar '
+                'a altura do banner na página, ou preencha "Altura personalizada" '
+                'para um valor exato em pixels. Você pode subir um arquivo OU colar '
                 'o endereço (URL) de uma imagem da internet.'
             ),
         }),

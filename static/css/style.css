@@ -204,17 +204,32 @@ img { max-width: 100%; height: auto; display: block; }
     display: none;
     position: relative;
     min-height: 400px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
 }
 .hero-slide.active { display: block; }
-/* A imagem se ajusta automaticamente à área do banner: preenche 100% da
-   largura e da altura definida (sem sobrar faixa cinza nas laterais).
-   object-fit:cover pode cortar uma borda mínima da imagem para caber —
-   mesma técnica já usada nos ícones de botão (item 13 do histórico). */
+/* A imagem do banner NUNCA é cortada (object-fit:contain, ajuste
+   automático) — o espaço sobrando ao redor é preenchido com um fundo
+   desfocado da própria imagem (::before, usando o background-image já
+   definido inline no .hero-slide), mesma técnica já usada no
+   carrossel/cartazes/destaques. Corrigido em 2026-07-17 — antes usava
+   object-fit:cover, que cortava topo/base de imagens mais "quadradas". */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    filter: blur(20px) brightness(0.6);
+    transform: scale(1.15);
+    z-index: 0;
+}
 .hero-slide img {
     position: relative;
+    z-index: 1;
     width: 100%;
     height: 400px;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     display: block;
 }
@@ -228,6 +243,7 @@ img { max-width: 100%; height: auto; display: block; }
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 2;
     padding: 48px;
     background: linear-gradient(transparent, rgba(0,0,0,0.7));
     color: white;
@@ -1041,15 +1057,26 @@ img { max-width: 100%; height: auto; display: block; }
     text-decoration: none;
     background-size: cover;
     background-position: center;
+    overflow: hidden;
 }
 .cat-banner-item.active { display: block; }
-/* A imagem se ajusta automaticamente à área do banner: preenche 100% da
-   largura e da altura definida (sem sobrar faixa nas laterais).
-   object-fit:cover pode cortar uma borda mínima da imagem para caber. */
+/* A imagem NUNCA é cortada (object-fit:contain) — o espaço sobrando é
+   preenchido com um fundo desfocado da própria imagem (::before), mesma
+   técnica do .hero-slide (banner da home). Corrigido em 2026-07-17. */
+.cat-banner-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    filter: blur(20px) brightness(0.6);
+    transform: scale(1.15);
+    z-index: 0;
+}
 .cat-banner-item img {
     position: relative;
+    z-index: 1;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
     object-position: center;
     display: block;
 }
@@ -1884,8 +1911,9 @@ div[vw-access-button]:hover { opacity: 1; }
    Regra: só reposicionamento/altura — nenhuma funcionalidade alterada.
    ═══════════════════════════════════════════════════════════════════ */
 
-/* 1) Banner/hero mais BAIXO na vertical — a imagem preenche automaticamente
-      a área (object-fit:cover, sem faixa cinza nas laterais). */
+/* 1) Banner/hero mais BAIXO na vertical — só altura, o ajuste automático
+      da imagem (contain + fundo desfocado) é definido no bloco principal
+      do .hero-slide acima. */
 .hero-slide { min-height: 240px; }
 .hero-slide img { height: 240px; }
 .hero-slide.tamanho-pequeno { min-height: 170px; }

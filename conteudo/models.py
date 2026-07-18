@@ -469,7 +469,14 @@ class Banner(models.Model):
     link = models.URLField('Link ao clicar', blank=True)
     tamanho = models.CharField(
         'Tamanho da imagem', max_length=10, choices=TAMANHO_CHOICES, default='medio',
-        help_text='Controla a altura máxima do banner. A imagem nunca é cortada ou distorcida.'
+        help_text='Controla a altura máxima do banner. A imagem nunca é cortada ou distorcida. '
+                  'Ignorado se "Altura personalizada" (abaixo) estiver preenchida.'
+    )
+    altura_personalizada = models.PositiveIntegerField(
+        'Altura personalizada (px)', null=True, blank=True,
+        help_text='Opcional. Deixe vazio para usar Pequeno/Médio/Grande acima. Se '
+                  'preenchido, define a altura exata do banner em pixels (vale em '
+                  'qualquer tamanho de tela — não diminui sozinho no celular).'
     )
     ordem = models.PositiveIntegerField('Ordem', default=0)
     ativo = models.BooleanField('Ativo', default=True)

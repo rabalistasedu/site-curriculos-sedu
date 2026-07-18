@@ -8,8 +8,8 @@
     {% if banners %}
     <div class="hero-slider" id="heroSlider">
         {% for banner in banners %}
-        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}')">
-            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}">
+        <div class="hero-slide tamanho-{{ banner.tamanho }} {% if forloop.first %}active{% endif %}" style="background-image:url('{{ banner.imagem_src }}'){% if banner.altura_personalizada %};min-height:{{ banner.altura_personalizada }}px{% endif %}">
+            <img src="{{ banner.imagem_src }}" alt="{{ banner.titulo }}"{% if banner.altura_personalizada %} style="height:{{ banner.altura_personalizada }}px"{% endif %}>
             {% if banner.titulo or banner.subtitulo or banner.link %}
             <div class="hero-overlay">
                 {% if banner.titulo %}<h1>{{ banner.titulo }}</h1>{% endif %}

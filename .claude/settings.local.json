@@ -155,7 +155,13 @@
       "Bash(venvScriptspython -c ' *)",
       "Bash(venv/Scripts/python -c ' *)",
       "Bash(venv/Scripts/python manage.py check)",
-      "Bash(venv/Scripts/python manage.py makemigrations --check --dry-run)"
+      "Bash(venv/Scripts/python manage.py makemigrations --check --dry-run)",
+      "Bash(python manage.py shell -c \"from conteudo.models import Conteudo; qs=Conteudo.objects.filter\\(titulo__in=['Link X','Teste PC Multi Links'], categoria__isnull=True\\); print\\(list\\(qs.values\\('id','titulo'\\)\\)\\); qs.delete\\(\\)\")",
+      "Bash(venv/Scripts/python manage.py shell -c \"from conteudo.models import Conteudo; qs=Conteudo.objects.filter\\(titulo__in=['Link X','Teste PC Multi Links'], categoria__isnull=True\\); print\\(list\\(qs.values\\('id','titulo'\\)\\)\\); qs.delete\\(\\)\")",
+      "Bash(venv/Scripts/python manage.py shell -c ' *)",
+      "Bash(dir *.md)",
+      "Bash(venv/Scripts/python manage.py makemigrations conteudo)",
+      "Bash(venv/Scripts/python manage.py migrate conteudo)"
     ]
   }
 }
