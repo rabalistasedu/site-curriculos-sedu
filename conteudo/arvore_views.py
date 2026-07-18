@@ -165,6 +165,8 @@ def arvore_api(request):
             return _api_upload_icone(request)
         if action == 'associar_conteudo':
             return _api_associar_conteudo(request)
+        if action == 'associar_links':
+            return _api_associar_links(request)
         if action == 'upload_anexo':
             return _api_upload_anexo(request)
         if action == 'remover_anexo':
@@ -262,6 +264,27 @@ def _api_criar(request):
             data_publicacao=timezone.now(),
         )
         msg += f' Link associado.'
+
+    link_nomes = request.POST.getlist('link_nome')
+    link_urls = request.POST.getlist('link_url')
+    n_links = 0
+    for i, url in enumerate(link_urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (link_nomes[i] if i < len(link_nomes) else '').strip()
+        Conteudo.objects.create(
+            titulo=nome_link or nome,
+            slug=_slug_unico(Conteudo, nome_link or nome),
+            tipo='link',
+            url_externa=url,
+            categoria=cat,
+            status='publicado',
+            data_publicacao=timezone.now(),
+        )
+        n_links += 1
+    if n_links:
+        msg += f' {n_links} link(s) associado(s).'
 
     arquivos = request.FILES.getlist('arquivos_anexo')
     for arq in arquivos:
@@ -463,6 +486,42 @@ def _api_associar_conteudo(request):
         'ok': True,
         'id': conteudo.pk,
         'msg': f'Conteúdo "{conteudo.titulo}" associado a "{cat.nome}".',
+    })
+
+
+def _api_associar_links(request):
+    """Associa vários links (URL) de uma vez a uma categoria (botão/subbotão/subárea).
+    Recebe listas pareadas 'link_nome' e 'link_url' (uma por linha do formulário)."""
+    cat_id = request.POST.get('id')
+    cat = get_object_or_404(Categoria, pk=cat_id)
+
+    nomes = request.POST.getlist('link_nome')
+    urls = request.POST.getlist('link_url')
+
+    ids = []
+    for i, url in enumerate(urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (nomes[i] if i < len(nomes) else '').strip()
+        conteudo = Conteudo.objects.create(
+            titulo=nome_link or cat.nome,
+            slug=_slug_unico(Conteudo, nome_link or cat.nome),
+            tipo='link',
+            url_externa=url,
+            categoria=cat,
+            status='publicado',
+            data_publicacao=timezone.now(),
+        )
+        ids.append(conteudo.pk)
+
+    if not ids:
+        return JsonResponse({'error': 'Nenhum link válido informado'}, status=400)
+
+    return JsonResponse({
+        'ok': True,
+        'ids': ids,
+        'msg': f'{len(ids)} link(s) adicionado(s) a "{cat.nome}".',
     })
 
 

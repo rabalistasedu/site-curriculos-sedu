@@ -73,6 +73,30 @@ def _arvore_flat(arvore):
     return itens
 
 
+def _criar_links_extra(post, prefix, categoria, nome_padrao):
+    """Cria vários Conteudo(tipo='link') a partir de linhas dinâmicas de
+    nome+URL (campos '{prefix}_link_nome'/'{prefix}_link_url', uma lista
+    paralela por linha do formulário). Nome em branco usa nome_padrao."""
+    nomes = post.getlist(f'{prefix}_link_nome')
+    urls = post.getlist(f'{prefix}_link_url')
+    n = 0
+    for i, url in enumerate(urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (nomes[i] if i < len(nomes) else '').strip()
+        Conteudo.objects.create(
+            titulo=nome_link or nome_padrao,
+            slug=_slug_unico(Conteudo, nome_link or nome_padrao),
+            tipo='link',
+            url_externa=url,
+            categoria=categoria,
+            status='publicado',
+        )
+        n += 1
+    return n
+
+
 def _data_publicacao(post):
     """Combina os campos data + hora do formulário; vazio = agora."""
     data = post.get('pub_data', '').strip()
@@ -178,6 +202,8 @@ def _criar_no(request):
     for arq in arquivos:
         Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
 
+    n_links = _criar_links_extra(request.POST, 'novo', nova, nome)
+
     extras = []
     if icone_img:
         extras.append('ícone imagem')
@@ -185,6 +211,8 @@ def _criar_no(request):
         extras.append('URL')
     if arquivos:
         extras.append(f'{len(arquivos)} arquivo(s)')
+    if n_links:
+        extras.append(f'{n_links} link(s) extra(s)')
     sufixo = f' (+ {", ".join(extras)})' if extras else ''
     onde = f'dentro de "{pai.nome}"'
     messages.success(request, f'Botão "{nome}" criado {onde}{sufixo}.')
@@ -260,7 +288,9 @@ def _criar_subareas(request):
         for arq in arquivos:
             arq.seek(0)
             Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
-        criados.append(f'"{nome}" dentro de "{pai.nome}"')
+        n_links = _criar_links_extra(request.POST, 'subarea', nova, nome)
+        sufixo = f' (+ {n_links} link(s) extra(s))' if n_links else ''
+        criados.append(f'"{nome}" dentro de "{pai.nome}"{sufixo}')
     messages.success(
         request,
         f'{len(criados)} subárea(s) criada(s): ' + '; '.join(criados)
@@ -341,7 +371,12 @@ def _editar_botao(request):
             nome=anexo_file.name,
         )
 
-    messages.success(request, f'Botão "{cat.nome}" atualizado com sucesso.')
+    n_links = _criar_links_extra(request.POST, 'editar', cat, nome or cat.nome)
+
+    msg = f'Botão "{cat.nome}" atualizado com sucesso.'
+    if n_links:
+        msg += f' {n_links} link(s) adicionado(s).'
+    messages.success(request, msg)
     return redirect('painel:central')
 
 

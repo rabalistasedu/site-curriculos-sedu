@@ -257,6 +257,11 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
                    style="width:100%;padding:8px 10px;border:1px solid #93c5fd;border-radius:6px;font-size:13px;">
         </div>
         <div style="grid-column:1/-1;">
+            <label style="font-size:12px;font-weight:600;color:#1e40af;">Mais links / URLs (opcional, quantos quiser)</label>
+            <div id="orgNovaLinksContainer"></div>
+            <button type="button" onclick="orgNovaLinhaLink('orgNovaLinksContainer','nova')" style="font-size:11px;padding:4px 10px;border:1px solid #93c5fd;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
+        </div>
+        <div style="grid-column:1/-1;">
             <label style="font-size:12px;font-weight:600;color:#1e40af;">Arquivos (múltiplos, qualquer formato — opcional)</label>
             <div class="dropzone" id="dzArquivosBotao" data-dropzone-input="arquivosBotaoInput" data-dropzone-texto="dzArquivosBotaoTexto" style="border-color:#93c5fd;">
                 <i class="fas fa-cloud-arrow-up"></i>
@@ -447,6 +452,11 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
                    style="width:100%;padding:8px 10px;border:1px solid #6ee7b7;border-radius:6px;font-size:13px;">
         </div>
         <div style="grid-column:1/-1;">
+            <label style="font-size:12px;font-weight:600;color:#065f46;">Mais links / URLs (opcional, quantos quiser)</label>
+            <div id="orgAquiLinksContainer"></div>
+            <button type="button" onclick="orgNovaLinhaLink('orgAquiLinksContainer','aqui')" style="font-size:11px;padding:4px 10px;border:1px solid #6ee7b7;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
+        </div>
+        <div style="grid-column:1/-1;">
             <label style="font-size:12px;font-weight:600;color:#065f46;">Arquivos (múltiplos, qualquer formato):</label>
             <div class="dropzone" id="dzNovoArquivosCat" data-dropzone-input="novoArquivosCatInput" data-dropzone-texto="dzNovoArquivosCatTexto" style="border-color:#6ee7b7;">
                 <i class="fas fa-cloud-arrow-up"></i>
@@ -529,6 +539,23 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
 <script>
 function toggleAll(source) { document.querySelectorAll('.item-check').forEach(function(cb) { cb.checked = source.checked; }); }
 function toggleAllBusca(source) { document.querySelectorAll('.busca-check').forEach(function(cb) { cb.checked = source.checked; }); }
+
+// ── Vários links de uma vez (nome + URL, linhas dinâmicas) ──
+function orgNovaLinhaLink(containerId, prefix) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px';
+    row.innerHTML =
+        '<input type="text" name="' + prefix + '_link_nome" placeholder="Nome do link (opcional)" style="flex:1;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;">' +
+        '<input type="url" name="' + prefix + '_link_url" placeholder="https://..." style="flex:2;padding:8px 10px;border:1px solid #cbd5e1;border-radius:6px;font-size:13px;">' +
+        '<button type="button" onclick="this.parentElement.remove()" style="padding:2px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">&times;</button>';
+    container.appendChild(row);
+}
+document.addEventListener('DOMContentLoaded', function () {
+    orgNovaLinhaLink('orgNovaLinksContainer', 'nova');
+    orgNovaLinhaLink('orgAquiLinksContainer', 'aqui');
+});
 </script>
 <script src="{% static 'js/dropzone.js' %}"></script>
 {% endblock %}

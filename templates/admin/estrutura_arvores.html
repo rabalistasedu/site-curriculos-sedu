@@ -816,6 +816,14 @@ const EA = {
             <div class="ea-campo"><label>URL (para links)</label><input type="url" id="acUrl" placeholder="https://..."></div>
             <div class="ea-campo"><label>Arquivo</label><input type="file" id="acArquivo"></div>
             <button class="ea-btn-sm ea-btn-info" onclick="EA.associarConteudo(${d.id})"><i class="fas fa-plus"></i> Associar</button>
+
+            <hr style="margin:12px 0;border-color:var(--ea-border)">
+            <p style="font-size:12px;font-weight:600;margin-bottom:8px">Adicionar vários links de uma vez:</p>
+            <div id="acLinksContainer_${d.id}"></div>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+                <button type="button" class="ea-btn-sm ea-btn-ghost" onclick="EA._novaLinhaLink('acLinksContainer_${d.id}')"><i class="fas fa-plus"></i> Adicionar outro link</button>
+                <button type="button" class="ea-btn-sm ea-btn-success" onclick="EA.associarLinks(${d.id})"><i class="fas fa-check"></i> Adicionar links</button>
+            </div>
             </div></div>`;
 
         // Anexos
@@ -850,6 +858,9 @@ const EA = {
             </div></div>`;
 
         document.getElementById('eaDetalhes').innerHTML = html;
+
+        // Linhas iniciais do "Adicionar vários links de uma vez"
+        this._novaLinhaLink(`acLinksContainer_${d.id}`);
 
         // Render FA icons grid
         this._renderIconesFAGrid();
@@ -946,6 +957,11 @@ const EA = {
         html += `<div class="ea-campo"><label>Nome do botão *</label><input type="text" id="criarNome" placeholder="Ex: Documentos Orientadores"></div>`;
         html += `<div class="ea-campo"><label>URL / Link (opcional)</label><input type="url" id="criarUrl" placeholder="https://..."></div>`;
         html += `<div class="ea-campo">
+            <label>Mais links / URLs (opcional, quantos quiser)</label>
+            <div id="criarLinksContainer"></div>
+            <button type="button" class="ea-btn-sm ea-btn-ghost" onclick="EA._novaLinhaLink('criarLinksContainer')"><i class="fas fa-plus"></i> Adicionar outro link</button>
+        </div>`;
+        html += `<div class="ea-campo">
             <label>Anexos / Arquivos (opcional, vários)</label>
             <div class="ea-dropzone" id="criarAnexosDropzone">
                 <i class="fas fa-cloud-arrow-up"></i>
@@ -967,6 +983,9 @@ const EA = {
         // Dropzone de anexos (arrastar-e-soltar)
         document.getElementById('criarAnexosDropzone').onclick = () => document.getElementById('criarAnexos').click();
         this._attachDropzone('criarAnexosDropzone', 'criarAnexos', 'criarAnexosDropzoneTexto', 'Arraste arquivos aqui ou clique para escolher');
+
+        // Linha inicial de "mais links"
+        this._novaLinhaLink('criarLinksContainer');
     },
 
     async confirmarCriar(paiId) {
@@ -985,6 +1004,8 @@ const EA = {
         if (iconeImg) fd.append('icone_imagem', iconeImg);
         if (url) fd.append('url_conteudo', url);
         if (anexos) { for (const f of anexos) fd.append('arquivos_anexo', f); }
+        const { nomes: linkNomes, urls: linkUrls } = this._coletarLinks('criarLinksContainer');
+        linkUrls.forEach((u, i) => { fd.append('link_url', u); fd.append('link_nome', linkNomes[i] || ''); });
 
         this.fecharModal();
         const r = await this._post(fd);
@@ -1129,6 +1150,45 @@ const EA = {
         fd.append('id', catId);
         for (const f of arqs) fd.append('arquivos', f);
         fd.append('nome', document.getElementById('axNome').value);
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
+        else this.toast(r.error, 'error');
+    },
+
+    // ── Vários links de uma vez (nome + URL, linhas dinâmicas) ──
+    _novaLinhaLink(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const row = document.createElement('div');
+        row.className = 'ea-link-row';
+        row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px';
+        row.innerHTML = `
+            <input type="text" class="ea-link-nome" placeholder="Nome do link (opcional)" style="flex:1">
+            <input type="url" class="ea-link-url" placeholder="https://..." style="flex:2">
+            <button type="button" class="ea-btn-sm ea-btn-ghost" onclick="this.parentElement.remove()" title="Remover linha" style="padding:2px 10px">&times;</button>
+        `;
+        container.appendChild(row);
+    },
+
+    _coletarLinks(containerId) {
+        const nomes = [], urls = [];
+        document.querySelectorAll(`#${containerId} .ea-link-row`).forEach(row => {
+            const url = row.querySelector('.ea-link-url').value.trim();
+            if (url) {
+                nomes.push(row.querySelector('.ea-link-nome').value.trim());
+                urls.push(url);
+            }
+        });
+        return { nomes, urls };
+    },
+
+    async associarLinks(catId) {
+        const { nomes, urls } = this._coletarLinks(`acLinksContainer_${catId}`);
+        if (!urls.length) { this.toast('Informe ao menos 1 link.', 'error'); return; }
+        const fd = new FormData();
+        fd.append('action', 'associar_links');
+        fd.append('id', catId);
+        urls.forEach((u, i) => { fd.append('link_url', u); fd.append('link_nome', nomes[i] || ''); });
         const r = await this._post(fd);
         if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
         else this.toast(r.error, 'error');
