@@ -323,12 +323,18 @@ class BannerAdmin(admin.ModelAdmin):
         ('🖼️ Imagem', {
             'fields': ('imagem', 'url_imagem', 'tamanho', 'altura_personalizada'),
             'description': (
-                'Qualquer formato de imagem funciona (horizontal ou vertical). '
-                'O banner se ajusta AUTOMATICAMENTE: a imagem ocupa a largura toda '
+                'O banner se ajusta AUTOMATICAMENTE à imagem: ocupa a largura toda '
                 'da página e a altura acompanha a proporção dela — nunca corta nenhuma '
-                'parte e não deixa barras nas laterais. Basta subir a imagem (arquivo '
-                'OU endereço/URL da internet); não precisa configurar mais nada. '
-                'Só preencha "Altura fixa em pixels" se quiser FORÇAR uma altura fixa.'
+                'parte e não deixa barras nas laterais. '
+                '<br><br>👉 <b>DICA IMPORTANTE:</b> para o banner ficar no tamanho baixo '
+                'padrão de uma faixa (e não alto), use uma imagem <b>larga e baixa</b> — '
+                'formato faixa. Medidas ideais: cerca de <b>1600×450</b> ou <b>1920×500</b> '
+                'pixels (bem mais larga do que alta). Uma imagem quase quadrada vira um '
+                'banner alto (é a proporção dela). '
+                '<br><br>Basta subir a imagem (arquivo OU endereço/URL da internet). '
+                'Só preencha "Altura fixa em pixels" se quiser FORÇAR uma altura fixa '
+                '(nesse caso a imagem aparece inteira dentro da faixa, com as sobras '
+                'preenchidas por um fundo desfocado).'
             ),
         }),
         ('⚙️ Exibição', {
