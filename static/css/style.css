@@ -217,29 +217,17 @@ img { max-width: 100%; height: auto; display: block; }
     height: auto;
 }
 
-/* ALTURA FIXA (opcional — só quando o admin preenche "Altura personalizada"
-   no Banner): a imagem inteira aparece dentro da altura escolhida (contain)
-   sobre um fundo desfocado da própria imagem preenchendo as sobras — para
-   quem quer uma faixa de altura uniforme entre banners diferentes. */
+/* ALTURA FIXA (opcional — quando o admin preenche "Altura fixa em pixels"):
+   o banner fica EXATAMENTE com essa altura e a imagem PREENCHE a faixa
+   (cover) — ideal para uma faixa fina e discreta. Sem barras, sem
+   desfoque; pode recortar um pouco as bordas da imagem para caber. */
 .hero-slide--fixo {
     overflow: hidden;
-    background-size: cover;
-    background-position: center;
-}
-.hero-slide--fixo::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: inherit;
-    filter: blur(20px) brightness(0.6);
-    transform: scale(1.15);
-    z-index: 0;
 }
 .hero-slide--fixo img {
-    position: relative;
-    z-index: 1;
+    width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
 }
 
@@ -1070,27 +1058,15 @@ img { max-width: 100%; height: auto; display: block; }
     width: 100%;
     height: auto;
 }
-/* ALTURA FIXA (opcional, quando o admin preenche "Altura personalizada"):
-   imagem inteira dentro da altura (contain) sobre fundo desfocado. */
+/* ALTURA FIXA (opcional, quando o admin preenche "Altura fixa em pixels"):
+   o banner fica com essa altura e a imagem PREENCHE a faixa (cover). */
 .cat-banner-item--fixo {
     overflow: hidden;
-    background-size: cover;
-    background-position: center;
-}
-.cat-banner-item--fixo::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: inherit;
-    filter: blur(20px) brightness(0.6);
-    transform: scale(1.15);
-    z-index: 0;
 }
 .cat-banner-item--fixo img {
-    position: relative;
-    z-index: 1;
+    width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
 }
 .cat-banner-overlay {

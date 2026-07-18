@@ -475,11 +475,11 @@ class Banner(models.Model):
     )
     altura_personalizada = models.PositiveIntegerField(
         'Altura fixa em pixels (opcional)', null=True, blank=True,
-        help_text='DEIXE VAZIO (recomendado): o banner se ajusta sozinho a qualquer imagem — '
-                  'ocupa a largura toda da página e a altura acompanha a proporção da imagem, '
-                  'sem cortar nenhuma parte e sem barras nas laterais. Só preencha se quiser '
-                  'FORÇAR uma altura fixa em pixels (nesse caso a imagem aparece inteira dentro '
-                  'da faixa, com um fundo desfocado preenchendo as sobras).'
+        help_text='VAZIO: o banner se ajusta sozinho à imagem (ocupa a largura toda e a altura '
+                  'acompanha a proporção, sem cortar). PREENCHA um número para deixar o banner com '
+                  'uma altura fixa — ótimo para uma FAIXA FINA E DISCRETA (ex.: 120, 150). Nesse '
+                  'caso a imagem PREENCHE a faixa (pode recortar um pouco o topo/base para caber), '
+                  'sem barras nem desfoque. Quanto menor o número, mais fina a faixa.'
     )
     ordem = models.PositiveIntegerField('Ordem', default=0)
     ativo = models.BooleanField('Ativo', default=True)

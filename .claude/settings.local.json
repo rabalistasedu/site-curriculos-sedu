@@ -161,7 +161,8 @@
       "Bash(venv/Scripts/python manage.py shell -c ' *)",
       "Bash(dir *.md)",
       "Bash(venv/Scripts/python manage.py makemigrations conteudo)",
-      "Bash(venv/Scripts/python manage.py migrate conteudo)"
+      "Bash(venv/Scripts/python manage.py migrate conteudo)",
+      "Bash(venv/Scripts/python \"/c/Users/RABALI~1/AppData/Local/Temp/claude/C--ridan-Claude-Projects-Site-Curriculos-SEDU/29405347-a47b-4f24-8aab-acdd5c7f2b02/scratchpad/gen_preview.py\")"
     ]
   }
 }
