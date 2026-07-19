@@ -2,13 +2,14 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) – Espírito Santo.
 
-## Status Atual (2026-07-13 — Parte 8 + ngrok corrigido)
+## Status Atual (2026-07-19 — Parte 31 + Docker + Backup/Restore Completo)
 
-✅ **Site funcional e responsivo** – 365+ conteúdos migrados, 10 categorias, 42+ subcategorias  
-✅ **Admin completo** – Django Admin + 5 painéis customizados (Organizador, Painel de Arquivos, Painel Central, Painel de Botões da Barra)  
-✅ **Sistema de comentários moderados** – 3 estados, respostas aninhadas com votação 👍/👎, visual moderno  
-✅ **ngrok corrigido** – UTF-8 funcionando, vídeo do carrossel agora acessível via compartilhamento  
-✅ **Deploy em progresso** – ngrok (demo) → `curriculo.sedu.es.gov.br/curriculo/` (produção final)
+✅ **Site funcional e responsivo** – 588 conteúdos, 132 categorias, organização hierárquica ilimitada  
+✅ **9 painéis administrativos** – Organizador, Adicionar Arquivos, Painel Central (Telas 1+2), Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência  
+✅ **Sistema de comentários** – 3 estados (pendente/publicado/recusado), respostas aninhadas, votos 👍/👎  
+✅ **Infraestrutura Docker** – PostgreSQL 16 + Postgres pronto para produção, SQLite local intacto  
+✅ **Backup/Restore automático** – `.bat` para sincronizar dados locais ↔ Docker em 1 clique  
+✅ **Deploy** – ngrok (demo) + próximo: `curriculo.sedu.es.gov.br/curriculo/` (SEDU)
 
 ## Quick Start
 
@@ -34,34 +35,40 @@ python manage.py runserver 8001
 
 Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (admin)
 
-## Mudanças Recentes (2026-07-12 a 2026-07-13)
+## Últimas Implementações (2026-07-11 a 2026-07-19)
 
-### 8 Partes de Implementação (19 features/bugs total)
-1. ✅ **Bugs de layout** – navegação mobile, carrossel dividido, rodapé flutuante, anexos invisíveis
-2. ✅ **Edição inline** – "Editar botão selecionado" com AJAX + criação de subáreas em lote
-3. ✅ **Carrossel admin** – mostra arquivo atual + checkbox "Limpar" + opção "Modificar"
-4. ✅ **Campo URL no painel** – cria links automáticos dentro de botões
-5. ✅ **Sistema de comentários** – 3 estados (pendente/publicado/recusado), resposta do admin, não aparece em links
-6. ✅ **Bugfixes UX** – busca árvore 3+ níveis, rodapé sticky, CategoriaPicker dinâmico
-7. ✅ **Respostas + Votos** – comentários aninhados com votação 👍/👎 AJAX, migração 0020
-8. ✅ **ngrok corrigido** – UTF-8 funcionando, vídeo renomeado para ASCII-only
+### 31 Partes de Implementação (50+ features/bugs total)
+- **Partes 1-10**: 6 bugs de layout/UX + 8 features (edição inline, carrossel admin, comentários, respostas, votos)
+- **Partes 11-21**: 6 correções + 8 features (duplicação, Estrutura de Árvores, Currículo Atual central, subáreas, Área do Site, ícones, delegação de acesso)
+- **Partes 22-28**: arrastar-e-soltar (anexos + todos painéis), vários links (URL), banner automático + faixa fina
+- **Partes 29-31**: **Docker/PostgreSQL**, **Backup/Restore**, **Organizador com árvore completa no "Mover para"**
 
-**Migrações novas**: `conteudo.0012-0020`, `painel.0002`
+**Migrações novas**: `conteudo.0012-0033` + `painel.0002-0003` + `inteligencia.0002`
 
 → Veja **[CLAUDE.md](CLAUDE.md)** para detalhes completos
 
 ## Estrutura
 
 ```
-conteudo/               → App principal (models, views, admin, forms, widgets)
-painel/                 → Painel Central Administrativo (Telas 1 e 2)
-templates/              → HTML5 (base, home, categoria, conteudo, busca, admin)
+conteudo/               → App principal (models, views, admin, forms, widgets, arvore_views, permissoes)
+painel/                 → Painel Central Administrativo (Telas 1 + 2, Vinculo, EstiloBotao)
+inteligencia/           → Central de Inteligência (estatísticas, alertas, exports)
+templates/
+  ├─ base.html          → Layout base (header, nav, footer com flexbox sticky)
+  ├─ home.html          → Hero (faixa 130px), destaques, recentes, áreas, colunas extras
+  ├─ categoria.html     → Conteúdos com filtros, subbotões como cards, anexos
+  ├─ conteudo_detalhe.html → Detalhe + comentários moderados + votos
+  └─ admin/             → 9 painéis: organizar, adicionar-arquivos, painel-central,
+                         painel-conteudos, barra-superior, estrutura-arvores,
+                         area-do-site, editor-rodape, inteligencia
 static/
-  ├─ css/style.css      → Design system (atualizado ?v=20260713-2)
-  ├─ js/main.js         → Interações (slider, menu, carrossel, votos AJAX)
-  └─ img/               → Brasão, logos, ícones
-db.sqlite3              → Banco SQLite (365+ docs)
-CLAUDE.md               → Documentação técnica completa (v6 – 2026-07-13)
+  ├─ css/style.css      → Design system (atualizado ?v=20260718-2)
+  ├─ js/                → main.js, dropzone.js, filtro_select.js
+  └─ img/               → Brasão (50px), GECEB logo, ícones
+db.sqlite3              → Banco SQLite (588 conteúdos, 132 categorias)
+docker-compose.yml      → Orquestração: db (Postgres 16) + web (Django)
+Dockerfile              → Build da imagem Django com Python 3.12
+CLAUDE.md               → Documentação técnica completa (v27 – 2026-07-19, Parte 31)
 ```
 
 ## Modelos Principais
@@ -78,52 +85,87 @@ CLAUDE.md               → Documentação técnica completa (v6 – 2026-07-13)
 
 | Rota | Descrição |
 |------|-----------|
-| `/` | Home (hero, banners, destaques, recentes, áreas, cartazes, carrosséis) |
-| `/categoria/<slug>/` | Conteúdos da categoria com filtros |
-| `/conteudo/<slug>/` | Detalhe do conteúdo + comentários + votos |
-| `/busca/?q=termo` | Busca textual sem acento |
-| `/admin/` | Django Admin |
-| `/admin/painel-central/` | **Painel Administrativo Completo** (Telas 1 e 2) |
-| `/admin/organizar/` | Organizador visual de hierarquia |
-| `/admin/adicionar-arquivos/` | Upload em lote de arquivos |
+| `/` | Home (hero faixa 130px, destaques, recentes, navegue por área, colunas extras) |
+| `/categoria/<slug>/` | Conteúdos com filtros, subbotões, anexos, comentários |
+| `/conteudo/<slug>/` | Detalhe + comentários moderados (3 estados) + votos AJAX |
+| `/busca/?q=termo` | Busca sem acento em conteúdos e botões |
+| `/admin/` | Django Admin (modelos principais) |
+| `/admin/organizar/` | **Organizador** – gerenciar conteúdos e anexos por categoria |
+| `/admin/adicionar-arquivos/` | **Adicionar Arquivos** – upload em lote + subcategorias |
+| `/admin/painel-central/` | **Painel Central Tela 1** – árvore + publicação multi-destino |
+| `/admin/painel-central/conteudos/` | **Painel Central Tela 2** – listagem geral de conteúdos |
+| `/admin/barra-superior/` | **Barra Superior** – 5 botões fixos no topo |
+| `/admin/estrutura-arvores/` | **Estrutura de Árvores** – 133 nós interativos, CRUD, drag-drop, biblioteca ícones |
+| `/admin/area-do-site/` | **Área do Site** – títulos formatáveis + colunas extras personalizadas |
+| `/admin/editor-rodape/` | **Editor do Rodapé** – 3 colunas de links + contato |
+| `/admin/inteligencia/` | **Central de Inteligência** – estatísticas, alertas, exports Excel/PDF |
 
 ## Stack
 
-- **Backend**: Django 5.2, Python 3.13 (local) / 3.11 (SEDU)
-- **DB**: SQLite
+- **Backend**: Django 5.2, Python 3.13 (local) / 3.12 (Docker)
+- **DB Local**: SQLite (desenvolvimento, intacto)
+- **DB Docker/Produção**: PostgreSQL 16
 - **Frontend**: CSS puro, Font Awesome 6 (ícones), Google Fonts (Inter)
 - **Versionamento**: GitHub (`rabalistasedu/site-curriculos-sedu`)
-- **Demo**: ngrok (URL pública temporária – UTF-8 corrigido)
+- **Demo**: ngrok (URL pública temporária com UTF-8)
+- **Containerização**: Docker + Docker Compose (pronto para SEDU)
 - **Produção**: `curriculo.sedu.es.gov.br/curriculo/` (em progresso)
 
 ## Deploy
 
-### Demonstração ao gerente (ngrok — AGORA CORRIGIDO):
+### Desenvolvimento Local (SQLite — padrão)
+```bash
+# Clone + setup
+git clone https://github.com/rabalistasedu/site-curriculos-sedu.git
+cd "Site Curriculos SEDU"
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+# Rodar (SQLite automaticamente)
+python manage.py runserver 8001
+# Acesse: http://127.0.0.1:8001/admin/ (superuser: ridan / Sedu@2026)
+```
+
+### Docker + PostgreSQL (Sincronização local → Docker)
+```bash
+# 1. Certifique-se de que Docker Desktop está aberto
+# 2. Clique no ".bat" (mais fácil) ou rodeo comando:
+"BAT SEDU\ATUALIZAR BANCO DOCKER.bat"
+
+# Ou manualmente (5 passos automáticos no .bat):
+python manage.py dumpdata -e contenttypes -e auth.permission -e admin.logentry -e sessions --indent 2 -o dump_local.json
+docker compose up -d --build
+docker compose exec -T web python manage.py migrate
+docker compose exec -T web python manage.py flush --no-input
+docker compose exec -T web python manage.py loaddata dump_local.json
+
+# Site no Docker (PostgreSQL): http://localhost:8000
+```
+
+### Backup/Restore Completo (Parte 31)
+```bash
+# Fazer backup (banco + mídia + código)
+"BAT SEDU\BACKUP DOCKER COMPLETO.bat"
+
+# Restaurar em outro PC (copie a pasta gerada)
+"BAT SEDU\RESTAURAR ESTE BACKUP.bat"
+```
+
+### Demonstração ao gerente (ngrok):
 ```bash
 # Opção 1: Usar BAT (mais fácil)
 "BAT SEDU\INICIAR COM NGROK.bat"
 
-# Opção 2: Manualmente (Python com UTF-8)
-python ngrok_compartilhar.py
-
-# Opção 3: Teste primeiro, depois compartilhe
+# Opção 2: Manualmente
 python teste_ngrok.py         # testa tudo
 python ngrok_compartilhar.py  # compartilha com ngrok
 ```
 
 ### Produção na SEDU:
 - Servidor: `curriculo.sedu.es.gov.br/curriculo/`
-- Estratégia: reescrita via `.htaccess` de URLs do WordPress (evita duplicar ~1000 arquivos)
-- Detalhes: ver `MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md`
-
-## Fixes Recentes do ngrok (2026-07-13)
-
-1. **UTF-8 corrigido** – BAT agora usa Python script com `# -*- coding: utf-8 -*-` em vez de ngrok direto
-2. **Vídeo do carrossel renomeado** – `AFINAL_PARA_QUÊ_...mp4` → `AFINAL_PARA_QUE_...mp4` (ASCII-only para ngrok)
-3. **Teste automatizado** – novo script `teste_ngrok.py` valida tudo antes de compartilhar
-4. **BAT melhorado** – `COMPARTILHAR COM GERENTE.bat` agora tenta Python script primeiro (fallback para ngrok direto)
-
-Resultado: caracteres especiais (ç, á, é) agora aparecem corretamente quando gerente acessa via ngrok, e vídeos carregam normalmente.
+- Estratégia: Docker (Postgres) + `.htaccess` para URLs do WordPress
+- Detalhes: ver `MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md` e `CLAUDE.md` Parte 29-30
 
 ## Documentação
 
@@ -136,12 +178,14 @@ Resultado: caracteres especiais (ç, á, é) agora aparecem corretamente quando 
 
 ## Notas Importantes
 
-1. **Banco já populado** – `db.sqlite3` tem tudo. Não precisa rodar migration commands (a menos que teste).
-2. **Conteúdos apontam para URLs externas** – PDFs estão no WordPress, Google Drive, SEDU.
-3. **Cache do navegador** – ao mudar CSS, força recarregamento: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
-4. **GitHub** – sempre use o `.bat` "Subir GitHub SEDU" para enviar (ele faz pull automático).
-5. **Migrações aplicadas** – todas de 0012 a 0020; superusers: `ridan` (Sedu@2026) e `rabalista`.
-6. **ngrok funcionando** – teste com `python teste_ngrok.py` antes de compartilhar.
+1. **Banco já populado** – `db.sqlite3` local tem tudo (588 conteúdos, 132 categorias). Não precisa migration manual (a menos que teste).
+2. **Docker pronto** – use o `.bat` "ATUALIZAR BANCO DOCKER.bat" para sincronizar local → Docker em 1 clique. Sem Docker? SQLite local funciona 100% igual.
+3. **Backup portável** – `.bat` "BACKUP DOCKER COMPLETO.bat" gera backup com tudo (banco + mídia + código). Leve para outro PC com ".bat" de restauração.
+4. **Conteúdos em URLs externas** – PDFs estão no WordPress, Google Drive, SEDU (apenas links, não arquivos locais).
+5. **Cache do navegador** – CSS atualizado? Force com **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
+6. **GitHub** – sempre use `.bat` "Subir GitHub SEDU" para enviar (faz pull automático, evita conflitos).
+7. **Superusers padrão**: `ridan` / `Sedu@2026` e `rabalista`. Deletar testes com `django shell` antes de push.
+8. **ngrok para demo** – teste com `python teste_ngrok.py` antes de compartilhar. UTF-8 já corrigido (2026-07-13).
 
 ## Usuário Principal
 
@@ -166,5 +210,8 @@ Resultado: caracteres especiais (ç, á, é) agora aparecem corretamente quando 
 
 ---
 
-**Última atualização**: 2026-07-13  
-**Versão CSS**: `?v=20260713-2` | **Versão JS**: `?v=20260711-1`
+**Última atualização**: 2026-07-19 (Parte 31)  
+**Versão CSS**: `?v=20260718-2` | **Versão JS**: `?v=20260711-1`  
+**Migrações aplicadas**: `conteudo/0012-0033` + `painel/0002-0003` + `inteligencia/0002`  
+**Docker pronto para produção**: Dockerfile + docker-compose.yml com PostgreSQL 16  
+**Documentação completa**: [CLAUDE.md](CLAUDE.md) (v27)
