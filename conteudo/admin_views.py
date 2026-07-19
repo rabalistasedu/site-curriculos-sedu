@@ -10,6 +10,27 @@ from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, Coluna
 from .permissoes import exige_permissao_painel
 
 
+def _arvore_flat_categorias(excluir_pk=None):
+    """Lista achatada de TODAS as categorias ativas (todos os níveis, com
+    recuo por profundidade) — usada nos selects "mover para" que precisam
+    listar a árvore inteira de botões, não só os vizinhos."""
+    cats = list(Categoria.objects.filter(ativa=True).order_by('ordem', 'nome'))
+    filhos_map = {}
+    for c in cats:
+        filhos_map.setdefault(c.categoria_pai_id, []).append(c)
+
+    itens = []
+
+    def caminhar(pai_id, nivel):
+        for c in filhos_map.get(pai_id, []):
+            if c.pk != excluir_pk:
+                itens.append({'cat': c, 'nivel': nivel, 'recuo': ' ' * (nivel * 4)})
+            caminhar(c.pk, nivel + 1)
+
+    caminhar(None, 0)
+    return itens
+
+
 def _criar_links_extra(post, prefix, categoria, nome_padrao):
     """Cria vários Conteudo(tipo='link') a partir de linhas dinâmicas de
     nome+URL (campos '{prefix}_link_nome'/'{prefix}_link_url', uma lista
@@ -281,6 +302,8 @@ def organizar_view(request):
         else:
             destinos = list(subcategorias)
 
+        arvore_destinos = _arvore_flat_categorias(excluir_pk=categoria.pk)
+
         todos_conteudos = Conteudo.objects.exclude(
             categoria=categoria
         ).select_related('categoria').order_by('titulo')
@@ -299,6 +322,7 @@ def organizar_view(request):
             'anexos_categoria': anexos_categoria,
             'destinos': destinos,
             'todas_subcategorias': todas_subcategorias,
+            'arvore_destinos': arvore_destinos,
             'todos_conteudos': todos_conteudos,
             'busca': busca,
             'is_app_index': True,

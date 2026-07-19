@@ -349,27 +349,18 @@ subbotao vazio — nao dava para criar botao dentro dele.{% endcomment %}
         <label><input type="checkbox" id="selectAll" class="org-check" onclick="toggleAll(this)"> Selecionar</label>
         <span style="color:#9ca3af;">|</span>
         <label>Mover selecionados para:</label>
-        <select name="destino_id" required>
+        <select name="destino_id" required data-pesquisavel="🔍 Pesquisar botão de destino...">
             <option value="">— Escolha o destino —</option>
             {% if categoria.categoria_pai %}
-            <optgroup label="Categoria pai">
-                <option value="{{ categoria.categoria_pai.pk }}">↩ {{ categoria.categoria_pai.nome }}</option>
+            <optgroup label="Atalho rápido">
+                <option value="{{ categoria.categoria_pai.pk }}">↩ {{ categoria.categoria_pai.nome }} (categoria pai)</option>
             </optgroup>
             {% endif %}
-            {% if todas_subcategorias %}
-            <optgroup label="Subcategorias">
-                {% for sub in todas_subcategorias %}
-                <option value="{{ sub.pk }}">{{ sub.nome }}</option>
+            <optgroup label="Toda a árvore de botões do site">
+                {% for item in arvore_destinos %}
+                <option value="{{ item.cat.pk }}">{{ item.recuo }}{% if item.nivel > 0 %}└ {% endif %}{{ item.cat.nome }}</option>
                 {% endfor %}
             </optgroup>
-            {% endif %}
-            {% if destinos %}
-            <optgroup label="Outras áreas">
-                {% for dest in destinos %}
-                <option value="{{ dest.pk }}">{{ dest.nome }}</option>
-                {% endfor %}
-            </optgroup>
-            {% endif %}
         </select>
         <button type="submit" class="org-btn org-btn-primary"><i class="fas fa-arrows-alt"></i> Mover</button>
     </div>
@@ -558,4 +549,5 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 <script src="{% static 'js/dropzone.js' %}"></script>
+<script src="{% static 'js/filtro_select.js' %}"></script>
 {% endblock %}
