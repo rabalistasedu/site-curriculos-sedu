@@ -688,6 +688,42 @@ class ConfiguracaoSite(models.Model):
     icone_areas = models.CharField('Ícone de "Navegue por área" (padrão do site)', max_length=100, blank=True, default='fas fa-compass')
     icone_areas_imagem = models.FileField('Ícone de "Navegue por área" (imagem)', upload_to='icones_secao/', blank=True, null=True)
 
+    # Nome do botão "Currículo Atual" (pílula central da home) — editável.
+    nome_curriculo_atual = models.CharField(
+        'Nome do botão "Currículo Atual"', max_length=100, blank=True,
+        default='Currículo Atual',
+        help_text='Texto exibido na pílula central da página inicial. Deixe vazio '
+                  'para usar "Currículo Atual" (padrão).'
+    )
+
+    # ── Identidade Visual (cabeçalho) ──────────────────────────────────
+    ALINHAMENTO_LOGO_CHOICES = [
+        ('esquerda', 'Esquerda'),
+        ('centro', 'Centro'),
+        ('direita', 'Direita'),
+    ]
+    brasao_imagem = models.FileField(
+        'Brasão personalizado (opcional)', upload_to='identidade/', blank=True, null=True,
+        help_text='Se vazio, usa o brasão padrão do Espírito Santo. Envie uma imagem '
+                  'para substituí-lo (fundo transparente recomendado).'
+    )
+    brasao_alinhamento = models.CharField(
+        'Alinhamento do brasão', max_length=10, choices=ALINHAMENTO_LOGO_CHOICES, default='esquerda'
+    )
+    brasao_largura = models.PositiveIntegerField('Largura do brasão (px)', null=True, blank=True)
+    brasao_altura = models.PositiveIntegerField('Altura do brasão (px)', null=True, blank=True)
+
+    logo2_imagem = models.FileField(
+        'Segundo logotipo (opcional)', upload_to='identidade/', blank=True, null=True,
+        help_text='Ex.: logo do Currículo. Aparece na barra superior ao lado do brasão. '
+                  'Deixe vazio para não exibir nenhum segundo logotipo.'
+    )
+    logo2_alinhamento = models.CharField(
+        'Alinhamento do segundo logotipo', max_length=10, choices=ALINHAMENTO_LOGO_CHOICES, default='esquerda'
+    )
+    logo2_largura = models.PositiveIntegerField('Largura do segundo logotipo (px)', null=True, blank=True)
+    logo2_altura = models.PositiveIntegerField('Altura do segundo logotipo (px)', null=True, blank=True)
+
     class Meta:
         verbose_name = 'Configuração do site'
         verbose_name_plural = 'Configuração do site'
@@ -711,6 +747,56 @@ class ConfiguracaoSite(models.Model):
     def get_config(cls):
         config, _ = cls.objects.get_or_create(pk=1)
         return config
+
+
+class RodapeImagem(models.Model):
+    """Imagem configurável do rodapé (logo parceiro, selo, etc.) — gerenciada
+    pelo painel "Editor do Rodapé". A faixa de imagens tem altura fixa: cada
+    imagem se ajusta ao espaço disponível (object-fit:contain), nunca aumenta
+    a altura do rodapé, seja qual for a largura/altura configurada."""
+    ALINHAMENTO_CHOICES = [
+        ('esquerda', 'Esquerda'),
+        ('centro', 'Centralizado'),
+        ('direita', 'Direita'),
+    ]
+    imagem = models.FileField(
+        'Imagem', upload_to='rodape_imagens/',
+        help_text='Qualquer formato de imagem (PNG, JPG, SVG, WEBP...).'
+    )
+    largura = models.PositiveIntegerField(
+        'Largura (px)', null=True, blank=True,
+        help_text='Vazio = largura automática, proporcional à altura.'
+    )
+    altura = models.PositiveIntegerField(
+        'Altura (px)', null=True, blank=True,
+        help_text='Vazio = altura automática. A imagem nunca aumenta a altura do rodapé — '
+                  'ela sempre se ajusta ao espaço fixo já reservado.'
+    )
+    alinhamento = models.CharField(
+        'Alinhamento', max_length=10, choices=ALINHAMENTO_CHOICES, default='esquerda'
+    )
+    url = models.URLField(
+        'URL (opcional)', blank=True,
+        help_text='Se preenchida, a imagem funciona como link. Se vazia, é exibida sem link.'
+    )
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Imagem do rodapé'
+        verbose_name_plural = 'Imagens do rodapé'
+        ordering = ['ordem', 'pk']
+
+    def __str__(self):
+        return self.imagem.name.split('/')[-1] if self.imagem else f'Imagem {self.pk}'
+
+    @property
+    def link_externo(self):
+        u = (self.url or '').strip()
+        if not u:
+            return ''
+        if '://' in u or u.startswith(('mailto:', 'tel:', '//', '#', '/')):
+            return u
+        return 'https://' + u
 
 
 class ColunaExtra(models.Model):

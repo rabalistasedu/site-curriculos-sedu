@@ -30,6 +30,14 @@
     .rod-preview h4 { color: #fff; font-size: 13px; margin: 0 0 8px; }
     .rod-preview a { color: #93c5fd; }
     .rod-alert { padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .rod-img-tabela { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+    .rod-img-tabela th { background: #f3f6fa; text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; color: #4b5563; }
+    .rod-img-tabela td { padding: 8px 10px; border-top: 1px solid #eef1f5; font-size: 13px; vertical-align: middle; }
+    .rod-img-thumb { max-height: 40px; max-width: 90px; object-fit: contain; background: repeating-conic-gradient(#e5e7eb 0% 25%, #fff 0% 50%) 50% / 12px 12px; border-radius: 4px; }
+    .rod-img-add { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+    .rod-img-add > div { min-width: 140px; }
+    .rod-img-add label { display: block; font-size: 11px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+    .rod-img-excluir { background: none; border: none; color: #b91c1c; cursor: pointer; font-size: 13px; }
 </style>
 {% endblock %}
 
@@ -49,6 +57,7 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" name="secao" value="textos">
 
     <div class="rod-section">
         <h3><i class="fas fa-address-card" style="color:#2d5a8e;"></i> Informacoes de contato</h3>
@@ -119,6 +128,82 @@
         <i class="fas fa-save"></i> Salvar rodape
     </button>
 </form>
+
+<div class="rod-section">
+    <h3><i class="fas fa-images" style="color:#2d5a8e;"></i> Imagens do rodape</h3>
+    <div class="rod-help" style="margin-bottom:12px;">
+        Adicione quantas imagens quiser (logos parceiros, selos, etc.). Escolha o alinhamento
+        (esquerda, centralizado ou direita) e, se quiser, largura/altura em pixels e um link opcional.
+        A faixa de imagens tem altura fixa — elas sempre se ajustam ao espaco disponivel e nunca
+        aumentam a altura do rodape.
+    </div>
+
+    {% if imagens_rodape %}
+    <table class="rod-img-tabela">
+        <tr>
+            <th>Imagem</th>
+            <th>Alinhamento</th>
+            <th>Largura</th>
+            <th>Altura</th>
+            <th>URL</th>
+            <th>Ordem</th>
+            <th></th>
+        </tr>
+        {% for img in imagens_rodape %}
+        <tr>
+            <td><img src="{{ img.imagem.url }}" class="rod-img-thumb" alt=""></td>
+            <td>{{ img.get_alinhamento_display }}</td>
+            <td>{{ img.largura|default:"auto" }}</td>
+            <td>{{ img.altura|default:"auto" }}</td>
+            <td>{% if img.url %}<a href="{{ img.link_externo }}" target="_blank">{{ img.url|truncatechars:30 }}</a>{% else %}<em style="color:#9ca3af;">sem link</em>{% endif %}</td>
+            <td>{{ img.ordem }}</td>
+            <td>
+                <form method="post" style="display:inline;" onsubmit="return confirm('Remover esta imagem do rodape?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="secao" value="imagem_excluir">
+                    <input type="hidden" name="imagem_id" value="{{ img.pk }}">
+                    <button type="submit" class="rod-img-excluir" title="Excluir"><i class="fas fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p class="rod-help">Nenhuma imagem cadastrada ainda.</p>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="rod-img-add">
+        {% csrf_token %}
+        <input type="hidden" name="secao" value="imagem_nova">
+        <div>
+            <label>Imagem *</label>
+            <input type="file" name="nova_imagem" accept="image/*" required>
+        </div>
+        <div>
+            <label>Alinhamento</label>
+            <select name="nova_alinhamento" class="rod-input" style="margin-bottom:0;">
+                <option value="esquerda">Esquerda</option>
+                <option value="centro">Centralizado</option>
+                <option value="direita">Direita</option>
+            </select>
+        </div>
+        <div>
+            <label>Largura (px, opcional)</label>
+            <input type="number" name="nova_largura" class="rod-input" style="margin-bottom:0;" min="1">
+        </div>
+        <div>
+            <label>Altura (px, opcional)</label>
+            <input type="number" name="nova_altura" class="rod-input" style="margin-bottom:0;" min="1">
+        </div>
+        <div style="flex:2;min-width:220px;">
+            <label>URL (opcional — vira link ao clicar)</label>
+            <input type="url" name="nova_url" class="rod-input" style="margin-bottom:0;" placeholder="https://...">
+        </div>
+        <div>
+            <button type="submit" class="rod-save" style="padding:8px 20px;"><i class="fas fa-plus"></i> Adicionar</button>
+        </div>
+    </form>
+</div>
 
 <div class="rod-preview">
     <h4><i class="fas fa-eye"></i> Pre-visualizacao (estrutura atual do rodape)</h4>

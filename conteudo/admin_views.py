@@ -6,7 +6,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
 from django.db.models import Q
-from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao
+from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao, RodapeImagem
 from .permissoes import exige_permissao_painel
 
 
@@ -672,6 +672,31 @@ def editor_rodape_view(request):
     config = ConfiguracaoSite.get_config()
 
     if request.method == 'POST':
+        secao = request.POST.get('secao', 'textos')
+
+        if secao == 'imagem_nova':
+            arquivo = request.FILES.get('nova_imagem')
+            if not arquivo:
+                messages.error(request, 'Selecione um arquivo de imagem.')
+                return redirect('admin_editor_rodape')
+            largura = request.POST.get('nova_largura', '').strip()
+            altura = request.POST.get('nova_altura', '').strip()
+            RodapeImagem.objects.create(
+                imagem=arquivo,
+                largura=int(largura) if largura.isdigit() else None,
+                altura=int(altura) if altura.isdigit() else None,
+                alinhamento=request.POST.get('nova_alinhamento', 'esquerda'),
+                url=request.POST.get('nova_url', '').strip(),
+                ordem=RodapeImagem.objects.count(),
+            )
+            messages.success(request, 'Imagem adicionada ao rodapé.')
+            return redirect('admin_editor_rodape')
+
+        if secao == 'imagem_excluir':
+            RodapeImagem.objects.filter(pk=request.POST.get('imagem_id')).delete()
+            messages.success(request, 'Imagem removida do rodapé.')
+            return redirect('admin_editor_rodape')
+
         config.rodape_col1_titulo = request.POST.get('col1_titulo', '').strip()
         config.rodape_col1_html = request.POST.get('col1_html', '').strip()
         config.rodape_col2_titulo = request.POST.get('col2_titulo', '').strip()
@@ -693,6 +718,7 @@ def editor_rodape_view(request):
     return render(request, 'admin/editor_rodape.html', {
         'title': 'Editor do Rodape',
         'config': config,
+        'imagens_rodape': RodapeImagem.objects.all(),
         'has_permission': True,
         'is_app_index': True,
     })

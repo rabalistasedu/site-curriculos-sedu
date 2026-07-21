@@ -29,6 +29,12 @@ def home(request):
     recentes = Conteudo.objects.publicados().filter(
         Q(recente=True) | Q(categoria__in=cats_recentes)
     ).distinct()
+    # Botões raiz marcados com "Aparecer em Conteúdos Recentes" também
+    # aparecem, eles mesmos, como card na área "Conteúdos recentes" da
+    # home (antes só valia para os conteúdos DENTRO deles).
+    categorias_recentes = Categoria.objects.filter(
+        ativa=True, categoria_pai__isnull=True, mostrar_conteudos_recentes=True
+    ).order_by('ordem', 'nome')
 
     cartazes_esq = Cartaz.objects.filter(ativo=True, lado='esquerdo')
     cartazes_dir = Cartaz.objects.filter(ativo=True, lado='direito')
@@ -59,6 +65,7 @@ def home(request):
         'banners': banners,
         'destaques': destaques,
         'recentes': recentes,
+        'categorias_recentes': categorias_recentes,
         'cartazes_esq': cartazes_esq,
         'cartazes_dir': cartazes_dir,
         'carrosseis_esq': carrosseis_esq,

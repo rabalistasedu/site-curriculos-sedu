@@ -137,12 +137,12 @@
              junto com os botões marcados para a área central (painel
              "Botões da Barra Superior" — checkbox "Central?") -->
         <div class="curriculo-atual-topo">
-            <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured" title="Currículo Atual">
+            <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured" title="{{ config.nome_curriculo_atual|default:'Currículo Atual' }}">
                 <div class="category-icon">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 <div class="area-text">
-                    <h3>Currículo Atual</h3>
+                    <h3>{{ config.nome_curriculo_atual|default:"Currículo Atual" }}</h3>
                 </div>
             </a>
             {% for botao in botoes_area_central %}
@@ -203,7 +203,7 @@
                     {% endif %}
                     {{ config.titulo_recentes|default:"Conteúdos recentes"|safe }}
                 </h2>
-                {% if recentes %}
+                {% if recentes or categorias_recentes %}
                 <div class="content-list">
                     {% for item in recentes %}
                     <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
@@ -221,6 +221,22 @@
                                 <span>{{ item.data_publicacao|date:"d/m/Y" }}</span>
                                 {% if item.extensao_arquivo %}<span class="file-ext">{{ item.extensao_arquivo }}</span>{% endif %}
                             </div>
+                        </div>
+                        <i class="fas fa-chevron-right list-arrow"></i>
+                    </a>
+                    {% endfor %}
+                    {% for cat in categorias_recentes %}
+                    <a href="{% if cat.link_externo %}{{ cat.link_externo }}{% else %}{% url 'conteudo:categoria' cat.slug %}{% endif %}"
+                       class="list-item"
+                       {% if cat.link_externo %}target="_blank" rel="noopener"{% endif %}
+                       title="{{ cat.nome }}">
+                        <div class="list-icon{% if cat.icone_imagem %} sem-fundo{% endif %}">
+                            {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
+                            {% else %}<i class="{{ cat.icone_display }}"></i>{% endif %}
+                        </div>
+                        <div class="list-info">
+                            <h3>{{ cat.nome }}</h3>
+                            <div class="list-meta"><span>Botão</span></div>
                         </div>
                         <i class="fas fa-chevron-right list-arrow"></i>
                     </a>

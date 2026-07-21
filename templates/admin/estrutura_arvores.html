@@ -695,6 +695,7 @@ const EA = {
 
     _renderDetalhes(d) {
         let html = '';
+        this._iconeLibSelecionado = null;
 
         // Info
         html += `<div class="ea-secao">
@@ -769,7 +770,10 @@ const EA = {
                 <div class="ea-campo"><label>Classe Font Awesome</label><input type="text" id="edIcone" value="${this._esc(d.icone)}" placeholder="fas fa-folder"></div>
                 <div class="ea-campo"><label>Enviar imagem</label><input type="file" id="edIconeImg" accept=".png,.jpg,.jpeg,.svg,.webp,.ico,.gif"></div>
                 <div class="ea-campo"><label><input type="checkbox" id="edLimparIcone"> Remover ícone personalizado</label></div>
-                <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarIcone(${d.id})"><i class="fas fa-check"></i> Salvar ícone</button>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                    <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarIcone(${d.id})"><i class="fas fa-check"></i> Salvar ícone</button>
+                    <button class="ea-btn-sm ea-btn-danger" onclick="EA.excluirIconeAtual(${d.id})"><i class="fas fa-trash"></i> Excluir ícone</button>
+                </div>
 
                 <hr style="margin:16px 0;border-color:var(--ea-border)">
                 <div class="ea-campo"><label>Biblioteca de ícones Font Awesome</label>
@@ -914,6 +918,7 @@ const EA = {
             div.onclick = () => {
                 grid.querySelectorAll('.selected').forEach(s => s.classList.remove('selected'));
                 div.classList.add('selected');
+                EA._iconeLibSelecionado = { pasta: ic.pasta, nome: ic.nome };
             };
             grid.appendChild(div);
         });
@@ -943,10 +948,28 @@ const EA = {
         const icone = document.getElementById('edIcone').value;
         if (icone) fd.append('icone', icone);
         const img = document.getElementById('edIconeImg').files[0];
-        if (img) fd.append('icone_imagem', img);
+        if (img) {
+            fd.append('icone_imagem', img);
+        } else if (this._iconeLibSelecionado) {
+            // Ícone escolhido na galeria de "Ícones personalizados enviados"
+            // (em vez de subir um arquivo novo) — aplica o já existente.
+            fd.append('icone_imagem_biblioteca_pasta', this._iconeLibSelecionado.pasta);
+            fd.append('icone_imagem_biblioteca_nome', this._iconeLibSelecionado.nome);
+        }
         if (document.getElementById('edLimparIcone').checked) fd.append('limpar_icone_imagem', '1');
         const r = await this._post(fd);
         if (r.ok) { this.toast('Ícone atualizado.', 'success'); this.recarregar(); }
+        else this.toast(r.error, 'error');
+    },
+
+    async excluirIconeAtual(id) {
+        if (!confirm('Remover o ícone personalizado deste botão? Ele volta ao ícone automático/padrão.')) return;
+        const fd = new FormData();
+        fd.append('action', 'editar');
+        fd.append('id', id);
+        fd.append('limpar_icone_imagem', '1');
+        const r = await this._post(fd);
+        if (r.ok) { this.toast('Ícone removido do botão.', 'success'); this.recarregar(); }
         else this.toast(r.error, 'error');
     },
 

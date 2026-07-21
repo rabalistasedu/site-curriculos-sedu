@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db.models import Count
 from .models import (
     Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz,
-    Anexo, Carrossel, CarrosselImagem, ColunaExtra, ColunaExtraBotao,
+    Anexo, Carrossel, CarrosselImagem, ColunaExtra, ColunaExtraBotao, RodapeImagem,
 )
 from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
 from .busca_utils import BuscaSemAcentoMixin
@@ -665,8 +665,25 @@ class ConfiguracaoSiteAdmin(admin.ModelAdmin):
         ('🏢 Dados institucionais', {
             'fields': ('nome_site', 'descricao', 'email_contato', 'telefone', 'endereco'),
         }),
+        ('🎓 Botão "Currículo Atual"', {
+            'fields': ('nome_curriculo_atual',),
+            'description': 'Texto exibido na pílula central da página inicial.',
+        }),
         ('🖼️ Identidade visual', {
             'fields': ('logo', 'favicon'),
+        }),
+        ('🎖️ Identidade visual — Brasão (cabeçalho)', {
+            'fields': ('brasao_imagem', 'brasao_alinhamento', 'brasao_largura', 'brasao_altura'),
+            'description': (
+                'Se a imagem ficar vazia, o site usa o brasão padrão do Espírito Santo. '
+                'Largura/altura em pixels (opcional) — a barra superior do site tem altura '
+                'fixa, então a imagem sempre se ajusta ao espaço disponível, mesmo que você '
+                'informe um número maior.'
+            ),
+        }),
+        ('🎖️ Identidade visual — Segundo logotipo (cabeçalho)', {
+            'fields': ('logo2_imagem', 'logo2_alinhamento', 'logo2_largura', 'logo2_altura'),
+            'description': 'Ex.: logo do Currículo. Deixe a imagem vazia para não exibir nenhum segundo logotipo.',
         }),
     )
 
@@ -689,3 +706,9 @@ class ColunaExtraAdmin(admin.ModelAdmin):
     list_editable = ['lado', 'ativa', 'ordem']
     list_filter = ['lado', 'ativa']
     inlines = [ColunaExtraBotaoInline]
+
+
+@admin.register(RodapeImagem)
+class RodapeImagemAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'alinhamento', 'largura', 'altura', 'url', 'ordem']
+    list_editable = ['alinhamento', 'largura', 'altura', 'url', 'ordem']

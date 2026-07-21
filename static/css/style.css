@@ -2478,3 +2478,61 @@ div[vw-access-button]:hover { opacity: 1; }
     .home-coluna-extra { width: 100%; }
     .home-coluna-extra .areas-list { grid-template-columns: 1fr 1fr; max-height: none; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   AJUSTES 2026-07-21 — Identidade visual (brasão/2º logo) + imagens
+   configuráveis do rodapé. Ambas as faixas (barra superior e rodapé)
+   têm altura FIXA: as imagens sempre se ajustam ao espaço reservado
+   (object-fit:contain), nunca aumentam a altura da faixa.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Slot de logo do cabeçalho (brasão / segundo logotipo configuráveis) */
+.header-logo-slot {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    max-height: 50px;
+    flex-shrink: 0;
+}
+.header-logo-slot img { max-height: 100%; width: auto; object-fit: contain; }
+.header-logo-slot.align-centro { order: 5; margin-left: auto; margin-right: auto; }
+.header-logo-slot.align-direita { order: 20; }
+
+@media (max-width: 1024px) {
+    .header-logo-slot { max-height: 40px; }
+}
+@media (max-width: 860px) {
+    .header-logo-slot { max-height: 36px; }
+}
+@media (max-width: 400px) {
+    .header-logo-slot { max-height: 30px; }
+}
+
+/* Faixa de imagens do rodapé (painel "Editor do Rodapé") — altura fixa */
+.footer-imagens-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    height: 44px;
+    padding: 4px 0;
+    overflow: hidden;
+}
+.footer-imagens-zona {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+}
+.footer-imagens-esq { justify-content: flex-start; }
+.footer-imagens-centro { justify-content: center; }
+.footer-imagens-dir { justify-content: flex-end; }
+.footer-imagens-row img { max-height: 100%; width: auto; object-fit: contain; }
+.footer-imagens-row a { display: inline-flex; align-items: center; height: 100%; }
+
+@media (max-width: 900px) {
+    .footer-imagens-row { height: 36px; flex-wrap: wrap; }
+}

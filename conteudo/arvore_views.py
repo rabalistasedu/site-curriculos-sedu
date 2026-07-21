@@ -99,6 +99,7 @@ def _listar_icones_enviados():
             if ext in ('.png', '.jpg', '.jpeg', '.svg', '.webp', '.ico', '.gif'):
                 icones.append({
                     'nome': f,
+                    'pasta': 'icones_categoria',
                     'url': f'{settings.MEDIA_URL}icones_categoria/{f}',
                 })
     pasta2 = os.path.join(settings.MEDIA_ROOT, 'icones')
@@ -108,6 +109,7 @@ def _listar_icones_enviados():
             if ext in ('.png', '.jpg', '.jpeg', '.svg', '.webp', '.ico', '.gif'):
                 icones.append({
                     'nome': f,
+                    'pasta': 'icones',
                     'url': f'{settings.MEDIA_URL}icones/{f}',
                 })
     return icones
@@ -346,6 +348,16 @@ def _api_editar(request):
     icone_img = request.FILES.get('icone_imagem')
     if icone_img:
         cat.icone_imagem.save(icone_img.name, icone_img, save=False)
+    else:
+        # Ícone escolhido na "biblioteca" (galeria de ícones já enviados) —
+        # em vez de subir um arquivo novo, reaproveita um arquivo já existente
+        # em media/icones_categoria/ ou media/icones/ e aplica ao botão.
+        lib_pasta = request.POST.get('icone_imagem_biblioteca_pasta', '').strip()
+        lib_nome = os.path.basename(request.POST.get('icone_imagem_biblioteca_nome', '').strip())
+        if lib_pasta in ('icones_categoria', 'icones') and lib_nome:
+            caminho_absoluto = os.path.join(settings.MEDIA_ROOT, lib_pasta, lib_nome)
+            if os.path.isfile(caminho_absoluto):
+                cat.icone_imagem.name = f'{lib_pasta}/{lib_nome}'
 
     limpar_icone = request.POST.get('limpar_icone_imagem')
     if limpar_icone == '1':
@@ -448,6 +460,7 @@ def _api_upload_icone(request):
     return JsonResponse({
         'ok': True,
         'nome': nome_final,
+        'pasta': 'icones_categoria',
         'url': f'{settings.MEDIA_URL}icones_categoria/{nome_final}',
         'msg': f'Ícone "{nome_final}" enviado para a biblioteca.',
     })

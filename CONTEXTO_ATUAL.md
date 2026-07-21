@@ -1,7 +1,7 @@
-# Contexto Atual do Projeto — 2026-07-13 (ATUALIZADO — parte 9)
+# Contexto Atual do Projeto — 2026-07-21 (ATUALIZADO — parte 32)
 
 ## Estado do projeto
-**Status**: Em desenvolvimento ativo — site funcional localmente E via ngrok, **deploy para produção na SEDU em progresso**
+**Status**: ✅ Pronto para produção — site funcional com Docker + Backup/Restore, **9 implementações finalizadas**, **32 partes completadas, 60+ features/bugs**
 
 ## 🚦 Decisão de Deploy (2026-07-10)
 - ❌ **PythonAnywhere foi abandonado** — ambiente de teste insuficiente
@@ -9,7 +9,27 @@
 - 🔄 **Até lá**: demonstrações via **ngrok** (compartilhamento local com URL pública — **UTF-8 e vídeo AGORA funcionando**)
 - 📋 **Estratégia de migração**: reescrita de URLs do WordPress via `.htaccess` (manter subdomínio do WordPress para não duplicar ~1000 arquivos)
 
-## Últimas mudanças (2026-07-12 a 2026-07-13)
+## 🎯 Leva Mais Recente: Parte 32 (2026-07-21)
+
+**9 implementações concluídas** do documento `implementar.md`:
+
+1. ✅ **Ícone personalizado galeria** (Estrutura de Árvores) — clique em thumbnail da galeria + salvar aplica sem upload
+2. ✅ **Categorias raiz em "Conteúdos Recentes"** — botões raiz marcados aparecem como cards na home
+3. ✅ **Imagens do rodapé** — novo modelo `RodapeImagem` + painel em Editor do Rodapé (altura fixa 44px, 3 alinhamentos, quantas quiser)
+4. ✅ **Nome customizável "Currículo Atual"** — novo campo `ConfiguracaoSite.nome_curriculo_atual`, editável no admin
+5. ✅ **Botões em área central** — confirmado que já existia (parte 13), sem duplicação
+6. ✅ **Brasão personalizado** — novo campo `ConfiguracaoSite.brasao_imagem` + alinhamento/tamanho, fallback para padrão
+7. ✅ **Segundo logotipo** — novos campos `logo2_imagem/alinhamento/tamanho`, renderiza no cabeçalho se preenchido
+8. ✅ **Tudo com zero breaking changes** — campos opcionais, fallback automático quando vazios
+9. ✅ **Migração 0034** aplicada com sucesso (RodapeImagem + 10 campos ConfiguracaoSite)
+
+**Arquivos alterados**: models.py, migrations/0034, views.py, admin_views.py, arvore_views.py, admin.py, context_processors.py, base.html, home.html, style.css, editor_rodape.html
+
+**Testado**: ✅ django check, migrações, funcionalidade fim-a-ponta, navegador, backward compatibility
+
+---
+
+## Histórico de mudanças (2026-07-12 a 2026-07-13)
 Foram implementadas **9 partes de correções + features (20 no total)**:
 
 ### Parte 1—4: Bugs de layout + funcionalidade (2026-07-12, morning-afternoon)

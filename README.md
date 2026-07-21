@@ -2,7 +2,7 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) – Espírito Santo.
 
-## Status Atual (2026-07-19 — Parte 31 + Docker + Backup/Restore Completo)
+## Status Atual (2026-07-21 — Parte 32 + 9 Implementações do implementar.md)
 
 ✅ **Site funcional e responsivo** – 588 conteúdos, 132 categorias, organização hierárquica ilimitada  
 ✅ **9 painéis administrativos** – Organizador, Adicionar Arquivos, Painel Central (Telas 1+2), Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência  
@@ -35,15 +35,16 @@ python manage.py runserver 8001
 
 Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (admin)
 
-## Últimas Implementações (2026-07-11 a 2026-07-19)
+## Últimas Implementações (2026-07-11 a 2026-07-21)
 
-### 31 Partes de Implementação (50+ features/bugs total)
+### 32 Partes de Implementação (60+ features/bugs total)
 - **Partes 1-10**: 6 bugs de layout/UX + 8 features (edição inline, carrossel admin, comentários, respostas, votos)
 - **Partes 11-21**: 6 correções + 8 features (duplicação, Estrutura de Árvores, Currículo Atual central, subáreas, Área do Site, ícones, delegação de acesso)
 - **Partes 22-28**: arrastar-e-soltar (anexos + todos painéis), vários links (URL), banner automático + faixa fina
 - **Partes 29-31**: **Docker/PostgreSQL**, **Backup/Restore**, **Organizador com árvore completa no "Mover para"**
+- **Parte 32**: **9 Implementações** — ícone galeria (Estrutura), categorias recentes (home), imagens rodapé, nome Currículo Atual, identidade visual cabeçalho
 
-**Migrações novas**: `conteudo.0012-0033` + `painel.0002-0003` + `inteligencia.0002`
+**Migrações novas**: `conteudo.0012-0034` + `painel.0002-0003` + `inteligencia.0002`
 
 → Veja **[CLAUDE.md](CLAUDE.md)** para detalhes completos
 
