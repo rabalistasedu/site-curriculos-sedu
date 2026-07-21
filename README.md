@@ -2,7 +2,7 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) – Espírito Santo.
 
-## Status Atual (2026-07-21 — Parte 32 + 9 Implementações do implementar.md)
+## Status Atual (2026-07-21 — Parte 33 + Comentários em todos os botões)
 
 ✅ **Site funcional e responsivo** – 588 conteúdos, 132 categorias, organização hierárquica ilimitada  
 ✅ **9 painéis administrativos** – Organizador, Adicionar Arquivos, Painel Central (Telas 1+2), Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência  
@@ -37,14 +37,15 @@ Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (adm
 
 ## Últimas Implementações (2026-07-11 a 2026-07-21)
 
-### 32 Partes de Implementação (60+ features/bugs total)
+### 33 Partes de Implementação (60+ features/bugs total)
 - **Partes 1-10**: 6 bugs de layout/UX + 8 features (edição inline, carrossel admin, comentários, respostas, votos)
 - **Partes 11-21**: 6 correções + 8 features (duplicação, Estrutura de Árvores, Currículo Atual central, subáreas, Área do Site, ícones, delegação de acesso)
 - **Partes 22-28**: arrastar-e-soltar (anexos + todos painéis), vários links (URL), banner automático + faixa fina
 - **Partes 29-31**: **Docker/PostgreSQL**, **Backup/Restore**, **Organizador com árvore completa no "Mover para"**
 - **Parte 32**: **9 Implementações** — ícone galeria (Estrutura), categorias recentes (home), imagens rodapé, nome Currículo Atual, identidade visual cabeçalho
+- **Parte 33**: **Comentários em todos os botões** — página de qualquer categoria/botão ganhou a mesma seção de comentários dos conteúdos, regra automática vale para botões futuros
 
-**Migrações novas**: `conteudo.0012-0034` + `painel.0002-0003` + `inteligencia.0002`
+**Migrações novas**: `conteudo.0012-0035` + `painel.0002-0003` + `inteligencia.0002`
 
 → Veja **[CLAUDE.md](CLAUDE.md)** para detalhes completos
 
@@ -69,7 +70,7 @@ static/
 db.sqlite3              → Banco SQLite (588 conteúdos, 132 categorias)
 docker-compose.yml      → Orquestração: db (Postgres 16) + web (Django)
 Dockerfile              → Build da imagem Django com Python 3.12
-CLAUDE.md               → Documentação técnica completa (v27 – 2026-07-19, Parte 31)
+CLAUDE.md               → Documentação técnica completa (v29 – 2026-07-21, Parte 33)
 ```
 
 ## Modelos Principais
@@ -211,8 +212,8 @@ python ngrok_compartilhar.py  # compartilha com ngrok
 
 ---
 
-**Última atualização**: 2026-07-19 (Parte 31)  
-**Versão CSS**: `?v=20260718-2` | **Versão JS**: `?v=20260711-1`  
-**Migrações aplicadas**: `conteudo/0012-0033` + `painel/0002-0003` + `inteligencia/0002`  
+**Última atualização**: 2026-07-21 (Parte 33)  
+**Versão CSS**: `?v=20260721-1` | **Versão JS**: `?v=20260711-1`  
+**Migrações aplicadas**: `conteudo/0012-0035` + `painel/0002-0003` + `inteligencia/0002`  
 **Docker pronto para produção**: Dockerfile + docker-compose.yml com PostgreSQL 16  
-**Documentação completa**: [CLAUDE.md](CLAUDE.md) (v27)
+**Documentação completa**: [CLAUDE.md](CLAUDE.md) (v29)

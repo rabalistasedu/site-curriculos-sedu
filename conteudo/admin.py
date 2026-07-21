@@ -388,19 +388,20 @@ class BannerAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
-    list_display = ['nome', 'conteudo_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
+    list_display = ['nome', 'origem_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
     list_filter = ['status', 'data_criacao']
-    search_fields = ['nome', 'email', 'texto', 'conteudo__titulo']
+    search_fields = ['nome', 'email', 'texto', 'conteudo__titulo', 'categoria__nome']
     ordering = ['-data_criacao']
 
     def get_readonly_fields(self, request, obj=None):
-        if obj:  # edição — nome/email/texto/conteudo/data são leitura
-            return ['nome', 'email', 'texto', 'conteudo', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
+        if obj:  # edição — nome/email/texto/conteudo/categoria/data são leitura
+            return ['nome', 'email', 'texto', 'conteudo', 'categoria', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
         return ['data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
 
     fieldsets = (
         ('💬 Comentário', {
-            'fields': ('conteudo', 'parent', 'nome', 'email', 'texto', 'data_criacao'),
+            'fields': ('conteudo', 'categoria', 'parent', 'nome', 'email', 'texto', 'data_criacao'),
+            'description': 'Um comentário pertence a UM Conteúdo OU a UMA Categoria (botão) — nunca aos dois.',
         }),
         ('🔖 Moderação', {
             'fields': ('status',),
@@ -421,13 +422,21 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         }),
     )
 
-    def conteudo_link(self, obj):
-        return format_html(
-            '<a href="/admin/conteudo/conteudo/{}/change/" style="color:#2d5a8e;">{}</a>',
-            obj.conteudo.pk,
-            obj.conteudo.titulo[:50]
-        )
-    conteudo_link.short_description = 'Conteúdo'
+    def origem_link(self, obj):
+        if obj.conteudo:
+            return format_html(
+                '<a href="/admin/conteudo/conteudo/{}/change/" style="color:#2d5a8e;">{}</a>',
+                obj.conteudo.pk,
+                obj.conteudo.titulo[:50]
+            )
+        if obj.categoria:
+            return format_html(
+                '<a href="/admin/conteudo/categoria/{}/change/" style="color:#d97706;">🔘 {}</a>',
+                obj.categoria.pk,
+                obj.categoria.nome[:50]
+            )
+        return '—'
+    origem_link.short_description = 'Conteúdo / Botão'
 
     def texto_resumido(self, obj):
         return obj.texto[:80] + '…' if len(obj.texto) > 80 else obj.texto
@@ -468,22 +477,34 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     votos_badge.short_description = 'Votos'
 
     def local_comentario(self, obj):
-        cat = obj.conteudo.categoria
-        if cat:
+        if obj.conteudo:
+            cat = obj.conteudo.categoria
+            if cat:
+                return format_html(
+                    '<span style="font-size:11px;color:#475569;">{}</span>',
+                    cat.nome
+                )
+            return format_html('<span style="color:#9ca3af;">—</span>')
+        if obj.categoria:
             return format_html(
-                '<span style="font-size:11px;color:#475569;">{}</span>',
-                cat.nome
+                '<span style="font-size:11px;color:#d97706;font-weight:600;">página do botão</span>'
             )
         return format_html('<span style="color:#9ca3af;">—</span>')
     local_comentario.short_description = 'Local'
 
     def ir_para_comentario(self, obj):
+        if obj.conteudo:
+            url = f'/conteudo/{obj.conteudo.slug}/'
+        elif obj.categoria:
+            url = f'/categoria/{obj.categoria.slug}/'
+        else:
+            return '—'
         return format_html(
-            '<a href="/conteudo/{}/#comentarios" target="_blank" '
+            '<a href="{}#comentarios" target="_blank" '
             'style="background:#2d5a8e;color:#fff;padding:3px 10px;border-radius:4px;'
             'font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;">'
             '<i class="fas fa-arrow-up-right-from-square"></i> Ir</a>',
-            obj.conteudo.slug
+            url
         )
     ir_para_comentario.short_description = 'Ver no site'
 

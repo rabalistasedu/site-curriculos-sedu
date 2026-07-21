@@ -878,7 +878,14 @@ class Comentario(models.Model):
 
     conteudo = models.ForeignKey(
         Conteudo, on_delete=models.CASCADE,
-        related_name='comentarios', verbose_name='Conteúdo'
+        related_name='comentarios', verbose_name='Conteúdo',
+        null=True, blank=True,
+    )
+    categoria = models.ForeignKey(
+        Categoria, on_delete=models.CASCADE,
+        related_name='comentarios', verbose_name='Botão/categoria',
+        null=True, blank=True,
+        help_text='Preenchido quando o comentário foi feito na página de um botão (categoria) em vez de num conteúdo específico. Mutuamente exclusivo com Conteúdo.'
     )
     parent = models.ForeignKey(
         'self', null=True, blank=True,
@@ -910,8 +917,14 @@ class Comentario(models.Model):
         ordering = ['data_criacao']
 
     def __str__(self):
-        return f'{self.nome} em "{self.conteudo.titulo[:40]}"'
+        alvo = self.conteudo.titulo if self.conteudo else (self.categoria.nome if self.categoria else '?')
+        return f'{self.nome} em "{alvo[:40]}"'
 
     @property
     def publicado(self):
         return self.status == self.PUBLICADO
+
+    @property
+    def origem(self):
+        """Devolve o Conteudo ou a Categoria a que este comentário pertence."""
+        return self.conteudo or self.categoria

@@ -1,7 +1,7 @@
-# Contexto Atual do Projeto — 2026-07-21 (ATUALIZADO — parte 32)
+# Contexto Atual do Projeto — 2026-07-21 (ATUALIZADO — parte 33)
 
 ## Estado do projeto
-**Status**: ✅ Pronto para produção — site funcional com Docker + Backup/Restore, **9 implementações finalizadas**, **32 partes completadas, 60+ features/bugs**
+**Status**: ✅ Pronto para produção — site funcional com Docker + Backup/Restore, **comentários em todos os botões**, **33 partes completadas, 60+ features/bugs**
 
 ## 🚦 Decisão de Deploy (2026-07-10)
 - ❌ **PythonAnywhere foi abandonado** — ambiente de teste insuficiente
@@ -9,7 +9,20 @@
 - 🔄 **Até lá**: demonstrações via **ngrok** (compartilhamento local com URL pública — **UTF-8 e vídeo AGORA funcionando**)
 - 📋 **Estratégia de migração**: reescrita de URLs do WordPress via `.htaccess` (manter subdomínio do WordPress para não duplicar ~1000 arquivos)
 
-## 🎯 Leva Mais Recente: Parte 32 (2026-07-21)
+## 🎯 Leva Mais Recente: Parte 33 (2026-07-21)
+
+**Comentários em todos os botões (categorias) do site** — pedido do Dan: toda página de botão (com conteúdo ou criada no futuro) precisa da mesma seção de comentários que já existia só nos conteúdos individuais.
+
+- ✅ Novo campo `Comentario.categoria` (FK opcional) ao lado de `Comentario.conteudo` (agora também opcional) — mesmo padrão de FK dual do `Anexo`
+- ✅ View `categoria_detalhe` ganhou a mesma lógica de moderação/respostas/votos que `conteudo_detalhe` já tinha
+- ✅ Template `categoria.html` ganhou a mesma seção de comentários (visual idêntico)
+- ✅ **Regra automática, não configurável por botão** — vale para QUALQUER botão do site, inclusive os criados no futuro por qualquer painel
+- ✅ Migração `conteudo/0035` aplicada
+- ✅ Testado ponta a ponta: criar/aprovar/votar/responder em categoria, página de índice geral também funciona, regressão confirmada (comentários em Conteúdo continuam OK)
+
+---
+
+## Leva Anterior: Parte 32 (2026-07-21)
 
 **9 implementações concluídas** do documento `implementar.md`:
 
@@ -112,7 +125,7 @@ Foram implementadas **9 partes de correções + features (20 no total)**:
 - `templates/conteudo_detalhe.html` — renderização de `icone_imagem` na sidebar
 - `templates/admin/painel_central.html` — adicionado select de tipo, upload de ícone, select de tamanho, JS para alternar campos
 - `static/css/style.css` — blocos de CSS novos (`.icone-personalizado`, `.sem-fundo`, `.content-grid` compactado, `.botao-tam-*`)
-- `templates/base.html` — versão de cache atualizada para `?v=20260711-3` (CSS)
+- `templates/base.html` — versão de cache atualizada para `?v=20260721-1` (CSS)
 - `BAT SEDU/Subir GitHub SEDU.bat` — corrigido caminho (usava `C:\Users\ridan\...` antigo), adicionado `git pull --no-rebase` automático
 
 ## Migrações aplicadas e pendentes
@@ -135,7 +148,7 @@ python manage.py migrate  # Aplica TUDO de uma vez
 2. Para fazer alterações:
    - Edite arquivos em `templates/` ou `static/css/`
    - Teste: `python manage.py runserver 8001` → http://127.0.0.1:8001
-   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é **`?v=20260713-1`**)
+   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é **`?v=20260721-1`**)
 3. Para enviar para GitHub:
    - Clique 2x em **"Subir GitHub SEDU.bat"** — agora funciona de qualquer pasta e faz pull automático + migrate
 4. Para demonstração ao gerente:
@@ -155,7 +168,7 @@ conteudo/              → App principal (models, views, admin, forms, widgets)
 painel/                → Painel Central Administrativo
   migrations/          → 0001-0002 (tamanho novo)
 templates/             → HTML (base, home, categoria, conteudo_detalhe, busca, admin/)
-static/css/            → style.css (?v=20260713-1) + admin_picker.css
+static/css/            → style.css (?v=20260721-1) + admin_picker.css
 static/js/             → main.js (slider, menu, carrossel)
 db.sqlite3             → Banco com 365+ conteúdos
 ```

@@ -1,224 +1,150 @@
-﻿# ðŸŽ“ SITE CURRÃCULO SEDU â€” Resumo de Contexto (2026-07-13 â€” parte 8)
+# 🎓 SITE CURRÍCULO SEDU — Resumo de Contexto (2026-07-21 — Parte 33)
 
-## Estado atual: FUNCIONAL E COMPLETO âœ…âœ…âœ…
+## Estado atual: FUNCIONAL E COMPLETO ✅✅✅
 
-Projeto de migraÃ§Ã£o de site WordPress â†’ Django 5.2 para SEDU (Secretaria EducaÃ§Ã£o ES).  
-**Status do banco**: 365+ conteÃºdos migrados, 10 categorias principais, 42+ subcategorias, **sistema de comentÃ¡rios moderado**.  
-**Deploy**: âŒ PythonAnywhere abandonado | âœ… ngrok (demo) | ðŸŽ¯ `curriculo.sedu.es.gov.br/curriculo/` (produÃ§Ã£o)
-
----
-
-## âš¡ Para entender onde estamos (2026-07-11)
-
-### ðŸš¦ DecisÃ£o crÃ­tica de Deploy (2026-07-10)
-- **PythonAnywhere nÃ£o Ã© mais usado** â€” ambiente de teste insuficiente para demonstraÃ§Ãµes
-- **Novo destino**: servidor prÃ³prio da SEDU em `curriculo.sedu.es.gov.br/curriculo/` (subdomÃ­nio para nÃ£o quebrar WordPress existente)
-- **AtÃ© lÃ¡**: demonstraÃ§Ãµes via **ngrok** (gera URL pÃºblica vÃ¡lida por 2h)
-- **EstratÃ©gia**: reescrita de URLs via `.htaccess` Apache (manter WordPress em subdomÃ­nio, evitar duplicar ~1000 arquivos)
-
-### Categorias principais (menu "Navegue por Ã¡rea")
-1. **Documentos Curriculares** â€” CurrÃ­culo Atual (5 sub-etapas) + Material de Apoio + 7 subcategorias  
-2. **OrientaÃ§Ãµes Curriculares** â€” 129 docs + 16 subcategorias  
-3. **ItinerÃ¡rios Formativos de Aprofundamento (IFA)** â€” 10 subcategorias, 14 docs  
-4. **Projetos Integradores** â€” 5 subcategorias  
-5. **Rotinas PedagÃ³gicas Escolares (RPE)** â€” 8 subcategorias, **42 apostilas**  
-6. **Programas** â€” Educar para a Paz, Mais Leitores, EducaÃ§Ã£o Ambiental, Sucesso Escolar
-7. **Livro DidÃ¡tico**, **Modalidades e Diversidade**, **OlimpÃ­adas**, **Institucional**
-
-### ðŸ“Š Dados no banco
-- **SQLite** (`db.sqlite3`) â€” 365+ conteÃºdos (documento, video, post, link, pÃ¡gina)
-- **Sistema de comentÃ¡rios MODERADO** â€” 3 estados (pendente/publicado/recusado), resposta do admin, nÃ£o aparece em links
-- **Agendamento de publicaÃ§Ã£o** por data/hora futura
-- **Banners rotativos** por Ã¡rea, tamanho configurÃ¡vel, URL de imagem opcional
-- **Cartazes de eventos** (desktop sticky nas laterais, mobile botÃ£o flutuante)
-- **CarrossÃ©is de imagens** com autoplay, aceita vÃ­deos (MP4/WebM/etc), cÃ³digo HTML customizÃ¡vel
+Projeto de migração de site WordPress → Django 5.2 para SEDU (Secretaria Educação ES).  
+**Status do banco**: 588 conteúdos migrados, 132 categorias principais, 42+ subcategorias, **sistema de comentários em botões e conteúdos, votos AJAX, respostas aninhadas**.  
+**Deploy**: ❌ PythonAnywhere abandonado | ✅ ngrok (demo) | 🎯 `curriculo.sedu.es.gov.br/curriculo/` (produção)
 
 ---
 
-## ðŸ†• O que mudou em 2026-07-12 a 2026-07-13
+## ⚡ Para entender onde estamos (2026-07-21 — Parte 33)
 
-### ðŸŽ¯ 7 Partes de ImplementaÃ§Ã£o
+### 🚦 Decisão crítica de Deploy (2026-07-10)
+- **PythonAnywhere não é mais usado** — ambiente de teste insuficiente para demonstrações
+- **Novo destino**: servidor próprio da SEDU em `curriculo.sedu.es.gov.br/curriculo/` (subdomínio para não quebrar WordPress existente)
+- **Até lá**: demonstrações via **ngrok** (gera URL pública válida por 2h, UTF-8 corrigido parte 9, vídeo streaming parte 9)
+- **Estratégia**: reescrita de URLs via `.htaccess` Apache (manter WordPress em subdomínio, evitar duplicar ~1000 arquivos)
 
-**Parte 1â€“4 (2026-07-12, morning-afternoon): Bugs de layout + funcionalidade**
-- âœ… NavegaÃ§Ã£o embolada em mobile â†’ limitada a 861px+
-- âœ… Carrossel dividido em dois no painel Eventos â†’ widget funcional
-- âœ… Carrossel invadindo rodapÃ© azul â†’ `max-height: 100%`
-- âœ… Anexos de conteÃºdo invisÃ­veis â†’ seÃ§Ã£o de download adicionada
-- âœ… SubbotÃµes invisÃ­veis â†’ aparecem como cards destacados com borda azul
-- âœ… Busca da Ã¡rvore (3+ nÃ­veis) â†’ ancestrais expandem automaticamente
-- âœ… RodapÃ© flutuando em pÃ¡ginas vazias â†’ flexbox sticky footer
+### 📋 Leva Mais Recente: Parte 33 (2026-07-21)
+**Comentários em botões (categorias)** — pedido do Dan: toda página de botão precisa da mesma seção de comentários que já existia só em conteúdos individuais.
+- ✅ Novo campo `Comentario.categoria` (FK opcional) → FK dual com `conteudo` (agora também opcional)
+- ✅ View `categoria_detalhe` ganhou moderação/respostas/votos idêntica a `conteudo_detalhe`
+- ✅ Página de índice geral ("Documentos Curriculares") também tem comentários
+- ✅ Regra automática vale para **qualquer botão futuro** (sem configuração por botão)
+- ✅ Migração `conteudo/0035` aplicada
+- ✅ Testado: criar/aprovar/votar/responder em categoria, regressão confirmada (conteúdos OK)
 
-**Parte 5 (2026-07-12, evening): EdiÃ§Ã£o inline + features novas**
-- âœ… Editar botÃ£o selecionado â†’ seÃ§Ã£o verde AJAX (nome, descriÃ§Ã£o, Ã­cone, anexo)
-- âœ… BotÃµes sem pai â†’ "BotÃµes novos criados" (categoria raiz automÃ¡tica)
-- âœ… CategoriaPicker dinÃ¢mico â†’ categorias vazias agora aparecem
-- âœ… Criar subÃ¡rea nos botÃµes marcados â†’ nova seÃ§Ã£o azul (criar subÃ¡reas em lote)
+### Leva Anterior: Parte 32 (2026-07-21)
+**9 implementações concluídas** do documento `implementar.md`:
+1. ✅ Ícone personalizado galeria (Estrutura de Árvores) — clique em thumbnail + salvar aplica
+2. ✅ Categorias raiz em "Conteúdos Recentes" — botões raiz marcados como cards na home
+3. ✅ Imagens do rodapé — novo modelo `RodapeImagem`, painel Editor do Rodapé (altura fixa 44px)
+4. ✅ Nome customizável "Currículo Atual" — novo campo `ConfiguracaoSite.nome_curriculo_atual`
+5. ✅ Botões em área central — confirmado que já existia (parte 13), sem duplicação
+6. ✅ Brasão personalizado — novo campo `ConfiguracaoSite.brasao_imagem` + alinhamento/tamanho
+7. ✅ Segundo logotipo — novos campos `logo2_imagem/alinhamento/tamanho`
+8. ✅ Tudo com zero breaking changes — campos opcionais, fallback automático
+9. ✅ Migração 0034 aplicada com sucesso
 
-**Parte 6 (2026-07-12, evening): Carrossel admin + URL no painel**
-- âœ… Carrossel admin melhorado â†’ `ClearableFileInput` (mostra arquivo atual + Limpar + Modificar)
-- âœ… Campo URL no painel â†’ cria automaticamente Conteudo tipo "link"
+### Categorias principais (menu "Navegue por área")
+1. **Documentos Curriculares** — Currículo Atual (5 sub-etapas) + Material de Apoio + 7 subcategorias  
+2. **Orientações Curriculares** — 129 docs + 16 subcategorias  
+3. **Itinerários Formativos de Aprofundamento (IFA)** — 10 subcategorias, 14+ docs  
+4. **Projetos Integradores** — 5 subcategorias  
+5. **Rotinas Pedagógicas Escolares (RPE)** — 8 subcategorias, **42 apostilas**  
+6. **Programas** — Educar para a Paz, Mais Leitores, Educação Ambiental, Sucesso Escolar
+7. **Livro Didático**, **Modalidades e Diversidade**, **Olimpíadas**, **Institucional**
 
-**Parte 7 (2026-07-13): Sistema de ComentÃ¡rios Moderados**
-- âœ… 3 estados (pendente/publicado/recusado) â€” migraÃ§Ã£o `conteudo.0019`
-- âœ… Resposta do admin â€” campo editÃ¡vel com data automÃ¡tica
-- âœ… ExclusÃ£o em tipo "link" â€” comentÃ¡rios nÃ£o aparecem em links externos
-- âœ… Visual moderno â€” badge de contagem, botÃ£o gradiente, aviso de moderaÃ§Ã£o, seÃ§Ã£o colapsÃ¡vel
+### 📊 Dados no banco
+- **SQLite** (`db.sqlite3`) — 588 conteúdos (documento, video, post, link, página)
+- **Sistema de comentários MODERADO** — 3 estados (pendente/publicado/recusado), resposta do admin, votos 👍/👎, respostas aninhadas
+- **Docker + PostgreSQL pronto** — sincronização local→Docker em .bat, backup/restore automático
+- **Migrações aplicadas**: conteudo/0012-0035 + painel/0002-0003 + inteligencia/0002 (total 40+ migrações)
 
-**Parte 8 (2026-07-13): Respostas + Votos em comentÃ¡rios**
-- âœ… Respostas aninhadas â€” `Comentario.parent` (FK self), threads de atÃ© 2 nÃ­veis
-- âœ… FormulÃ¡rio inline "Responder" â€” abre/fecha animado, placeholder dinÃ¢mico ("...a Maria")
-- âœ… VotaÃ§Ã£o ðŸ‘/ðŸ‘Ž AJAX â€” `/comentario/<pk>/votar/`, sem reload, desabilita apÃ³s 1 voto
-- âœ… Respostas recuadas â€” margin-left 40px, borda azul, label "â†© resposta" roxo
-
-### ðŸ“ Arquivos modificados (2026-07-12 a 2026-07-13)
-- `conteudo/models.py` â€” Comentario expandido (status, resposta, data_resposta)
-- `conteudo/migrations/` â€” 0012â€“0019 (carrossel, Ã­cones, comentÃ¡rios)
-- `conteudo/admin.py` â€” ComentarioAdmin reescrito (3 estados, aÃ§Ãµes em lote, badges)
-- `conteudo/views.py` â€” conteudo_detalhe com `exibir_comentarios` + comentÃ¡rios com status
-- `painel/views.py` â€” _dados_botao, _editar_botao, _criar_subareas (AJAX)
-- `templates/conteudo_detalhe.html` â€” seÃ§Ã£o de comentÃ¡rios redesenhada
-- `templates/admin/painel_central.html` â€” "Editar botÃ£o selecionado" (AJAX) + "Criar subÃ¡rea"
-- `static/css/style.css` â€” novos blocos CSS (comentÃ¡rios, layout fixes) â€” cache `?v=20260713-2`
-- `templates/base.html` â€” cache-busting atualizado
-
-### ðŸ”„ Merge de conflito (2026-07-11)
-- Um commit remoto ("codigo ngrok") havia substituÃ­do `.gitignore` inteiro por erro
-- Resolvido no merge `2faca8e` mantendo versÃ£o completa do `.gitignore`
-- Regra: nunca perder o `.gitignore` ao fazer pull em outro computador
+### 🎨 Infraestrutura
+- **Frontend**: CSS puro, Font Awesome 6, Google Fonts (Inter)
+- **Backend**: Django 5.2 + Python 3.13 (local) / Python 3.12 (Docker)
+- **Banco Local**: SQLite (intacto)
+- **Banco Docker/Produção**: PostgreSQL 16
+- **Deploy Demo**: ngrok com UTF-8 correto
+- **Containerização**: Docker + docker-compose.yml pronto para SEDU
+- **GitHub**: https://github.com/rabalistasedu/site-curriculos-sedu.git
 
 ---
 
-## ðŸš€ Para comeÃ§ar novo (em novo computador)
+## 🛠️ 9 Painéis Administrativos (Delegação de acesso via permissões Django)
 
-### OpÃ§Ã£o 1: Git (recomendado)
+Cada painel tem uma permissão nativa em "Autenticação e Autorização":
+
+| Painel | URL | Permissão |
+|--------|-----|-----------|
+| **Organizador** | `/admin/organizar/` | `conteudo.pode_acessar_organizador` |
+| **Adicionar Arquivos** | `/admin/adicionar-arquivos/` | `conteudo.pode_acessar_adicionar_arquivos` |
+| **Painel Central** (Telas 1+2) | `/admin/painel-central/` | `painel.pode_acessar_painel_central` |
+| **Barra Superior** | `/admin/barra-superior/` | `conteudo.pode_acessar_barra_superior` |
+| **Estrutura de Árvores** | `/admin/estrutura-arvores/` | `conteudo.pode_acessar_estrutura_arvores` |
+| **Área do Site** | `/admin/area-do-site/` | `conteudo.pode_acessar_area_do_site` |
+| **Editor do Rodapé** | `/admin/editor-rodape/` | `conteudo.pode_acessar_editor_rodape` |
+| **Central de Inteligência** | `/admin/inteligencia/` | `inteligencia.pode_acessar_inteligencia` |
+
+---
+
+## 🚀 Quick Start (3 minutos)
+
 ```bash
+# Clone + setup
 git clone https://github.com/rabalistasedu/site-curriculos-sedu.git
 cd "Site Curriculos SEDU"
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\Scripts\activate  # Windows: ativação
 pip install -r requirements.txt
-python manage.py migrate  # Aplica migraÃ§Ãµes 0013 e 0002
-python manage.py runserver 8001
-```
-Acesse: http://127.0.0.1:8001/
 
-### OpÃ§Ã£o 2: Copiar pasta (sem Git)
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install django==5.2 pillow python-dateutil
-python manage.py migrate  # Essencial: 0013 e 0002
+# Banco (primeira vez apenas)
+python manage.py migrate
+
+# Rodar
 python manage.py runserver 8001
 ```
 
----
+**Acesse**: 
+- 🌐 Site: http://127.0.0.1:8001
+- 🔐 Admin: http://127.0.0.1:8001/admin/ (superuser: `ridan` / `Sedu@2026`)
 
-## ðŸ“‹ Management Commands (jÃ¡ executados; dados no banco)
+## 🐳 Docker + PostgreSQL (Sincronização local→Docker)
 
 ```bash
-python manage.py popular_categorias           # 10 categorias + subcategorias
-python manage.py popular_descricoes           # Textos introdutÃ³rios (HTML)
-python manage.py migrar_conteudo              # 102 docs do site antigo
-python manage.py migrar_orientacoes           # 129 docs (OrientaÃ§Ãµes Curriculares)
-python manage.py migrar_ifa                   # 10 subcats + 14 docs (IFA)
-python manage.py organizar_curriculo_atual    # 5 sub-botÃµes (EI/EFI/EFF/EM/Material)
-python manage.py migrar_material_apoio        # 5 docs de apoio
-python manage.py migrar_projetos_integradores # 5 subcats (Projetos Integradores)
-python manage.py migrar_rpe                   # 8 subcats + 42 apostilas (RPE)
-python manage.py migrar_olimpiadas            # 9 subcats (OlimpÃ­adas)
-python manage.py curar_recentes                # Marca itens de "ConteÃºdos recentes"
-python manage.py resolver_pendencias          # Arquiva 3 conteÃºdos sem dados
+# 1. Certifique-se de que Docker Desktop está aberto
+# 2. Clique em: "BAT SEDU\ATUALIZAR BANCO DOCKER.bat"
+
+# Resultado: site PostgreSQL em http://localhost:8000
 ```
-**Todos sÃ£o idempotentes** (rodar 2x = mesmo resultado).
 
----
+## 📦 Backup/Restore (Portable)
 
-## ðŸ“ Estrutura do projeto (atual)
+```bash
+# Fazer backup (banco + mídia + código)
+"BAT SEDU\BACKUP DOCKER COMPLETO.bat"
 
-```
-curriculo_sedu/              # Settings, URLs, WSGI
-conteudo/
-  â”œâ”€ models.py              # Categoria, Conteudo (+ icone_imagem), Anexo, 
-  â”‚                         #   Banner, Cartaz, Carrossel, ConfiguracaoSite, Comentario
-  â”œâ”€ admin.py               # Admin customizado (badges, widgets)
-  â”œâ”€ views.py               # home, categoria, conteudo, busca
-  â”œâ”€ widgets.py             # IconPicker, CategoriaPicker, RichTextWidget
-  â”œâ”€ forms.py               # ConteudoAdminForm (+ icone_imagem)
-  â”œâ”€ management/commands/   # 11 migration commands
-  â””â”€ migrations/            # 0001-0019 (comentÃ¡rios novo)
-painel/                      # Painel Central Administrativo (Telas 1 e 2)
-  â”œâ”€ models.py              # Vinculo, EstiloBotao (+ tamanho)
-  â”œâ”€ views.py               # painel_central_view, conteudos_view (Telas 1 e 2)
-  â””â”€ migrations/            # 0001-0002 (tamanho novo)
-templates/
-  â”œâ”€ base.html              # Header, nav, footer
-  â”œâ”€ home.html              # Hero, banners, destaques, recentes, Ã¡reas, cartazes, carrossÃ©is
-  â”œâ”€ categoria.html         # Subcategorias, filtros, conteÃºdos
-  â”œâ”€ conteudo_detalhe.html  # Detalhe + comentÃ¡rios moderados
-  â”œâ”€ busca.html             # Resultados de busca
-  â””â”€ admin/                 # Templates customizados do admin (painel central, organizar)
-static/
-  â”œâ”€ css/style.css          # Design system (?v=20260713-1)
-  â”œâ”€ css/admin_picker.css   # Estilos dos widgets visuais
-  â”œâ”€ js/main.js             # Slider, menu, carrossel (?v=20260711-1)
-  â””â”€ img/                   # BrasÃ£o, logos, Ã­cones
-db.sqlite3                   # Banco SQLite (365+ conteÃºdos)
-requirements.txt
-manage.py
-CLAUDE.md                    # ðŸ“˜ DocumentaÃ§Ã£o tÃ©cnica completa
-CONTEXTO_ATUAL.md            # ðŸ“‹ Estado atual + quick start
-README.md                    # ðŸ“– Overview do projeto
+# Restaurar em outro PC (copie a pasta gerada)
+"BAT SEDU\RESTAURAR ESTE BACKUP.bat"
 ```
 
 ---
 
-## ðŸ”§ Stack
+## 📚 Documentação Completa
 
-- **Backend**: Django 5.2, Python 3.13 (local) / 3.11 (SEDU)
-- **DB**: SQLite (dev e produÃ§Ã£o)
-- **Frontend**: CSS puro, Font Awesome 6, Google Fonts (Inter)
-- **Versionamento**: GitHub (`rabalistasedu/site-curriculos-sedu`)
-- **Demo**: ngrok (URL temporÃ¡ria)
-- **ProduÃ§Ã£o**: `curriculo.sedu.es.gov.br/curriculo/` (2026)
-
----
-
-## ðŸ“– URLs principais
-
-| Rota | DescriÃ§Ã£o |
-|------|-----------|
-| `/` | Home |
-| `/categoria/<slug>/` | ConteÃºdos da categoria |
-| `/conteudo/<slug>/` | Detalhe + comentÃ¡rios |
-| `/busca/?q=termo` | Busca textual |
-| `/admin/` | Django Admin |
-| `/admin/painel-central/` | Painel Central (Telas 1 e 2) |
-| `/admin/organizar/` | Organizador visual |
-| `/admin/adicionar-arquivos/` | Upload em lote |
+| Arquivo | Conteúdo |
+|---------|----------|
+| **[CLAUDE.md](CLAUDE.md)** | Documentação técnica completa (modelos, views, admin, decisões de design, 33 partes, troubleshooting) |
+| **[README.md](README.md)** | Quick start + status + stack |
+| **[CONTEXTO_ATUAL.md](CONTEXTO_ATUAL.md)** | Estado atual + mudanças recentes + como começar próximas sessões |
+| **[Especificacao_Painel_Admin_Site_Curriculos.md](Especificacao_Painel_Admin_Site_Curriculos.md)** | Spec oficial do Painel Central (histórico) |
+| **[MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md](MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md)** | Estratégia de migração + deploy final na SEDU |
 
 ---
 
-## âš ï¸ Notas importantes
+## ⚠️ Notas Importantes
 
-1. **Banco jÃ¡ populado** â€” db.sqlite3 tem tudo. NÃ£o precisa rodar commands (a menos que teste).
-2. **ConteÃºdos apontam para URLs externas** â€” PDFs no WordPress/Google Drive/SEDU.
-3. **Cache do navegador** â€” mudar CSS? Force: **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
-4. **GitHub** â€” use `.bat` "Subir GitHub SEDU" (faz pull automÃ¡tico agora).
-5. **MigraÃ§Ãµes aplicadas** â€” `conteudo.0012-0019` + `painel.0002`. Para novo ambiente: `python manage.py migrate`.
-6. **Superusers locais** â€” `ridan` (Sedu@2026), `rabalista`.
-
----
-
-## ðŸ“ž DocumentaÃ§Ã£o
-
-- **[CLAUDE.md](CLAUDE.md)** â€” DocumentaÃ§Ã£o tÃ©cnica completa (modelos, views, admin, decisÃµes, troubleshooting)
-- **[CONTEXTO_ATUAL.md](CONTEXTO_ATUAL.md)** â€” Estado atual + mudanÃ§as de 2026-07-11
-- **[README.md](README.md)** â€” Overview do projeto
-- **[Especificacao_Painel_Admin_Site_Curriculos.md](Especificacao_Painel_Admin_Site_Curriculos.md)** â€” Spec oficial do Painel Central
-- **[MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md](MANUAL_MIGRACAO_WORDPRESS_PARA_DJANGO.md)** â€” Deploy final na SEDU
+1. **Banco já populado** — `db.sqlite3` tem tudo (588 conteúdos, 132 categorias). Não precisa importação manual.
+2. **Superusers padrão**: `ridan` (`Sedu@2026`) e `rabalista` (senha trocada na parte 12 para `Sedu@2026` e depois variou conforme as sessões).
+3. **Cache do navegador** — CSS atualizado? Force com **Ctrl+Shift+R** (Windows/Linux) ou **Cmd+Shift+R** (Mac).
+4. **GitHub** — sempre use `.bat` "Subir GitHub SEDU" para enviar (faz pull automático, evita conflitos).
+5. **ngrok para demo** — teste com `python teste_ngrok.py` antes de compartilhar. UTF-8 e vídeo funcionando (parte 9).
 
 ---
 
-**Ãšltima atualizaÃ§Ã£o**: 2026-07-13  
-**VersÃ£o CSS**: `?v=20260713-1` | **VersÃ£o JS**: `?v=20260711-1`  
-**GitHub**: https://github.com/rabalistasedu/site-curriculos-sedu.git
+**Última atualização**: 2026-07-21 (Parte 33 — Comentários em botões)  
+**Versão CSS**: `?v=20260718-2` | **Versão JS**: `?v=20260711-1`  
+**Migrações aplicadas**: `conteudo/0012-0035` + `painel/0002-0003` + `inteligencia/0002` (total 40+)  
+**Docker pronto para produção**: Dockerfile + docker-compose.yml com PostgreSQL 16

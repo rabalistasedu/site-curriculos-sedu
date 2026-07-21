@@ -110,9 +110,50 @@ SLUG_INDICE_GERAL = 'documentos-curriculares'
 
 
 def categoria_detalhe(request, slug):
-    """Página de uma categoria com seus conteúdos"""
+    """Página de uma categoria com seus conteúdos.
+
+    Toda categoria (botão) tem sua própria seção de comentários no rodapé
+    da página — mesmo sistema de moderação/respostas/votos usado nos
+    conteúdos. Como é resolvido pela própria view/template, vale automa-
+    ticamente para QUALQUER botão do site, inclusive os criados depois
+    (Painel Central, Organizador, Estrutura de Árvores, Área do Site)."""
     categoria = get_object_or_404(Categoria, slug=slug, ativa=True)
     subcategorias = categoria.subcategorias.filter(ativa=True).order_by('nome')
+
+    respostas_qs = Comentario.objects.filter(status='publicado').order_by('data_criacao')
+    comentarios = (
+        categoria.comentarios.filter(status='publicado', parent__isnull=True)
+        .prefetch_related(Prefetch('respostas', queryset=respostas_qs))
+        .order_by('data_criacao')
+    )
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome', '').strip()
+        email = request.POST.get('email', '').strip()
+        texto = request.POST.get('texto', '').strip()
+        parent_id = request.POST.get('parent_id', '').strip()
+        parent = None
+        if parent_id:
+            try:
+                parent = Comentario.objects.get(pk=parent_id, categoria=categoria, status='publicado', parent__isnull=True)
+            except Comentario.DoesNotExist:
+                pass
+        if nome and texto:
+            Comentario.objects.create(
+                categoria=categoria,
+                nome=nome,
+                email=email,
+                texto=texto,
+                status='pendente',
+                parent=parent,
+            )
+            messages.success(
+                request,
+                'Comentário enviado! Ele será publicado após aprovação.'
+            )
+            return redirect('conteudo:categoria', slug=slug)
+        else:
+            messages.error(request, 'Preencha seu nome e o comentário.')
 
     # A página "Documentos Curriculares" é o índice geral: mostra todos os
     # temas do site (todas as subcategorias, de qualquer área), como no antigo.
@@ -126,6 +167,7 @@ def categoria_detalhe(request, slug):
             'botoes': botoes,
             'pagina_indice': True,
             'banners': banners_cat,
+            'comentarios': comentarios,
         })
 
     # Conteúdos SOMENTE desta categoria (não das subcategorias — elas aparecem
@@ -160,6 +202,7 @@ def categoria_detalhe(request, slug):
         'banners': banners_cat,
         'anexos_categoria': anexos_categoria,
         'pulsantes': pulsantes,
+        'comentarios': comentarios,
     })
 
 

@@ -189,4 +189,249 @@
     {% endif %}
     </div>
 </section>
+
+<!-- ── Comentários do botão (categoria) — aplica-se a todo botão do site,
+     inclusive os criados depois, pois é resolvido pela própria view ── -->
+<section class="section section-alt comentarios-section" id="comentarios">
+    <div class="container" style="max-width:760px;">
+
+        <h2 class="section-title" style="font-size:1.1rem;">
+            <span class="title-icon"><i class="fas fa-comments"></i></span>
+            Comentários
+            {% if comentarios %}<span class="comment-count-badge">{{ comentarios|length }}</span>{% endif %}
+        </h2>
+
+        {% for msg in messages %}
+        <div class="comment-alert comment-alert-{{ msg.tags }}">
+            <i class="fas fa-{% if msg.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+            {{ msg }}
+        </div>
+        {% endfor %}
+
+        {% if comentarios %}
+        <div class="comment-list">
+            {% for c in comentarios %}
+            <div class="comment-item" id="comment-{{ c.pk }}">
+                <div class="comment-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="comment-body">
+                    <div class="comment-header">
+                        <strong class="comment-nome">{{ c.nome }}</strong>
+                        <span class="comment-date">
+                            <i class="fas fa-clock" style="font-size:10px;opacity:.6;"></i>
+                            {{ c.data_criacao|date:"d/m/Y \à\s H:i" }}
+                        </span>
+                    </div>
+                    <p class="comment-texto">{{ c.texto|linebreaksbr }}</p>
+                    {% if c.resposta %}
+                    <div class="comment-resposta">
+                        <div class="comment-resposta-header">
+                            <i class="fas fa-shield-halved"></i>
+                            <strong>Resposta da equipe</strong>
+                            {% if c.data_resposta %}
+                            <span class="comment-date">{{ c.data_resposta|date:"d/m/Y" }}</span>
+                            {% endif %}
+                        </div>
+                        <p>{{ c.resposta|linebreaksbr }}</p>
+                    </div>
+                    {% endif %}
+                    <!-- Ações: votar + responder -->
+                    <div class="comment-actions">
+                        <button class="comment-vote-btn vote-pos" data-pk="{{ c.pk }}" data-voto="positivo" title="Gostei">
+                            <i class="fas fa-thumbs-up"></i>
+                            <span class="vote-count">{{ c.votos_positivos }}</span>
+                        </button>
+                        <button class="comment-vote-btn vote-neg" data-pk="{{ c.pk }}" data-voto="negativo" title="Não gostei">
+                            <i class="fas fa-thumbs-down"></i>
+                            <span class="vote-count">{{ c.votos_negativos }}</span>
+                        </button>
+                        <button class="comment-reply-btn" data-comment="{{ c.pk }}">
+                            <i class="fas fa-reply"></i> Responder
+                        </button>
+                    </div>
+                    <!-- Formulário inline de resposta (oculto por padrão) -->
+                    <div class="comment-inline-reply" id="reply-form-{{ c.pk }}">
+                        <form method="post" class="comment-form comment-reply-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ c.pk }}">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome <span class="required">*</span></label>
+                                    <input type="text" name="nome" required maxlength="100" placeholder="Seu nome">
+                                </div>
+                                <div class="form-group">
+                                    <label>E-mail <span style="color:#9ca3af;font-size:11px;">(opcional)</span></label>
+                                    <input type="email" name="email" maxlength="200" placeholder="seu@email.com">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Resposta <span class="required">*</span></label>
+                                <textarea name="texto" rows="2" required placeholder="Escreva sua resposta a {{ c.nome }}..."></textarea>
+                            </div>
+                            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                                <button type="submit" class="comment-submit-btn comment-reply-submit">
+                                    <i class="fas fa-paper-plane"></i> Enviar resposta
+                                </button>
+                                <button type="button" class="comment-cancel-reply" data-comment="{{ c.pk }}">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% comment %}Respostas dos visitantes ao comentário{% endcomment %}
+            {% if c.respostas.all %}
+            <div class="comment-replies">
+                {% for r in c.respostas.all %}
+                <div class="comment-item comment-reply">
+                    <div class="comment-avatar comment-avatar-reply">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <strong class="comment-nome">{{ r.nome }}</strong>
+                            <span class="comment-reply-label">↩ resposta</span>
+                            <span class="comment-date">{{ r.data_criacao|date:"d/m/Y \à\s H:i" }}</span>
+                        </div>
+                        <p class="comment-texto">{{ r.texto|linebreaksbr }}</p>
+                        {% if r.resposta %}
+                        <div class="comment-resposta">
+                            <div class="comment-resposta-header">
+                                <i class="fas fa-shield-halved"></i>
+                                <strong>Resposta da equipe</strong>
+                                {% if r.data_resposta %}<span class="comment-date">{{ r.data_resposta|date:"d/m/Y" }}</span>{% endif %}
+                            </div>
+                            <p>{{ r.resposta|linebreaksbr }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="comment-actions">
+                            <button class="comment-vote-btn vote-pos" data-pk="{{ r.pk }}" data-voto="positivo" title="Gostei">
+                                <i class="fas fa-thumbs-up"></i>
+                                <span class="vote-count">{{ r.votos_positivos }}</span>
+                            </button>
+                            <button class="comment-vote-btn vote-neg" data-pk="{{ r.pk }}" data-voto="negativo" title="Não gostei">
+                                <i class="fas fa-thumbs-down"></i>
+                                <span class="vote-count">{{ r.votos_negativos }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="comment-empty">
+            <i class="fas fa-comment-slash" style="opacity:.4;margin-right:6px;"></i>
+            Ainda não há comentários. Seja o primeiro!
+        </p>
+        {% endif %}
+
+        <div class="comment-form-box">
+            <h3 style="font-size:.95rem;margin-bottom:8px;">
+                <i class="fas fa-pen-to-square"></i> Deixe seu comentário
+            </h3>
+            <p class="comment-notice">
+                <i class="fas fa-shield-check"></i>
+                Seu comentário será publicado após aprovação da equipe.
+            </p>
+            <form method="post" class="comment-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome <span class="required">*</span></label>
+                        <input type="text" id="nome" name="nome" required maxlength="100"
+                               placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail <span style="color:#9ca3af;font-size:11px;">(opcional, não publicado)</span></label>
+                        <input type="email" id="email" name="email" maxlength="200"
+                               placeholder="seu@email.com">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="texto">Comentário <span class="required">*</span></label>
+                    <textarea id="texto" name="texto" rows="3" required
+                              placeholder="Escreva aqui sua dúvida, sugestão ou comentário..."></textarea>
+                </div>
+                <button type="submit" class="comment-submit-btn">
+                    <i class="fas fa-paper-plane"></i> Publicar Comentário
+                </button>
+            </form>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (!csrfToken) return;
+    var csrf = csrfToken.value;
+
+    document.querySelectorAll('.comment-vote-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            if (this.disabled || this.classList.contains('voted-pos') || this.classList.contains('voted-neg')) return;
+            var pk = this.dataset.pk;
+            var voto = this.dataset.voto;
+            var self = this;
+            var counterEl = this.querySelector('.vote-count');
+            var parent = this.closest('.comment-body');
+            parent.querySelectorAll('.comment-vote-btn').forEach(function(b) { b.disabled = true; });
+            fetch('/comentario/' + pk + '/votar/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrf,
+                },
+                body: 'voto=' + voto,
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.votos_positivos !== undefined) {
+                    if (voto === 'positivo') {
+                        self.classList.add('voted-pos');
+                        counterEl.textContent = data.votos_positivos;
+                    } else {
+                        self.classList.add('voted-neg');
+                        counterEl.textContent = data.votos_negativos;
+                    }
+                }
+            })
+            .catch(function() {
+                parent.querySelectorAll('.comment-vote-btn').forEach(function(b) { b.disabled = false; });
+            });
+        });
+    });
+
+    document.querySelectorAll('.comment-reply-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = this.dataset.comment;
+            var form = document.getElementById('reply-form-' + id);
+            if (!form) return;
+            var open = form.classList.toggle('open');
+            if (open) {
+                var first = form.querySelector('input[type=text]');
+                if (first) first.focus();
+            }
+        });
+    });
+
+    document.querySelectorAll('.comment-cancel-reply').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var id = this.dataset.comment;
+            var form = document.getElementById('reply-form-' + id);
+            if (form) {
+                form.classList.remove('open');
+                form.querySelectorAll('input[type=text],input[type=email],textarea').forEach(function(el) { el.value = ''; });
+            }
+        });
+    });
+})();
+</script>
 {% endblock %}

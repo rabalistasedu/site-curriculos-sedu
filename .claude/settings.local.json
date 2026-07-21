@@ -175,7 +175,14 @@
       "PowerShell(cd \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\"; cmd /c '\"BAT SEDU\\\\BACKUP DOCKER COMPLETO.bat\" < NUL > \"%TEMP%\\\\backup_log.txt\" 2>&1'; Write-Host \"ExitCode: $LASTEXITCODE\"; Get-Content \"$env:TEMP\\\\backup_log.txt\")",
       "Bash(unzip -l \"docker_backups/backup_20260718_140924/codigo_projeto.zip\")",
       "Bash(awk '{print $1, $4}')",
-      "Bash(unzip -l \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\docker_backups\\\\backup_20260718_140924\\\\codigo_projeto.zip\")"
+      "Bash(unzip -l \"C:\\\\ridan\\\\Claude\\\\Projects\\\\Site Curriculos SEDU\\\\docker_backups\\\\backup_20260718_140924\\\\codigo_projeto.zip\")",
+      "Bash(venv\\\\Scripts\\\\python manage.py makemigrations conteudo --name comentario_categoria)",
+      "Bash(\"venv/Scripts/python.exe\" manage.py makemigrations conteudo --name comentario_categoria)",
+      "Bash(\"venv/Scripts/python.exe\" manage.py migrate conteudo)",
+      "Bash(\"venv/Scripts/python.exe\" manage.py check)",
+      "Bash(\"venv/Scripts/python.exe\" \"C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--ridan-Claude-Projects-Site-Curriculos-SEDU\\\\b8d61147-6eaf-4961-8eb7-9e4969e5b818\\\\scratchpad\\\\test_comentario_categoria.py\")",
+      "Bash(\"venv/Scripts/python.exe\" manage.py shell)",
+      "Bash(venv/Scripts/python.exe manage.py shell -c ' *)"
     ]
   }
 }
