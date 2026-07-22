@@ -107,7 +107,7 @@ class Categoria(models.Model):
                   'Vale apenas para botões do nível principal.'
     )
     url_externa = models.URLField(
-        'URL / Link de acesso externo', max_length=500, blank=True,
+        'URL / Link de acesso externo', max_length=1000, blank=True,
         help_text='Opcional. Se preenchido, ao clicar neste botão o visitante '
                   'será direcionado para este endereço externo em vez de abrir '
                   'a página interna da categoria.'
@@ -212,12 +212,12 @@ class Conteudo(models.Model):
 
     # Vídeo
     url_video = models.URLField(
-        'URL do vídeo', blank=True,
+        'URL do vídeo', max_length=1000, blank=True,
         help_text='Cole o link do YouTube ou Vimeo'
     )
 
     # Link externo
-    url_externa = models.URLField('Link externo', blank=True)
+    url_externa = models.URLField('Link externo', max_length=1000, blank=True)
 
     # Imagem de destaque
     imagem_destaque = models.ImageField(
@@ -449,7 +449,7 @@ class Anexo(models.Model):
         help_text='PDF, Word, Excel, PowerPoint, vídeo, imagem ou outro arquivo.'
     )
     url = models.URLField(
-        'Link (URL)', max_length=500, blank=True,
+        'Link (URL)', max_length=1000, blank=True,
         help_text='Em vez de um arquivo, aponta para um link externo. Aparece no site '
                    'exatamente como um anexo de arquivo, só que abre a URL. Preencha '
                    'OU o arquivo OU o link — nunca os dois.'
@@ -515,12 +515,12 @@ class Banner(models.Model):
     subtitulo = models.CharField('Subtítulo', max_length=300, blank=True)
     imagem = models.ImageField('Imagem do banner', upload_to='banners/', blank=True, null=True)
     url_imagem = models.URLField(
-        'Imagem por URL (opcional)', blank=True,
+        'Imagem por URL (opcional)', max_length=1000, blank=True,
         help_text='Cole aqui o endereço de uma imagem da internet para usá-la '
                   'no lugar do arquivo enviado. Se os dois estiverem preenchidos, '
                   'a URL tem prioridade.'
     )
-    link = models.URLField('Link ao clicar', blank=True)
+    link = models.URLField('Link ao clicar', max_length=1000, blank=True)
     tamanho = models.CharField(
         'Tamanho da imagem', max_length=10, choices=TAMANHO_CHOICES, default='medio',
         help_text='Campo legado — hoje o banner se ajusta AUTOMATICAMENTE à imagem '
@@ -576,12 +576,12 @@ class Cartaz(models.Model):
     titulo = models.CharField('Título do evento', max_length=200)
     imagem = models.ImageField('Imagem do cartaz', upload_to='cartazes/', blank=True, null=True)
     url_imagem = models.URLField(
-        'Imagem por URL (opcional)', blank=True,
+        'Imagem por URL (opcional)', max_length=1000, blank=True,
         help_text='Cole aqui o endereço de uma imagem da internet para usá-la '
                   'como cartaz, no lugar do arquivo enviado. Se os dois estiverem '
                   'preenchidos, a URL tem prioridade.'
     )
-    link = models.URLField('Link do evento', blank=True, help_text='URL para inscrição ou página do evento')
+    link = models.URLField('Link do evento', max_length=1000, blank=True, help_text='URL para inscrição ou página do evento')
     lado = models.CharField('Lado da página', max_length=10, choices=LADO_CHOICES, default='esquerdo')
     tamanho = models.CharField('Tamanho do cartaz', max_length=10, choices=TAMANHO_CHOICES, default='pequeno')
     ordem = models.PositiveIntegerField('Ordem', default=0)
@@ -665,11 +665,11 @@ class CarrosselImagem(models.Model):
         help_text='Aceita imagem (JPG, PNG, GIF, WEBP...) ou vídeo (MP4, WEBM...).'
     )
     url_imagem = models.URLField(
-        'Imagem/vídeo por URL', blank=True,
+        'Imagem/vídeo por URL', max_length=1000, blank=True,
         help_text='Cole o endereço de uma imagem ou vídeo da internet. Se os '
                   'dois estiverem preenchidos, a URL tem prioridade.'
     )
-    link = models.URLField('Link ao clicar (opcional)', blank=True)
+    link = models.URLField('Link ao clicar (opcional)', max_length=1000, blank=True)
     ordem = models.PositiveIntegerField('Ordem', default=0)
 
     class Meta:
@@ -830,7 +830,7 @@ class RodapeImagem(models.Model):
         'Alinhamento', max_length=10, choices=ALINHAMENTO_CHOICES, default='esquerda'
     )
     url = models.URLField(
-        'URL (opcional)', blank=True,
+        'URL (opcional)', max_length=1000, blank=True,
         help_text='Se preenchida, a imagem funciona como link. Se vazia, é exibida sem link.'
     )
     ordem = models.PositiveIntegerField('Ordem', default=0)
@@ -889,7 +889,7 @@ class ColunaExtraBotao(models.Model):
         help_text='Se escolhida, o botão abre esta categoria do site.'
     )
     link_externo = models.URLField(
-        'Link externo (opcional)', blank=True,
+        'Link externo (opcional)', max_length=1000, blank=True,
         help_text='Se preenchido, tem prioridade sobre a categoria escolhida.'
     )
     icone = models.CharField('Ícone Font Awesome', max_length=100, blank=True, default='fas fa-link')
