@@ -115,23 +115,6 @@ def organizar_view(request):
                 if icone_img:
                     nova.icone_imagem.save(icone_img.name, icone_img, save=True)
 
-                # URL preenchida também vira Conteudo tipo=link dentro do botão
-                if url_externa:
-                    slug_link = slugify(nome)[:50] or 'link'
-                    original_link = slug_link
-                    n = 1
-                    while Conteudo.objects.filter(slug=slug_link).exists():
-                        slug_link = f'{original_link}-{n}'
-                        n += 1
-                    Conteudo.objects.create(
-                        titulo=nome,
-                        slug=slug_link,
-                        tipo='link',
-                        url_externa=url_externa,
-                        categoria=nova,
-                        status='publicado',
-                    )
-
                 # Arquivos viram anexos da nova subcategoria
                 for arq in arquivos:
                     Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
@@ -867,20 +850,8 @@ def area_do_site_view(request):
             # sem precisar abrir a árvore de botões separadamente.
             url_rapida = request.POST.get('botao_url_rapida', '').strip()
             if categoria and url_rapida:
-                slug_link = slugify(nome)[:50] or 'link'
-                original_link = slug_link
-                n = 1
-                while Conteudo.objects.filter(slug=slug_link).exists():
-                    slug_link = f'{original_link}-{n}'
-                    n += 1
-                Conteudo.objects.create(
-                    titulo=nome,
-                    slug=slug_link,
-                    tipo='link',
-                    url_externa=url_rapida,
-                    categoria=categoria,
-                    status='publicado',
-                )
+                categoria.url_externa = url_rapida
+                categoria.save(update_fields=['url_externa'])
             if categoria:
                 for arq in request.FILES.getlist('botao_anexos_rapidos'):
                     Anexo.objects.create(categoria=categoria, arquivo=arq, nome=arq.name)

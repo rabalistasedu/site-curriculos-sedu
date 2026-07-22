@@ -242,12 +242,15 @@ def _api_criar(request):
     if pai_id:
         pai = get_object_or_404(Categoria, pk=pai_id)
 
+    url_conteudo = request.POST.get('url_conteudo', '').strip()
+
     cat = Categoria.objects.create(
         nome=nome,
         slug=_slug_unico(Categoria, nome),
         categoria_pai=pai,
         icone=icone or 'fas fa-folder-open',
         ativa=True,
+        url_externa=url_conteudo,
     )
 
     icone_img = request.FILES.get('icone_imagem')
@@ -256,18 +259,8 @@ def _api_criar(request):
 
     msg = f'"{nome}" criado com sucesso.'
 
-    url_conteudo = request.POST.get('url_conteudo', '').strip()
     if url_conteudo:
-        Conteudo.objects.create(
-            titulo=nome,
-            slug=_slug_unico(Conteudo, nome),
-            tipo='link',
-            url_externa=url_conteudo,
-            categoria=cat,
-            status='publicado',
-            data_publicacao=timezone.now(),
-        )
-        msg += f' Link associado.'
+        msg += ' Ao clicar no botão, abre o link direto.'
 
     link_nomes = request.POST.getlist('link_nome')
     link_urls = request.POST.getlist('link_url')

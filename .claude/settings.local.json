@@ -185,7 +185,9 @@
       "Bash(venv/Scripts/python.exe manage.py shell -c ' *)",
       "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo --name coluna_extra_titulo_textfield)",
       "Bash(rm -f /tmp/teste_video.py)",
-      "Bash(kill %1)"
+      "Bash(kill %1)",
+      "Bash(curl -s \"http://127.0.0.1:8002/categoria/programa-jovem-senador/\")",
+      "Bash(curl -s \"http://127.0.0.1:8002/categoria/oli-jovem-senador/\")"
     ]
   }
 }

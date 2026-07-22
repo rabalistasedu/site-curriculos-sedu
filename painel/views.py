@@ -209,15 +209,6 @@ def _criar_no(request):
     )
     if icone_img:
         nova.icone_imagem.save(icone_img.name, icone_img, save=True)
-    if url_ext:
-        Conteudo.objects.create(
-            titulo=nome,
-            slug=_slug_unico(Conteudo, nome),
-            tipo='link',
-            url_externa=url_ext,
-            categoria=nova,
-            status='publicado',
-        )
     for arq in arquivos:
         Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
 
@@ -298,15 +289,6 @@ def _criar_subareas(request):
         if icone_img:
             icone_img.seek(0)
             nova.icone_imagem.save(icone_img.name, icone_img, save=True)
-        if url_ext:
-            Conteudo.objects.create(
-                titulo=nome,
-                slug=_slug_unico(Conteudo, nome),
-                tipo='link',
-                url_externa=url_ext,
-                categoria=nova,
-                status='publicado',
-            )
         for arq in arquivos:
             arq.seek(0)
             Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
