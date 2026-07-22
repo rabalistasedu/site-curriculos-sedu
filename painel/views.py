@@ -97,6 +97,25 @@ def _criar_links_extra(post, prefix, categoria, nome_padrao):
     return n
 
 
+def _criar_anexos_link(post, prefix, conteudo=None, categoria=None):
+    """Cria vários Anexo(url=...) a partir de linhas dinâmicas de nome+URL
+    (campos '{prefix}_anexolink_nome'/'{prefix}_anexolink_url'). Diferente
+    de _criar_links_extra (que cria um BOTÃO/card clicável), este aparece
+    na seção "Arquivos para download" junto dos PDFs/anexos, mas abre uma
+    URL externa em vez de baixar um arquivo. Nome em branco usa a própria URL."""
+    nomes = post.getlist(f'{prefix}_anexolink_nome')
+    urls = post.getlist(f'{prefix}_anexolink_url')
+    n = 0
+    for i, url in enumerate(urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (nomes[i] if i < len(nomes) else '').strip()
+        Anexo.objects.create(conteudo=conteudo, categoria=categoria, url=url, nome=nome_link)
+        n += 1
+    return n
+
+
 def _data_publicacao(post):
     """Combina os campos data + hora do formulário; vazio = agora."""
     data = post.get('pub_data', '').strip()
@@ -203,6 +222,7 @@ def _criar_no(request):
         Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
 
     n_links = _criar_links_extra(request.POST, 'novo', nova, nome)
+    n_anexolinks = _criar_anexos_link(request.POST, 'novo', categoria=nova)
 
     extras = []
     if icone_img:
@@ -213,6 +233,8 @@ def _criar_no(request):
         extras.append(f'{len(arquivos)} arquivo(s)')
     if n_links:
         extras.append(f'{n_links} link(s) extra(s)')
+    if n_anexolinks:
+        extras.append(f'{n_anexolinks} link(s) anexado(s)')
     sufixo = f' (+ {", ".join(extras)})' if extras else ''
     onde = f'dentro de "{pai.nome}"'
     messages.success(request, f'Botão "{nome}" criado {onde}{sufixo}.')
@@ -289,7 +311,13 @@ def _criar_subareas(request):
             arq.seek(0)
             Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
         n_links = _criar_links_extra(request.POST, 'subarea', nova, nome)
-        sufixo = f' (+ {n_links} link(s) extra(s))' if n_links else ''
+        n_anexolinks = _criar_anexos_link(request.POST, 'subarea', categoria=nova)
+        extras_sub = []
+        if n_links:
+            extras_sub.append(f'{n_links} link(s) extra(s)')
+        if n_anexolinks:
+            extras_sub.append(f'{n_anexolinks} link(s) anexado(s)')
+        sufixo = f' (+ {", ".join(extras_sub)})' if extras_sub else ''
         criados.append(f'"{nome}" dentro de "{pai.nome}"{sufixo}')
     messages.success(
         request,
@@ -372,10 +400,13 @@ def _editar_botao(request):
         )
 
     n_links = _criar_links_extra(request.POST, 'editar', cat, nome or cat.nome)
+    n_anexolinks = _criar_anexos_link(request.POST, 'editar', categoria=cat)
 
     msg = f'Botão "{cat.nome}" atualizado com sucesso.'
     if n_links:
         msg += f' {n_links} link(s) adicionado(s).'
+    if n_anexolinks:
+        msg += f' {n_anexolinks} link(s) anexado(s).'
     messages.success(request, msg)
     return redirect('painel:central')
 
@@ -463,6 +494,7 @@ def _publicar(request):
                     ordem=n_anexos + 1,
                 )
                 n_anexos += 1
+        _criar_anexos_link(request.POST, 'conteudo', conteudo=conteudo)
         # Vínculos em TODOS os destinos (o primeiro já é a categoria primária;
         # o vínculo registra ordem/pulsante por local)
         for d in destinos:
@@ -476,8 +508,8 @@ def _publicar(request):
         feitos.append(f'Conteúdo "{nome_exibicao}"{extra} publicado em: {locais}')
         conteudo_criado = True
 
-    # 2. Sem título: arquivos soltos viram anexos de cada categoria destino
-    elif tem_arquivos:
+    # 2. Sem título: arquivos soltos (e/ou links anexados) viram anexos de cada categoria destino
+    elif tem_arquivos or request.POST.getlist('conteudo_anexolink_url'):
         n = 0
         for i in range(50):
             f = request.FILES.get(f'arquivo_{i}')
@@ -494,6 +526,11 @@ def _publicar(request):
             n += 1
         if n:
             feitos.append(f'{n} arquivo(s) anexado(s) em {len(destinos)} local(is)')
+        n_anexolinks = 0
+        for d in destinos:
+            n_anexolinks = _criar_anexos_link(request.POST, 'conteudo', categoria=d)
+        if n_anexolinks:
+            feitos.append(f'{n_anexolinks} link(s) anexado(s) em {len(destinos)} local(is)')
 
     # 2b. Destaque / Conteúdos recentes para os conteúdos JÁ PUBLICADOS nos
     #     botões marcados (só quando NÃO foi criado um conteúdo novo — se foi,

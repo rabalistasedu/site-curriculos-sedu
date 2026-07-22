@@ -883,9 +883,10 @@ const EA = {
             <div class="ea-secao-body collapsed">`;
         if (d.anexos.length > 0) {
             d.anexos.forEach(a => {
+                const ehLink = a.url && !a.arquivo;
                 html += `<div class="ea-lista-item">
-                    <i class="fas fa-file" style="color:var(--ea-text-muted)"></i>
-                    <span class="ea-titulo">${this._esc(a.nome || a.arquivo)}</span>
+                    <i class="fas ${ehLink ? 'fa-link' : 'fa-file'}" style="color:var(--ea-text-muted)"></i>
+                    <span class="ea-titulo">${this._esc(a.nome || (ehLink ? a.url : a.arquivo))}</span>
                     <button class="ea-btn-sm ea-btn-danger" onclick="EA.removerAnexo(${a.id}, ${d.id})" style="padding:2px 6px;font-size:10px"><i class="fas fa-times"></i></button>
                 </div>`;
             });
@@ -903,6 +904,14 @@ const EA = {
             </div>
             <div class="ea-campo"><label>Nome (opcional, só se enviar 1 arquivo)</label><input type="text" id="axNome" placeholder="Nome do anexo"></div>
             <button class="ea-btn-sm ea-btn-success" onclick="EA.uploadAnexo(${d.id})"><i class="fas fa-upload"></i> Enviar</button>
+
+            <hr style="margin:12px 0;border-color:var(--ea-border)">
+            <p style="font-size:12px;font-weight:600;margin-bottom:8px"><i class="fas fa-link"></i> Anexar link (aparece na lista acima, mas abre uma URL em vez de um arquivo):</p>
+            <div id="axLinkContainer_${d.id}"></div>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+                <button type="button" class="ea-btn-sm ea-btn-ghost" onclick="EA._novaLinhaLink('axLinkContainer_${d.id}')"><i class="fas fa-plus"></i> Adicionar outro link</button>
+                <button type="button" class="ea-btn-sm ea-btn-success" onclick="EA.associarAnexoLink(${d.id})"><i class="fas fa-check"></i> Anexar</button>
+            </div>
             </div></div>`;
 
         document.getElementById('eaDetalhes').innerHTML = html;
@@ -912,6 +921,7 @@ const EA = {
 
         // Linhas iniciais do "Adicionar vários links de uma vez"
         this._novaLinhaLink(`acLinksContainer_${d.id}`);
+        this._novaLinhaLink(`axLinkContainer_${d.id}`);
 
         // Render FA icons grid
         this._renderIconesFAGrid();
@@ -1039,6 +1049,11 @@ const EA = {
             </div>
             <input type="file" id="criarAnexos" multiple style="display:none">
         </div>`;
+        html += `<div class="ea-campo">
+            <label><i class="fas fa-paperclip"></i> Anexar link (aparece como anexo de download, não como botão)</label>
+            <div id="criarAnexoLinksContainer"></div>
+            <button type="button" class="ea-btn-sm ea-btn-ghost" onclick="EA._novaLinhaLink('criarAnexoLinksContainer')"><i class="fas fa-plus"></i> Adicionar outro link anexado</button>
+        </div>`;
         html += `<div class="ea-campo"><label>Ícone Font Awesome (opcional)</label><input type="text" id="criarIcone" placeholder="fas fa-folder-open" value="fas fa-folder-open"></div>`;
         html += `<div class="ea-campo"><label>OU Ícone personalizado — imagem (opcional)</label><input type="file" id="criarIconeImg" accept="image/*,.ico"></div>`;
         html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download. Imagem de ícone tem prioridade sobre o Font Awesome.</p>`;
@@ -1056,6 +1071,7 @@ const EA = {
 
         // Linha inicial de "mais links"
         this._novaLinhaLink('criarLinksContainer');
+        this._novaLinhaLink('criarAnexoLinksContainer');
     },
 
     async confirmarCriar(paiId) {
@@ -1076,6 +1092,8 @@ const EA = {
         if (anexos) { for (const f of anexos) fd.append('arquivos_anexo', f); }
         const { nomes: linkNomes, urls: linkUrls } = this._coletarLinks('criarLinksContainer');
         linkUrls.forEach((u, i) => { fd.append('link_url', u); fd.append('link_nome', linkNomes[i] || ''); });
+        const { nomes: anexoLinkNomes, urls: anexoLinkUrls } = this._coletarLinks('criarAnexoLinksContainer');
+        anexoLinkUrls.forEach((u, i) => { fd.append('anexolink_url', u); fd.append('anexolink_nome', anexoLinkNomes[i] || ''); });
 
         this.fecharModal();
         const r = await this._post(fd);
@@ -1301,6 +1319,18 @@ const EA = {
         fd.append('action', 'associar_links');
         fd.append('id', catId);
         urls.forEach((u, i) => { fd.append('link_url', u); fd.append('link_nome', nomes[i] || ''); });
+        const r = await this._post(fd);
+        if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
+        else this.toast(r.error, 'error');
+    },
+
+    async associarAnexoLink(catId) {
+        const { nomes, urls } = this._coletarLinks(`axLinkContainer_${catId}`);
+        if (!urls.length) { this.toast('Informe ao menos 1 link.', 'error'); return; }
+        const fd = new FormData();
+        fd.append('action', 'associar_anexo_link');
+        fd.append('id', catId);
+        urls.forEach((u, i) => { fd.append('anexolink_url', u); fd.append('anexolink_nome', nomes[i] || ''); });
         const r = await this._post(fd);
         if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
         else this.toast(r.error, 'error');

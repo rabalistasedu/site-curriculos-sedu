@@ -32,10 +32,10 @@ ACCEPT_FILES = (
 class AnexoConteudoInline(admin.TabularInline):
     model = Anexo
     extra = 3
-    fields = ['arquivo', 'nome', 'ordem']
+    fields = ['arquivo', 'url', 'nome', 'ordem']
     fk_name = 'conteudo'
     verbose_name = 'Anexo'
-    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo...)'
+    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo... ou um Link/URL)'
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'arquivo':
@@ -46,10 +46,10 @@ class AnexoConteudoInline(admin.TabularInline):
 class AnexoCategoriaInline(admin.TabularInline):
     model = Anexo
     extra = 3
-    fields = ['arquivo', 'nome', 'ordem']
+    fields = ['arquivo', 'url', 'nome', 'ordem']
     fk_name = 'categoria'
     verbose_name = 'Anexo'
-    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo...)'
+    verbose_name_plural = '📎 Arquivos anexados (PDF, Word, Excel, vídeo... ou um Link/URL)'
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         if db_field.name == 'arquivo':

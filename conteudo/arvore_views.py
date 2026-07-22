@@ -169,6 +169,8 @@ def arvore_api(request):
             return _api_associar_conteudo(request)
         if action == 'associar_links':
             return _api_associar_links(request)
+        if action == 'associar_anexo_link':
+            return _api_associar_anexo_link(request)
         if action == 'upload_anexo':
             return _api_upload_anexo(request)
         if action == 'remover_anexo':
@@ -183,7 +185,7 @@ def _api_detalhes(request):
     """Retorna detalhes completos de um nó."""
     cat_id = request.GET.get('id')
     cat = get_object_or_404(Categoria, pk=cat_id)
-    anexos = list(cat.anexos.all().values('id', 'nome', 'arquivo', 'ordem'))
+    anexos = list(cat.anexos.all().values('id', 'nome', 'arquivo', 'url', 'ordem'))
     conteudos = list(
         Conteudo.objects.filter(categoria=cat)
         .values('id', 'titulo', 'tipo', 'status', 'data_publicacao', 'url_externa')
@@ -297,6 +299,19 @@ def _api_criar(request):
         )
     if arquivos:
         msg += f' {len(arquivos)} anexo(s) adicionado(s).'
+
+    anexolink_nomes = request.POST.getlist('anexolink_nome')
+    anexolink_urls = request.POST.getlist('anexolink_url')
+    n_anexolinks = 0
+    for i, url in enumerate(anexolink_urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (anexolink_nomes[i] if i < len(anexolink_nomes) else '').strip()
+        Anexo.objects.create(categoria=cat, url=url, nome=nome_link)
+        n_anexolinks += 1
+    if n_anexolinks:
+        msg += f' {n_anexolinks} link(s) anexado(s).'
 
     return JsonResponse({
         'ok': True,
@@ -535,6 +550,37 @@ def _api_associar_links(request):
         'ok': True,
         'ids': ids,
         'msg': f'{len(ids)} link(s) adicionado(s) a "{cat.nome}".',
+    })
+
+
+def _api_associar_anexo_link(request):
+    """Anexa vários links (URL) de uma vez a uma categoria — diferente de
+    _api_associar_links (que cria um BOTÃO/card clicável), este cria Anexo(url=...),
+    aparecendo na seção "Arquivos para download" junto dos PDFs, mas abrindo uma
+    URL externa em vez de baixar um arquivo. Recebe listas pareadas
+    'anexolink_nome' e 'anexolink_url' (uma por linha do formulário)."""
+    cat_id = request.POST.get('id')
+    cat = get_object_or_404(Categoria, pk=cat_id)
+
+    nomes = request.POST.getlist('anexolink_nome')
+    urls = request.POST.getlist('anexolink_url')
+
+    ids = []
+    for i, url in enumerate(urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (nomes[i] if i < len(nomes) else '').strip()
+        anexo = Anexo.objects.create(categoria=cat, url=url, nome=nome_link)
+        ids.append(anexo.pk)
+
+    if not ids:
+        return JsonResponse({'error': 'Nenhum link válido informado'}, status=400)
+
+    return JsonResponse({
+        'ok': True,
+        'ids': ids,
+        'msg': f'{len(ids)} link(s) anexado(s) a "{cat.nome}".',
     })
 
 

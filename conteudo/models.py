@@ -445,12 +445,18 @@ class Anexo(models.Model):
         related_name='anexos', verbose_name='Categoria'
     )
     arquivo = models.FileField(
-        'Arquivo', upload_to='anexos/%Y/%m/',
+        'Arquivo', upload_to='anexos/%Y/%m/', blank=True,
         help_text='PDF, Word, Excel, PowerPoint, vídeo, imagem ou outro arquivo.'
     )
+    url = models.URLField(
+        'Link (URL)', max_length=500, blank=True,
+        help_text='Em vez de um arquivo, aponta para um link externo. Aparece no site '
+                   'exatamente como um anexo de arquivo, só que abre a URL. Preencha '
+                   'OU o arquivo OU o link — nunca os dois.'
+    )
     nome = models.CharField(
-        'Nome do arquivo', max_length=200, blank=True,
-        help_text='Nome exibido no site. Se vazio, usa o nome do arquivo.'
+        'Nome de exibição', max_length=200, blank=True,
+        help_text='Nome exibido no site. Se vazio, usa o nome do arquivo (ou o link, se for um anexo de URL).'
     )
     ordem = models.PositiveIntegerField('Ordem', default=0)
 
@@ -460,17 +466,39 @@ class Anexo(models.Model):
         ordering = ['ordem', 'nome']
 
     def __str__(self):
-        return self.nome or self.arquivo.name.split('/')[-1]
+        return self.nome_exibicao
+
+    @property
+    def eh_link(self):
+        """True quando este anexo é um link de URL, não um arquivo enviado."""
+        return bool(self.url) and not self.arquivo
+
+    @property
+    def link_href(self):
+        """URL de destino do anexo — do link externo ou do arquivo enviado."""
+        if self.url:
+            return self.url
+        if self.arquivo:
+            return self.arquivo.url
+        return ''
 
     @property
     def extensao(self):
+        if self.eh_link:
+            return 'LINK'
         if self.arquivo:
             return self.arquivo.name.split('.')[-1].upper()
         return ''
 
     @property
     def nome_exibicao(self):
-        return self.nome or self.arquivo.name.split('/')[-1]
+        if self.nome:
+            return self.nome
+        if self.arquivo:
+            return self.arquivo.name.split('/')[-1]
+        if self.url:
+            return self.url
+        return '(anexo vazio)'
 
 
 class Banner(models.Model):

@@ -184,7 +184,8 @@
       "Bash(\"venv/Scripts/python.exe\" manage.py shell)",
       "Bash(venv/Scripts/python.exe manage.py shell -c ' *)",
       "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo --name coluna_extra_titulo_textfield)",
-      "Bash(rm -f /tmp/teste_video.py)"
+      "Bash(rm -f /tmp/teste_video.py)",
+      "Bash(kill %1)"
     ]
   }
 }

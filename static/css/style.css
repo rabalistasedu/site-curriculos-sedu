@@ -865,6 +865,7 @@ img { max-width: 100%; height: auto; display: block; }
 .anexo-ext.ext-mp4,
 .anexo-ext.ext-avi,
 .anexo-ext.ext-mov   { background: #ede9fe; color: #7c3aed; }
+.anexo-ext.ext-link  { background: #cffafe; color: #0e7490; }
 .anexo-ext           { background: #f3f4f6; color: #6b7280; }
 .anexo-download {
     font-size: 14px;

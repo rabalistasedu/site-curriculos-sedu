@@ -132,6 +132,11 @@
                     <button type="button" onclick="pcNovaLinhaLink('novoLinksContainer','novo')" style="font-size:11px;padding:4px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
                 </div>
                 <div style="margin:0 0 8px;">
+                    <label style="font-size:11px;font-weight:600;color:#374151;"><i class="fas fa-paperclip"></i> Anexar link (aparece como anexo de download, não como botão)</label>
+                    <div id="novoAnexoLinksContainer"></div>
+                    <button type="button" onclick="pcNovaLinhaLink('novoAnexoLinksContainer','novo','anexolink')" style="font-size:11px;padding:4px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link anexado</button>
+                </div>
+                <div style="margin:0 0 8px;">
                     <label style="font-size:11px;font-weight:600;color:#374151;">Arquivos (múltiplos — opcional)</label>
                     <div class="dropzone" id="dzNovoArquivos" data-dropzone-input="novoArquivosInput" data-dropzone-texto="dzNovoArquivosTexto">
                         <i class="fas fa-cloud-arrow-up"></i>
@@ -176,6 +181,11 @@
                     <button type="button" onclick="pcNovaLinhaLink('subareaLinksContainer','subarea')" style="font-size:11px;padding:4px 10px;border:1px solid #93c5fd;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
                 </div>
                 <div style="margin:0 0 8px;">
+                    <label style="font-size:11px;font-weight:600;color:#1d4ed8;"><i class="fas fa-paperclip"></i> Anexar link (aparece como anexo de download, não como botão)</label>
+                    <div id="subareaAnexoLinksContainer"></div>
+                    <button type="button" onclick="pcNovaLinhaLink('subareaAnexoLinksContainer','subarea','anexolink')" style="font-size:11px;padding:4px 10px;border:1px solid #93c5fd;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link anexado</button>
+                </div>
+                <div style="margin:0 0 8px;">
                     <label style="font-size:11px;font-weight:600;color:#1d4ed8;">Arquivos (múltiplos — opcional)</label>
                     <div class="dropzone" id="dzSubareaArquivos" data-dropzone-input="subareaArquivosInput" data-dropzone-texto="dzSubareaArquivosTexto" style="border-color:#93c5fd;">
                         <i class="fas fa-cloud-arrow-up"></i>
@@ -209,6 +219,11 @@
                     <label style="font-size:11px;font-weight:600;color:#15803d;">Mais links / URLs (opcional, quantos quiser)</label>
                     <div id="editarLinksContainer"></div>
                     <button type="button" onclick="pcNovaLinhaLink('editarLinksContainer','editar')" style="font-size:11px;padding:4px 10px;border:1px solid #bbf7d0;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
+                </div>
+                <div style="margin:0 0 8px;">
+                    <label style="font-size:11px;font-weight:600;color:#15803d;"><i class="fas fa-paperclip"></i> Anexar link (aparece como anexo de download, não como botão)</label>
+                    <div id="editarAnexoLinksContainer"></div>
+                    <button type="button" onclick="pcNovaLinhaLink('editarAnexoLinksContainer','editar','anexolink')" style="font-size:11px;padding:4px 10px;border:1px solid #bbf7d0;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link anexado</button>
                 </div>
                 <label style="font-size:12px;font-weight:600;color:#374151;">Ícone (Font Awesome):</label>
                 <input type="text" name="editar_icone" id="pc-editar-icone" placeholder="Ex.: fas fa-book" style="background:#fff;">
@@ -380,6 +395,11 @@
                         </div>
                     </div>
                     <button type="button" class="pc-add-anexo" id="pc-add-anexo"><i class="fas fa-plus"></i> Adicionar mais arquivo</button>
+                    <div style="margin:14px 0 0;">
+                        <label style="font-size:11px;font-weight:600;color:#374151;"><i class="fas fa-link"></i> Anexar link (aparece na lista de anexos, mas abre uma URL em vez de um arquivo)</label>
+                        <div id="conteudoAnexoLinksContainer"></div>
+                        <button type="button" onclick="pcNovaLinhaLink('conteudoAnexoLinksContainer','conteudo','anexolink')" style="font-size:11px;padding:4px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link anexado</button>
+                    </div>
                 </div>
             </div>
 
@@ -873,6 +893,8 @@
                 document.getElementById('pc-editar-anexos-info').innerHTML = info;
                 document.getElementById('editarLinksContainer').innerHTML = '';
                 pcNovaLinhaLink('editarLinksContainer', 'editar');
+                document.getElementById('editarAnexoLinksContainer').innerHTML = '';
+                pcNovaLinhaLink('editarAnexoLinksContainer', 'editar', 'anexolink');
             });
             editarSecao.style.display = '';
         } else {
@@ -885,19 +907,24 @@
     });
 
     // ── Vários links de uma vez (nome + URL, linhas dinâmicas) ──
-    window.pcNovaLinhaLink = function (containerId, prefix) {
+    window.pcNovaLinhaLink = function (containerId, prefix, campo) {
+        campo = campo || 'link';
         var container = document.getElementById(containerId);
         if (!container) return;
         var row = document.createElement('div');
         row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px';
         row.innerHTML =
-            '<input type="text" name="' + prefix + '_link_nome" placeholder="Nome do link (opcional)" style="flex:1;font-size:12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;">' +
-            '<input type="url" name="' + prefix + '_link_url" placeholder="https://..." style="flex:2;font-size:12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;">' +
+            '<input type="text" name="' + prefix + '_' + campo + '_nome" placeholder="Nome do link (opcional)" style="flex:1;font-size:12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;">' +
+            '<input type="url" name="' + prefix + '_' + campo + '_url" placeholder="https://..." style="flex:2;font-size:12px;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;">' +
             '<button type="button" onclick="this.parentElement.remove()" style="padding:2px 10px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;cursor:pointer;">&times;</button>';
         container.appendChild(row);
     };
     pcNovaLinhaLink('novoLinksContainer', 'novo');
     pcNovaLinhaLink('subareaLinksContainer', 'subarea');
+    pcNovaLinhaLink('novoAnexoLinksContainer', 'novo', 'anexolink');
+    pcNovaLinhaLink('subareaAnexoLinksContainer', 'subarea', 'anexolink');
+    pcNovaLinhaLink('editarAnexoLinksContainer', 'editar', 'anexolink');
+    pcNovaLinhaLink('conteudoAnexoLinksContainer', 'conteudo', 'anexolink');
 
     // ── Confirmação ao salvar ──
     window.pcConfirmar = function () {

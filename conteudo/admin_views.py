@@ -61,6 +61,25 @@ def _criar_links_extra(post, prefix, categoria, nome_padrao):
     return n
 
 
+def _criar_anexos_link(post, prefix, conteudo=None, categoria=None):
+    """Cria vários Anexo(url=...) a partir de linhas dinâmicas de nome+URL
+    (campos '{prefix}_anexolink_nome'/'{prefix}_anexolink_url'). Diferente
+    de _criar_links_extra (que cria um BOTÃO/card clicável), este aparece
+    na seção "Arquivos para download" junto dos PDFs/anexos, mas abre uma
+    URL externa em vez de baixar um arquivo. Nome em branco usa a própria URL."""
+    nomes = post.getlist(f'{prefix}_anexolink_nome')
+    urls = post.getlist(f'{prefix}_anexolink_url')
+    n = 0
+    for i, url in enumerate(urls):
+        url = (url or '').strip()
+        if not url:
+            continue
+        nome_link = (nomes[i] if i < len(nomes) else '').strip()
+        Anexo.objects.create(conteudo=conteudo, categoria=categoria, url=url, nome=nome_link)
+        n += 1
+    return n
+
+
 @staff_member_required
 @exige_permissao_painel('conteudo.pode_acessar_organizador')
 def organizar_view(request):
@@ -118,6 +137,7 @@ def organizar_view(request):
                     Anexo.objects.create(categoria=nova, arquivo=arq, nome=arq.name)
 
                 n_links = _criar_links_extra(request.POST, 'nova', nova, nome)
+                n_anexolinks = _criar_anexos_link(request.POST, 'nova', categoria=nova)
 
                 extras = []
                 if icone_img:
@@ -128,6 +148,8 @@ def organizar_view(request):
                     extras.append(f'{len(arquivos)} arquivo(s)')
                 if n_links:
                     extras.append(f'{n_links} link(s) extra(s)')
+                if n_anexolinks:
+                    extras.append(f'{n_anexolinks} link(s) anexado(s)')
                 sufixo = f' (+ {", ".join(extras)})' if extras else ''
                 messages.success(request, f'Subcategoria "{nome}" criada com sucesso{sufixo}!')
             return redirect(f'/admin/organizar/?cat={pai_id}')
@@ -188,11 +210,12 @@ def organizar_view(request):
             url_ext = request.POST.get('novo_url', '').strip()
             arquivos = request.FILES.getlist('novo_arquivos')
             tem_links_extra = any((u or '').strip() for u in request.POST.getlist('aqui_link_url'))
+            tem_anexolinks = any((u or '').strip() for u in request.POST.getlist('aqui_anexolink_url'))
             if not cat_destino:
                 messages.error(request, 'Categoria destino não informada.')
                 return redirect('/admin/organizar/')
             destino = get_object_or_404(Categoria, pk=cat_destino)
-            if not (arquivos or url_ext or tem_links_extra):
+            if not (arquivos or url_ext or tem_links_extra or tem_anexolinks):
                 messages.error(request, 'Envie pelo menos um arquivo ou informe uma URL.')
                 return redirect(f'/admin/organizar/?cat={cat_destino}')
 
@@ -220,6 +243,7 @@ def organizar_view(request):
                 criados += 1
 
             criados += _criar_links_extra(request.POST, 'aqui', destino, titulo or destino.nome)
+            criados += _criar_anexos_link(request.POST, 'aqui', categoria=destino)
 
             messages.success(
                 request,
@@ -861,6 +885,7 @@ def area_do_site_view(request):
                 for arq in request.FILES.getlist('botao_anexos_rapidos'):
                     Anexo.objects.create(categoria=categoria, arquivo=arq, nome=arq.name)
                 _criar_links_extra(request.POST, 'botao', categoria, nome)
+                _criar_anexos_link(request.POST, 'botao', categoria=categoria)
 
             botao = ColunaExtraBotao.objects.create(
                 coluna=coluna,

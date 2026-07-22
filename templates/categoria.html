@@ -105,9 +105,10 @@
             <h3 class="anexos-titulo"><i class="fas fa-paperclip"></i> Arquivos para download</h3>
             <div class="anexos-lista">
                 {% for anexo in anexos_categoria %}
-                <a href="{{ anexo.arquivo.url }}" class="anexo-item" target="_blank" rel="noopener" title="{{ anexo.nome_exibicao }}">
+                <a href="{{ anexo.link_href }}" class="anexo-item" target="_blank" rel="noopener" title="{{ anexo.nome_exibicao }}">
                     <span class="anexo-icone">
-                        {% if anexo.extensao == 'PDF' %}<i class="fas fa-file-pdf"></i>
+                        {% if anexo.eh_link %}<i class="fas fa-link"></i>
+                        {% elif anexo.extensao == 'PDF' %}<i class="fas fa-file-pdf"></i>
                         {% elif anexo.extensao == 'DOCX' or anexo.extensao == 'DOC' %}<i class="fas fa-file-word"></i>
                         {% elif anexo.extensao == 'XLSX' or anexo.extensao == 'XLS' %}<i class="fas fa-file-excel"></i>
                         {% elif anexo.extensao == 'PPTX' or anexo.extensao == 'PPT' %}<i class="fas fa-file-powerpoint"></i>
@@ -118,10 +119,10 @@
                     </span>
                     <span class="anexo-info">
                         <span class="anexo-nome">{{ anexo.nome_exibicao }}</span>
-                        <span class="anexo-meta">Clique para abrir ou baixar</span>
+                        <span class="anexo-meta">{% if anexo.eh_link %}Clique para abrir o link{% else %}Clique para abrir ou baixar{% endif %}</span>
                     </span>
                     <span class="anexo-ext ext-{{ anexo.extensao|lower }}">{{ anexo.extensao }}</span>
-                    <span class="anexo-download"><i class="fas fa-download"></i></span>
+                    <span class="anexo-download"><i class="{% if anexo.eh_link %}fas fa-arrow-up-right-from-square{% else %}fas fa-download{% endif %}"></i></span>
                 </a>
                 {% endfor %}
             </div>
