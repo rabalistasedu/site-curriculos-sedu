@@ -196,6 +196,8 @@ def _criar_no(request):
     url_ext = request.POST.get('novo_url_externa', '').strip()
     icone_img = request.FILES.get('novo_icone_imagem')
     arquivos = request.FILES.getlist('novo_arquivos')
+    icone_largura = request.POST.get('novo_icone_largura', '').strip() or None
+    icone_altura = request.POST.get('novo_icone_altura', '').strip() or None
 
     nova = Categoria.objects.create(
         nome=nome,
@@ -206,6 +208,8 @@ def _criar_no(request):
         mostrar_menu_superior=False,
         mostrar_navegue_area=False,
         url_externa=url_ext,
+        icone_largura=icone_largura,
+        icone_altura=icone_altura,
     )
     if icone_img:
         nova.icone_imagem.save(icone_img.name, icone_img, save=True)
@@ -273,6 +277,8 @@ def _criar_subareas(request):
     url_ext = request.POST.get('subarea_url_externa', '').strip()
     icone_img = request.FILES.get('subarea_icone_imagem')
     arquivos = request.FILES.getlist('subarea_arquivos')
+    icone_largura = request.POST.get('subarea_icone_largura', '').strip() or None
+    icone_altura = request.POST.get('subarea_icone_altura', '').strip() or None
     criados = []
     for pai in pais:
         nova = Categoria.objects.create(
@@ -285,6 +291,8 @@ def _criar_subareas(request):
             mostrar_navegue_area=False,
             mostrar_como_card=False,
             url_externa=url_ext,
+            icone_largura=icone_largura,
+            icone_altura=icone_altura,
         )
         if icone_img:
             icone_img.seek(0)
@@ -324,6 +332,8 @@ def _dados_botao(request):
         'url_externa': cat.url_externa or '',
         'pai_id': cat.categoria_pai_id,
         'pai_nome': cat.categoria_pai.nome if cat.categoria_pai else None,
+        'icone_largura': cat.icone_largura,
+        'icone_altura': cat.icone_altura,
     })
 
 
@@ -348,6 +358,11 @@ def _editar_botao(request):
     icone_img = request.FILES.get('editar_icone_imagem')
     if icone_img:
         cat.icone_imagem.save(icone_img.name, icone_img, save=False)
+
+    icone_largura = request.POST.get('editar_icone_largura', '').strip()
+    cat.icone_largura = icone_largura or None
+    icone_altura = request.POST.get('editar_icone_altura', '').strip()
+    cat.icone_altura = icone_altura or None
 
     vis_menu = request.POST.get('editar_vis_menu', '')
     if vis_menu in ('sim', 'nao'):

@@ -210,6 +210,8 @@ def _api_detalhes(request):
         'mostrar_navegue_area': cat.mostrar_navegue_area,
         'mostrar_conteudos_recentes': cat.mostrar_conteudos_recentes,
         'url_externa': cat.url_externa or '',
+        'icone_largura': cat.icone_largura,
+        'icone_altura': cat.icone_altura,
         'data_criacao': cat.pk,  # Categoria não tem data, usamos pk como proxy
         'anexos': anexos,
         'conteudos': conteudos,
@@ -243,6 +245,8 @@ def _api_criar(request):
         pai = get_object_or_404(Categoria, pk=pai_id)
 
     url_conteudo = request.POST.get('url_conteudo', '').strip()
+    icone_largura = request.POST.get('icone_largura', '').strip() or None
+    icone_altura = request.POST.get('icone_altura', '').strip() or None
 
     cat = Categoria.objects.create(
         nome=nome,
@@ -251,6 +255,8 @@ def _api_criar(request):
         icone=icone or 'fas fa-folder-open',
         ativa=True,
         url_externa=url_conteudo,
+        icone_largura=icone_largura,
+        icone_altura=icone_altura,
     )
 
     icone_img = request.FILES.get('icone_imagem')
@@ -352,6 +358,14 @@ def _api_editar(request):
     url_ext = request.POST.get('url_externa_cat')
     if url_ext is not None:
         cat.url_externa = url_ext.strip()
+
+    icone_largura = request.POST.get('icone_largura')
+    if icone_largura is not None:
+        cat.icone_largura = icone_largura.strip() or None
+
+    icone_altura = request.POST.get('icone_altura')
+    if icone_altura is not None:
+        cat.icone_altura = icone_altura.strip() or None
 
     icone_img = request.FILES.get('icone_imagem')
     if icone_img:

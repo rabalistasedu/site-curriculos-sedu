@@ -86,13 +86,16 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             ),
         }),
         ('Aparência', {
-            'fields': ('icone', 'icone_imagem', 'imagem', 'ordem', 'ativa'),
+            'fields': ('icone', 'icone_imagem', 'icone_largura', 'icone_altura', 'imagem', 'ordem', 'ativa'),
             'description': (
                 '"Ícone" escolhe um ícone pronto (Font Awesome). "Ícone personalizado '
                 '(imagem)" substitui por uma imagem enviada por você (qualquer formato, '
                 'inclusive .ico) — use fundo transparente para não prejudicar a estética; '
                 'a imagem se ajusta automaticamente ao botão, sem cortar, tanto no botão '
                 'principal quanto em subbotões. '
+                '"Largura do ícone" e "Altura do ícone" (opcionais, em pixels) controlam '
+                'o tamanho do ícone deste botão — deixe em branco para usar o tamanho '
+                'padrão do site. '
                 '⚠️ "Imagem de capa" é diferente — aceita apenas imagens (JPG, PNG, GIF) '
                 'e é usada para outros fins, não como ícone do botão. Para anexar PDF, '
                 'Word ou Excel, use o campo "Arquivo" dentro de um Conteúdo.'

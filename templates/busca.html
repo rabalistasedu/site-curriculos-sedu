@@ -23,8 +23,8 @@
                 <div class="subcategories">
                     {% for cat in categorias_encontradas %}
                     <a href="{% url 'conteudo:categoria' cat.slug %}" class="subcategory-chip">
-                        {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado">
-                        {% elif cat.icone %}<i class="{{ cat.icone }}"></i>{% endif %}
+                        {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado"{% if cat.icone_estilo_inline %} style="{{ cat.icone_estilo_inline }}"{% endif %}>
+                        {% elif cat.icone %}<i class="{{ cat.icone }}"{% if cat.icone_estilo_inline %} style="{{ cat.icone_estilo_inline }}"{% endif %}></i>{% endif %}
                         {{ cat.nome }}
                         {% if cat.categoria_pai %}<span class="chip-pai">em {{ cat.categoria_pai.nome }}</span>{% endif %}
                     </a>

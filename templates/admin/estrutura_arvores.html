@@ -813,6 +813,10 @@ const EA = {
                 <div class="ea-campo"><label>Ícone atual</label><div style="font-size:28px;margin:8px 0">${d.icone_imagem ? '<img src="' + d.icone_imagem + '" style="width:40px;height:40px;object-fit:contain">' : (d.icone ? '<i class="' + d.icone + '"></i>' : '<i class="fas fa-folder text-muted"></i>')}</div></div>
                 <div class="ea-campo"><label>Classe Font Awesome</label><input type="text" id="edIcone" value="${this._esc(d.icone)}" placeholder="fas fa-folder"></div>
                 <div class="ea-campo"><label>Enviar imagem</label><input type="file" id="edIconeImg" accept=".png,.jpg,.jpeg,.svg,.webp,.ico,.gif"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <div class="ea-campo"><label>Largura do ícone (px)</label><input type="number" id="edIconeLargura" min="10" max="300" value="${d.icone_largura || ''}" placeholder="Padrão do site"></div>
+                    <div class="ea-campo"><label>Altura do ícone (px)</label><input type="number" id="edIconeAltura" min="10" max="300" value="${d.icone_altura || ''}" placeholder="= largura"></div>
+                </div>
                 <div class="ea-campo"><label><input type="checkbox" id="edLimparIcone"> Remover ícone personalizado</label></div>
                 <div style="display:flex;gap:8px;flex-wrap:wrap">
                     <button class="ea-btn-sm ea-btn-success" onclick="EA.salvarIcone(${d.id})"><i class="fas fa-check"></i> Salvar ícone</button>
@@ -1004,6 +1008,8 @@ const EA = {
         fd.append('id', id);
         const icone = document.getElementById('edIcone').value;
         if (icone) fd.append('icone', icone);
+        fd.append('icone_largura', document.getElementById('edIconeLargura').value);
+        fd.append('icone_altura', document.getElementById('edIconeAltura').value);
         const img = document.getElementById('edIconeImg').files[0];
         if (img) {
             fd.append('icone_imagem', img);
@@ -1056,6 +1062,10 @@ const EA = {
         </div>`;
         html += `<div class="ea-campo"><label>Ícone Font Awesome (opcional)</label><input type="text" id="criarIcone" placeholder="fas fa-folder-open" value="fas fa-folder-open"></div>`;
         html += `<div class="ea-campo"><label>OU Ícone personalizado — imagem (opcional)</label><input type="file" id="criarIconeImg" accept="image/*,.ico"></div>`;
+        html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="ea-campo"><label>Largura do ícone (px, opcional)</label><input type="number" id="criarIconeLargura" min="10" max="300" placeholder="Padrão do site"></div>
+            <div class="ea-campo"><label>Altura do ícone (px, opcional)</label><input type="number" id="criarIconeAltura" min="10" max="300" placeholder="= largura"></div>
+        </div>`;
         html += `<p style="font-size:11px;color:var(--ea-text-muted);margin:8px 0">URL cria um link dentro do botão. Arquivos são adicionados como anexos para download. Imagem de ícone tem prioridade sobre o Font Awesome.</p>`;
         html += `<div style="display:flex;gap:8px;justify-content:flex-end">
             <button class="ea-btn-sm ea-btn-ghost" onclick="EA.fecharModal()">Cancelar</button>
@@ -1088,6 +1098,10 @@ const EA = {
         if (paiId) fd.append('pai_id', paiId);
         if (icone) fd.append('icone', icone);
         if (iconeImg) fd.append('icone_imagem', iconeImg);
+        const iconeLargura = document.getElementById('criarIconeLargura')?.value;
+        const iconeAltura = document.getElementById('criarIconeAltura')?.value;
+        if (iconeLargura) fd.append('icone_largura', iconeLargura);
+        if (iconeAltura) fd.append('icone_altura', iconeAltura);
         if (url) fd.append('url_conteudo', url);
         if (anexos) { for (const f of anexos) fd.append('arquivos_anexo', f); }
         const { nomes: linkNomes, urls: linkUrls } = this._coletarLinks('criarLinksContainer');

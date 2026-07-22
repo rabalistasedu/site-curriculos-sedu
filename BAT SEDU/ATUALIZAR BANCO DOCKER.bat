@@ -13,12 +13,14 @@ REM  O que ele faz, na ordem:
 REM   1. Exporta todos os dados do banco local (SQLite) para um
 REM      arquivo temporario (dump_local.json)
 REM   2. Sobe os containers do Docker, se nao estiverem rodando
-REM   3. Aplica as migracoes no banco Postgres do Docker
-REM   4. Limpa os dados atuais do Postgres do Docker
-REM   5. Importa o dump_local.json dentro do Postgres do Docker
+REM   3. Copia os arquivos de midia locais (media\) para dentro
+REM      do Docker (icones, imagens, banners, anexos, etc.)
+REM   4. Aplica as migracoes no banco Postgres do Docker
+REM   5. Limpa os dados atuais do Postgres do Docker
+REM   6. Importa o dump_local.json dentro do Postgres do Docker
 REM
-REM  Nao mexe no seu banco local (SQLite) em nenhum momento -
-REM  so LE dele para copiar os dados para o Docker.
+REM  Nao mexe no seu banco local (SQLite) nem na sua pasta media\
+REM  em nenhum momento - so LE deles para copiar para o Docker.
 REM
 REM  Funciona em qualquer computador: usa a pasta onde este
 REM  .bat esta salvo (BAT SEDU), subindo um nivel para o projeto.
@@ -43,7 +45,7 @@ if not exist "venv\Scripts\python.exe" (
 )
 
 REM -- 1. Exporta os dados do banco local (SQLite) -------------
-echo [1/5] Exportando dados do banco local (SQLite)...
+echo [1/6] Exportando dados do banco local (SQLite)...
 venv\Scripts\python.exe manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.permission -e admin.logentry -e sessions.session --indent 2 -o dump_local.json
 if errorlevel 1 (
     color 0C
@@ -54,7 +56,7 @@ if errorlevel 1 (
 )
 
 REM -- 2. Sobe os containers do Docker --------------------------
-echo [2/5] Subindo os containers do Docker ^(se nao estiverem rodando^)...
+echo [2/6] Subindo os containers do Docker ^(se nao estiverem rodando^)...
 docker compose up -d
 if errorlevel 1 (
     color 0C
@@ -68,8 +70,24 @@ if errorlevel 1 (
 echo        Aguardando o banco Postgres do Docker ficar pronto...
 timeout /t 8 /nobreak >nul
 
-REM -- 3. Aplica as migracoes no Postgres do Docker -------------
-echo [3/5] Aplicando migracoes no Postgres do Docker...
+REM -- 3. Copia os arquivos de midia locais para o Docker -------
+REM  A pasta media\ do Docker e um volume separado da sua pasta
+REM  media\ local - copiar o banco de dados NAO copia os arquivos
+REM  (icones, imagens, banners, anexos). Este passo copia tudo
+REM  que existe na sua pasta media\ local para dentro do Docker,
+REM  sem apagar nada que ja esteja la.
+echo [3/6] Copiando arquivos de midia locais ^(icones, imagens, banners, anexos^) para o Docker...
+docker compose cp media\. web:/app/media/
+if errorlevel 1 (
+    color 0C
+    echo.
+    echo ERRO ao copiar os arquivos de midia para o Docker. Leia a mensagem acima.
+    pause
+    exit /b 1
+)
+
+REM -- 4. Aplica as migracoes no Postgres do Docker -------------
+echo [4/6] Aplicando migracoes no Postgres do Docker...
 docker compose exec -T web python manage.py migrate
 if errorlevel 1 (
     color 0C
@@ -79,12 +97,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM -- 4. Limpa os dados atuais do Postgres do Docker -----------
-echo [4/5] Limpando os dados atuais do Postgres do Docker...
+REM -- 5. Limpa os dados atuais do Postgres do Docker -----------
+echo [5/6] Limpando os dados atuais do Postgres do Docker...
 docker compose exec -T web python manage.py flush --no-input
 
-REM -- 5. Importa o dump do banco local para o Docker ------------
-echo [5/5] Importando os dados do banco local para o Docker...
+REM -- 6. Importa o dump do banco local para o Docker ------------
+echo [6/6] Importando os dados do banco local para o Docker...
 docker compose exec -T web python manage.py loaddata dump_local.json
 if errorlevel 1 (
     color 0C
@@ -96,8 +114,8 @@ if errorlevel 1 (
 
 echo.
 echo ============================================================
-echo   PRONTO! O banco do Docker (Postgres) agora tem os mesmos
-echo   dados do seu banco local (SQLite).
+echo   PRONTO! O banco do Docker (Postgres) e a pasta de midia
+echo   agora tem os mesmos dados do seu ambiente local.
 echo   Site no Docker: http://localhost:8000/
 echo ============================================================
 echo.

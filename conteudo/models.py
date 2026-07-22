@@ -78,6 +78,17 @@ class Categoria(models.Model):
                   'ícone (sem cortar) tanto no botão principal quanto em subbotões. Se '
                   'preenchido, tem prioridade sobre o ícone escolhido.'
     )
+    icone_largura = models.PositiveIntegerField(
+        'Largura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Controla o tamanho do ícone deste botão em pixels '
+                  '(Font Awesome ou imagem personalizada). Deixe em branco para '
+                  'usar o tamanho padrão do site.'
+    )
+    icone_altura = models.PositiveIntegerField(
+        'Altura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo '
+                  'valor da largura (ícone quadrado).'
+    )
     imagem = models.ImageField('Imagem de capa', upload_to='categorias/', blank=True, null=True)
     ordem = models.PositiveIntegerField('Ordem no menu', default=0)
     ativa = models.BooleanField('Ativa', default=True)
@@ -157,6 +168,16 @@ class Categoria(models.Model):
         if '://' in url or url.startswith(('mailto:', 'tel:', '//', '#', '/')):
             return url
         return 'https://' + url
+
+    @property
+    def icone_estilo_inline(self):
+        """CSS inline (width/height/font-size) quando o tamanho do ícone é personalizado."""
+        if not self.icone_largura and not self.icone_altura:
+            return ''
+        largura = self.icone_largura or self.icone_altura
+        altura = self.icone_altura or self.icone_largura
+        fonte = max(10, int(altura * 0.45))
+        return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
 
 
 class TipoConteudo(models.TextChoices):

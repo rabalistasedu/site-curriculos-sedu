@@ -233,6 +233,14 @@
                         <label>URL dentro do botão (opcional)</label>
                         <input type="url" name="botao_url_rapida" placeholder="https://...">
                     </div>
+                    <div>
+                        <label>Largura do ícone em px (opcional)</label>
+                        <input type="number" name="botao_icone_largura" min="10" max="300" placeholder="Padrão do site">
+                    </div>
+                    <div>
+                        <label>Altura do ícone em px (opcional)</label>
+                        <input type="number" name="botao_icone_altura" min="10" max="300" placeholder="= largura">
+                    </div>
                     <div style="flex-basis:100%;">
                         <label>Mais links / URLs dentro do botão (opcional, quantos quiser)</label>
                         <div id="botaoLinksContainer{{ coluna.pk }}"></div>

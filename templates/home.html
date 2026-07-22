@@ -150,7 +150,7 @@
                class="area-card area-card-featured area-card-central{% if botao.estilo.pulsante %} btn-pulse{% endif %}"
                {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ botao.nome }}">
-                <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}"{% if botao.icone_estilo_inline %} style="{{ botao.icone_estilo_inline }}"{% endif %}>
                     {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
                     {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
                 </div>
@@ -230,7 +230,7 @@
                        class="list-item"
                        {% if cat.link_externo %}target="_blank" rel="noopener"{% endif %}
                        title="{{ cat.nome }}">
-                        <div class="list-icon{% if cat.icone_imagem %} sem-fundo{% endif %}">
+                        <div class="list-icon{% if cat.icone_imagem %} sem-fundo{% endif %}"{% if cat.icone_estilo_inline %} style="{{ cat.icone_estilo_inline }}"{% endif %}>
                             {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
                             {% else %}<i class="{{ cat.icone_display }}"></i>{% endif %}
                         </div>
@@ -263,7 +263,7 @@
                        {% if cat.estilo %}style="{{ cat.estilo.css_inline }}"{% endif %}
                        {% if cat.link_externo %}target="_blank" rel="noopener"{% endif %}
                        title="{{ cat.nome }}">
-                        <div class="category-icon{% if cat.icone_imagem %} sem-fundo{% endif %}">
+                        <div class="category-icon{% if cat.icone_imagem %} sem-fundo{% endif %}"{% if cat.icone_estilo_inline %} style="{{ cat.icone_estilo_inline }}"{% endif %}>
                             {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
                             {% else %}<i class="{{ cat.icone|default:'fas fa-folder-open' }}"></i>{% endif %}
                         </div>

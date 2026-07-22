@@ -58,7 +58,7 @@
                {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}
                {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ botao.nome }}">
-                <span class="topic-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                <span class="topic-icon{% if botao.icone_imagem %} sem-fundo{% endif %}"{% if botao.icone_estilo_inline %} style="{{ botao.icone_estilo_inline }}"{% endif %}>
                     {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
                     {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
                 </span>
@@ -77,8 +77,8 @@
                {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}
                {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ sub.nome }}">
-                {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado">
-                {% elif sub.icone %}<i class="{{ sub.icone }}"></i>{% endif %}
+                {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}>
+                {% elif sub.icone %}<i class="{{ sub.icone }}"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}></i>{% endif %}
                 {{ sub.nome }}
             </a>
             {% endfor %}
@@ -143,7 +143,7 @@
                class="content-card content-card--subbotao{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
                {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ sub.nome }}">
-                <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}">
+                <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}>
                     {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado">
                     {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
                 </div>

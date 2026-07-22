@@ -96,6 +96,8 @@ def organizar_view(request):
             icone_img = request.FILES.get('icone_imagem')
             url_externa = request.POST.get('url_externa', '').strip()
             arquivos = request.FILES.getlist('arquivos')
+            icone_largura = request.POST.get('icone_largura', '').strip() or None
+            icone_altura = request.POST.get('icone_altura', '').strip() or None
             if nome and pai_id:
                 pai = get_object_or_404(Categoria, pk=pai_id)
                 slug = slugify(nome)
@@ -111,6 +113,8 @@ def organizar_view(request):
                     icone=icone or 'fas fa-folder',
                     ativa=True,
                     url_externa=url_externa,
+                    icone_largura=icone_largura,
+                    icone_altura=icone_altura,
                 )
                 if icone_img:
                     nova.icone_imagem.save(icone_img.name, icone_img, save=True)
@@ -818,6 +822,8 @@ def area_do_site_view(request):
             criar_botao_completo = bool(request.POST.get('botao_criar_arvore'))
             icone_texto = request.POST.get('botao_icone', '').strip()
             icone_img = request.FILES.get('botao_icone_imagem')
+            icone_largura = request.POST.get('botao_icone_largura', '').strip() or None
+            icone_altura = request.POST.get('botao_icone_altura', '').strip() or None
 
             # "Criar um botão completo do site": sem escolher uma categoria já
             # existente, cria uma categoria RAIZ de verdade (categoria_pai=None,
@@ -841,6 +847,8 @@ def area_do_site_view(request):
                     ativa=True,
                     mostrar_menu_superior=False,
                     mostrar_navegue_area=False,
+                    icone_largura=icone_largura,
+                    icone_altura=icone_altura,
                 )
                 if icone_img:
                     icone_img.seek(0)
