@@ -220,6 +220,21 @@
 /* Altura fixa nos selects para o texto não aparecer cortado (mesmo padrão do Painel Central) */
 .ea-campo select { height: 38px; line-height: normal; padding-top: 0; padding-bottom: 0; }
 
+/* Editor de texto rico (mesmo componente do RichTextWidget usado nos
+   outros painéis) — reproduzido aqui porque este template não carrega
+   admin_picker.css (é 100% renderizado via JS, sem formulário Django). */
+.rte-wrap { border: 1px solid var(--ea-border); border-radius: 6px; overflow: hidden; }
+.rte-toolbar { display: flex; align-items: center; gap: 2px; background: #f3f4f6; border-bottom: 1px solid var(--ea-border); padding: 6px 8px; flex-wrap: wrap; }
+.rte-btn { background: none; border: none; width: 32px; height: 32px; border-radius: 4px; color: #374151; cursor: pointer; font-size: 13px; }
+.rte-btn:hover { background: #e5e7eb; }
+.rte-sep { width: 1px; height: 20px; background: #d1d5db; margin: 0 4px; }
+.rte-color-btn { position: relative; width: 32px; height: 32px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #374151; font-size: 13px; cursor: pointer; }
+.rte-color-btn:hover { background: #e5e7eb; }
+.rte-color-btn input[type="color"] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; border: none; padding: 0; cursor: pointer; }
+.rte-editor { min-height: 90px; padding: 10px 12px; font-size: 13px; line-height: 1.6; color: #1a1a2e; background: #fff; }
+.rte-editor:focus { outline: none; background: #fafafa; }
+.rte-textarea { display: none; }
+
 .ea-dropzone {
     border: 2px dashed var(--ea-border);
     border-radius: 8px;
@@ -729,7 +744,34 @@ const EA = {
             </div>
             <div class="ea-secao-body">
                 <div class="ea-campo"><label>Nome</label><input type="text" id="edNome" value="${this._esc(d.nome)}"></div>
-                <div class="ea-campo"><label>Descrição</label><textarea id="edDesc">${this._esc(d.descricao)}</textarea></div>
+                <div class="ea-campo">
+                    <label>Descrição</label>
+                    <div class="rte-wrap" id="edDescWrap">
+                        <div class="rte-toolbar">
+                            <button type="button" class="rte-btn" data-cmd="bold" title="Negrito"><i class="fas fa-bold"></i></button>
+                            <button type="button" class="rte-btn" data-cmd="italic" title="Itálico"><i class="fas fa-italic"></i></button>
+                            <button type="button" class="rte-btn" data-cmd="underline" title="Sublinhado"><i class="fas fa-underline"></i></button>
+                            <span class="rte-sep"></span>
+                            <button type="button" class="rte-btn" data-cmd="justifyLeft" title="Alinhar à esquerda"><i class="fas fa-align-left"></i></button>
+                            <button type="button" class="rte-btn" data-cmd="justifyCenter" title="Centralizar"><i class="fas fa-align-center"></i></button>
+                            <button type="button" class="rte-btn" data-cmd="justifyRight" title="Alinhar à direita"><i class="fas fa-align-right"></i></button>
+                            <span class="rte-sep"></span>
+                            <button type="button" class="rte-btn" data-cmd="insertUnorderedList" title="Lista com marcadores"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="rte-btn" data-cmd="removeFormat" title="Limpar formatação"><i class="fas fa-eraser"></i></button>
+                            <span class="rte-sep"></span>
+                            <label class="rte-color-btn" title="Cor do texto">
+                                <i class="fas fa-font"></i>
+                                <input type="color" data-cmd="foreColor" value="#1a1a2e">
+                            </label>
+                            <label class="rte-color-btn" title="Cor de destaque (marca-texto)">
+                                <i class="fas fa-highlighter"></i>
+                                <input type="color" data-cmd="hiliteColor" value="#fff59d">
+                            </label>
+                        </div>
+                        <div class="rte-editor" contenteditable="true">${d.descricao || ''}</div>
+                        <textarea id="edDesc" class="rte-textarea"></textarea>
+                    </div>
+                </div>
                 <div class="ea-campo"><label>Ordem</label><input type="number" id="edOrdem" value="${d.ordem}" min="0"></div>
                 ${!d.pai_id ? '' : `<div style="background:#fef3c7;border:1px solid #fbbf24;color:#92400e;border-radius:8px;padding:8px 12px;font-size:12px;margin-bottom:10px;">
                     <i class="fas fa-triangle-exclamation"></i> "${this._esc(d.nome)}" é um <strong>subbotão</strong> (está dentro de "${this._esc(d.pai_nome)}").
@@ -864,6 +906,9 @@ const EA = {
             </div></div>`;
 
         document.getElementById('eaDetalhes').innerHTML = html;
+
+        // Liga a barra de formatação do campo Descrição
+        this._attachRichEditor('edDescWrap');
 
         // Linhas iniciais do "Adicionar vários links de uma vez"
         this._novaLinhaLink(`acLinksContainer_${d.id}`);
@@ -1178,6 +1223,48 @@ const EA = {
         const r = await this._post(fd);
         if (r.ok) { this.toast(r.msg, 'success'); this.carregarDetalhes(catId); }
         else this.toast(r.error, 'error');
+    },
+
+    // ── Editor de texto rico (campo Descrição) ──────────
+    _attachRichEditor(wrapId) {
+        const wrap = document.getElementById(wrapId);
+        if (!wrap) return;
+        const editor = wrap.querySelector('.rte-editor');
+        const textarea = wrap.querySelector('.rte-textarea');
+        textarea.value = editor.innerHTML;
+        editor.addEventListener('input', function() { textarea.value = editor.innerHTML; });
+
+        // Guarda a última seleção feita dentro do editor — necessária porque
+        // abrir o seletor de cor nativo tira o foco do editor e a seleção
+        // de texto se perderia antes de aplicar a cor.
+        document.addEventListener('selectionchange', function() {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0 && editor.contains(sel.anchorNode)) {
+                editor._savedRange = sel.getRangeAt(0).cloneRange();
+            }
+        });
+        function restaurarSelecao() {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            if (editor._savedRange) { sel.addRange(editor._savedRange); } else { editor.focus(); }
+        }
+
+        wrap.querySelectorAll('.rte-btn').forEach(function(btn) {
+            btn.addEventListener('mousedown', function(e) { e.preventDefault(); });
+            btn.addEventListener('click', function() {
+                document.execCommand(btn.dataset.cmd, false, null);
+                textarea.value = editor.innerHTML;
+                editor.focus();
+            });
+        });
+        wrap.querySelectorAll('.rte-color-btn input[type=color]').forEach(function(inp) {
+            inp.addEventListener('input', function() {
+                restaurarSelecao();
+                try { document.execCommand(inp.dataset.cmd, false, inp.value); }
+                catch (err) { document.execCommand('backColor', false, inp.value); }
+                textarea.value = editor.innerHTML;
+            });
+        });
     },
 
     // ── Vários links de uma vez (nome + URL, linhas dinâmicas) ──

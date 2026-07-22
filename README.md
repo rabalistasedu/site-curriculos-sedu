@@ -2,7 +2,7 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) – Espírito Santo.
 
-## Status Atual (2026-07-22 — Parte 34 + 4 Correções UX/Bugs)
+## Status Atual (2026-07-22 — Parte 35 + Barra de formatação completa)
 
 ✅ **Site funcional e responsivo** – 588 conteúdos, 132 categorias, organização hierárquica ilimitada  
 ✅ **9 painéis administrativos** – Organizador, Adicionar Arquivos, Painel Central (Telas 1+2), Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência  
@@ -45,6 +45,7 @@ Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (adm
 - **Parte 32**: **9 Implementações** — ícone galeria (Estrutura), categorias recentes (home), imagens rodapé, nome Currículo Atual, identidade visual cabeçalho
 - **Parte 33**: **Comentários em todos os botões** — página de qualquer categoria/botão ganhou a mesma seção de comentários dos conteúdos, regra automática vale para botões futuros
 - **Parte 34**: **4 Correções UX/Bugs + Layout fine-tuning** — selects com altura correta (4 painéis), coluna extra com título rich text (RichTextWidget), resposta em massa para comentários, vídeo sem iframe (elimina erro 153 YouTube), **layout das colunas extras idêntico ao de "Navegue por área"** (grade com botões quadrados 2×N em vez de lista 1×N)
+- **Parte 35**: **Barra de formatação completa em todos os campos de texto** — `RichTextWidget` (Área do Site, Editor do Rodapé, Organizador, Painel Central, etc.) agora tem **cor do texto** + **cor de destaque (marca-texto)** com seletores de cor nativos. Campo "Descrição" da Estrutura de Árvores usa o mesmo editor. Colar de outra fonte **preserva formatação**
 
 **Migrações novas**: `conteudo.0012-0036` + `painel.0002-0003` + `inteligencia.0002`
 

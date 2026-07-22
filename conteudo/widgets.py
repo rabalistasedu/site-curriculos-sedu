@@ -7,6 +7,102 @@ from django import forms
 from django.utils.safestring import mark_safe
 
 
+def _render_rich_text_editor(name, widget_id, value):
+    """HTML/CSS/JS do editor de texto rico compartilhado (RichTextWidget,
+    e também usado fora de formulários Django, ex.: Estrutura de Árvores).
+    Barra: negrito, itálico, sublinhado, alinhamento, lista, cor do texto,
+    cor de destaque (marca-texto), limpar formatação."""
+    botoes = [
+        ('bold', 'fa-bold', 'Negrito'),
+        ('italic', 'fa-italic', 'Itálico'),
+        ('underline', 'fa-underline', 'Sublinhado'),
+        ('|', '', ''),
+        ('justifyLeft', 'fa-align-left', 'Alinhar à esquerda'),
+        ('justifyCenter', 'fa-align-center', 'Centralizar'),
+        ('justifyRight', 'fa-align-right', 'Alinhar à direita'),
+        ('|', '', ''),
+        ('insertUnorderedList', 'fa-list-ul', 'Lista com marcadores'),
+        ('removeFormat', 'fa-eraser', 'Limpar formatação'),
+    ]
+    botoes_html = []
+    for cmd, icone, titulo in botoes:
+        if cmd == '|':
+            botoes_html.append('<span class="rte-sep"></span>')
+        else:
+            botoes_html.append(
+                f'<button type="button" class="rte-btn" data-cmd="{cmd}" title="{titulo}">'
+                f'<i class="fas {icone}"></i></button>'
+            )
+
+    return f'''
+<div class="rte-wrap">
+    <div class="rte-toolbar">
+        {''.join(botoes_html)}
+        <span class="rte-sep"></span>
+        <label class="rte-color-btn" title="Cor do texto">
+            <i class="fas fa-font"></i>
+            <input type="color" data-cmd="foreColor" value="#1a1a2e">
+        </label>
+        <label class="rte-color-btn" title="Cor de destaque (marca-texto)">
+            <i class="fas fa-highlighter"></i>
+            <input type="color" data-cmd="hiliteColor" value="#fff59d">
+        </label>
+    </div>
+    <div class="rte-editor" contenteditable="true">{value}</div>
+    <textarea name="{name}" id="{widget_id}" class="rte-textarea">{value}</textarea>
+</div>
+<script>
+(function() {{
+    var textarea = document.getElementById('{widget_id}');
+    var wrap = textarea.closest('.rte-wrap');
+    var editor = wrap.querySelector('.rte-editor');
+
+    editor.addEventListener('input', function() {{ textarea.value = editor.innerHTML; }});
+
+    // Guarda a última seleção feita dentro do editor — necessária porque
+    // abrir o seletor de cor nativo tira o foco do editor e a seleção
+    // de texto se perderia antes de aplicar a cor.
+    document.addEventListener('selectionchange', function() {{
+        var sel = window.getSelection();
+        if (sel.rangeCount > 0 && editor.contains(sel.anchorNode)) {{
+            editor._savedRange = sel.getRangeAt(0).cloneRange();
+        }}
+    }});
+    function restaurarSelecao() {{
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        if (editor._savedRange) {{
+            sel.addRange(editor._savedRange);
+        }} else {{
+            editor.focus();
+        }}
+    }}
+
+    wrap.querySelectorAll('.rte-btn').forEach(function(btn) {{
+        btn.addEventListener('mousedown', function(e) {{ e.preventDefault(); }});
+        btn.addEventListener('click', function() {{
+            document.execCommand(btn.dataset.cmd, false, null);
+            textarea.value = editor.innerHTML;
+            editor.focus();
+        }});
+    }});
+
+    wrap.querySelectorAll('.rte-color-btn input[type=color]').forEach(function(inp) {{
+        inp.addEventListener('input', function() {{
+            restaurarSelecao();
+            try {{
+                document.execCommand(inp.dataset.cmd, false, inp.value);
+            }} catch (err) {{
+                document.execCommand('backColor', false, inp.value);
+            }}
+            textarea.value = editor.innerHTML;
+        }});
+    }});
+}})();
+</script>
+'''
+
+
 class CategoriaPicker(forms.Widget):
     """Grade de botões com ícone para escolher a área de publicação."""
 
@@ -195,8 +291,10 @@ class IconPicker(forms.Widget):
 
 
 class RichTextWidget(forms.Widget):
-    """Editor de texto simples com barra de formatação (negrito, itálico,
-    sublinhado, alinhamento e lista) — sem depender de bibliotecas externas."""
+    """Editor de texto simples com barra de formatação completa (negrito,
+    itálico, sublinhado, alinhamento, lista, cor do texto e destaque/marca-texto)
+    — sem depender de bibliotecas externas. Colar de outra fonte preserva a
+    formatação (comportamento padrão do navegador em contenteditable)."""
 
     class Media:
         css = {'all': (
@@ -208,50 +306,4 @@ class RichTextWidget(forms.Widget):
         value = value or ''
         attrs = attrs or {}
         widget_id = attrs.get('id', f'id_{name}')
-
-        botoes = [
-            ('bold', 'fa-bold', 'Negrito'),
-            ('italic', 'fa-italic', 'Itálico'),
-            ('underline', 'fa-underline', 'Sublinhado'),
-            ('|', '', ''),
-            ('justifyLeft', 'fa-align-left', 'Alinhar à esquerda'),
-            ('justifyCenter', 'fa-align-center', 'Centralizar'),
-            ('justifyRight', 'fa-align-right', 'Alinhar à direita'),
-            ('|', '', ''),
-            ('insertUnorderedList', 'fa-list-ul', 'Lista com marcadores'),
-            ('removeFormat', 'fa-eraser', 'Limpar formatação'),
-        ]
-        botoes_html = []
-        for cmd, icone, titulo in botoes:
-            if cmd == '|':
-                botoes_html.append('<span class="rte-sep"></span>')
-            else:
-                botoes_html.append(
-                    f'<button type="button" class="rte-btn" data-cmd="{cmd}" title="{titulo}">'
-                    f'<i class="fas {icone}"></i></button>'
-                )
-
-        return mark_safe(f'''
-<div class="rte-wrap">
-    <div class="rte-toolbar">{''.join(botoes_html)}</div>
-    <div class="rte-editor" contenteditable="true">{value}</div>
-    <textarea name="{name}" id="{widget_id}" class="rte-textarea">{value}</textarea>
-</div>
-<script>
-(function() {{
-    var scripts = document.querySelectorAll('#{widget_id} + script');
-    var textarea = document.getElementById('{widget_id}');
-    var wrap = textarea.closest('.rte-wrap');
-    var editor = wrap.querySelector('.rte-editor');
-    editor.addEventListener('input', function() {{ textarea.value = editor.innerHTML; }});
-    wrap.querySelectorAll('.rte-btn').forEach(function(btn) {{
-        btn.addEventListener('mousedown', function(e) {{ e.preventDefault(); }});
-        btn.addEventListener('click', function() {{
-            document.execCommand(btn.dataset.cmd, false, null);
-            textarea.value = editor.innerHTML;
-            editor.focus();
-        }});
-    }});
-}})();
-</script>
-''')
+        return mark_safe(_render_rich_text_editor(name, widget_id, value))
