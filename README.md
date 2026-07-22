@@ -44,7 +44,7 @@ Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (adm
 - **Partes 29-31**: **Docker/PostgreSQL**, **Backup/Restore**, **Organizador com árvore completa no "Mover para"**
 - **Parte 32**: **9 Implementações** — ícone galeria (Estrutura), categorias recentes (home), imagens rodapé, nome Currículo Atual, identidade visual cabeçalho
 - **Parte 33**: **Comentários em todos os botões** — página de qualquer categoria/botão ganhou a mesma seção de comentários dos conteúdos, regra automática vale para botões futuros
-- **Parte 34**: **4 Correções UX/Bugs** — selects com altura correta (4 painéis), coluna extra com título rich text (RichTextWidget), resposta em massa para comentários, vídeo sem iframe (elimina erro 153 YouTube)
+- **Parte 34**: **4 Correções UX/Bugs + Layout fine-tuning** — selects com altura correta (4 painéis), coluna extra com título rich text (RichTextWidget), resposta em massa para comentários, vídeo sem iframe (elimina erro 153 YouTube), **layout das colunas extras idêntico ao de "Navegue por área"** (grade com botões quadrados 2×N em vez de lista 1×N)
 
 **Migrações novas**: `conteudo.0012-0036` + `painel.0002-0003` + `inteligencia.0002`
 

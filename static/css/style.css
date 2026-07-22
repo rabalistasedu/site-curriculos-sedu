@@ -2470,7 +2470,9 @@ div[vw-access-button]:hover { opacity: 1; }
 }
 .home-split-wrap .home-split { flex: 3; min-width: 0; }
 .home-coluna-extra { flex: 1; min-width: 200px; }
-.home-coluna-extra .areas-list { grid-template-columns: 1fr; max-height: 560px; }
+/* Mesmo layout em grade de botões quadrados usado em "Navegue por área" —
+   só ajusta o número de colunas (2, por ser uma coluna mais estreita). */
+.home-coluna-extra .areas-list { grid-template-columns: repeat(2, 1fr); max-height: 560px; }
 
 @media (max-width: 1024px) {
     .home-split-wrap { flex-direction: column; }
