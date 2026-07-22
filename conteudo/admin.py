@@ -3,6 +3,10 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Count
+from django.urls import path
+from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.contrib.admin.views.decorators import staff_member_required
 from .models import (
     Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz,
     Anexo, Carrossel, CarrosselImagem, ColunaExtra, ColunaExtraBotao, RodapeImagem,
@@ -508,7 +512,7 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         )
     ir_para_comentario.short_description = 'Ver no site'
 
-    actions = ['aprovar_selecionados', 'recusar_selecionados', 'excluir_selecionados']
+    actions = ['aprovar_selecionados', 'recusar_selecionados', 'excluir_selecionados', 'responder_em_massa']
 
     @admin.action(description='✅ Aprovar e publicar comentários selecionados')
     def aprovar_selecionados(self, request, queryset):
@@ -525,6 +529,39 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         count = queryset.count()
         queryset.delete()
         self.message_user(request, f'{count} comentário(s) excluído(s) permanentemente.')
+
+    @admin.action(description='💬 Responder em massa (mesma resposta para todos os selecionados)')
+    def responder_em_massa(self, request, queryset):
+        ids = ','.join(str(pk) for pk in queryset.values_list('pk', flat=True))
+        return HttpResponseRedirect(f'responder-massa/?ids={ids}')
+
+    def get_urls(self):
+        urls = [
+            path('responder-massa/', self.admin_site.admin_view(self.responder_massa_view), name='conteudo_comentario_responder_massa'),
+        ]
+        return urls + super().get_urls()
+
+    def responder_massa_view(self, request):
+        ids_param = request.POST.get('ids') or request.GET.get('ids', '')
+        ids = [i for i in ids_param.split(',') if i.strip().isdigit()]
+        comentarios = Comentario.objects.filter(pk__in=ids)
+
+        if request.method == 'POST':
+            resposta = request.POST.get('resposta', '').strip()
+            if resposta and comentarios.exists():
+                count = comentarios.update(resposta=resposta, data_resposta=timezone.now())
+                self.message_user(request, f'Resposta aplicada a {count} comentário(s).')
+            else:
+                self.message_user(request, 'Nenhum comentário selecionado ou resposta vazia.', level='error')
+            return redirect('admin:conteudo_comentario_changelist')
+
+        return render(request, 'admin/comentario_responder_massa.html', {
+            'title': 'Responder em massa',
+            'comentarios': comentarios,
+            'ids': ids_param,
+            'opts': self.model._meta,
+            'has_permission': True,
+        })
 
     def save_model(self, request, obj, form, change):
         from django.utils import timezone

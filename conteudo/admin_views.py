@@ -885,15 +885,27 @@ def area_do_site_view(request):
 
         return redirect('admin_area_do_site')
 
+    from .widgets import RichTextWidget
+
     form = TituloSecoesForm(instance=config)
-    colunas = ColunaExtra.objects.all().prefetch_related('botoes')
+    colunas = list(ColunaExtra.objects.all().prefetch_related('botoes'))
     categorias = Categoria.objects.filter(ativa=True).order_by('nome')
+
+    titulo_widget = RichTextWidget()
+    for coluna in colunas:
+        coluna.titulo_editor_html = titulo_widget.render(
+            'coluna_titulo', coluna.titulo, attrs={'id': f'id_coluna_titulo_{coluna.pk}'}
+        )
+    titulo_editor_novo_html = titulo_widget.render(
+        'coluna_titulo', '', attrs={'id': 'id_coluna_titulo_nova'}
+    )
 
     return render(request, 'admin/area_do_site.html', {
         'title': 'Área do Site',
         'form': form,
         'colunas': colunas,
         'categorias': categorias,
+        'titulo_editor_novo_html': titulo_editor_novo_html,
         'has_permission': True,
         'is_app_index': True,
     })

@@ -15,7 +15,11 @@
     .as-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
     .as-section h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
     .as-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
-    .as-input, .as-select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; margin-bottom: 12px; }
+    .as-input, .as-select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; margin-bottom: 12px; box-sizing: border-box; }
+    /* Altura fixa nos selects para o texto não aparecer cortado (mesmo padrão do Painel Central) */
+    select.as-input, select.as-select, .as-add-botao-form select, select[name="coluna_lado"] {
+        height: 38px; line-height: normal; padding-top: 0; padding-bottom: 0; box-sizing: border-box;
+    }
     .as-help { font-size: 11px; color: #6b7280; margin-top: -8px; margin-bottom: 12px; }
     .as-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
     .as-row > div { flex: 1; min-width: 220px; }
@@ -152,7 +156,7 @@
                     {% elif coluna.icone %}
                         <i class="{{ coluna.icone }}" style="color:#0891b2;width:20px;text-align:center;"></i>
                     {% endif %}
-                    <strong>{{ coluna.titulo|default:"(sem título)" }}</strong>
+                    <strong>{{ coluna.titulo|default:"(sem título)"|safe }}</strong>
                     <span class="as-badge {% if coluna.lado == 'esquerda' %}as-badge-esq{% else %}as-badge-dir{% endif %}">
                         {{ coluna.get_lado_display }}
                     </span>
@@ -249,28 +253,31 @@
             </form>
 
             <!-- Editar / excluir coluna -->
-            <div class="as-coluna-footer">
-                <form method="post" enctype="multipart/form-data" style="flex-wrap:wrap;">
+            <div class="as-coluna-footer" style="flex-direction:column;align-items:stretch;">
+                <form method="post" enctype="multipart/form-data" style="flex-wrap:wrap;flex-direction:column;align-items:stretch;">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="editar_coluna">
                     <input type="hidden" name="coluna_id" value="{{ coluna.pk }}">
-                    <input type="text" name="coluna_titulo" value="{{ coluna.titulo }}" placeholder="Título da coluna" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
-                    <select name="coluna_lado" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
-                        <option value="esquerda" {% if coluna.lado == 'esquerda' %}selected{% endif %}>Esquerda</option>
-                        <option value="direita" {% if coluna.lado == 'direita' %}selected{% endif %}>Direita</option>
-                    </select>
-                    <input type="number" name="coluna_ordem" value="{{ coluna.ordem }}" style="width:60px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;" title="Ordem">
-                    <input type="text" name="coluna_icone" value="{{ coluna.icone }}" placeholder="Ícone FA (ex.: fas fa-star)" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;width:170px;">
-                    <input type="file" name="coluna_icone_imagem" accept="image/*,.svg,.ico" style="font-size:11px;" title="OU envie uma imagem de ícone">
-                    {% if coluna.icone_imagem %}
-                    <label style="font-size:11px;display:inline-flex;align-items:center;gap:4px;color:#6b7280;">
-                        <input type="checkbox" name="limpar_coluna_icone_imagem" value="1"> Remover imagem
-                    </label>
-                    {% endif %}
-                    <label style="font-size:12px;display:inline-flex;align-items:center;gap:4px;">
-                        <input type="checkbox" name="coluna_ativa" {% if coluna.ativa %}checked{% endif %}> Ativa
-                    </label>
-                    <button type="submit" class="as-btn-mini"><i class="fas fa-save"></i> Salvar</button>
+                    <label style="font-size:11px;font-weight:600;color:#374151;margin-bottom:3px;">Título da coluna (aceita formatação)</label>
+                    {{ coluna.titulo_editor_html|safe }}
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px;">
+                        <select name="coluna_lado" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;height:32px;line-height:normal;box-sizing:border-box;">
+                            <option value="esquerda" {% if coluna.lado == 'esquerda' %}selected{% endif %}>Esquerda</option>
+                            <option value="direita" {% if coluna.lado == 'direita' %}selected{% endif %}>Direita</option>
+                        </select>
+                        <input type="number" name="coluna_ordem" value="{{ coluna.ordem }}" style="width:60px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;" title="Ordem">
+                        <input type="text" name="coluna_icone" value="{{ coluna.icone }}" placeholder="Ícone FA (ex.: fas fa-star)" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;width:170px;">
+                        <input type="file" name="coluna_icone_imagem" accept="image/*,.svg,.ico" style="font-size:11px;" title="OU envie uma imagem de ícone">
+                        {% if coluna.icone_imagem %}
+                        <label style="font-size:11px;display:inline-flex;align-items:center;gap:4px;color:#6b7280;">
+                            <input type="checkbox" name="limpar_coluna_icone_imagem" value="1"> Remover imagem
+                        </label>
+                        {% endif %}
+                        <label style="font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+                            <input type="checkbox" name="coluna_ativa" {% if coluna.ativa %}checked{% endif %}> Ativa
+                        </label>
+                        <button type="submit" class="as-btn-mini"><i class="fas fa-save"></i> Salvar</button>
+                    </div>
                 </form>
                 <form method="post" onsubmit="return confirm('Excluir a coluna \'{{ coluna.titulo|escapejs }}\' e todos os seus botões?');">
                     {% csrf_token %}
@@ -289,9 +296,9 @@
     <form method="post" enctype="multipart/form-data" class="as-nova-coluna" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
         {% csrf_token %}
         <input type="hidden" name="action" value="criar_coluna">
-        <div>
-            <label class="as-label">Título da nova coluna</label>
-            <input type="text" name="coluna_titulo" class="as-input" placeholder="Ex.: Acesso Rápido" style="margin-bottom:0;">
+        <div style="flex-basis:100%;">
+            <label class="as-label">Título da nova coluna (aceita formatação)</label>
+            {{ titulo_editor_novo_html|safe }}
         </div>
         <div>
             <label class="as-label">Lado</label>

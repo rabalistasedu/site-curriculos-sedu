@@ -50,9 +50,11 @@
     .cat-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; background:#e5e7eb; color:#374151; }
     .org-empty { color:#9ca3af; font-style:italic; padding:20px; text-align:center; background:#f9fafb; border-radius:8px; margin:8px 0; }
     .org-form-inline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-    .org-form-inline input[type="text"], .org-form-inline select { padding:7px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; }
+    .org-form-inline input[type="text"], .org-form-inline select { padding:7px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; box-sizing:border-box; }
     .org-form-inline input[type="text"] { min-width:220px; }
     .org-form-inline select { min-width:180px; }
+    /* Altura fixa nos selects para o texto não aparecer cortado (mesmo padrão do Painel Central) */
+    .org-form-inline select, select[name="destino_id"] { height: 38px; line-height: normal; padding-top: 0; padding-bottom: 0; }
     .org-move-bar { background:#eef2f7; padding:12px 16px; border-radius:8px; margin:8px 0 16px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     .org-move-bar label { font-size:13px; font-weight:600; color:#374151; }
     .org-search-box { background:#fffbeb; border:2px solid #fbbf24; border-radius:8px; padding:16px; margin:16px 0; }

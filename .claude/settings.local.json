@@ -182,7 +182,9 @@
       "Bash(\"venv/Scripts/python.exe\" manage.py check)",
       "Bash(\"venv/Scripts/python.exe\" \"C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--ridan-Claude-Projects-Site-Curriculos-SEDU\\\\b8d61147-6eaf-4961-8eb7-9e4969e5b818\\\\scratchpad\\\\test_comentario_categoria.py\")",
       "Bash(\"venv/Scripts/python.exe\" manage.py shell)",
-      "Bash(venv/Scripts/python.exe manage.py shell -c ' *)"
+      "Bash(venv/Scripts/python.exe manage.py shell -c ' *)",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations conteudo --name coluna_extra_titulo_textfield)",
+      "Bash(rm -f /tmp/teste_video.py)"
     ]
   }
 }

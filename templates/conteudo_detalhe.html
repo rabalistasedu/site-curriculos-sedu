@@ -36,13 +36,15 @@
             <div class="article-summary">{{ conteudo.resumo }}</div>
             {% endif %}
 
-            <!-- Vídeo embutido -->
+            <!-- Vídeo: botão "Assistir vídeo" (em vez de iframe embutido) —
+                 alguns vídeos têm a incorporação bloqueada pelo próprio dono
+                 no YouTube (erro 153), então o link direto é sempre confiável -->
             {% if conteudo.url_video %}
-            <div class="video-container">
-                <iframe src="{{ conteudo.get_video_embed_url }}"
-                        frameborder="0" allowfullscreen
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                </iframe>
+            <div class="external-link-box">
+                <a href="{{ conteudo.url_video }}" target="_blank" rel="noopener" class="btn btn-primary">
+                    <i class="fas fa-play-circle"></i>
+                    {% if conteudo.video_embed_valido %}Assistir vídeo{% else %}Assistir vídeo ou acessar site{% endif %}
+                </a>
             </div>
             {% endif %}
 

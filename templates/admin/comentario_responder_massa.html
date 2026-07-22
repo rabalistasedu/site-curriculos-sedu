@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;">
+    <p style="font-size:13px;color:#4b5563;margin-bottom:16px;">
+        Você está prestes a aplicar a <strong>mesma resposta</strong> a
+        <strong>{{ comentarios|length }}</strong> comentário(s) selecionado(s). A resposta
+        substitui qualquer resposta anterior desses comentários.
+    </p>
+
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:18px;max-height:260px;overflow-y:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead>
+                <tr style="text-align:left;color:#6b7280;text-transform:uppercase;font-size:10.5px;">
+                    <th style="padding:4px 6px;">Nome</th>
+                    <th style="padding:4px 6px;">Comentário</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in comentarios %}
+                <tr style="border-top:1px solid #f1f5f9;">
+                    <td style="padding:6px;font-weight:600;">{{ c.nome }}</td>
+                    <td style="padding:6px;color:#4b5563;">{{ c.texto|truncatechars:80 }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2" style="padding:8px;color:#9ca3af;">Nenhum comentário selecionado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="ids" value="{{ ids }}">
+        <label style="display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;">
+            Resposta do administrador
+        </label>
+        <textarea name="resposta" required rows="5" style="width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;margin-bottom:16px;" placeholder="Digite a resposta que será aplicada a todos os comentários selecionados..."></textarea>
+
+        <button type="submit" style="background:#2d5a8e;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+            <i class="fas fa-paper-plane"></i> Aplicar resposta a {{ comentarios|length }} comentário(s)
+        </button>
+        <a href="../" style="margin-left:12px;font-size:13px;color:#6b7280;text-decoration:none;">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

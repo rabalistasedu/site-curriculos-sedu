@@ -171,7 +171,7 @@
                 {% elif coluna.icone %}
                 <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
                 {% endif %}
-                {{ coluna.titulo }}
+                {{ coluna.titulo|safe }}
             </h2>
             <div class="areas-list">
                 {% for botao in coluna.botoes.all %}
@@ -287,7 +287,7 @@
                 {% elif coluna.icone %}
                 <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
                 {% endif %}
-                {{ coluna.titulo }}
+                {{ coluna.titulo|safe }}
             </h2>
             <div class="areas-list">
                 {% for botao in coluna.botoes.all %}

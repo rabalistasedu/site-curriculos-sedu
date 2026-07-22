@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.utils.text import slugify
 from django.utils import timezone
@@ -360,20 +361,45 @@ class Conteudo(models.Model):
         return ''
 
     def get_video_embed_url(self):
-        """Converte URL do YouTube/Vimeo para embed"""
-        url = self.url_video
+        """Converte URL do YouTube/Vimeo para embed. Reconhece as variações
+        mais comuns (watch, youtu.be, shorts, live, mobile m.youtube.com,
+        já embed) via regex — extrai o ID de forma confiável, ignorando
+        parâmetros extras (ex.: si=, t=, list=) em qualquer ordem.
+        Se a URL não for de um provedor de vídeo reconhecido (ex.: o usuário
+        colou por engano o link de um site comum), devolve '' em vez de
+        tentar embutir algo que não é um vídeo — evita o erro "153/erro de
+        configuração do player" do YouTube, que aparecia sempre que a URL
+        não era de fato um vídeo do YouTube/Vimeo."""
+        url = (self.url_video or '').strip()
         if not url:
             return ''
-        if 'youtube.com/watch' in url:
-            video_id = url.split('v=')[1].split('&')[0]
-            return f'https://www.youtube.com/embed/{video_id}'
-        if 'youtu.be/' in url:
-            video_id = url.split('youtu.be/')[1].split('?')[0]
-            return f'https://www.youtube.com/embed/{video_id}'
-        if 'vimeo.com/' in url:
-            video_id = url.split('vimeo.com/')[1].split('?')[0]
-            return f'https://player.vimeo.com/video/{video_id}'
-        return url
+
+        padroes_youtube = [
+            r'(?:youtube\.com|m\.youtube\.com)/watch\?(?:.*&)?v=([A-Za-z0-9_-]{6,})',
+            r'youtu\.be/([A-Za-z0-9_-]{6,})',
+            r'(?:youtube\.com|m\.youtube\.com)/shorts/([A-Za-z0-9_-]{6,})',
+            r'(?:youtube\.com|m\.youtube\.com)/live/([A-Za-z0-9_-]{6,})',
+            r'(?:youtube\.com|m\.youtube\.com)/embed/([A-Za-z0-9_-]{6,})',
+        ]
+        for padrao in padroes_youtube:
+            m = re.search(padrao, url)
+            if m:
+                return f'https://www.youtube.com/embed/{m.group(1)}'
+
+        m = re.search(r'vimeo\.com/(?:video/)?(\d+)', url)
+        if m:
+            return f'https://player.vimeo.com/video/{m.group(1)}'
+
+        # Não é uma URL reconhecida de vídeo — não tenta embutir (o template
+        # mostra um botão "Assistir/abrir" apontando direto para a URL).
+        return ''
+
+    @property
+    def video_embed_valido(self):
+        """True quando url_video é de um provedor reconhecido (YouTube/Vimeo)
+        e pode ser embutido num iframe. Usado no template para decidir entre
+        mostrar o player embutido ou um botão de link direto."""
+        return bool(self.get_video_embed_url())
 
     @property
     def link_externo(self):
@@ -805,7 +831,7 @@ class ColunaExtra(models.Model):
     dentro — gerenciada pelo painel "Área do Site"."""
     LADO_CHOICES = [('esquerda', 'Esquerda'), ('direita', 'Direita')]
 
-    titulo = models.CharField('Título da coluna', max_length=200, blank=True)
+    titulo = models.TextField('Título da coluna', blank=True, help_text='Aceita formatação (negrito, itálico, alinhamento, lista) — mesmo editor usado em Destaques/Recentes/Navegue por área.')
     icone = models.CharField('Ícone do título (padrão do site)', max_length=100, blank=True)
     icone_imagem = models.FileField(
         'Ícone do título (imagem)', upload_to='icones_secao/', blank=True, null=True,
