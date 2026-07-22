@@ -290,6 +290,8 @@
                         <input type="number" name="coluna_ordem" value="{{ coluna.ordem }}" style="width:60px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;" title="Ordem">
                         <input type="text" name="coluna_icone" value="{{ coluna.icone }}" placeholder="Ícone FA (ex.: fas fa-star)" style="padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;width:170px;">
                         <input type="file" name="coluna_icone_imagem" accept="image/*,.svg,.ico" style="font-size:11px;" title="OU envie uma imagem de ícone">
+                        <input type="number" name="coluna_icone_largura" value="{{ coluna.icone_largura|default:'' }}" min="10" max="300" placeholder="Largura px" style="width:90px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
+                        <input type="number" name="coluna_icone_altura" value="{{ coluna.icone_altura|default:'' }}" min="10" max="300" placeholder="Altura px" style="width:90px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">
                         {% if coluna.icone_imagem %}
                         <label style="font-size:11px;display:inline-flex;align-items:center;gap:4px;color:#6b7280;">
                             <input type="checkbox" name="limpar_coluna_icone_imagem" value="1"> Remover imagem
@@ -336,6 +338,14 @@
         <div>
             <label class="as-label">OU envie uma imagem de ícone</label>
             <input type="file" name="coluna_icone_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+        </div>
+        <div>
+            <label class="as-label">Largura do ícone em px (opcional)</label>
+            <input type="number" name="coluna_icone_largura" min="10" max="300" class="as-input" placeholder="Padrão do site" style="margin-bottom:0;">
+        </div>
+        <div>
+            <label class="as-label">Altura do ícone em px (opcional)</label>
+            <input type="number" name="coluna_icone_altura" min="10" max="300" class="as-input" placeholder="= largura" style="margin-bottom:0;">
         </div>
         <div style="flex:0;">
             <button type="submit" class="as-save"><i class="fas fa-plus"></i> Criar coluna</button>

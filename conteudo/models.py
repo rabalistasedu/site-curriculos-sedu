@@ -886,6 +886,14 @@ class ColunaExtra(models.Model):
         'Ícone do título (imagem)', upload_to='icones_secao/', blank=True, null=True,
         help_text='Qualquer formato. Tem prioridade sobre o ícone padrão e aparece sempre com fundo transparente.'
     )
+    icone_largura = models.PositiveIntegerField(
+        'Largura do ícone do título (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_altura = models.PositiveIntegerField(
+        'Altura do ícone do título (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
     lado = models.CharField('Lado', max_length=10, choices=LADO_CHOICES, default='direita')
     ativa = models.BooleanField('Ativa (aparece no site)', default=True)
     ordem = models.PositiveIntegerField('Ordem', default=0)
@@ -897,6 +905,15 @@ class ColunaExtra(models.Model):
 
     def __str__(self):
         return self.titulo or f'Coluna {self.pk}'
+
+    @property
+    def icone_estilo_inline(self):
+        if not self.icone_largura and not self.icone_altura:
+            return ''
+        largura = self.icone_largura or self.icone_altura
+        altura = self.icone_altura or self.icone_largura
+        fonte = max(10, int(altura * 0.45))
+        return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
 
 
 class ColunaExtraBotao(models.Model):

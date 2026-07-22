@@ -167,9 +167,9 @@
         <aside class="home-coluna-extra">
             <h2 class="section-title">
                 {% if coluna.icone_imagem %}
-                <span class="title-icon sem-fundo"><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
+                <span class="title-icon sem-fundo"{% if coluna.icone_estilo_inline %} style="{{ coluna.icone_estilo_inline }}"{% endif %}><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
                 {% elif coluna.icone %}
-                <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
+                <span class="title-icon"{% if coluna.icone_estilo_inline %} style="{{ coluna.icone_estilo_inline }}"{% endif %}><i class="{{ coluna.icone }}"></i></span>
                 {% endif %}
                 {{ coluna.titulo|safe }}
             </h2>
@@ -282,9 +282,9 @@
         <aside class="home-coluna-extra">
             <h2 class="section-title">
                 {% if coluna.icone_imagem %}
-                <span class="title-icon sem-fundo"><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
+                <span class="title-icon sem-fundo"{% if coluna.icone_estilo_inline %} style="{{ coluna.icone_estilo_inline }}"{% endif %}><img src="{{ coluna.icone_imagem.url }}" alt="" class="icone-personalizado"></span>
                 {% elif coluna.icone %}
-                <span class="title-icon"><i class="{{ coluna.icone }}"></i></span>
+                <span class="title-icon"{% if coluna.icone_estilo_inline %} style="{{ coluna.icone_estilo_inline }}"{% endif %}><i class="{{ coluna.icone }}"></i></span>
                 {% endif %}
                 {{ coluna.titulo|safe }}
             </h2>

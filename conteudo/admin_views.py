@@ -775,6 +775,8 @@ def area_do_site_view(request):
                 titulo=titulo or 'Nova coluna',
                 lado=lado,
                 icone=request.POST.get('coluna_icone', '').strip(),
+                icone_largura=request.POST.get('coluna_icone_largura', '').strip() or None,
+                icone_altura=request.POST.get('coluna_icone_altura', '').strip() or None,
             )
             if 'coluna_icone_imagem' in request.FILES:
                 coluna.icone_imagem = request.FILES['coluna_icone_imagem']
@@ -787,6 +789,8 @@ def area_do_site_view(request):
             coluna = get_object_or_404(ColunaExtra, pk=coluna_id)
             coluna.titulo = request.POST.get('coluna_titulo', '').strip()
             coluna.icone = request.POST.get('coluna_icone', '').strip()
+            coluna.icone_largura = request.POST.get('coluna_icone_largura', '').strip() or None
+            coluna.icone_altura = request.POST.get('coluna_icone_altura', '').strip() or None
             lado = request.POST.get('coluna_lado', coluna.lado)
             if lado in ('esquerda', 'direita'):
                 coluna.lado = lado
