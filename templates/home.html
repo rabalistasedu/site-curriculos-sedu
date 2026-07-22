@@ -178,7 +178,7 @@
                 <a href="{{ botao.url }}" class="area-card"
                    {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
                    title="{{ botao.nome }}">
-                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}"{% if botao.icone_estilo_inline %} style="{{ botao.icone_estilo_inline }}"{% endif %}>
                         {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
                         {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
                     </div>
@@ -293,7 +293,7 @@
                 <a href="{{ botao.url }}" class="area-card"
                    {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
                    title="{{ botao.nome }}">
-                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}">
+                    <div class="category-icon{% if botao.icone_imagem %} sem-fundo{% endif %}"{% if botao.icone_estilo_inline %} style="{{ botao.icone_estilo_inline }}"{% endif %}>
                         {% if botao.icone_imagem %}<img src="{{ botao.icone_imagem.url }}" alt="" class="icone-personalizado">
                         {% else %}<i class="{{ botao.icone_display }}"></i>{% endif %}
                     </div>

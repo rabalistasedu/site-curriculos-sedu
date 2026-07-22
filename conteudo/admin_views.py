@@ -872,12 +872,28 @@ def area_do_site_view(request):
                 categoria=categoria,
                 link_externo=request.POST.get('botao_link', '').strip() if not categoria else '',
                 icone=icone_texto or 'fas fa-link',
+                icone_largura=icone_largura,
+                icone_altura=icone_altura,
             )
             if icone_img:
                 icone_img.seek(0)
                 botao.icone_imagem = icone_img
                 botao.save(update_fields=['icone_imagem'])
             messages.success(request, f'Botão "{nome}" adicionado à coluna "{coluna.titulo}".')
+            return redirect('admin_area_do_site')
+
+        elif action == 'editar_botao_coluna':
+            botao_id = request.POST.get('botao_id')
+            botao = get_object_or_404(ColunaExtraBotao, pk=botao_id)
+            icone_largura = request.POST.get('botao_icone_largura', '').strip()
+            botao.icone_largura = icone_largura or None
+            icone_altura = request.POST.get('botao_icone_altura', '').strip()
+            botao.icone_altura = icone_altura or None
+            icone_img = request.FILES.get('botao_icone_imagem')
+            if icone_img:
+                botao.icone_imagem = icone_img
+            botao.save()
+            messages.success(request, f'Tamanho do ícone de "{botao.nome}" atualizado.')
             return redirect('admin_area_do_site')
 
         elif action == 'excluir_botao':

@@ -169,9 +169,9 @@
                 {% for botao in coluna.botoes.all %}
                 <div class="as-botao-item">
                     {% if botao.icone_imagem %}
-                        <img src="{{ botao.icone_imagem.url }}" alt="" style="width:18px;height:18px;object-fit:contain;">
+                        <img src="{{ botao.icone_imagem.url }}" alt="" style="width:18px;height:18px;object-fit:contain;{{ botao.icone_estilo_inline }}">
                     {% else %}
-                        <i class="{{ botao.icone_display }} icone-item"></i>
+                        <i class="{{ botao.icone_display }} icone-item" style="{{ botao.icone_estilo_inline }}"></i>
                     {% endif %}
                     <span>{{ botao.nome }}</span>
                     <span class="destino">
@@ -179,6 +179,7 @@
                         {% elif botao.categoria %}→ {{ botao.categoria.nome }}
                         {% else %}(sem destino){% endif %}
                     </span>
+                    <button type="button" class="as-btn-excluir" style="background:#e0f2fe;color:#0369a1;" title="Ajustar tamanho do ícone" onclick="document.getElementById('as-tam-{{ botao.pk }}').style.display=document.getElementById('as-tam-{{ botao.pk }}').style.display==='flex'?'none':'flex';"><i class="fas fa-expand"></i></button>
                     <form method="post" onsubmit="return confirm('Excluir o botão \'{{ botao.nome|escapejs }}\'?');">
                         {% csrf_token %}
                         <input type="hidden" name="action" value="excluir_botao">
@@ -186,6 +187,14 @@
                         <button type="submit" class="as-btn-excluir" title="Excluir botão"><i class="fas fa-trash-alt"></i></button>
                     </form>
                 </div>
+                <form method="post" id="as-tam-{{ botao.pk }}" style="display:none;gap:8px;align-items:center;margin:2px 0 8px 26px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="editar_botao_coluna">
+                    <input type="hidden" name="botao_id" value="{{ botao.pk }}">
+                    <input type="number" name="botao_icone_largura" min="10" max="300" placeholder="Largura px" value="{{ botao.icone_largura|default:'' }}" style="width:100px;padding:4px 6px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;">
+                    <input type="number" name="botao_icone_altura" min="10" max="300" placeholder="Altura px" value="{{ botao.icone_altura|default:'' }}" style="width:100px;padding:4px 6px;font-size:11px;border:1px solid #cbd5e1;border-radius:6px;">
+                    <button type="submit" style="font-size:11px;padding:4px 10px;border:1px solid #0891b2;border-radius:6px;background:#0891b2;color:#fff;cursor:pointer;">Salvar tamanho</button>
+                </form>
                 {% empty %}
                 <p style="font-size:12px;color:#9ca3af;margin:0;">Nenhum botão nesta coluna ainda.</p>
                 {% endfor %}
@@ -221,6 +230,14 @@
                     <label>OU ícone (imagem)</label>
                     <input type="file" name="botao_icone_imagem" accept="image/*">
                 </div>
+                <div>
+                    <label>Largura do ícone em px (opcional)</label>
+                    <input type="number" name="botao_icone_largura" min="10" max="300" placeholder="Padrão do site">
+                </div>
+                <div>
+                    <label>Altura do ícone em px (opcional)</label>
+                    <input type="number" name="botao_icone_altura" min="10" max="300" placeholder="= largura">
+                </div>
                 <div class="as-botao-arvore-toggle">
                     <label style="display:flex;align-items:center;gap:5px;font-weight:700;color:#0891b2;">
                         <input type="checkbox" name="botao_criar_arvore" value="1" onchange="document.getElementById('arvore-extra-{{ coluna.pk }}').style.display=this.checked?'flex':'none'">
@@ -232,14 +249,6 @@
                     <div>
                         <label>URL dentro do botão (opcional)</label>
                         <input type="url" name="botao_url_rapida" placeholder="https://...">
-                    </div>
-                    <div>
-                        <label>Largura do ícone em px (opcional)</label>
-                        <input type="number" name="botao_icone_largura" min="10" max="300" placeholder="Padrão do site">
-                    </div>
-                    <div>
-                        <label>Altura do ícone em px (opcional)</label>
-                        <input type="number" name="botao_icone_altura" min="10" max="300" placeholder="= largura">
                     </div>
                     <div style="flex-basis:100%;">
                         <label>Mais links / URLs dentro do botão (opcional, quantos quiser)</label>

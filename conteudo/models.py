@@ -917,6 +917,14 @@ class ColunaExtraBotao(models.Model):
     icone_imagem = models.FileField(
         'Ícone personalizado (imagem)', upload_to='icones_coluna_extra/', blank=True, null=True
     )
+    icone_largura = models.PositiveIntegerField(
+        'Largura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_altura = models.PositiveIntegerField(
+        'Altura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
     ordem = models.PositiveIntegerField('Ordem', default=0)
 
     class Meta:
@@ -938,6 +946,15 @@ class ColunaExtraBotao(models.Model):
     @property
     def icone_display(self):
         return self.icone or 'fas fa-link'
+
+    @property
+    def icone_estilo_inline(self):
+        if not self.icone_largura and not self.icone_altura:
+            return ''
+        largura = self.icone_largura or self.icone_altura
+        altura = self.icone_altura or self.icone_largura
+        fonte = max(10, int(altura * 0.45))
+        return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
 
 
 class Comentario(models.Model):
