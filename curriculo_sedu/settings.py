@@ -5,8 +5,16 @@ Site: Currículo do Espírito Santo — SEDU/ES
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Carrega variáveis de um arquivo .env na raiz do projeto (ao lado do manage.py),
+# se ele existir. Não sobrescreve variáveis de ambiente já definidas pelo sistema
+# (ex.: as do docker-compose.yml) — apenas preenche o que ainda não foi setado.
+# Sem .env nenhum: comportamento 100% igual a antes (os.environ.get com os
+# valores padrão de sempre).
+load_dotenv(BASE_DIR / '.env')
 
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',

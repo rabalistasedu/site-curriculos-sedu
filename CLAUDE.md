@@ -1,4 +1,4 @@
-# Site Currículos SEDU — Contexto do Projeto (v35 — atualizado em 2026-07-23 — Parte 39: Integração de Comentários com Microsoft Teams)
+# Site Currículos SEDU — Contexto do Projeto (v39 — atualizado em 2026-07-23 — Parte 39: Integração de Comentários com Microsoft Teams ✅ CONCLUÍDA E TESTADA)
 
 ## O que é este projeto
 
