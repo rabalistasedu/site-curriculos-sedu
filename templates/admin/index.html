@@ -103,6 +103,24 @@
 </div>
 {% endif %}
 
+{% if perms.conteudo.pode_acessar_lixeira %}
+<!-- Banner da Lixeira -->
+<div style="background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-trash-can" style="margin-right: 8px;"></i>
+            Lixeira
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #fecaca;">
+            Botões e conteúdos excluídos ficam recuperáveis por 30 dias. Restaure o que foi apagado por engano, antes que a limpeza automática apague de vez.
+        </p>
+    </div>
+    <a href="{% url 'admin_lixeira' %}" style="background: #fff; color: #b91c1c; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-rotate-left"></i> Abrir Lixeira
+    </a>
+</div>
+{% endif %}
+
 {% if perms.conteudo.pode_acessar_editor_rodape %}
 <!-- Banner do Editor de Rodapé -->
 <div style="background: linear-gradient(135deg, #374151 0%, #111827 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">

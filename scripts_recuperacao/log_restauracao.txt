@@ -1,0 +1,97 @@
+Python 3.13.14 (tags/v3.13.14:fd17997, Jun 10 2026, 13:03:48) [MSC v.1944 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+(InteractiveConsole)
+24 objects imported automatically (use -v 2 for details).
+
+>>> ... ... ... ... ... ... ... ... ... '\nScript de recuperação ÚNICA: recria as 20 categorias da árvore "Orientações\nCurriculares" (exclu�\xaddas localmente em 2026-07-23) a partir dos dados\nextra�\xaddos do backup Postgres de hoje 15:05 (dados_recuperados.json),\nrecria o anexo de link, e reconecta os 127 conteúdos órfãos de volta �\xa0s\ncategorias originais (só ajusta o campo categoria_id, não toca em mais\nnada desses conteúdos — preserva qualquer edição feita neles depois).\n\nRodar com: python manage.py shell < scripts_recuperacao/restaurar_orientacoes.py\n'
+>>> >>> >>> >>> >>> ... ... >>> >>> ... ... >>> >>> ... ... >>> >>> === 1) Recriando categorias (ordem: raiz primeiro) ===
+>>> >>> ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ...   File "<console>", line 29
+    print(f'Total categorias criadas: {criadas}')
+    ^^^^^
+SyntaxError: invalid syntax
+>>> >>> 
+>>> === 2) Recriando anexo (link) ===
+>>> ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... Traceback (most recent call last):
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\utils.py", line 98, in inner
+    return func(*args, **kwargs)
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<console>", line 6, in <module>
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\query.py", line 665, in create
+    obj.save(force_insert=True, using=self.db)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\base.py", line 902, in save
+    self.save_base(
+    ~~~~~~~~~~~~~~^
+        using=using,
+        ^^^^^^^^^^^^
+    ...<2 lines>...
+        update_fields=update_fields,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\base.py", line 1008, in save_base
+    updated = self._save_table(
+        raw,
+    ...<4 lines>...
+        update_fields,
+    )
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\base.py", line 1169, in _save_table
+    results = self._do_insert(
+        cls._base_manager, using, fields, returning_fields, raw
+    )
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\base.py", line 1210, in _do_insert
+    return manager._insert(
+           ~~~~~~~~~~~~~~~^
+        [self],
+        ^^^^^^^
+    ...<3 lines>...
+        raw=raw,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\query.py", line 1873, in _insert
+    return query.get_compiler(using=using).execute_sql(returning_fields)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1894, in execute_sql
+    self.connection.ops.fetch_returned_insert_columns(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+        self.returning_params,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\backends\base\operations.py", line 215, in fetch_returned_insert_columns
+    return cursor.fetchone()
+           ~~~~~~~~~~~~~~~^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\utils.py", line 97, in inner
+    with self:
+         ^^^^
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "C:\ridan\Claude\Projects\Site Curriculos SEDU\venv\Lib\site-packages\django\db\utils.py", line 98, in inner
+    return func(*args, **kwargs)
+django.db.utils.IntegrityError: FOREIGN KEY constraint failed
+>>> 
+>>> === 3) Reconectando conteudos orfaos (so ajusta categoria_id) ===
+>>> >>> >>> ... ... ... ... ... ... ... ...   File "<console>", line 9
+    print(f'Conteudos reconectados: {reconectados}')
+    ^^^^^
+SyntaxError: invalid syntax
+>>> ... ... >>> 
+>>> === Verificacao final ===
+>>> >>> Categoria raiz restaurada: None
+>>> Total de subcategorias (recursivo esperado 19): 0
+>>> Total de conteudos hoje ligados a essa arvore: 0
+>>> 
+now exiting InteractiveConsole...

@@ -60,8 +60,51 @@ def icone_por_texto(texto, fallback='fas fa-file-lines'):
     return fallback
 
 
+class CategoriaQuerySet(models.QuerySet):
+    def delete(self):
+        """Lixeira: em vez de apagar de verdade, marca como excluída (recuperável
+        por 30 dias — ver /admin/lixeira/). Move junto TODA a subárvore (filhos,
+        netos...), o mesmo alcance que a exclusão de verdade (CASCADE) teria."""
+        agora = timezone.now()
+        alvo_ids = set(self.values_list('pk', flat=True))
+        fronteira = set(alvo_ids)
+        while fronteira:
+            filhos = set(
+                Categoria.todos_objetos
+                .filter(categoria_pai_id__in=fronteira, excluido_em__isnull=True)
+                .values_list('pk', flat=True)
+            )
+            novos = filhos - alvo_ids
+            if not novos:
+                break
+            alvo_ids |= novos
+            fronteira = novos
+        count = Categoria.todos_objetos.filter(pk__in=alvo_ids, excluido_em__isnull=True).update(excluido_em=agora)
+        return count, {'conteudo.Categoria': count}
+
+    def hard_delete(self):
+        """Exclusão de verdade, sem passar pela lixeira (usada pela limpeza automática
+        depois de 30 dias, e por quem clicar em 'Excluir definitivamente' na lixeira)."""
+        return super().delete()
+
+
+class CategoriaManager(models.Manager.from_queryset(CategoriaQuerySet)):
+    """Manager padrão (Categoria.objects) — nunca mostra itens na lixeira."""
+    def get_queryset(self):
+        return super().get_queryset().filter(excluido_em__isnull=True)
+
+
+class CategoriaTodosManager(models.Manager.from_queryset(CategoriaQuerySet)):
+    """Categoria.todos_objetos — enxerga tudo, inclusive o que está na lixeira.
+    Usado só pela tela da Lixeira e pela limpeza automática de 30 dias."""
+    pass
+
+
 class Categoria(models.Model):
     """Categorias principais do menu (Documentos Curriculares, Programas, etc.)"""
+    objects = CategoriaManager()
+    todos_objetos = CategoriaTodosManager()
+
     nome = models.CharField('Nome', max_length=200)
     slug = models.SlugField('URL amigável', max_length=200, unique=True, blank=True)
     descricao = models.TextField('Descrição', blank=True)
@@ -136,11 +179,17 @@ class Categoria(models.Model):
                   'no topo (sem duplicar). Subáreas criadas pela função "Criar subárea '
                   'nos botões marcados" já nascem desmarcadas, por padrão.'
     )
+    excluido_em = models.DateTimeField(
+        'Excluído em', null=True, blank=True, editable=False, db_index=True,
+        help_text='Preenchido automaticamente quando o botão vai para a lixeira. '
+                  'Fica recuperável por 30 dias — ver painel "Lixeira".'
+    )
 
     class Meta:
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
         ordering = ['ordem', 'nome']
+        base_manager_name = 'todos_objetos'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -151,6 +200,33 @@ class Categoria(models.Model):
         if self.categoria_pai:
             return f"{self.categoria_pai.nome} → {self.nome}"
         return self.nome
+
+    def delete(self, *args, **kwargs):
+        """Manda para a lixeira (recuperável por 30 dias) em vez de apagar de
+        verdade. Delega para o queryset, que já move a subárvore inteira junto."""
+        return Categoria.objects.filter(pk=self.pk).delete()
+
+    def hard_delete(self, *args, **kwargs):
+        """Exclusão real e definitiva, sem passar pela lixeira."""
+        return super().delete(*args, **kwargs)
+
+    def restaurar(self):
+        """Restaura esta categoria e toda a subárvore que foi para a lixeira junto."""
+        alvo_ids = {self.pk}
+        fronteira = {self.pk}
+        while fronteira:
+            filhos = set(
+                Categoria.todos_objetos
+                .filter(categoria_pai_id__in=fronteira, excluido_em__isnull=False)
+                .values_list('pk', flat=True)
+            )
+            novos = filhos - alvo_ids
+            if not novos:
+                break
+            alvo_ids |= novos
+            fronteira = novos
+        Categoria.todos_objetos.filter(pk__in=alvo_ids).update(excluido_em=None)
+        self.excluido_em = None
 
     @property
     def icone_display(self):
@@ -204,10 +280,32 @@ class ConteudoQuerySet(models.QuerySet):
             data_publicacao__lte=timezone.now(),
         )
 
+    def delete(self):
+        """Lixeira: em vez de apagar de verdade, marca como excluído (recuperável
+        por 30 dias — ver /admin/lixeira/)."""
+        count = self.filter(excluido_em__isnull=True).update(excluido_em=timezone.now())
+        return count, {'conteudo.Conteudo': count}
+
+    def hard_delete(self):
+        """Exclusão de verdade, sem passar pela lixeira."""
+        return super().delete()
+
+
+class ConteudoManager(models.Manager.from_queryset(ConteudoQuerySet)):
+    """Manager padrão (Conteudo.objects) — nunca mostra itens na lixeira."""
+    def get_queryset(self):
+        return super().get_queryset().filter(excluido_em__isnull=True)
+
+
+class ConteudoTodosManager(models.Manager.from_queryset(ConteudoQuerySet)):
+    """Conteudo.todos_objetos — enxerga tudo, inclusive o que está na lixeira."""
+    pass
+
 
 class Conteudo(models.Model):
     """Modelo principal — qualquer conteúdo do site (documento, vídeo, post, link)"""
-    objects = ConteudoQuerySet.as_manager()
+    objects = ConteudoManager()
+    todos_objetos = ConteudoTodosManager()
 
     titulo = models.CharField(
         'Título', max_length=300, blank=True,
@@ -327,10 +425,17 @@ class Conteudo(models.Model):
     # Autor
     autor = models.CharField('Autor / Responsável', max_length=200, blank=True)
 
+    excluido_em = models.DateTimeField(
+        'Excluído em', null=True, blank=True, editable=False, db_index=True,
+        help_text='Preenchido automaticamente quando o conteúdo vai para a lixeira. '
+                  'Fica recuperável por 30 dias — ver painel "Lixeira".'
+    )
+
     class Meta:
         verbose_name = 'Conteúdo'
         verbose_name_plural = 'Conteúdos'
         ordering = ['-destaque', 'ordem', '-data_publicacao']
+        base_manager_name = 'todos_objetos'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -347,6 +452,19 @@ class Conteudo(models.Model):
 
     def __str__(self):
         return self.titulo or f'{self.get_tipo_display()} #{self.pk}'
+
+    def delete(self, *args, **kwargs):
+        """Manda para a lixeira (recuperável por 30 dias) em vez de apagar de verdade."""
+        self.excluido_em = timezone.now()
+        self.save(update_fields=['excluido_em'])
+
+    def hard_delete(self, *args, **kwargs):
+        """Exclusão real e definitiva, sem passar pela lixeira."""
+        return super().delete(*args, **kwargs)
+
+    def restaurar(self):
+        self.excluido_em = None
+        self.save(update_fields=['excluido_em'])
 
     @property
     def tipo_icone(self):
@@ -809,6 +927,7 @@ class ConfiguracaoSite(models.Model):
             ('pode_acessar_editor_rodape', 'Pode acessar: Editor do Rodapé'),
             ('pode_acessar_area_do_site', 'Pode acessar: Área do Site'),
             ('pode_acessar_estrutura_arvores', 'Pode acessar: Estrutura de Árvores'),
+            ('pode_acessar_lixeira', 'Pode acessar: Lixeira'),
         ]
 
     def __str__(self):

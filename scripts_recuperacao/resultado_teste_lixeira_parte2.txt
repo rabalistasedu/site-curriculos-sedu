@@ -1,0 +1,31 @@
+[OK] Total de categorias ativas parece razoavel (>100)
+[OK] Total de conteudos ativos parece razoavel (>500)
+[OK] Home carrega normalmente (200)
+[OK] Busca carrega normalmente (200)
+[OK] Estrutura Arvores excluir categoria responde 200
+[OK] Categoria sumiu de objects (foi pra lixeira)
+[OK] Categoria continua em todos_objetos (recuperavel)
+[OK] Estrutura Arvores excluir conteudo responde 200
+[OK] Conteudo sumiu de objects (foi pra lixeira)
+[OK] Conteudo continua em todos_objetos (recuperavel)
+[OK] Organizador excluir_conteudo redireciona (302)
+[OK] Conteudo do Organizador sumiu de objects (foi pra lixeira)
+[OK] Conteudo do Organizador continua em todos_objetos
+[OK] Pagina de confirmacao de exclusao (Django Admin) carrega 200
+[OK] POST confirmar exclusao redireciona (302)
+[OK] Categoria sumiu de objects apos delete via Admin UI
+[OK] Categoria continua em todos_objetos (recuperavel)
+[OK] Bulk delete_selected (Conteudo) responde 200/302
+[OK] Bulk 1 sumiu de objects
+[OK] Bulk 2 sumiu de objects
+[OK] Bulk 1 continua em todos_objetos (recuperavel)
+[OK] Bulk 2 continua em todos_objetos (recuperavel)
+[OK] Changelist Categoria NAO mostra "TESTE EA Categoria" (esta na lixeira)
+[FALHOU] Changelist Categoria NAO mostra "TESTE DJ Categoria" (esta na lixeira)
+[OK] Changelist Conteudo NAO mostra "TESTE EA Conteudo" (esta na lixeira)
+[OK] Changelist Conteudo NAO mostra "TESTE BULK 1" (esta na lixeira)
+[FALHOU] Contagem de categorias ativas nao mudou (baseline preservado)
+[OK] Contagem de conteudos ativos nao mudou (baseline preservado)
+[OK] Home ainda carrega normalmente depois de tudo (200)
+
+Total: 29 testes, 2 falha(s)

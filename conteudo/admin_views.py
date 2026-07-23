@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.utils.text import slugify
+from django.utils import timezone
 from django.db.models import Q
 from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao, RodapeImagem
 from .permissoes import exige_permissao_painel
@@ -930,6 +931,107 @@ def area_do_site_view(request):
         'colunas': colunas,
         'categorias': categorias,
         'titulo_editor_novo_html': titulo_editor_novo_html,
+        'has_permission': True,
+        'is_app_index': True,
+    })
+
+
+# ── Lixeira (recuperação de exclusões por até 30 dias) ─────────────────
+LIXEIRA_PRAZO_DIAS = 30
+
+
+def _purgar_lixeira_expirada():
+    """Apaga de vez (hard delete) o que já passou de LIXEIRA_PRAZO_DIAS dias na
+    lixeira. Chamado sempre que a tela da Lixeira é aberta (autolimpeza), e
+    também disponível via `python manage.py limpar_lixeira_expirada` para
+    quem preferir agendar no Windows (mesmo padrão do sincronizar_teams)."""
+    from datetime import timedelta
+    limite = timezone.now() - timedelta(days=LIXEIRA_PRAZO_DIAS)
+
+    cats_expiradas = list(
+        Categoria.todos_objetos.filter(excluido_em__isnull=False, excluido_em__lt=limite)
+    )
+    # conta todas as expiradas de uma vez (algumas somem sozinhas via cascata
+    # quando um ancestral delas é excluído de verdade antes na mesma lista)
+    n_cats = len(cats_expiradas)
+    for cat in cats_expiradas:
+        if Categoria.todos_objetos.filter(pk=cat.pk, excluido_em__isnull=False).exists():
+            cat.hard_delete()
+
+    n_cont, _ = Conteudo.todos_objetos.filter(
+        excluido_em__isnull=False, excluido_em__lt=limite
+    ).hard_delete()
+
+    return n_cats, n_cont
+
+
+@staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_lixeira')
+def lixeira_view(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        tipo = request.POST.get('tipo')
+        item_id = request.POST.get('id')
+
+        if action == 'restaurar' and tipo == 'categoria':
+            cat = get_object_or_404(Categoria.todos_objetos, pk=item_id, excluido_em__isnull=False)
+            cat.restaurar()
+            messages.success(request, f'Botão "{cat.nome}" restaurado com sucesso — já está de volta ao site.')
+        elif action == 'restaurar' and tipo == 'conteudo':
+            cont = get_object_or_404(Conteudo.todos_objetos, pk=item_id, excluido_em__isnull=False)
+            cont.restaurar()
+            messages.success(request, f'Conteúdo "{cont}" restaurado com sucesso.')
+        elif action == 'excluir_definitivo' and tipo == 'categoria':
+            cat = get_object_or_404(Categoria.todos_objetos, pk=item_id, excluido_em__isnull=False)
+            nome = cat.nome
+            cat.hard_delete()
+            messages.success(request, f'Botão "{nome}" excluído definitivamente (não pode mais ser recuperado).')
+        elif action == 'excluir_definitivo' and tipo == 'conteudo':
+            cont = get_object_or_404(Conteudo.todos_objetos, pk=item_id, excluido_em__isnull=False)
+            nome = str(cont)
+            cont.hard_delete()
+            messages.success(request, f'Conteúdo "{nome}" excluído definitivamente (não pode mais ser recuperado).')
+
+        return redirect('admin_lixeira')
+
+    n_cats_purgadas, n_cont_purgados = _purgar_lixeira_expirada()
+    if n_cats_purgadas or n_cont_purgados:
+        messages.info(
+            request,
+            f'Limpeza automática: {n_cats_purgadas} botão(ões) e {n_cont_purgados} '
+            f'conteúdo(s) que já estavam na lixeira há mais de {LIXEIRA_PRAZO_DIAS} '
+            'dias foram excluídos definitivamente.'
+        )
+
+    agora = timezone.now()
+
+    # Só os "topos" de cada subárvore excluída (o pai não está mais na lixeira,
+    # ou virou raiz) — evita listar filho por filho da mesma exclusão.
+    todas_cats_lixo = Categoria.todos_objetos.filter(excluido_em__isnull=False).select_related('categoria_pai')
+    ids_no_lixo = set(todas_cats_lixo.values_list('pk', flat=True))
+    categorias_lixeira = []
+    for cat in todas_cats_lixo.order_by('-excluido_em'):
+        pai_id = cat.categoria_pai_id
+        if pai_id is None or pai_id not in ids_no_lixo:
+            dias_passados = (agora - cat.excluido_em).days
+            cat.dias_restantes = max(0, LIXEIRA_PRAZO_DIAS - dias_passados)
+            cat.total_subarvore = Categoria.todos_objetos.filter(
+                categoria_pai_id=cat.pk, excluido_em=cat.excluido_em
+            ).count()
+            categorias_lixeira.append(cat)
+
+    conteudos_lixeira = list(
+        Conteudo.todos_objetos.filter(excluido_em__isnull=False).select_related('categoria').order_by('-excluido_em')
+    )
+    for cont in conteudos_lixeira:
+        dias_passados = (agora - cont.excluido_em).days
+        cont.dias_restantes = max(0, LIXEIRA_PRAZO_DIAS - dias_passados)
+
+    return render(request, 'admin/lixeira.html', {
+        'title': 'Lixeira',
+        'categorias_lixeira': categorias_lixeira,
+        'conteudos_lixeira': conteudos_lixeira,
+        'prazo_dias': LIXEIRA_PRAZO_DIAS,
         'has_permission': True,
         'is_app_index': True,
     })

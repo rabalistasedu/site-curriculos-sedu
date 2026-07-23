@@ -237,10 +237,10 @@ def _criar_no(request):
 
 
 def _excluir_nos(request):
-    """Exclui os botões (categorias) marcados na árvore. Os conteúdos
-    publicados neles NÃO são excluídos — apenas ficam sem local (a FK
-    Conteudo.categoria é SET_NULL); podem ser vinculados de novo depois.
-    Subbotões dos botões excluídos são excluídos junto (fazem parte dele)."""
+    """Exclui os botões (categorias) marcados na árvore — vão para a lixeira,
+    recuperáveis por 30 dias (ver painel "Lixeira"). Subbotões dos botões
+    excluídos vão junto. Os conteúdos que estavam neles continuam ligados a
+    eles e voltam a aparecer normalmente se o botão for restaurado."""
     ids = request.POST.getlist('destinos')
     cats = list(Categoria.objects.filter(pk__in=ids))
     if not cats:
@@ -251,9 +251,9 @@ def _excluir_nos(request):
     Categoria.objects.filter(pk__in=ids).delete()
     messages.success(
         request,
-        f'{n} botão(ões) excluído(s): {nomes}. Os conteúdos que estavam '
-        'neles continuam salvos (sem local de exibição) e podem ser '
-        'vinculados novamente em "Conteúdo para modificar ou configurar".'
+        f'{n} botão(ões) movido(s) para a lixeira: {nomes}. Recuperável por 30 '
+        'dias no painel "Lixeira" — os conteúdos que estavam neles voltam '
+        'junto automaticamente se o botão for restaurado.'
     )
     return redirect('painel:central')
 
@@ -696,7 +696,9 @@ def conteudos_view(request):
 
         elif action == 'excluir' and ids:
             n = Conteudo.objects.filter(pk__in=ids).count()
-            Conteudo.objects.filter(pk__in=ids).delete()
+            # Ação explicitamente "permanente" (rótulo já existente na tela) —
+            # pula a lixeira de propósito, diferente das outras exclusões do site.
+            Conteudo.objects.filter(pk__in=ids).hard_delete()
             messages.success(request, f'{n} conteúdo(s) excluído(s) permanentemente.')
 
         elif not ids and action in ('remover_vinculos', 'excluir'):

@@ -1,0 +1,32 @@
+[OK] Pai sumiu de Categoria.objects (filtrado)
+[OK] Pai continua em todos_objetos
+[OK] Filho tambem foi trashado (cascata)
+[OK] Neto tambem foi trashado (cascata)
+[OK] excluido_em preenchido no pai
+[OK] Conteudo continua com categoria_id apontando pro filho (nao orfanado)
+[OK] Conteudo continua visivel em Conteudo.objects (nao foi trashado junto)
+[OK] Anexo continua existindo
+[OK] Pagina da categoria trashada retorna 404
+[OK] Tela da lixeira carrega (200)
+[OK] Categoria trashada aparece na lixeira
+[OK] Filho NAO aparece separado na lixeira (so o topo)
+[OK] POST restaurar redireciona (302)
+[OK] Pai restaurado, aparece em Categoria.objects de novo
+[OK] Filho tambem restaurado junto
+[OK] Neto tambem restaurado junto
+[OK] Pagina da categoria volta a funcionar (200) apos restaurar
+[OK] Conteudo sumiu de Conteudo.objects apos delete()
+[OK] Conteudo tem excluido_em preenchido
+[OK] Restaurar conteudo redireciona (302)
+[OK] Conteudo restaurado
+[OK] Excluir definitivo redireciona (302)
+[OK] Conteudo NAO existe nem em todos_objetos (excluido de verdade)
+[OK] Purga contou 3 categorias expiradas (contou 3)
+[OK] Pai nao existe mais nem em todos_objetos (purgado de verdade)
+[OK] Filho nao existe mais
+[OK] Neto nao existe mais
+[OK] Item recente NAO foi purgado (ainda dentro do prazo)
+[OK] Painel Central excluir permanente responde (302 ou 200)
+[OK] Conteudo NAO existe nem em todos_objetos (hard delete de verdade)
+
+Total: 30 testes, 0 falha(s)

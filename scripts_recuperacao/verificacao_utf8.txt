@@ -1,0 +1,24 @@
+Nome: Orientações Curriculares
+Slug: orientacoes-curriculares
+Icone: fas fa-compass
+Icone imagem: icones_categoria/orientações_curriculares.jpg
+Pai: None
+Subcategorias diretas: 18
+  - Orientações Curriculares (id=358)
+  - Ensino Fundamental — Anos Iniciais (id=65)
+  - Ensino Fundamental — Anos Finais (id=66)
+  - Orientações Curriculares (id=4)
+  - Ensino Médio — Formação Geral Básica (id=67)
+  - Itinerários de Aprofundamento (IFA) — Linguagens e Ciências Humanas (id=68)
+  - Itinerários de Aprofundamento (IFA) — Matemática e Ciências da Natureza (id=69)
+  - Itinerários de Aprofundamento (IFA) — Quatro Áreas (Noturno) (id=70)
+  - Itinerário — Educação Financeira e Fiscal (id=71)
+  - Itinerário — Terra, Vida e Cosmo (id=72)
+  - Itinerário — Modernização, Transformação Social e Meio Ambiente (id=73)
+  - Itinerário — Energias Renováveis e Eficiência Energética (id=74)
+  - Itinerário — Narrativas Socioliterárias (id=75)
+  - Itinerário — Humanidades e Relações Socioambientais (id=76)
+  - Itinerário — Aspirações Docentes (id=77)
+  - Itinerário — Mídias Digitais, Linguagens em Ação (id=78)
+  - Itinerário — O Esporte, a Ciência e suas Linguagens (id=79)
+  - Anos anteriores (id=80)

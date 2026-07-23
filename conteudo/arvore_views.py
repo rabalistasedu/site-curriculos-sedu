@@ -393,7 +393,9 @@ def _api_editar(request):
 
 
 def _api_excluir(request):
-    """Exclui um nó (conteúdos ficam com categoria=None)."""
+    """Exclui um nó e sua subárvore (vão para a lixeira, recuperáveis por 30
+    dias). Os conteúdos que estavam neles continuam ligados e voltam junto
+    se o botão for restaurado."""
     cat_id = request.POST.get('id')
     cat = get_object_or_404(Categoria, pk=cat_id)
     nome = cat.nome
@@ -631,7 +633,7 @@ def _api_remover_anexo(request):
 
 
 def _api_excluir_conteudo(request):
-    """Exclui um conteúdo permanentemente."""
+    """Exclui um conteúdo (vai para a lixeira, recuperável por 30 dias)."""
     conteudo_id = request.POST.get('conteudo_id')
     conteudo = get_object_or_404(Conteudo, pk=conteudo_id)
     titulo = conteudo.titulo

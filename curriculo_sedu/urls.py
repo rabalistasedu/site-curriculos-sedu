@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from conteudo.admin_views import (
     organizar_view, adicionar_arquivos_view, api_subcategorias_itens,
-    barra_superior_view, editor_rodape_view, area_do_site_view,
+    barra_superior_view, editor_rodape_view, area_do_site_view, lixeira_view,
 )
 from conteudo.arvore_views import estrutura_arvores_view, arvore_api
 from conteudo.media_views import serve_media
@@ -19,6 +19,7 @@ urlpatterns = [
     path('admin/area-do-site/', admin.site.admin_view(area_do_site_view), name='admin_area_do_site'),
     path('admin/estrutura-arvores/', admin.site.admin_view(estrutura_arvores_view), name='admin_estrutura_arvores'),
     path('admin/estrutura-arvores/api/', admin.site.admin_view(arvore_api), name='admin_arvore_api'),
+    path('admin/lixeira/', admin.site.admin_view(lixeira_view), name='admin_lixeira'),
     path('admin/inteligencia/', include('inteligencia.urls')),
     path('admin/', admin.site.urls),
     path('', include('conteudo.urls')),

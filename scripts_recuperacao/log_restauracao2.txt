@@ -1,0 +1,35 @@
+24 objects imported automatically (use -v 2 for details).
+
+=== 1) Recriando categorias (ordem: raiz primeiro) ===
+  id=64 nome='Orientações Curriculares' pai=None -> criada
+  id=4 nome='Orientações Curriculares' pai=64 -> criada
+  id=65 nome='Ensino Fundamental — Anos Iniciais' pai=64 -> criada
+  id=66 nome='Ensino Fundamental — Anos Finais' pai=64 -> criada
+  id=67 nome='Ensino Médio — Formação Geral Básica' pai=64 -> criada
+  id=68 nome='Itinerários de Aprofundamento (IFA) — Linguagens e Ciências Humanas' pai=64 -> criada
+  id=69 nome='Itinerários de Aprofundamento (IFA) — Matemática e Ciências da Natureza' pai=64 -> criada
+  id=70 nome='Itinerários de Aprofundamento (IFA) — Quatro Áreas (Noturno)' pai=64 -> criada
+  id=71 nome='Itinerário — Educação Financeira e Fiscal' pai=64 -> criada
+  id=72 nome='Itinerário — Terra, Vida e Cosmo' pai=64 -> criada
+  id=73 nome='Itinerário — Modernização, Transformação Social e Meio Ambiente' pai=64 -> criada
+  id=74 nome='Itinerário — Energias Renováveis e Eficiência Energética' pai=64 -> criada
+  id=75 nome='Itinerário — Narrativas Socioliterárias' pai=64 -> criada
+  id=76 nome='Itinerário — Humanidades e Relações Socioambientais' pai=64 -> criada
+  id=77 nome='Itinerário — Aspirações Docentes' pai=64 -> criada
+  id=78 nome='Itinerário — Mídias Digitais, Linguagens em Ação' pai=64 -> criada
+  id=79 nome='Itinerário — O Esporte, a Ciência e suas Linguagens' pai=64 -> criada
+  id=80 nome='Anos anteriores' pai=64 -> criada
+  id=358 nome='Orientações Curriculares' pai=64 -> criada
+  id=190 nome='Orientações Curriculares 2026' pai=4 -> criada
+Total categorias criadas: 20
+
+=== 2) Recriando anexo (link) ===
+  anexo id=89 recriado (categoria_id=358)
+
+=== 3) Reconectando conteudos orfaos (so ajusta categoria_id) ===
+Conteudos reconectados: 127
+
+=== Verificacao final ===
+Categoria raiz restaurada: Orientações Curriculares
+Total de subcategorias (recursivo esperado 19): 20
+Total de conteudos hoje ligados a essa arvore: 127

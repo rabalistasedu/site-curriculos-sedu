@@ -144,7 +144,11 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     def delete_selected(self, request, queryset):
         count = queryset.count()
         queryset.delete()
-        self.message_user(request, f'{count} categoria(s) removida(s) permanentemente.')
+        self.message_user(
+            request,
+            f'{count} categoria(s) movida(s) para a lixeira (recuperável por 30 dias em '
+            'Lixeira, no painel administrativo).'
+        )
     delete_selected.short_description = '🗑️ Remover categorias selecionadas'
 
     @admin.action(description='📂 Mover selecionadas para outro botão (ou virar raiz)')
@@ -363,7 +367,11 @@ class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         """Ação padrão do Django com mensagem customizada"""
         count = queryset.count()
         queryset.delete()
-        self.message_user(request, f'{count} conteúdo(s) removido(s) permanentemente.')
+        self.message_user(
+            request,
+            f'{count} conteúdo(s) movido(s) para a lixeira (recuperável por 30 dias em '
+            'Lixeira, no painel administrativo).'
+        )
     delete_selected.short_description = '🗑️ Remover conteúdos selecionados'
 
     @admin.action(description='📂 Mover selecionados para outro botão')

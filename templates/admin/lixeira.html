@@ -1,0 +1,142 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .lx-wrap { max-width: 920px; }
+    .lx-hint { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+               padding: 10px 14px; font-size: 13px; margin-bottom: 18px; color: #7f1d1d; }
+    .lx-secao-titulo { font-size: 15px; font-weight: 700; color: #374151; margin: 22px 0 10px; }
+    .lx-vazio { color: #9ca3af; font-size: 13px; padding: 14px 4px; }
+    .lx-tabela { width: 100%; border-collapse: collapse; background: #fff;
+                 border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; margin-bottom: 8px; }
+    .lx-tabela th { background: #f3f6fa; text-align: left; padding: 10px 12px;
+                    font-size: 12px; text-transform: uppercase; color: #4b5563; }
+    .lx-tabela td { padding: 9px 12px; border-top: 1px solid #eef1f5; font-size: 13.5px; vertical-align: middle; }
+    .lx-tabela tr:hover td { background: #f8fafc; }
+    .lx-dias { display: inline-block; padding: 2px 9px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .lx-dias-ok { background: #dcfce7; color: #166534; }
+    .lx-dias-alerta { background: #fef3c7; color: #92400e; }
+    .lx-dias-critico { background: #fee2e2; color: #991b1b; }
+    .lx-acoes button { border: none; border-radius: 6px; padding: 6px 12px; font-size: 12.5px;
+                        font-weight: 700; cursor: pointer; margin-right: 6px; }
+    .lx-btn-restaurar { background: #16a34a; color: #fff; }
+    .lx-btn-restaurar:hover { background: #15803d; }
+    .lx-btn-excluir { background: #fff; color: #b91c1c; border: 1px solid #fca5a5 !important; }
+    .lx-btn-excluir:hover { background: #fef2f2; }
+    .lx-sub { color: #9ca3af; font-size: 11.5px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="lx-wrap">
+    <h1><i class="fas fa-trash-can"></i> Lixeira</h1>
+    <div class="lx-hint">
+        Botões e conteúdos excluídos ficam aqui por <strong>{{ prazo_dias }} dias</strong>,
+        podendo ser restaurados a qualquer momento. Depois desse prazo, são excluídos
+        definitivamente de forma automática (a limpeza acontece sempre que esta página é
+        aberta). Excluir um botão manda junto toda a subárvore de botões dentro dele —
+        restaurar traz tudo de volta de uma vez.
+    </div>
+
+    <div class="lx-secao-titulo"><i class="fas fa-network-wired"></i> Botões excluídos ({{ categorias_lixeira|length }})</div>
+    {% if categorias_lixeira %}
+    <table class="lx-tabela">
+        <tr>
+            <th>Botão</th>
+            <th style="width:150px;">Excluído em</th>
+            <th style="width:120px;">Prazo</th>
+            <th style="width:220px;">Ações</th>
+        </tr>
+        {% for cat in categorias_lixeira %}
+        <tr>
+            <td>
+                {{ cat.nome }}
+                {% if cat.total_subarvore %}
+                <div class="lx-sub">+ {{ cat.total_subarvore }} subbotão(ões) junto</div>
+                {% endif %}
+            </td>
+            <td>{{ cat.excluido_em|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if cat.dias_restantes <= 3 %}
+                <span class="lx-dias lx-dias-critico">{{ cat.dias_restantes }} dia(s)</span>
+                {% elif cat.dias_restantes <= 10 %}
+                <span class="lx-dias lx-dias-alerta">{{ cat.dias_restantes }} dia(s)</span>
+                {% else %}
+                <span class="lx-dias lx-dias-ok">{{ cat.dias_restantes }} dia(s)</span>
+                {% endif %}
+            </td>
+            <td class="lx-acoes">
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="restaurar">
+                    <input type="hidden" name="tipo" value="categoria">
+                    <input type="hidden" name="id" value="{{ cat.pk }}">
+                    <button type="submit" class="lx-btn-restaurar"><i class="fas fa-rotate-left"></i> Restaurar</button>
+                </form>
+                <form method="post" style="display:inline;" onsubmit="return confirm('Excluir \'{{ cat.nome|escapejs }}\' definitivamente? Isso NÃO pode ser desfeito.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="excluir_definitivo">
+                    <input type="hidden" name="tipo" value="categoria">
+                    <input type="hidden" name="id" value="{{ cat.pk }}">
+                    <button type="submit" class="lx-btn-excluir"><i class="fas fa-trash"></i> Excluir já</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="lx-vazio">Nenhum botão na lixeira. ✓</div>
+    {% endif %}
+
+    <div class="lx-secao-titulo"><i class="fas fa-file"></i> Conteúdos excluídos ({{ conteudos_lixeira|length }})</div>
+    {% if conteudos_lixeira %}
+    <table class="lx-tabela">
+        <tr>
+            <th>Título</th>
+            <th style="width:150px;">Excluído em</th>
+            <th style="width:120px;">Prazo</th>
+            <th style="width:220px;">Ações</th>
+        </tr>
+        {% for cont in conteudos_lixeira %}
+        <tr>
+            <td>
+                {{ cont }}
+                <div class="lx-sub">{{ cont.get_tipo_display }}{% if cont.categoria %} — {{ cont.categoria.nome }}{% endif %}</div>
+            </td>
+            <td>{{ cont.excluido_em|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if cont.dias_restantes <= 3 %}
+                <span class="lx-dias lx-dias-critico">{{ cont.dias_restantes }} dia(s)</span>
+                {% elif cont.dias_restantes <= 10 %}
+                <span class="lx-dias lx-dias-alerta">{{ cont.dias_restantes }} dia(s)</span>
+                {% else %}
+                <span class="lx-dias lx-dias-ok">{{ cont.dias_restantes }} dia(s)</span>
+                {% endif %}
+            </td>
+            <td class="lx-acoes">
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="restaurar">
+                    <input type="hidden" name="tipo" value="conteudo">
+                    <input type="hidden" name="id" value="{{ cont.pk }}">
+                    <button type="submit" class="lx-btn-restaurar"><i class="fas fa-rotate-left"></i> Restaurar</button>
+                </form>
+                <form method="post" style="display:inline;" onsubmit="return confirm('Excluir este conteúdo definitivamente? Isso NÃO pode ser desfeito.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="excluir_definitivo">
+                    <input type="hidden" name="tipo" value="conteudo">
+                    <input type="hidden" name="id" value="{{ cont.pk }}">
+                    <button type="submit" class="lx-btn-excluir"><i class="fas fa-trash"></i> Excluir já</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="lx-vazio">Nenhum conteúdo na lixeira. ✓</div>
+    {% endif %}
+</div>
+{% endblock %}

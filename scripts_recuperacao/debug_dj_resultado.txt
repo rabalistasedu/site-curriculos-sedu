@@ -1,0 +1,39 @@
+excluido_em de cat_dj apos delete: 2026-07-23 18:53:34.247240+00:00
+Em Categoria.objects (filtrado)? False
+Em Categoria.todos_objetos? True
+Changelist status: 200
+"TESTE DJ Categoria" no html? True
+--- CONTEXTO ao redor da ocorrencia ---
+</a></td>
+              
+
+              
+            </tr>
+          
+        
+      </table>
+    </div>
+  
+
+
+</nav>
+
+        
+      
+      <main id="content-start" class="content" tabindex="-1">
+        
+          
+            <ul class="messagelist">
+              <li class="success">O Categoria “TESTE DJ Categoria” foi removido com sucesso.</li>
+            </ul>
+          
+        
+        <!-- Content -->
+        <div id="content" class="">
+          
+          <h1>Selecione Categoria para modificar</h1>
+          
+          
+  <div id="content-main">
+    
+        <ul class="object-tools"
