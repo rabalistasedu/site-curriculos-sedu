@@ -1020,6 +1020,35 @@ class Comentario(models.Model):
     data_criacao = models.DateTimeField('Enviado em', auto_now_add=True)
     data_resposta = models.DateTimeField('Respondido em', null=True, blank=True)
 
+    # Integração com Microsoft Teams (grupo GECEB) — todos opcionais, não afetam
+    # nenhum comentário existente nem o fluxo de moderação já existente.
+    TEAMS_NAO_ENVIADO = 'nao_enviado'
+    TEAMS_ENVIADO = 'enviado'
+    TEAMS_VINCULADO = 'vinculado'
+    TEAMS_RESPONDIDO = 'respondido'
+    TEAMS_ERRO = 'erro'
+    TEAMS_STATUS_CHOICES = [
+        (TEAMS_NAO_ENVIADO, '— Não enviado'),
+        (TEAMS_ENVIADO, '📤 Enviado ao Teams'),
+        (TEAMS_VINCULADO, '🔗 Vinculado (aguardando resposta)'),
+        (TEAMS_RESPONDIDO, '✅ Respondido via Teams'),
+        (TEAMS_ERRO, '⚠️ Erro ao enviar'),
+    ]
+    teams_status = models.CharField(
+        'Status no Teams', max_length=12, choices=TEAMS_STATUS_CHOICES,
+        default=TEAMS_NAO_ENVIADO, blank=True,
+        help_text='Controlado automaticamente pela integração com o Microsoft Teams (grupo GECEB).'
+    )
+    teams_message_id = models.CharField(
+        'ID da mensagem no Teams', max_length=255, blank=True,
+        help_text='ID da mensagem raiz criada no canal do Teams para este comentário (uso interno).'
+    )
+    teams_data_envio = models.DateTimeField('Enviado ao Teams em', null=True, blank=True)
+    teams_ultima_verificacao = models.DateTimeField(
+        'Última verificação de resposta', null=True, blank=True,
+        help_text='Usado pela sincronização automática para não reprocessar tudo a cada rodada.'
+    )
+
     class Meta:
         verbose_name = 'Comentário'
         verbose_name_plural = 'Comentários'

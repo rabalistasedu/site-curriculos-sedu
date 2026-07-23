@@ -395,15 +395,17 @@ class BannerAdmin(admin.ModelAdmin):
 @admin.register(Comentario)
 class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
-    list_display = ['nome', 'origem_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'data_criacao']
+    list_display = ['nome', 'origem_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'teams_status_badge', 'data_criacao']
     list_filter = ['status', 'data_criacao']
     search_fields = ['nome', 'email', 'texto', 'conteudo__titulo', 'categoria__nome']
     ordering = ['-data_criacao']
 
+    CAMPOS_TEAMS_READONLY = ['teams_status', 'teams_message_id', 'teams_data_envio', 'teams_ultima_verificacao']
+
     def get_readonly_fields(self, request, obj=None):
         if obj:  # edição — nome/email/texto/conteudo/categoria/data são leitura
-            return ['nome', 'email', 'texto', 'conteudo', 'categoria', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
-        return ['data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos']
+            return ['nome', 'email', 'texto', 'conteudo', 'categoria', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos'] + self.CAMPOS_TEAMS_READONLY
+        return ['data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos'] + self.CAMPOS_TEAMS_READONLY
 
     fieldsets = (
         ('💬 Comentário', {
@@ -425,6 +427,15 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         ('💬 Resposta do administrador', {
             'fields': ('resposta', 'data_resposta'),
             'description': 'Escreva aqui para responder ao comentário. A resposta aparece vinculada ao comentário no site.',
+            'classes': ('collapse',),
+        }),
+        ('🔗 Integração com Microsoft Teams (GECEB)', {
+            'fields': ('teams_status', 'teams_message_id', 'teams_data_envio', 'teams_ultima_verificacao'),
+            'description': (
+                'Controlado automaticamente pela integração com o Teams — não precisa mexer aqui. '
+                'Enquanto a resposta automática não estiver ativa, basta colar a resposta do Teams '
+                'no campo "Resposta do administrador" acima, do jeito que já funciona hoje.'
+            ),
             'classes': ('collapse',),
         }),
     )
@@ -482,6 +493,20 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             obj.votos_positivos, obj.votos_negativos
         )
     votos_badge.short_description = 'Votos'
+
+    def teams_status_badge(self, obj):
+        cores = {
+            'nao_enviado': ('#9ca3af', '— Não enviado'),
+            'enviado': ('#2d5a8e', '📤 Enviado'),
+            'vinculado': ('#0891b2', '🔗 Vinculado'),
+            'respondido': ('#10b981', '✅ Respondido'),
+            'erro': ('#ef4444', '⚠️ Erro'),
+        }
+        cor, label = cores.get(obj.teams_status, ('#9ca3af', '— Não enviado'))
+        return format_html(
+            '<span style="color:{};font-weight:600;font-size:11px;">{}</span>', cor, label
+        )
+    teams_status_badge.short_description = 'Teams'
 
     def local_comentario(self, obj):
         if obj.conteudo:

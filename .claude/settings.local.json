@@ -189,7 +189,8 @@
       "Bash(curl -s \"http://127.0.0.1:8002/categoria/programa-jovem-senador/\")",
       "Bash(curl -s \"http://127.0.0.1:8002/categoria/oli-jovem-senador/\")",
       "Bash(grep -v \"sem-fundo\\\\\"$\")",
-      "Bash(python manage.py check)"
+      "Bash(python manage.py check)",
+      "WebSearch"
     ]
   }
 }

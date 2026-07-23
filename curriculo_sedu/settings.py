@@ -23,6 +23,20 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.ngrok-free.dev",
     "https://*.ngrok.app",
 ]
+
+# ── Domínios conhecidos do projeto (oficial + homologação) ─────────────
+# Hardcoded uma única vez aqui — o código nunca precisa ser editado na troca
+# de ambiente (local → homologação → oficial). Usado apenas para deixar o
+# admin/CSRF funcionando de imediato em qualquer um deles; qualquer link
+# gerado dinamicamente (ex.: para o card do Teams) usa o host da própria
+# requisição (request.build_absolute_uri), então também se ajusta sozinho.
+DOMINIOS_CONHECIDOS = [
+    'curriculo.sedu.es.gov.br',     # oficial
+    'curriculohm.sedu.es.gov.br',   # homologação
+    'curriculodev.sedu.es.gov.br',  # homologação
+]
+CSRF_TRUSTED_ORIGINS += [f'https://{dominio}' for dominio in DOMINIOS_CONHECIDOS]
+
 # ── Apps ──────────────────────────────────────────────────────────────
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -119,3 +133,29 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # 50 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ── Integração de Comentários com o Microsoft Teams (grupo GECEB) ──────
+# Todas vazias por padrão — a integração fica desligada (no-op) até serem
+# configuradas via variável de ambiente. Nada do site quebra sem elas.
+#
+# TEAMS_WEBHOOK_URL       → URL do fluxo Power Automate (modelo "Publicar em
+#                           um canal quando um webhook for recebido"), usada
+#                           para enviar cada novo comentário ao Teams.
+# TEAMS_CLIENT_ID/SECRET/
+# TEAMS_TENANT_ID         → credenciais do App Registration no Azure AD
+#                           (fornecidas pela TI da SEDU), usadas só para LER
+#                           mensagens/respostas do canal via Microsoft Graph.
+# TEAMS_TEAM_ID           → ID do Team (grupo) GECEB no Teams.
+# TEAMS_CHANNEL_ID        → ID do canal dentro do Team onde os comentários
+#                           são postados.
+# TEAMS_MEMBROS_AUTORIZADOS → e-mails separados por vírgula; se vazio, aceita
+#                           resposta de qualquer membro do canal (a própria
+#                           restrição de acesso ao canal do Teams já limita
+#                           quem pode responder).
+TEAMS_WEBHOOK_URL = os.environ.get('TEAMS_WEBHOOK_URL', '')
+TEAMS_CLIENT_ID = os.environ.get('TEAMS_CLIENT_ID', '')
+TEAMS_CLIENT_SECRET = os.environ.get('TEAMS_CLIENT_SECRET', '')
+TEAMS_TENANT_ID = os.environ.get('TEAMS_TENANT_ID', '')
+TEAMS_TEAM_ID = os.environ.get('TEAMS_TEAM_ID', '')
+TEAMS_CHANNEL_ID = os.environ.get('TEAMS_CHANNEL_ID', '')
+TEAMS_MEMBROS_AUTORIZADOS = os.environ.get('TEAMS_MEMBROS_AUTORIZADOS', '')

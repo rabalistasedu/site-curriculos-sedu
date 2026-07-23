@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel, ColunaExtra
+from .teams_integration import enviar_comentario_para_teams
 
 
 def home(request):
@@ -139,7 +140,7 @@ def categoria_detalhe(request, slug):
             except Comentario.DoesNotExist:
                 pass
         if nome and texto:
-            Comentario.objects.create(
+            comentario = Comentario.objects.create(
                 categoria=categoria,
                 nome=nome,
                 email=email,
@@ -147,6 +148,7 @@ def categoria_detalhe(request, slug):
                 status='pendente',
                 parent=parent,
             )
+            enviar_comentario_para_teams(comentario, request=request)
             messages.success(
                 request,
                 'Comentário enviado! Ele será publicado após aprovação.'
@@ -237,7 +239,7 @@ def conteudo_detalhe(request, slug):
             except Comentario.DoesNotExist:
                 pass
         if nome and texto:
-            Comentario.objects.create(
+            comentario = Comentario.objects.create(
                 conteudo=conteudo,
                 nome=nome,
                 email=email,
@@ -245,6 +247,7 @@ def conteudo_detalhe(request, slug):
                 status='pendente',
                 parent=parent,
             )
+            enviar_comentario_para_teams(comentario, request=request)
             messages.success(
                 request,
                 'Comentário enviado! Ele será publicado após aprovação.'

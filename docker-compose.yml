@@ -31,11 +31,48 @@ services:
       - POSTGRES_PASSWORD=curriculo_sedu
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
+      # Integração de comentários com o Microsoft Teams (grupo GECEB) — vazias
+      # por padrão (integração desligada/no-op); preencher via arquivo .env
+      # (não commitado) quando a TI da SEDU liberar o cadastro no Azure AD.
+      - TEAMS_WEBHOOK_URL=${TEAMS_WEBHOOK_URL:-}
+      - TEAMS_CLIENT_ID=${TEAMS_CLIENT_ID:-}
+      - TEAMS_CLIENT_SECRET=${TEAMS_CLIENT_SECRET:-}
+      - TEAMS_TENANT_ID=${TEAMS_TENANT_ID:-}
+      - TEAMS_TEAM_ID=${TEAMS_TEAM_ID:-}
+      - TEAMS_CHANNEL_ID=${TEAMS_CHANNEL_ID:-}
+      - TEAMS_MEMBROS_AUTORIZADOS=${TEAMS_MEMBROS_AUTORIZADOS:-}
     depends_on:
       db:
         condition: service_healthy
     command: >
       sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  teams_sync:
+    build: .
+    volumes:
+      - .:/app
+      - media_data:/app/media
+    environment:
+      - DOCKER_POSTGRES=1
+      - POSTGRES_DB=curriculo_sedu
+      - POSTGRES_USER=curriculo_sedu
+      - POSTGRES_PASSWORD=curriculo_sedu
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - TEAMS_WEBHOOK_URL=${TEAMS_WEBHOOK_URL:-}
+      - TEAMS_CLIENT_ID=${TEAMS_CLIENT_ID:-}
+      - TEAMS_CLIENT_SECRET=${TEAMS_CLIENT_SECRET:-}
+      - TEAMS_TENANT_ID=${TEAMS_TENANT_ID:-}
+      - TEAMS_TEAM_ID=${TEAMS_TEAM_ID:-}
+      - TEAMS_CHANNEL_ID=${TEAMS_CHANNEL_ID:-}
+      - TEAMS_MEMBROS_AUTORIZADOS=${TEAMS_MEMBROS_AUTORIZADOS:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    # Sem credenciais Graph configuradas, o comando só avisa e sai — seguro
+    # deixar este serviço sempre rodando, mesmo antes da TI liberar o Azure AD.
+    command: >
+      sh -c "while true; do python manage.py sincronizar_teams; sleep 180; done"
 
 volumes:
   media_data:
