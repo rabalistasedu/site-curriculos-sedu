@@ -71,7 +71,7 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         # caixinha de pesquisa do select "Categoria pai" (data-pesquisavel)
         js = ['js/filtro_select.js']
     prepopulated_fields = {'slug': ('nome',)}
-    actions = ['ativar_selecionadas', 'desativar_selecionadas', 'delete_selected']
+    actions = ['ativar_selecionadas', 'desativar_selecionadas', 'mover_selecionadas', 'delete_selected']
     inlines = [AnexoCategoriaInline]
 
     fieldsets = (
@@ -146,6 +146,66 @@ class CategoriaAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         queryset.delete()
         self.message_user(request, f'{count} categoria(s) removida(s) permanentemente.')
     delete_selected.short_description = '🗑️ Remover categorias selecionadas'
+
+    @admin.action(description='📂 Mover selecionadas para outro botão (ou virar raiz)')
+    def mover_selecionadas(self, request, queryset):
+        ids = ','.join(str(pk) for pk in queryset.values_list('pk', flat=True))
+        return HttpResponseRedirect(f'mover/?ids={ids}')
+
+    def get_urls(self):
+        urls = [
+            path('mover/', self.admin_site.admin_view(self.mover_massa_view), name='conteudo_categoria_mover_massa'),
+        ]
+        return urls + super().get_urls()
+
+    def mover_massa_view(self, request):
+        from .admin_views import _arvore_flat_categorias
+        from .arvore_views import _eh_descendente
+
+        ids_param = request.POST.get('ids') or request.GET.get('ids', '')
+        ids = [i for i in ids_param.split(',') if i.strip().isdigit()]
+        categorias = Categoria.objects.filter(pk__in=ids)
+
+        if request.method == 'POST':
+            destino_id = request.POST.get('destino_id', '').strip()
+            destino = Categoria.objects.filter(pk=destino_id).first() if destino_id else None
+
+            count = 0
+            bloqueados = []
+            for cat in categorias:
+                if destino and _eh_descendente(cat, destino):
+                    bloqueados.append(cat.nome)
+                    continue
+                cat.categoria_pai = destino
+                cat.save()
+                count += 1
+
+            if count:
+                destino_nome = destino.nome if destino else 'raiz (sem pai)'
+                self.message_user(request, f'{count} categoria(s) movida(s) para "{destino_nome}".')
+            if bloqueados:
+                self.message_user(
+                    request,
+                    f'Não movido(s) por criar ciclo (botão dentro dele mesmo): {", ".join(bloqueados)}.',
+                    level='warning',
+                )
+            return redirect('admin:conteudo_categoria_changelist')
+
+        selecionadas_ids = set(categorias.values_list('pk', flat=True))
+        destinos = [
+            item for item in _arvore_flat_categorias()
+            if item['cat'].pk not in selecionadas_ids
+            and not any(_eh_descendente(sel, item['cat']) for sel in categorias)
+        ]
+
+        return render(request, 'admin/categoria_mover_massa.html', {
+            'title': 'Mover botões selecionados',
+            'categorias': categorias,
+            'destinos': destinos,
+            'ids': ids_param,
+            'opts': self.model._meta,
+            'has_permission': True,
+        })
 
 
 # ── Conteúdo ──────────────────────────────────────────────────────────
@@ -287,7 +347,7 @@ class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     status_badge.short_description = 'Status'
     status_badge.admin_order_field = 'status'
 
-    actions = ['publicar_selecionados', 'arquivar_selecionados', 'delete_selected']
+    actions = ['publicar_selecionados', 'arquivar_selecionados', 'mover_selecionados', 'delete_selected']
 
     @admin.action(description='✅ Publicar selecionados')
     def publicar_selecionados(self, request, queryset):
@@ -305,6 +365,46 @@ class ConteudoAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
         queryset.delete()
         self.message_user(request, f'{count} conteúdo(s) removido(s) permanentemente.')
     delete_selected.short_description = '🗑️ Remover conteúdos selecionados'
+
+    @admin.action(description='📂 Mover selecionados para outro botão')
+    def mover_selecionados(self, request, queryset):
+        ids = ','.join(str(pk) for pk in queryset.values_list('pk', flat=True))
+        return HttpResponseRedirect(f'mover/?ids={ids}')
+
+    def get_urls(self):
+        urls = [
+            path('mover/', self.admin_site.admin_view(self.mover_massa_view), name='conteudo_conteudo_mover_massa'),
+        ]
+        return urls + super().get_urls()
+
+    def mover_massa_view(self, request):
+        from .admin_views import _arvore_flat_categorias
+
+        ids_param = request.POST.get('ids') or request.GET.get('ids', '')
+        ids = [i for i in ids_param.split(',') if i.strip().isdigit()]
+        conteudos = Conteudo.objects.filter(pk__in=ids)
+
+        if request.method == 'POST':
+            destino_id = request.POST.get('destino_id', '').strip()
+            if destino_id and conteudos.exists():
+                destino = Categoria.objects.filter(pk=destino_id).first()
+                if destino:
+                    count = conteudos.update(categoria=destino)
+                    self.message_user(request, f'{count} conteúdo(s) movido(s) para "{destino.nome}".')
+                else:
+                    self.message_user(request, 'Botão de destino não encontrado.', level='error')
+            else:
+                self.message_user(request, 'Nenhum conteúdo selecionado ou destino não escolhido.', level='error')
+            return redirect('admin:conteudo_conteudo_changelist')
+
+        return render(request, 'admin/conteudo_mover_massa.html', {
+            'title': 'Mover conteúdos selecionados',
+            'conteudos': conteudos,
+            'destinos': _arvore_flat_categorias(),
+            'ids': ids_param,
+            'opts': self.model._meta,
+            'has_permission': True,
+        })
 
 
 # ── Banner ────────────────────────────────────────────────────────────

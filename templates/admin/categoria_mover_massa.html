@@ -1,0 +1,62 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'js/filtro_select.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div style="max-width:700px;">
+    <p style="font-size:13px;color:#4b5563;margin-bottom:16px;">
+        Você está prestes a mover <strong>{{ categorias|length }}</strong> botão(ões) selecionado(s)
+        para dentro de outro botão da árvore do site (ou para virar botão raiz). A lista abaixo
+        já esconde os próprios botões selecionados e os que estão dentro deles, para evitar
+        criar um ciclo (um botão não pode ficar dentro dele mesmo).
+    </p>
+
+    <div style="background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:18px;max-height:220px;overflow-y:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
+            <thead>
+                <tr style="text-align:left;color:#6b7280;text-transform:uppercase;font-size:10.5px;">
+                    <th style="padding:4px 6px;">Nome do botão</th>
+                    <th style="padding:4px 6px;">Botão pai atual</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in categorias %}
+                <tr style="border-top:1px solid #f1f5f9;">
+                    <td style="padding:6px;font-weight:600;">{{ cat.nome }}</td>
+                    <td style="padding:6px;color:#4b5563;">{{ cat.categoria_pai.nome|default:"— raiz —" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2" style="padding:8px;color:#9ca3af;">Nenhum botão selecionado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="ids" value="{{ ids }}">
+        <label style="display:block;font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;">
+            Mover para dentro do botão
+        </label>
+        <select name="destino_id" data-pesquisavel="🔍 Pesquisar botão..." style="width:100%;max-width:520px;padding:8px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:13px;box-sizing:border-box;margin-bottom:16px;">
+            <option value="">— Nenhum (vira botão raiz) —</option>
+            {% for item in destinos %}
+            <option value="{{ item.cat.pk }}">{{ item.recuo }}{{ item.cat.nome }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <button type="submit" style="background:#2d5a8e;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;">
+            <i class="fas fa-arrows-turn-to-dots"></i> Mover {{ categorias|length }} botão(ões)
+        </button>
+        <a href="../" style="margin-left:12px;font-size:13px;color:#6b7280;text-decoration:none;">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
