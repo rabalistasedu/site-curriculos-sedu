@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n log %}
+{% load i18n log comentarios_extras %}
 
 {% block extrahead %}
 {{ block.super }}
@@ -166,6 +166,32 @@
 {% get_admin_log 10 as admin_log for_user user %}
 {% if not is_popup %}
 <div id="content-related">
+    {% if perms.conteudo.view_comentario %}
+    {% comentarios_pendentes_count as qtd_comentarios_pendentes %}
+    <div class="module" id="comentarios-counter-module" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; border: 1px solid rgba(56,189,248,0.25); box-shadow: 0 0 18px rgba(56,189,248,0.08); position: relative; overflow: hidden;">
+        <a href="/admin/conteudo/comentario/?status__exact=pendente" style="text-decoration: none; display: flex; align-items: center; gap: 14px;">
+            <div style="position: relative; width: 46px; height: 46px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                <div style="position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.35), transparent 70%);{% if qtd_comentarios_pendentes > 0 %} animation: comentPulse 2s ease-in-out infinite;{% endif %}"></div>
+                <i class="fas fa-comment-dots" style="position: relative; color: #38bdf8; font-size: 20px;"></i>
+            </div>
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; font-weight: 600;">Comentários pendentes</div>
+                <div style="font-size: 26px; font-weight: 800; color: #f1f5f9; line-height: 1.1; font-variant-numeric: tabular-nums;">
+                    {{ qtd_comentarios_pendentes }}{% if qtd_comentarios_pendentes > 0 %}<span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; margin-left: 6px; box-shadow: 0 0 8px #38bdf8;"></span>{% endif %}
+                </div>
+            </div>
+        </a>
+        {% if qtd_comentarios_pendentes == 0 %}
+        <div style="margin-top: 6px; font-size: 11px; color: #4ade80;">✓ Tudo revisado</div>
+        {% endif %}
+    </div>
+    <style>
+    @keyframes comentPulse {
+        0%, 100% { opacity: .55; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.12); }
+    }
+    </style>
+    {% endif %}
     <div class="module" id="recent-actions-module">
         <h2>{% translate 'Recent actions' %}</h2>
         {% if admin_log %}

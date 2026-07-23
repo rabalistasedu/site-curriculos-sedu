@@ -2,13 +2,13 @@
 
 **Migração WordPress → Django 5.2** para a Gerência de Currículo da Educação Básica (GECEB), Secretaria de Estado da Educação (SEDU) – Espírito Santo.
 
-## Status Atual (2026-07-22 — Parte 35 + Barra de formatação completa)
+## Status Atual (2026-07-23 — Parte 38 + Contador de Comentários, v34)
 
 ✅ **Site funcional e responsivo** – 588 conteúdos, 132 categorias, organização hierárquica ilimitada  
 ✅ **9 painéis administrativos** – Organizador, Adicionar Arquivos, Painel Central (Telas 1+2), Barra Superior, Estrutura de Árvores, Área do Site, Editor do Rodapé, Central de Inteligência  
-✅ **Sistema de comentários** – 3 estados (pendente/publicado/recusado), respostas aninhadas, votos 👍/👎  
-✅ **Infraestrutura Docker** – PostgreSQL 16 + Postgres pronto para produção, SQLite local intacto  
-✅ **Backup/Restore automático** – `.bat` para sincronizar dados locais ↔ Docker em 1 clique  
+✅ **Sistema de comentários** – 3 estados (pendente/publicado/recusado), respostas aninhadas, votos 👍/👎, **contador discreto & futurista** no dashboard admin  
+✅ **Infraestrutura Docker** – PostgreSQL 16 + Postgres pronto para produção, SQLite local intacto, **mídia sincronizada** (novo em Parte 37)  
+✅ **Backup/Restore automático** – `.bat` para sincronizar dados locais ↔ Docker em 1 clique (agora com media)  
 ✅ **Deploy** – ngrok (demo) + próximo: `curriculo.sedu.es.gov.br/curriculo/` (SEDU)
 
 ## Quick Start
@@ -35,9 +35,9 @@ python manage.py runserver 8001
 
 Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (admin)
 
-## Últimas Implementações (2026-07-11 a 2026-07-22)
+## Últimas Implementações (2026-07-11 a 2026-07-23)
 
-### 34 Partes de Implementação (64+ features/bugs total)
+### 38 Partes de Implementação (70+ features/bugs + 3 correções críticas totais)
 - **Partes 1-10**: 6 bugs de layout/UX + 8 features (edição inline, carrossel admin, comentários, respostas, votos)
 - **Partes 11-21**: 6 correções + 8 features (duplicação, Estrutura de Árvores, Currículo Atual central, subáreas, Área do Site, ícones, delegação de acesso)
 - **Partes 22-28**: arrastar-e-soltar (anexos + todos painéis), vários links (URL), banner automático + faixa fina
@@ -46,8 +46,11 @@ Acesse: **http://127.0.0.1:8001** (site) | **http://127.0.0.1:8001/admin/** (adm
 - **Parte 33**: **Comentários em todos os botões** — página de qualquer categoria/botão ganhou a mesma seção de comentários dos conteúdos, regra automática vale para botões futuros
 - **Parte 34**: **4 Correções UX/Bugs + Layout fine-tuning** — selects com altura correta (4 painéis), coluna extra com título rich text (RichTextWidget), resposta em massa para comentários, vídeo sem iframe (elimina erro 153 YouTube), **layout das colunas extras idêntico ao de "Navegue por área"** (grade com botões quadrados 2×N em vez de lista 1×N)
 - **Parte 35**: **Barra de formatação completa em todos os campos de texto** — `RichTextWidget` (Área do Site, Editor do Rodapé, Organizador, Painel Central, etc.) agora tem **cor do texto** + **cor de destaque (marca-texto)** com seletores de cor nativos. Campo "Descrição" da Estrutura de Árvores usa o mesmo editor. Colar de outra fonte **preserva formatação**
+- **Parte 36**: **Anexo de link/URL** — novo campo `Anexo.url` para criar anexos que apontam a links (ícone `fa-link`, badge "LINK" ciano) em vez de arquivos. Aplicado em 5 painéis administrativos. Migração `conteudo/0037`
+- **Parte 37**: **Sync de mídia Docker + Tamanho de ícone configurável** — (1) novo passo `[3/6]` em `ATUALIZAR BANCO DOCKER.bat` que copia `media\` local para container Docker; (2) campos `icone_largura`/`icone_altura` (px, opcionais) em Categoria, renderizados via `style` inline. Migrações `conteudo/0038-0041` (4 novas); 3 correções críticas também (URLField max_length, URL redirect, rótulo Recentes)
+- **Parte 38**: **Contador de comentários discreto & futurista** — novo template tag `@comentarios_pendentes_count` + módulo no sidebar do admin mostrando número de comentários pendentes. Zera automaticamente quando comentários são aprovados/recusados/excluídos. Zero breaking changes
 
-**Migrações novas**: `conteudo.0012-0036` + `painel.0002-0003` + `inteligencia.0002`
+**Migrações novas**: `conteudo.0012-0041` (30 total) + `painel.0002-0003` + `inteligencia.0002`
 
 → Veja **[CLAUDE.md](CLAUDE.md)** para detalhes completos
 
@@ -66,13 +69,14 @@ templates/
                          painel-conteudos, barra-superior, estrutura-arvores,
                          area-do-site, editor-rodape, inteligencia
 static/
-  ├─ css/style.css      → Design system (atualizado ?v=20260718-2)
+  ├─ css/style.css      → Design system (atualizado ?v=20260723-1)
   ├─ js/                → main.js, dropzone.js, filtro_select.js
   └─ img/               → Brasão (50px), GECEB logo, ícones
 db.sqlite3              → Banco SQLite (588 conteúdos, 132 categorias)
 docker-compose.yml      → Orquestração: db (Postgres 16) + web (Django)
 Dockerfile              → Build da imagem Django com Python 3.12
-CLAUDE.md               → Documentação técnica completa (v29 – 2026-07-21, Parte 33)
+CLAUDE.md               → Documentação técnica completa (v34 – 2026-07-23, Parte 38)
+conteudo/templatetags/  → Template tags customizadas (comentarios_extras.py — contador)
 ```
 
 ## Modelos Principais
@@ -214,8 +218,8 @@ python ngrok_compartilhar.py  # compartilha com ngrok
 
 ---
 
-**Última atualização**: 2026-07-21 (Parte 33)  
-**Versão CSS**: `?v=20260721-1` | **Versão JS**: `?v=20260711-1`  
-**Migrações aplicadas**: `conteudo/0012-0035` + `painel/0002-0003` + `inteligencia/0002`  
-**Docker pronto para produção**: Dockerfile + docker-compose.yml com PostgreSQL 16  
-**Documentação completa**: [CLAUDE.md](CLAUDE.md) (v29)
+**Última atualização**: 2026-07-23 (Parte 38)  
+**Versão CSS**: `?v=20260723-1` | **Versão JS**: `?v=20260711-1`  
+**Migrações aplicadas**: `conteudo/0012-0041` + `painel/0002-0003` + `inteligencia/0002`  
+**Docker pronto para produção**: Dockerfile + docker-compose.yml com PostgreSQL 16 + media sync  
+**Documentação completa**: [CLAUDE.md](CLAUDE.md) (v34)

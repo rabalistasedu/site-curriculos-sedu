@@ -1,7 +1,7 @@
-# Contexto Atual do Projeto — 2026-07-21 (ATUALIZADO — parte 33)
+# Contexto Atual do Projeto — 2026-07-23 (ATUALIZADO — parte 38, v34)
 
 ## Estado do projeto
-**Status**: ✅ Pronto para produção — site funcional com Docker + Backup/Restore, **comentários em todos os botões**, **33 partes completadas, 60+ features/bugs**
+**Status**: ✅ Pronto para produção — site funcional com Docker + Backup/Restore + media sync, **contador de comentários discreto & futurista**, **38 partes completadas, 70+ features/bugs + 3 correções críticas**
 
 ## 🚦 Decisão de Deploy (2026-07-10)
 - ❌ **PythonAnywhere foi abandonado** — ambiente de teste insuficiente
@@ -9,16 +9,46 @@
 - 🔄 **Até lá**: demonstrações via **ngrok** (compartilhamento local com URL pública — **UTF-8 e vídeo AGORA funcionando**)
 - 📋 **Estratégia de migração**: reescrita de URLs do WordPress via `.htaccess` (manter subdomínio do WordPress para não duplicar ~1000 arquivos)
 
-## 🎯 Leva Mais Recente: Parte 33 (2026-07-21)
+## 🎯 Leva Mais Recente: Parte 38 (2026-07-23)
 
-**Comentários em todos os botões (categorias) do site** — pedido do Dan: toda página de botão (com conteúdo ou criada no futuro) precisa da mesma seção de comentários que já existia só nos conteúdos individuais.
+**Contador discreto & futurista de comentários no dashboard admin** — pedido do Dan: um contador no lado direito (sidebar) do painel administrativo mostrando quantos comentários estão pendentes, que zera automaticamente conforme comentários são aprovados/recusados/excluídos.
 
-- ✅ Novo campo `Comentario.categoria` (FK opcional) ao lado de `Comentario.conteudo` (agora também opcional) — mesmo padrão de FK dual do `Anexo`
-- ✅ View `categoria_detalhe` ganhou a mesma lógica de moderação/respostas/votos que `conteudo_detalhe` já tinha
-- ✅ Template `categoria.html` ganhou a mesma seção de comentários (visual idêntico)
-- ✅ **Regra automática, não configurável por botão** — vale para QUALQUER botão do site, inclusive os criados no futuro por qualquer painel
-- ✅ Migração `conteudo/0035` aplicada
-- ✅ Testado ponta a ponta: criar/aprovar/votar/responder em categoria, página de índice geral também funciona, regressão confirmada (comentários em Conteúdo continuam OK)
+- ✅ Novo arquivo `conteudo/templatetags/comentarios_extras.py` — template tag `@comentarios_pendentes_count` que retorna `Comentario.objects.filter(status='pendente').count()` (live query)
+- ✅ Novo módulo em `templates/admin/index.html` dentro do `{% block sidebar %}` (antes do "Recent actions")
+- ✅ Card escuro com gradiente ciano, ícone com halo pulsante (só quando há pendentes), número grande (26px), ponto ciano animado
+- ✅ Quando chega a 0: exibe "✓ Tudo revisado" em verde
+- ✅ Card é um link direto para `/admin/conteudo/comentario/?status__exact=pendente` (changelist filtrada)
+- ✅ Só renderiza se `perms.conteudo.view_comentario` (permissão nativa do Django)
+- ✅ **Zero breaking changes** — apenas 2 arquivos novos + 1 `{% load %}` no template + 1 módulo no sidebar intacto
+- ✅ Testado ponta a ponta: contador 0→2→1→0, animação pulsante, limpeza de dados de teste
+- ✅ Nenhuma migração necessária (usa modelo e campo já existentes desde Parte 7)
+
+**Nota**: Zera automaticamente porque a query é executada **toda vez** que o dashboard é carregado. As ações existentes mudam status/deletam comentários — na próxima vez que Dan volta ao dashboard, o contador reflete o novo total.
+
+---
+
+## Leva Anterior: Parte 37 (2026-07-22)
+
+**Sincronização de mídia no Docker + Tamanho de ícone configurável em 3 níveis**
+
+1. ✅ **Sync de mídia Docker** (principal): novo passo `[3/6]` em `ATUALIZAR BANCO DOCKER.bat` que copia `media\` local para volume Docker
+2. ✅ **Tamanho de ícone em Categoria** (migração `conteudo/0039`): campos `icone_largura`/`icone_altura` em 5 painéis
+3. ✅ **Tamanho em ColunaExtraBotao** (migração `conteudo/0040`): mesmos 2 campos + botão "🔍" para editar tamanho
+4. ✅ **Tamanho em ColunaExtra** (migração `conteudo/0041`): para o ícone do título da coluna
+
+**Correções críticas**: URLField max_length=1000 (0038), botão com URL não criava filho redundante, rótulo "Botão" removido de Recentes
+
+---
+
+## Leva Anterior: Parte 36 (2026-07-22)
+
+**Anexo de link/URL** — novo campo `Anexo.url` para criar anexos que apontam a links (ícone `fa-link`) em vez de arquivos. Aplicado em 5 painéis. Migração `conteudo/0037`.
+
+---
+
+## Leva Anterior: Parte 33 (2026-07-21)
+
+**Comentários em todos os botões (categorias) do site** — novo campo `Comentario.categoria` (FK dual). View e template ganharam mesma seção de comentários. Regra automática vale para qualquer botão, inclusive futuros. Migração `conteudo/0035`.
 
 ---
 
@@ -128,30 +158,34 @@ Foram implementadas **9 partes de correções + features (20 no total)**:
 - `templates/base.html` — versão de cache atualizada para `?v=20260721-1` (CSS)
 - `BAT SEDU/Subir GitHub SEDU.bat` — corrigido caminho (usava `C:\Users\ridan\...` antigo), adicionado `git pull --no-rebase` automático
 
-## Migrações aplicadas e pendentes
+## Migrações aplicadas e pendentes (v34)
+
 **Já aplicadas nesta máquina:**
-- `conteudo.0012` — Carrossel, url_imagem, mostrar_menu_superior/mostrar_navegue_area
-- `conteudo.0013` — icone_imagem em Conteudo
-- `conteudo.0014` — icone_imagem em Categoria
-- `conteudo.0015` — Carrossel aceita vídeo (FileField)
-- `conteudo.0016` — Estilo de texto em Conteudo
-- `painel.0002` — EstiloBotao.tamanho
-- **`conteudo.0019`** — Comentario: status (3 estados) + resposta + data_resposta
+- `conteudo.0012-0041` (30 migrations) — tudo (Carrossel, ícones, comentários, anexo URL, tamanho 3 níveis, URLField max_length)
+- `painel.0002-0003` — EstiloBotao.tamanho, permissões delegadas
+- `inteligencia.0002` — permissões delegadas
 
 **Para novos ambientes:**
 ```bash
-python manage.py migrate  # Aplica TUDO de uma vez
+python manage.py migrate  # Aplica TUDO de uma vez (0012-0041 + painel + inteligencia)
 ```
 
-## Próximas sessões — como começar
-1. Leia **CLAUDE.md** para arquitetura completa (atualizado com todas as mudanças até 2026-07-13, parte 7)
+**CSS version**: `?v=20260723-1` (incrementar se alterar style.css)
+**JS version**: `?v=20260711-1` (manter se main.js não muda)
+
+## Próximas sessões — como começar (v34)
+
+1. Leia **CLAUDE.md** para arquitetura completa (atualizado em 2026-07-23 com v34: Parte 37 + Parte 38)
 2. Para fazer alterações:
    - Edite arquivos em `templates/` ou `static/css/`
    - Teste: `python manage.py runserver 8001` → http://127.0.0.1:8001
-   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é **`?v=20260721-1`**)
-3. Para enviar para GitHub:
-   - Clique 2x em **"Subir GitHub SEDU.bat"** — agora funciona de qualquer pasta e faz pull automático + migrate
-4. Para demonstração ao gerente:
+   - **Importante**: Ctrl+Shift+R para forçar cache (versão CSS é **`?v=20260723-1`**)
+   - **Importante 2**: Se em nova sessão, `python manage.py migrate` primeiro (aplica 41 migrações)
+3. Para sincronizar local → Docker:
+   - Clique 2x em **"BAT SEDU/ATUALIZAR BANCO DOCKER.bat"** — agora copia também `media\` (novo em Parte 37)
+4. Para enviar para GitHub:
+   - Clique 2x em **"Subir GitHub SEDU.bat"** — funciona de qualquer pasta e faz pull automático + migrate
+5. Para demonstração ao gerente:
    - Clique 2x em **"COMPARTILHAR COM GERENTE.bat"** — abre ngrok, gera URL pública (válida por 2h)
 
 ## Stack técnico
@@ -207,5 +241,24 @@ Para alterar senha:
 venv\Scripts\python.exe manage.py changepassword <username>
 ```
 
+## Checklist de hoje (2026-07-23)
+
+- ✅ **CLAUDE.md** atualizado para v34 (Parte 37 + 3 correções + Parte 38 + extensões 1-2)
+- ✅ **README.md** atualizado (status, migrações v34)
+- ✅ **CONTEXTO_ATUAL.md** atualizado (este arquivo)
+- ✅ **MEMORY.md** atualizado (memory files + índice)
+- ✅ **Memory files criados**: part_38, part_37_resumo, RESUMO_PARTE_37_HOJE
+- ✅ **Contador de comentários** implementado (Parte 38)
+  - `conteudo/templatetags/__init__.py` + `conteudo/templatetags/comentarios_extras.py`
+  - `templates/admin/index.html` modificado
+  - Testado ponta a ponta
+
+## Próximas ações para o Dan
+
+1. `python manage.py migrate` (aplica 0012-0041 + painel + inteligencia)
+2. Clique em `BAT SEDU/ATUALIZAR BANCO DOCKER.bat` (sincroniza local → Docker, agora com media)
+3. Abra `/admin/` → veja contador no lado direito mostrando "✓ Tudo revisado" ou número de pendentes
+4. Pronto para demo/deploy no servidor SEDU
+
 ## Dúvidas?
-→ **CLAUDE.md** (documentação técnica completa, atualizado hoje com migração 0013/0002 e todos os 4 pedidos)
+→ **CLAUDE.md** (documentação técnica completa, atualizado em 2026-07-23 com v34: Parte 37 + Parte 38)
