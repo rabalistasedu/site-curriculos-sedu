@@ -45,8 +45,15 @@ if not exist "venv\Scripts\python.exe" (
 )
 
 REM -- 1. Exporta os dados do banco local (SQLite) -------------
+REM  --all e necessario por causa da Lixeira (Categoria/Conteudo
+REM  soft-delete): sem essa flag, o dumpdata usa o manager padrao,
+REM  que ESCONDE itens na lixeira. Isso pode gerar um Conteudo
+REM  exportado apontando para uma Categoria que ficou de fora
+REM  (por estar na lixeira), quebrando a chave estrangeira ao
+REM  importar no Postgres. --all usa o manager que enxerga tudo,
+REM  inclusive a lixeira, mantendo o Docker espelhado ao local.
 echo [1/6] Exportando dados do banco local (SQLite)...
-venv\Scripts\python.exe manage.py dumpdata --natural-foreign --natural-primary -e contenttypes -e auth.permission -e admin.logentry -e sessions.session --indent 2 -o dump_local.json
+venv\Scripts\python.exe manage.py dumpdata --all --natural-foreign --natural-primary -e contenttypes -e auth.permission -e admin.logentry -e sessions.session --indent 2 -o dump_local.json
 if errorlevel 1 (
     color 0C
     echo.
