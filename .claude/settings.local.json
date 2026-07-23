@@ -192,7 +192,10 @@
       "Bash(python manage.py check)",
       "WebSearch",
       "Bash(grep -n \"^\\\\.env$\\\\|^\\\\.env\\\\b\" .gitignore)",
-      "Bash(pip show *)"
+      "Bash(pip show *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://localhost:8000/)",
+      "Bash(curl -s -o /dev/null -w \"Admin: HTTP %{http_code}\\\\n\" http://localhost:8000/admin/)",
+      "Bash(grep -n \"14\\\\. \\\\*\\\\*Arquivo \\\\`.bat\\\\` criado\" CLAUDE.md)"
     ]
   }
 }

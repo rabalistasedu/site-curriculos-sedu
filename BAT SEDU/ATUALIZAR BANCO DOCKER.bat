@@ -55,8 +55,22 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM -- 2. Sobe os containers do Docker --------------------------
-echo [2/6] Subindo os containers do Docker ^(se nao estiverem rodando^)...
+REM -- 2. Reconstroi as imagens e sobe os containers do Docker --
+REM  Reconstruir sempre garante que qualquer mudanca no
+REM  requirements.txt (novas bibliotecas Python) seja aplicada
+REM  dentro do Docker. Sem isso, o container pode tentar rodar
+REM  codigo novo com bibliotecas antigas e falhar ao iniciar.
+echo [2/6] Atualizando as imagens do Docker com as dependencias mais recentes...
+docker compose build
+if errorlevel 1 (
+    color 0C
+    echo.
+    echo ERRO ao reconstruir as imagens do Docker. Leia a mensagem acima.
+    pause
+    exit /b 1
+)
+
+echo        Subindo os containers do Docker...
 docker compose up -d
 if errorlevel 1 (
     color 0C
