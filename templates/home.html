@@ -239,7 +239,7 @@
                        {% if cat.link_externo %}target="_blank" rel="noopener"{% endif %}
                        title="{{ cat.nome }}">
                         <div class="list-icon{% if cat.icone_imagem %} sem-fundo{% endif %}"{% if cat.icone_estilo_inline %} style="{{ cat.icone_estilo_inline }}"{% endif %}>
-                            {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado">
+                            {% if cat.icone_imagem %}<img src="{{ cat.icone_imagem.url }}" alt="" class="icone-personalizado icone-personalizado-botao">
                             {% else %}<i class="{{ cat.icone_display }}"></i>{% endif %}
                         </div>
                         <div class="list-info">

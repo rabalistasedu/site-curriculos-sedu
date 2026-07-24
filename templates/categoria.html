@@ -156,7 +156,7 @@
                {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ sub.nome }}">
                 <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}>
-                    {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado">
+                    {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado icone-personalizado-botao">
                     {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
                 </div>
                 <div class="card-body">

@@ -1892,6 +1892,20 @@ img { max-width: 100%; height: auto; display: block; }
     padding: 0;
 }
 
+/* 10b) Ícone de BOTÃO (Categoria) dentro de containers compartilhados com
+       Conteúdo (`.card-image-placeholder` dos cards de subbotão,
+       `.list-icon` de "Conteúdos recentes"/busca) — sem largura/altura
+       escolhidas no admin, a imagem preenche e centraliza automaticamente
+       (cover), igual aos ícones redondos/quadrados dos outros botões.
+       Marcador `.icone-personalizado-botao` distingue do ícone de
+       CONTEÚDO nesses mesmos containers, que continua inteiro (contain)
+       por decisão de design já documentada (2026-07-11). */
+.card-image-placeholder.sem-fundo .icone-personalizado-botao,
+.list-icon.sem-fundo .icone-personalizado-botao {
+    object-fit: cover;
+    padding: 0;
+}
+
 /* 11) Botão discreto "Voltar página inicial" — logo ACIMA da barra do
       cadeado/copyright, colado na margem direita do conteúdo. Pulsa
       (brilho BRANCO — o pulso azul padrão sumiria no rodapé azul)
