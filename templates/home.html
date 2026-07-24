@@ -37,10 +37,14 @@
 
 <!-- ── Texto da home (editável no admin, abaixo do banner) ─────── -->
 {% if config.home_titulo or config.home_texto %}
-<section class="home-intro">
-    <div class="container">
-        {% if config.home_titulo %}<h1>{{ config.home_titulo }}</h1>{% endif %}
-        {% if config.home_texto %}<div class="home-intro-texto">{{ config.home_texto|safe }}</div>{% endif %}
+<section class="home-intro"{% if config.home_intro_estilo_barra %} style="{{ config.home_intro_estilo_barra }}"{% endif %}>
+    {% if config.home_intro_imagem %}
+    <div class="home-intro-bg" style="background-image:url('{{ config.home_intro_imagem.url }}');"></div>
+    <div class="home-intro-overlay" style="background-color:{{ config.home_intro_overlay_cor }};"></div>
+    {% endif %}
+    <div class="container"{% if config.home_intro_estilo_conteudo %} style="{{ config.home_intro_estilo_conteudo }}"{% endif %}>
+        {% if config.home_titulo %}<h1{% if config.home_intro_estilo_titulo %} style="{{ config.home_intro_estilo_titulo }}"{% endif %}>{{ config.home_titulo }}</h1>{% endif %}
+        {% if config.home_texto %}<div class="home-intro-texto"{% if config.home_intro_estilo_texto %} style="{{ config.home_intro_estilo_texto }}"{% endif %}>{{ config.home_texto|safe }}</div>{% endif %}
     </div>
 </section>
 {% endif %}
@@ -51,9 +55,9 @@
     <div class="container">
         <h2 class="section-title">
             {% if config.icone_destaques_imagem %}
-            <span class="title-icon sem-fundo"><img src="{{ config.icone_destaques_imagem.url }}" alt="" class="icone-personalizado"></span>
+            <span class="title-icon sem-fundo"{% if config.icone_destaques_estilo_inline %} style="{{ config.icone_destaques_estilo_inline }}"{% endif %}><img src="{{ config.icone_destaques_imagem.url }}" alt="" class="icone-personalizado"></span>
             {% elif config.icone_destaques %}
-            <span class="title-icon"><i class="{{ config.icone_destaques }}"></i></span>
+            <span class="title-icon"{% if config.icone_destaques_estilo_inline %} style="{{ config.icone_destaques_estilo_inline }}"{% endif %}><i class="{{ config.icone_destaques }}"></i></span>
             {% endif %}
             {{ config.titulo_destaques|default:"Destaques"|safe }}
         </h2>
@@ -135,8 +139,11 @@
 
         <!-- Botão "Currículo Atual" centralizado acima das duas colunas,
              junto com os botões marcados para a área central (painel
-             "Botões da Barra Superior" — checkbox "Central?") -->
+             "Botões da Barra Superior" — checkbox "Central?"). Sua
+             exibição obedece o mesmo checkbox "Central?" (marcado/
+             desmarcado nesse botão específico), igual aos demais. -->
         <div class="curriculo-atual-topo">
+            {% if categoria_curriculo_atual.mostrar_area_central %}
             <a href="{% url 'conteudo:categoria' 'curriculo-atual' %}" class="area-card area-card-featured" title="{{ config.nome_curriculo_atual|default:'Currículo Atual' }}">
                 <div class="category-icon">
                     <i class="fas fa-graduation-cap"></i>
@@ -145,6 +152,7 @@
                     <h3>{{ config.nome_curriculo_atual|default:"Currículo Atual" }}</h3>
                 </div>
             </a>
+            {% endif %}
             {% for botao in botoes_area_central %}
             <a href="{% if botao.link_externo %}{{ botao.link_externo }}{% else %}{% url 'conteudo:categoria' botao.slug %}{% endif %}"
                class="area-card area-card-featured area-card-central{% if botao.estilo.pulsante %} btn-pulse{% endif %}"
@@ -197,9 +205,9 @@
             <div class="home-recentes">
                 <h2 class="section-title">
                     {% if config.icone_recentes_imagem %}
-                    <span class="title-icon sem-fundo"><img src="{{ config.icone_recentes_imagem.url }}" alt="" class="icone-personalizado"></span>
+                    <span class="title-icon sem-fundo"{% if config.icone_recentes_estilo_inline %} style="{{ config.icone_recentes_estilo_inline }}"{% endif %}><img src="{{ config.icone_recentes_imagem.url }}" alt="" class="icone-personalizado"></span>
                     {% else %}
-                    <span class="title-icon"><i class="{{ config.icone_recentes|default:'fas fa-wand-magic-sparkles' }}"></i></span>
+                    <span class="title-icon"{% if config.icone_recentes_estilo_inline %} style="{{ config.icone_recentes_estilo_inline }}"{% endif %}><i class="{{ config.icone_recentes|default:'fas fa-wand-magic-sparkles' }}"></i></span>
                     {% endif %}
                     {{ config.titulo_recentes|default:"Conteúdos recentes"|safe }}
                 </h2>
@@ -250,9 +258,9 @@
             <aside class="home-areas">
                 <h2 class="section-title">
                     {% if config.icone_areas_imagem %}
-                    <span class="title-icon sem-fundo"><img src="{{ config.icone_areas_imagem.url }}" alt="" class="icone-personalizado"></span>
+                    <span class="title-icon sem-fundo"{% if config.icone_areas_estilo_inline %} style="{{ config.icone_areas_estilo_inline }}"{% endif %}><img src="{{ config.icone_areas_imagem.url }}" alt="" class="icone-personalizado"></span>
                     {% else %}
-                    <span class="title-icon"><i class="{{ config.icone_areas|default:'fas fa-compass' }}"></i></span>
+                    <span class="title-icon"{% if config.icone_areas_estilo_inline %} style="{{ config.icone_areas_estilo_inline }}"{% endif %}><i class="{{ config.icone_areas|default:'fas fa-compass' }}"></i></span>
                     {% endif %}
                     {{ config.titulo_areas|default:"Navegue por área"|safe }}
                 </h2>

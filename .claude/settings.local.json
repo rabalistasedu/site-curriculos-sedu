@@ -209,7 +209,14 @@
       "Bash(venv/Scripts/python.exe manage.py dumpdata --all --natural-foreign --natural-primary -e contenttypes -e auth.permission -e admin.logentry -e sessions.session --indent 2 -o teste_dump_temp.json)",
       "Bash(echo \"EXIT: $?\")",
       "Bash(rm -f teste_dump_temp.json)",
-      "Bash(venv/Scripts/python.exe \"C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--ridan-Claude-Projects-Site-Curriculos-SEDU\\\\b7879893-8c97-4d8b-83ad-88d379118fb9\\\\scratchpad\\\\check_dump.py\")"
+      "Bash(venv/Scripts/python.exe \"C:\\\\Users\\\\RABALI~1\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--ridan-Claude-Projects-Site-Curriculos-SEDU\\\\b7879893-8c97-4d8b-83ad-88d379118fb9\\\\scratchpad\\\\check_dump.py\")",
+      "Bash(venv/Scripts/python.exe manage.py makemigrations conteudo)",
+      "Bash(venv/Scripts/python.exe manage.py migrate conteudo)",
+      "Bash(mkdir -p /tmp/db_check)",
+      "Bash(git show *)",
+      "Bash(tasklist)",
+      "Bash(wmic process *)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe' or Name='python3.13.exe'\")"
     ]
   }
 }

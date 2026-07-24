@@ -89,6 +89,7 @@ class ConfiguracaoSiteAdminForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'home_texto': RichTextWidget(),
+            'home_intro_cor_fundo': forms.TextInput(attrs={'type': 'color', 'style': 'height:40px;width:80px;padding:2px;'}),
         }
 
 
@@ -99,9 +100,9 @@ class TituloSecoesForm(forms.ModelForm):
     class Meta:
         model = ConfiguracaoSite
         fields = [
-            'titulo_destaques', 'icone_destaques',
-            'titulo_recentes', 'icone_recentes',
-            'titulo_areas', 'icone_areas',
+            'titulo_destaques', 'icone_destaques', 'icone_destaques_largura', 'icone_destaques_altura',
+            'titulo_recentes', 'icone_recentes', 'icone_recentes_largura', 'icone_recentes_altura',
+            'titulo_areas', 'icone_areas', 'icone_areas_largura', 'icone_areas_altura',
         ]
         widgets = {
             'titulo_destaques': RichTextWidget(),
@@ -110,4 +111,10 @@ class TituloSecoesForm(forms.ModelForm):
             'icone_destaques': IconPicker(),
             'icone_recentes': IconPicker(),
             'icone_areas': IconPicker(),
+            'icone_destaques_largura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': 'Padrão do site', 'style': 'margin-bottom:0;'}),
+            'icone_destaques_altura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': '= largura', 'style': 'margin-bottom:0;'}),
+            'icone_recentes_largura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': 'Padrão do site', 'style': 'margin-bottom:0;'}),
+            'icone_recentes_altura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': '= largura', 'style': 'margin-bottom:0;'}),
+            'icone_areas_largura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': 'Padrão do site', 'style': 'margin-bottom:0;'}),
+            'icone_areas_altura': forms.NumberInput(attrs={'class': 'as-input', 'min': 10, 'max': 300, 'placeholder': '= largura', 'style': 'margin-bottom:0;'}),
         }

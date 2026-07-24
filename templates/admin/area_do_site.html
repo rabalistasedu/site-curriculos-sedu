@@ -103,6 +103,16 @@
             {{ form.icone_destaques }}
             <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
             <input type="file" name="icone_destaques_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <div>
+                    <label class="as-label">Largura do ícone (px)</label>
+                    {{ form.icone_destaques_largura }}
+                </div>
+                <div>
+                    <label class="as-label">Altura do ícone (px)</label>
+                    {{ form.icone_destaques_altura }}
+                </div>
+            </div>
         </div>
 
         <div class="as-icone-bloco">
@@ -118,6 +128,16 @@
             {{ form.icone_recentes }}
             <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
             <input type="file" name="icone_recentes_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <div>
+                    <label class="as-label">Largura do ícone (px)</label>
+                    {{ form.icone_recentes_largura }}
+                </div>
+                <div>
+                    <label class="as-label">Altura do ícone (px)</label>
+                    {{ form.icone_recentes_altura }}
+                </div>
+            </div>
         </div>
 
         <div class="as-icone-bloco">
@@ -133,6 +153,16 @@
             {{ form.icone_areas }}
             <label class="as-label" style="margin-top:6px;">OU envie uma imagem</label>
             <input type="file" name="icone_areas_imagem" accept="image/*,.svg,.ico" class="as-input" style="margin-bottom:0;">
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <div>
+                    <label class="as-label">Largura do ícone (px)</label>
+                    {{ form.icone_areas_largura }}
+                </div>
+                <div>
+                    <label class="as-label">Altura do ícone (px)</label>
+                    {{ form.icone_areas_altura }}
+                </div>
+            </div>
         </div>
 
         <button type="submit" class="as-save" style="margin-top:12px;">

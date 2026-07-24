@@ -1,0 +1,302 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+
+{% block extrastyle %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    .as-wrap { max-width: 1100px; }
+    .as-header { background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; color: #fff; }
+    .as-header h2 { margin: 0 0 4px; font-size: 18px; font-weight: 700; }
+    .as-header p { margin: 0; opacity: 0.85; font-size: 13px; }
+    .as-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin-bottom: 20px; }
+    .as-section h3 { margin: 0 0 14px; font-size: 15px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .as-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+    .as-input, .as-select { width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; margin-bottom: 12px; box-sizing: border-box; }
+    select.as-input, select.as-select, .as-add-botao-form select {
+        height: 38px; line-height: normal; padding-top: 0; padding-bottom: 0; box-sizing: border-box;
+    }
+    .as-help { font-size: 11px; color: #6b7280; margin-top: -8px; margin-bottom: 12px; }
+    .as-save { background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); color: #fff; border: none; padding: 11px 28px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+    .as-save:hover { transform: scale(1.02); }
+    .as-alert { padding: 10px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .as-pagina-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 14px; background: #f9fafb; }
+    .as-pagina-card.inativa { opacity: 0.55; }
+    .as-pagina-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+    .as-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .as-badge-link { background: #ede9fe; color: #5b21b6; font-family: monospace; }
+    .as-botoes-lista { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .as-botao-item { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+    .as-botao-item i.icone-item { color: #7c3aed; width: 18px; text-align: center; }
+    .as-botao-item .destino { color: #6b7280; font-size: 11px; }
+    .as-botao-item form { margin-left: auto; }
+    .as-btn-excluir { background: none; border: none; color: #dc2626; cursor: pointer; font-size: 13px; padding: 4px; }
+    .as-btn-excluir:hover { color: #991b1b; }
+    .as-add-botao-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: flex-end; padding: 12px; background: #f5f3ff; border-radius: 8px; }
+    .as-add-botao-form > div { flex: 1; min-width: 160px; }
+    .as-add-botao-form label { font-size: 11px; font-weight: 600; color: #374151; display: block; margin-bottom: 3px; }
+    .as-add-botao-form input, .as-add-botao-form select { width: 100%; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 5px; font-size: 12px; height: 32px; box-sizing: border-box; }
+    .as-btn-mini { background: #7c3aed; color: #fff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .as-btn-mini:hover { background: #5b21b6; }
+    .as-botao-arvore-toggle { flex-basis: 100%; padding: 6px 0; }
+    .as-botao-arvore-extra { flex-basis: 100%; display: flex; gap: 8px; flex-wrap: wrap; padding: 10px; background: #ede9fe; border: 1px dashed #7c3aed; border-radius: 8px; }
+    .as-botao-arvore-extra > div { flex: 1; min-width: 160px; }
+    .as-pagina-footer { display: flex; flex-direction: column; align-items: stretch; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; gap: 10px; }
+    .as-pagina-footer form { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .as-empty { text-align: center; padding: 30px; color: #9ca3af; font-size: 13px; }
+    .as-nova-pagina { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .as-nova-pagina > div { flex: 1; min-width: 220px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="as-wrap">
+
+{% if messages %}
+{% for message in messages %}
+<div class="as-alert">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<div class="as-header">
+    <h2><i class="fas fa-file-lines"></i> Páginas Livres</h2>
+    <p>Crie páginas em branco, no mesmo padrão visual do site, com texto livre, botões (já existentes ou novos) e comentários no rodapé. Elas não aparecem sozinhas em nenhum menu — você coloca o link (/pagina/&lt;url&gt;/) onde quiser: num botão com URL externa, numa coluna extra, no rodapé, etc.</p>
+</div>
+
+<!-- Páginas existentes -->
+<div class="as-section">
+    <h3><i class="fas fa-list" style="color:#7c3aed;"></i> Páginas criadas</h3>
+
+    {% if paginas %}
+        {% for pagina in paginas %}
+        <div class="as-pagina-card{% if not pagina.ativa %} inativa{% endif %}">
+            <div class="as-pagina-head">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <strong>{{ pagina.titulo }}</strong>
+                    <a href="/pagina/{{ pagina.slug }}/" target="_blank" class="as-badge as-badge-link">
+                        <i class="fas fa-arrow-up-right-from-square"></i> /pagina/{{ pagina.slug }}/
+                    </a>
+                    {% if not pagina.ativa %}<span class="as-badge" style="background:#fee2e2;color:#991b1b;">Inativa</span>{% endif %}
+                </div>
+            </div>
+
+            <!-- Botões da página -->
+            <div class="as-botoes-lista">
+                {% for botao in pagina.botoes.all %}
+                <div class="as-botao-item">
+                    {% if botao.icone_imagem %}
+                        <img src="{{ botao.icone_imagem.url }}" alt="" style="width:18px;height:18px;object-fit:contain;{{ botao.icone_estilo_inline }}">
+                    {% else %}
+                        <i class="{{ botao.icone_display }} icone-item" style="{{ botao.icone_estilo_inline }}"></i>
+                    {% endif %}
+                    <span>{{ botao.nome }}</span>
+                    <span class="destino">
+                        {% if botao.link_externo %}→ {{ botao.link_externo }}
+                        {% elif botao.categoria %}→ {{ botao.categoria.nome }}
+                        {% else %}(sem destino){% endif %}
+                    </span>
+                    {% if botao.categoria %}
+                    <button type="button" class="as-btn-excluir" style="background:#ede9fe;color:#5b21b6;" title="Arquivos e links deste botão" onclick="var p=document.getElementById('as-conteudo-{{ botao.pk }}');p.style.display=p.style.display==='block'?'none':'block';"><i class="fas fa-paperclip"></i> {{ botao.total_itens }}</button>
+                    <a href="/admin/organizar/?cat={{ botao.categoria.pk }}" target="_blank" class="as-btn-excluir" style="background:#eef2ff;color:#4338ca;text-decoration:none;" title="Abrir no Organizador (gerenciamento completo)"><i class="fas fa-folder-open"></i></a>
+                    {% endif %}
+                    <form method="post" onsubmit="return confirm('Excluir o botão \'{{ botao.nome|escapejs }}\'?');">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="excluir_botao">
+                        <input type="hidden" name="botao_id" value="{{ botao.pk }}">
+                        <button type="submit" class="as-btn-excluir" title="Excluir botão"><i class="fas fa-trash-alt"></i></button>
+                    </form>
+                </div>
+
+                {% if botao.categoria %}
+                <div id="as-conteudo-{{ botao.pk }}" style="display:none;margin:2px 0 10px 26px;padding:12px;background:#f5f3ff;border:1px dashed #7c3aed;border-radius:8px;">
+                    <p class="as-help" style="margin:0 0 8px;">Arquivos e links anexados aqui aparecem em "Arquivos para download" na página de <strong>{{ botao.categoria.nome }}</strong> — o mesmo lugar gerenciado pelo Organizador e Estrutura de Árvores.</p>
+
+                    {% if botao.anexos_existentes or botao.links_existentes %}
+                    <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
+                        {% for anexo in botao.anexos_existentes %}
+                        <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:5px 10px;font-size:12px;">
+                            <i class="fas fa-paperclip" style="color:#7c3aed;"></i>
+                            <span style="flex:1;">{{ anexo.nome_exibicao }}</span>
+                            <span style="color:#9ca3af;font-size:11px;">{{ anexo.extensao }}</span>
+                            <form method="post" onsubmit="return confirm('Excluir este anexo?');" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="excluir_conteudo_botao">
+                                <input type="hidden" name="tipo_item" value="anexo">
+                                <input type="hidden" name="item_id" value="{{ anexo.pk }}">
+                                <button type="submit" class="as-btn-excluir" style="padding:2px 6px;"><i class="fas fa-times"></i></button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                        {% for link in botao.links_existentes %}
+                        <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e5e7eb;border-radius:5px;padding:5px 10px;font-size:12px;">
+                            <i class="fas fa-link" style="color:#0891b2;"></i>
+                            <span style="flex:1;">{{ link.titulo }}</span>
+                            <span style="color:#9ca3af;font-size:11px;">link</span>
+                            <form method="post" onsubmit="return confirm('Excluir este link?');" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="excluir_conteudo_botao">
+                                <input type="hidden" name="tipo_item" value="conteudo">
+                                <input type="hidden" name="item_id" value="{{ link.pk }}">
+                                <button type="submit" class="as-btn-excluir" style="padding:2px 6px;"><i class="fas fa-times"></i></button>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data" style="display:flex;flex-direction:column;gap:8px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="adicionar_conteudo_botao">
+                        <input type="hidden" name="botao_id" value="{{ botao.pk }}">
+                        <div class="dropzone" id="dzConteudoBotao{{ botao.pk }}" data-dropzone-input="conteudoBotaoInput{{ botao.pk }}" data-dropzone-texto="dzConteudoBotaoTexto{{ botao.pk }}">
+                            <i class="fas fa-cloud-arrow-up"></i>
+                            <span id="dzConteudoBotaoTexto{{ botao.pk }}">Arraste arquivos aqui ou clique (vários)</span>
+                        </div>
+                        <input type="file" name="botaoconteudo_arquivos" id="conteudoBotaoInput{{ botao.pk }}" multiple style="display:none">
+                        <div>
+                            <label class="as-label" style="margin-bottom:4px;">Mais links / URLs (opcional, quantos quiser)</label>
+                            <div id="botaoConteudoLinksContainer{{ botao.pk }}"></div>
+                            <button type="button" onclick="pcLinkConteudoBotao('botaoConteudoLinksContainer{{ botao.pk }}')" style="font-size:11px;padding:4px 10px;border:1px solid #7c3aed;border-radius:6px;background:#fff;cursor:pointer;margin-top:4px;">+ Adicionar outro link</button>
+                        </div>
+                        <div style="flex:0;">
+                            <button type="submit" class="as-btn-mini"><i class="fas fa-plus"></i> Adicionar arquivos/links</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                {% empty %}
+                <p style="font-size:12px;color:#9ca3af;margin:0;">Nenhum botão nesta página ainda.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Adicionar botão -->
+            <form method="post" enctype="multipart/form-data" class="as-add-botao-form">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="criar_botao">
+                <input type="hidden" name="pagina_id" value="{{ pagina.pk }}">
+                <div>
+                    <label>Nome do botão</label>
+                    <input type="text" name="botao_nome" required placeholder="Ex.: Editais">
+                </div>
+                <div style="flex-basis:260px;">
+                    <label>Categoria já existente (opcional)</label>
+                    <select name="botao_categoria" data-pesquisavel="🔍 Pesquisar botão...">
+                        <option value="">— nenhuma —</option>
+                        {% for item in arvore_categorias %}
+                        <option value="{{ item.cat.pk }}">{{ item.recuo }}{% if item.nivel > 0 %}└ {% endif %}{{ item.cat.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label>OU link externo simples</label>
+                    <input type="url" name="botao_link" placeholder="https://...">
+                </div>
+                <div>
+                    <label>Ícone Font Awesome</label>
+                    <input type="text" name="botao_icone" placeholder="fas fa-link">
+                </div>
+                <div>
+                    <label>OU ícone (imagem)</label>
+                    <input type="file" name="botao_icone_imagem" accept="image/*">
+                </div>
+                <div>
+                    <label>Largura do ícone em px (opcional)</label>
+                    <input type="number" name="botao_icone_largura" min="10" max="300" placeholder="Padrão do site">
+                </div>
+                <div>
+                    <label>Altura do ícone em px (opcional)</label>
+                    <input type="number" name="botao_icone_altura" min="10" max="300" placeholder="= largura">
+                </div>
+                <div class="as-botao-arvore-toggle">
+                    <label style="display:flex;align-items:center;gap:5px;font-weight:700;color:#7c3aed;">
+                        <input type="checkbox" name="botao_criar_arvore" value="1">
+                        Criar como botão completo do site (aparece nas árvores de botões)
+                    </label>
+                </div>
+                <div class="as-botao-arvore-extra" style="display:none;">
+                    <p class="as-help" style="width:100%;margin:0;">Deixe "Categoria já existente" vazia acima — um botão RAIZ novo será criado (igual a "Currículo Atual" ou qualquer outro botão principal), aparecendo na Estrutura de Árvores, Painel Central, Organizador e Barra Superior. Depois de criado, edite-o normalmente em qualquer um desses painéis para adicionar conteúdos, subbotões e anexos.</p>
+                </div>
+                <div style="flex:0;">
+                    <button type="submit" class="as-btn-mini"><i class="fas fa-plus"></i> Adicionar botão</button>
+                </div>
+            </form>
+
+            <!-- Editar / excluir página -->
+            <div class="as-pagina-footer">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="editar_pagina">
+                    <input type="hidden" name="pagina_id" value="{{ pagina.pk }}">
+                    <div style="flex-basis:100%;">
+                        <label class="as-label">Título</label>
+                        <input type="text" name="pagina_titulo" class="as-input" value="{{ pagina.titulo }}" style="margin-bottom:8px;">
+                        <label class="as-label">Texto da página (aceita formatação)</label>
+                        {{ pagina.conteudo_editor_html|safe }}
+                    </div>
+                    <input type="number" name="pagina_ordem" value="{{ pagina.ordem }}" style="width:70px;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;" title="Ordem">
+                    <label style="font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+                        <input type="checkbox" name="pagina_ativa" {% if pagina.ativa %}checked{% endif %}> Ativa
+                    </label>
+                    <button type="submit" class="as-btn-mini"><i class="fas fa-save"></i> Salvar</button>
+                </form>
+                <form method="post" onsubmit="return confirm('Excluir a página \'{{ pagina.titulo|escapejs }}\' e todos os seus botões? Os comentários dessa página também serão excluídos.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="excluir_pagina">
+                    <input type="hidden" name="pagina_id" value="{{ pagina.pk }}">
+                    <button type="submit" class="as-btn-excluir"><i class="fas fa-trash-alt"></i> Excluir página</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="as-empty">Nenhuma página livre criada ainda.</div>
+    {% endif %}
+
+    <!-- Criar nova página -->
+    <form method="post" class="as-nova-pagina" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="criar_pagina">
+        <div>
+            <label class="as-label">Título da nova página</label>
+            <input type="text" name="pagina_titulo" class="as-input" required placeholder="Ex.: Editorial 2026" style="margin-bottom:0;">
+        </div>
+        <div style="flex-basis:100%;">
+            <label class="as-label">Texto da página (aceita formatação)</label>
+            {{ conteudo_editor_novo_html|safe }}
+        </div>
+        <div style="flex:0;">
+            <button type="submit" class="as-save"><i class="fas fa-plus"></i> Criar página</button>
+        </div>
+    </form>
+</div>
+
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'js/filtro_select.js' %}"></script>
+<script src="{% static 'js/dropzone.js' %}"></script>
+<script>
+document.querySelectorAll('input[name="botao_criar_arvore"]').forEach(function(chk) {
+    chk.addEventListener('change', function() {
+        var extra = this.closest('form').querySelector('.as-botao-arvore-extra');
+        if (extra) extra.style.display = this.checked ? 'flex' : 'none';
+    });
+});
+
+function pcLinkConteudoBotao(containerId) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;gap:6px;margin-bottom:6px;';
+    row.innerHTML =
+        '<input type="text" name="botaoconteudo_link_nome" placeholder="Nome do link (opcional)" style="flex:1;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">' +
+        '<input type="url" name="botaoconteudo_link_url" placeholder="https://..." style="flex:2;padding:6px 8px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;">' +
+        '<button type="button" onclick="this.parentElement.remove()" style="padding:2px 10px;border:1px solid #7c3aed;border-radius:6px;background:#fff;cursor:pointer;">&times;</button>';
+    container.appendChild(row);
+}
+</script>
+{% endblock %}

@@ -27,6 +27,13 @@
     .lx-btn-excluir { background: #fff; color: #b91c1c; border: 1px solid #fca5a5 !important; }
     .lx-btn-excluir:hover { background: #fef2f2; }
     .lx-sub { color: #9ca3af; font-size: 11.5px; }
+    .lx-bulk-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .lx-bulk-bar label { font-size: 12.5px; color: #4b5563; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+    .lx-btn-excluir-massa { background: #b91c1c; color: #fff; border: none; border-radius: 6px;
+                             padding: 6px 14px; font-size: 12.5px; font-weight: 700; cursor: pointer; }
+    .lx-btn-excluir-massa:hover { background: #991b1b; }
+    .lx-btn-excluir-massa:disabled { background: #d1d5db; cursor: not-allowed; }
+    .lx-check-col { width: 30px; text-align: center; }
 </style>
 {% endblock %}
 
@@ -43,8 +50,20 @@
 
     <div class="lx-secao-titulo"><i class="fas fa-network-wired"></i> Botões excluídos ({{ categorias_lixeira|length }})</div>
     {% if categorias_lixeira %}
+    <form id="lx-bulk-categoria" method="post" onsubmit="return confirm('Excluir os botões selecionados DEFINITIVAMENTE? Isso NÃO pode ser desfeito.');">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="excluir_definitivo_massa">
+        <input type="hidden" name="tipo" value="categoria">
+    </form>
+    <div class="lx-bulk-bar">
+        <label><input type="checkbox" onclick="lxToggleTodos('categoria', this)"> Selecionar todos</label>
+        <button type="submit" form="lx-bulk-categoria" class="lx-btn-excluir-massa" id="lx-btn-massa-categoria" disabled>
+            <i class="fas fa-trash"></i> Excluir selecionados definitivamente
+        </button>
+    </div>
     <table class="lx-tabela">
         <tr>
+            <th class="lx-check-col"></th>
             <th>Botão</th>
             <th style="width:150px;">Excluído em</th>
             <th style="width:120px;">Prazo</th>
@@ -52,6 +71,9 @@
         </tr>
         {% for cat in categorias_lixeira %}
         <tr>
+            <td class="lx-check-col">
+                <input type="checkbox" form="lx-bulk-categoria" name="ids" value="{{ cat.pk }}" class="lx-check-categoria" onclick="lxAtualizarBotaoMassa('categoria')">
+            </td>
             <td>
                 {{ cat.nome }}
                 {% if cat.total_subarvore %}
@@ -93,8 +115,20 @@
 
     <div class="lx-secao-titulo"><i class="fas fa-file"></i> Conteúdos excluídos ({{ conteudos_lixeira|length }})</div>
     {% if conteudos_lixeira %}
+    <form id="lx-bulk-conteudo" method="post" onsubmit="return confirm('Excluir os conteúdos selecionados DEFINITIVAMENTE? Isso NÃO pode ser desfeito.');">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="excluir_definitivo_massa">
+        <input type="hidden" name="tipo" value="conteudo">
+    </form>
+    <div class="lx-bulk-bar">
+        <label><input type="checkbox" onclick="lxToggleTodos('conteudo', this)"> Selecionar todos</label>
+        <button type="submit" form="lx-bulk-conteudo" class="lx-btn-excluir-massa" id="lx-btn-massa-conteudo" disabled>
+            <i class="fas fa-trash"></i> Excluir selecionados definitivamente
+        </button>
+    </div>
     <table class="lx-tabela">
         <tr>
+            <th class="lx-check-col"></th>
             <th>Título</th>
             <th style="width:150px;">Excluído em</th>
             <th style="width:120px;">Prazo</th>
@@ -102,6 +136,9 @@
         </tr>
         {% for cont in conteudos_lixeira %}
         <tr>
+            <td class="lx-check-col">
+                <input type="checkbox" form="lx-bulk-conteudo" name="ids" value="{{ cont.pk }}" class="lx-check-conteudo" onclick="lxAtualizarBotaoMassa('conteudo')">
+            </td>
             <td>
                 {{ cont }}
                 <div class="lx-sub">{{ cont.get_tipo_display }}{% if cont.categoria %} — {{ cont.categoria.nome }}{% endif %}</div>
@@ -139,4 +176,16 @@
     <div class="lx-vazio">Nenhum conteúdo na lixeira. ✓</div>
     {% endif %}
 </div>
+
+<script>
+function lxAtualizarBotaoMassa(tipo) {
+    var marcados = document.querySelectorAll('.lx-check-' + tipo + ':checked').length;
+    document.getElementById('lx-btn-massa-' + tipo).disabled = (marcados === 0);
+}
+function lxToggleTodos(tipo, origem) {
+    var checks = document.querySelectorAll('.lx-check-' + tipo);
+    checks.forEach(function (c) { c.checked = origem.checked; });
+    lxAtualizarBotaoMassa(tipo);
+}
+</script>
 {% endblock %}

@@ -10,6 +10,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from .models import (
     Categoria, Conteudo, Banner, ConfiguracaoSite, Comentario, Cartaz,
     Anexo, Carrossel, CarrosselImagem, ColunaExtra, ColunaExtraBotao, RodapeImagem,
+    PaginaLivre, PaginaLivreBotao,
 )
 from .forms import BannerAdminForm, ConteudoAdminForm, CategoriaAdminForm, ConfiguracaoSiteAdminForm
 from .busca_utils import BuscaSemAcentoMixin
@@ -505,20 +506,20 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
     busca_normalizada_campos = ('nome', 'email', 'texto')
     list_display = ['nome', 'origem_link', 'local_comentario', 'ir_para_comentario', 'eh_resposta', 'texto_resumido', 'status_badge', 'votos_badge', 'tem_resposta', 'teams_status_badge', 'data_criacao']
     list_filter = ['status', 'data_criacao']
-    search_fields = ['nome', 'email', 'texto', 'conteudo__titulo', 'categoria__nome']
+    search_fields = ['nome', 'email', 'texto', 'conteudo__titulo', 'categoria__nome', 'pagina_livre__titulo']
     ordering = ['-data_criacao']
 
     CAMPOS_TEAMS_READONLY = ['teams_status', 'teams_message_id', 'teams_data_envio', 'teams_ultima_verificacao']
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # edição — nome/email/texto/conteudo/categoria/data são leitura
-            return ['nome', 'email', 'texto', 'conteudo', 'categoria', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos'] + self.CAMPOS_TEAMS_READONLY
+            return ['nome', 'email', 'texto', 'conteudo', 'categoria', 'pagina_livre', 'parent', 'data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos'] + self.CAMPOS_TEAMS_READONLY
         return ['data_criacao', 'data_resposta', 'votos_positivos', 'votos_negativos'] + self.CAMPOS_TEAMS_READONLY
 
     fieldsets = (
         ('💬 Comentário', {
-            'fields': ('conteudo', 'categoria', 'parent', 'nome', 'email', 'texto', 'data_criacao'),
-            'description': 'Um comentário pertence a UM Conteúdo OU a UMA Categoria (botão) — nunca aos dois.',
+            'fields': ('conteudo', 'categoria', 'pagina_livre', 'parent', 'nome', 'email', 'texto', 'data_criacao'),
+            'description': 'Um comentário pertence a UM Conteúdo, UMA Categoria (botão) OU UMA Página Livre — nunca a mais de um.',
         }),
         ('🔖 Moderação', {
             'fields': ('status',),
@@ -561,8 +562,14 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
                 obj.categoria.pk,
                 obj.categoria.nome[:50]
             )
+        if obj.pagina_livre:
+            return format_html(
+                '<a href="/admin/conteudo/paginalivre/{}/change/" style="color:#7c3aed;">📄 {}</a>',
+                obj.pagina_livre.pk,
+                obj.pagina_livre.titulo[:50]
+            )
         return '—'
-    origem_link.short_description = 'Conteúdo / Botão'
+    origem_link.short_description = 'Conteúdo / Botão / Página'
 
     def texto_resumido(self, obj):
         return obj.texto[:80] + '…' if len(obj.texto) > 80 else obj.texto
@@ -629,6 +636,10 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             return format_html(
                 '<span style="font-size:11px;color:#d97706;font-weight:600;">página do botão</span>'
             )
+        if obj.pagina_livre:
+            return format_html(
+                '<span style="font-size:11px;color:#7c3aed;font-weight:600;">página livre</span>'
+            )
         return format_html('<span style="color:#9ca3af;">—</span>')
     local_comentario.short_description = 'Local'
 
@@ -637,6 +648,8 @@ class ComentarioAdmin(BuscaSemAcentoMixin, admin.ModelAdmin):
             url = f'/conteudo/{obj.conteudo.slug}/'
         elif obj.categoria:
             url = f'/categoria/{obj.categoria.slug}/'
+        elif obj.pagina_livre:
+            url = f'/pagina/{obj.pagina_livre.slug}/'
         else:
             return '—'
         return format_html(
@@ -856,6 +869,20 @@ class ConfiguracaoSiteAdmin(admin.ModelAdmin):
                 'Use a barra de ferramentas para negrito, itálico, sublinhado e alinhamento.'
             ),
         }),
+        ('🎨 Aparência da barra do título/texto da home', {
+            'fields': (
+                'home_intro_titulo_tamanho_fonte', 'home_intro_texto_tamanho_fonte',
+                'home_intro_largura', 'home_intro_altura',
+                'home_intro_cor_fundo', 'home_intro_imagem',
+            ),
+            'description': (
+                'Ajustes opcionais da barra azul acima — tamanho da letra, largura '
+                'máxima do texto (evita quebrar linha cedo), altura mínima da barra, '
+                'cor de fundo e imagem de fundo (com camada semi-transparente por cima '
+                'para manter o texto legível). Deixe tudo em branco para manter a '
+                'aparência padrão de sempre.'
+            ),
+        }),
         ('🏢 Dados institucionais', {
             'fields': ('nome_site', 'descricao', 'email_contato', 'telefone', 'endereco'),
         }),
@@ -906,3 +933,17 @@ class ColunaExtraAdmin(admin.ModelAdmin):
 class RodapeImagemAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'alinhamento', 'largura', 'altura', 'url', 'ordem']
     list_editable = ['alinhamento', 'largura', 'altura', 'url', 'ordem']
+
+
+class PaginaLivreBotaoInline(admin.TabularInline):
+    model = PaginaLivreBotao
+    extra = 1
+    fields = ('nome', 'categoria', 'link_externo', 'icone', 'icone_imagem', 'ordem')
+
+
+@admin.register(PaginaLivre)
+class PaginaLivreAdmin(admin.ModelAdmin):
+    list_display = ['titulo', 'slug', 'ativa', 'ordem']
+    list_editable = ['ativa', 'ordem']
+    prepopulated_fields = {'slug': ('titulo',)}
+    inlines = [PaginaLivreBotaoInline]

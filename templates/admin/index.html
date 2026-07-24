@@ -121,6 +121,24 @@
 </div>
 {% endif %}
 
+{% if perms.conteudo.pode_acessar_paginas_livres %}
+<!-- Banner de Páginas Livres -->
+<div style="background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+    <div style="color: #fff;">
+        <h2 style="margin: 0 0 4px; font-size: 18px; font-weight: 700; color: #fff;">
+            <i class="fas fa-file-lines" style="margin-right: 8px;"></i>
+            Páginas Livres
+        </h2>
+        <p style="margin: 0; font-size: 13px; opacity: 0.85; color: #ddd6fe;">
+            Crie páginas em branco com texto livre, botões (existentes ou novos) e comentários — fora da árvore de categorias, acessíveis só pelo link direto.
+        </p>
+    </div>
+    <a href="{% url 'admin_paginas_livres' %}" style="background: #fff; color: #7c3aed; padding: 10px 24px; border-radius: 6px; font-weight: 700; font-size: 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;">
+        <i class="fas fa-plus"></i> Abrir Páginas Livres
+    </a>
+</div>
+{% endif %}
+
 {% if perms.conteudo.pode_acessar_editor_rodape %}
 <!-- Banner do Editor de Rodapé -->
 <div style="background: linear-gradient(135deg, #374151 0%, #111827 100%); border-radius: 10px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">

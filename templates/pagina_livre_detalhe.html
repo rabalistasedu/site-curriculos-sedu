@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ categoria.nome }} — {{ config.nome_site }}{% endblock %}
+{% block title %}{{ pagina.titulo }} — {{ config.nome_site }}{% endblock %}
 {% block logo_class %}logo-pulse{% endblock %}
 
 {% block content %}
@@ -8,54 +8,25 @@
     <div class="container">
         <nav class="breadcrumb">
             <a href="{% url 'conteudo:home' %}">Início</a>
-            {% if categoria.categoria_pai %}
             <span>/</span>
-            <a href="{% url 'conteudo:categoria' categoria.categoria_pai.slug %}">{{ categoria.categoria_pai.nome }}</a>
-            {% endif %}
-            <span>/</span>
-            <span>{{ categoria.nome }}</span>
+            <span>{{ pagina.titulo }}</span>
         </nav>
-        <h1>{{ categoria.nome }}</h1>
+        <h1>{{ pagina.titulo }}</h1>
     </div>
 </section>
-
-{% if banners %}
-<section class="cat-banners">
-    <div class="container">
-        <div class="cat-banner-slider">
-            {% for b in banners %}
-            {% if b.link %}
-            <a href="{{ b.link }}" class="cat-banner-item {% if b.altura_personalizada %}cat-banner-item--fixo{% endif %} {% if forloop.first %}active{% endif %}"{% if b.altura_personalizada %} style="background-image:url('{{ b.imagem_src }}');height:{{ b.altura_personalizada }}px;min-height:{{ b.altura_personalizada }}px"{% endif %} target="_blank" rel="noopener">
-            {% else %}
-            <div class="cat-banner-item {% if b.altura_personalizada %}cat-banner-item--fixo{% endif %} {% if forloop.first %}active{% endif %}"{% if b.altura_personalizada %} style="background-image:url('{{ b.imagem_src }}');height:{{ b.altura_personalizada }}px;min-height:{{ b.altura_personalizada }}px"{% endif %}>
-            {% endif %}
-                <img src="{{ b.imagem_src }}" alt="{{ b.titulo }}"{% if b.altura_personalizada %} style="height:{{ b.altura_personalizada }}px"{% endif %}>
-                {% if b.titulo or b.subtitulo %}
-                <div class="cat-banner-overlay">
-                    {% if b.titulo %}<h3>{{ b.titulo }}</h3>{% endif %}
-                    {% if b.subtitulo %}<p>{{ b.subtitulo }}</p>{% endif %}
-                </div>
-                {% endif %}
-            {% if b.link %}</a>{% else %}</div>{% endif %}
-            {% endfor %}
-        </div>
-    </div>
-</section>
-{% endif %}
 
 <section class="section">
     <div class="container">
 
-    {% if pagina_indice %}
-        <!-- Índice geral: todos os temas do site, como no site antigo -->
-        {% if categoria.descricao %}
-        <div class="page-intro-body">{{ categoria.descricao|safe }}</div>
+        {% if pagina.conteudo %}
+        <div class="page-intro-body">{{ pagina.conteudo|safe }}</div>
         {% endif %}
+
+        {% if botoes %}
         <div class="topic-grid">
             {% for botao in botoes %}
-            <a href="{% if botao.link_externo %}{{ botao.link_externo }}{% else %}{% url 'conteudo:categoria' botao.slug %}{% endif %}"
-               class="topic-btn{% if botao.estilo.pulsante %} btn-pulse{% endif %}{% if botao.estilo.classe_tamanho %} {{ botao.estilo.classe_tamanho }}{% endif %}"
-               {% if botao.estilo %}style="{{ botao.estilo.css_inline }}"{% endif %}
+            <a href="{{ botao.url }}"
+               class="topic-btn"
                {% if botao.link_externo %}target="_blank" rel="noopener"{% endif %}
                title="{{ botao.nome }}">
                 <span class="topic-icon{% if botao.icone_imagem %} sem-fundo{% endif %}"{% if botao.icone_estilo_inline %} style="{{ botao.icone_estilo_inline }}"{% endif %}>
@@ -66,145 +37,13 @@
             </a>
             {% endfor %}
         </div>
-    {% else %}
-
-        <!-- Subcategorias -->
-        {% if subcategorias %}
-        <div class="subcategories">
-            {% for sub in subcategorias %}
-            <a href="{% if sub.link_externo %}{{ sub.link_externo }}{% else %}{% url 'conteudo:categoria' sub.slug %}{% endif %}"
-               class="subcategory-chip{% if sub.estilo.pulsante %} btn-pulse{% endif %}{% if sub.estilo.classe_tamanho %} {{ sub.estilo.classe_tamanho }}{% endif %}"
-               {% if sub.estilo %}style="{{ sub.estilo.css_inline }}"{% endif %}
-               {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
-               title="{{ sub.nome }}">
-                {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado chip-icone-personalizado"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}>
-                {% elif sub.icone %}<i class="{{ sub.icone }}"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}></i>{% endif %}
-                {{ sub.nome }}
-            </a>
-            {% endfor %}
-        </div>
         {% endif %}
 
-        <!-- Filtros por tipo -->
-        <div class="filters">
-            <a href="{% url 'conteudo:categoria' categoria.slug %}" class="filter-chip {% if not tipo_filtro %}active{% endif %}">Todos</a>
-            <a href="?tipo=documento" class="filter-chip {% if tipo_filtro == 'documento' %}active{% endif %}"><i class="fas fa-file-pdf"></i> Documentos</a>
-            <a href="?tipo=video" class="filter-chip {% if tipo_filtro == 'video' %}active{% endif %}"><i class="fas fa-play-circle"></i> Vídeos</a>
-            <a href="?tipo=post" class="filter-chip {% if tipo_filtro == 'post' %}active{% endif %}"><i class="fas fa-newspaper"></i> Posts</a>
-            <a href="?tipo=link" class="filter-chip {% if tipo_filtro == 'link' %}active{% endif %}"><i class="fas fa-external-link-alt"></i> Links</a>
-        </div>
-
-        <!-- Texto introdutório -->
-        {% if categoria.descricao %}
-        <div class="page-intro-body">{{ categoria.descricao|safe }}</div>
-        {% endif %}
-
-        <!-- Arquivos anexados à categoria -->
-        {% if anexos_categoria %}
-        <div class="anexos-section">
-            <h3 class="anexos-titulo"><i class="fas fa-paperclip"></i> Arquivos para download</h3>
-            <div class="anexos-lista">
-                {% for anexo in anexos_categoria %}
-                <a href="{{ anexo.link_href }}" class="anexo-item" target="_blank" rel="noopener" title="{{ anexo.nome_exibicao }}">
-                    <span class="anexo-icone">
-                        {% if anexo.eh_link %}<i class="fas fa-link"></i>
-                        {% elif anexo.extensao == 'PDF' %}<i class="fas fa-file-pdf"></i>
-                        {% elif anexo.extensao == 'DOCX' or anexo.extensao == 'DOC' %}<i class="fas fa-file-word"></i>
-                        {% elif anexo.extensao == 'XLSX' or anexo.extensao == 'XLS' %}<i class="fas fa-file-excel"></i>
-                        {% elif anexo.extensao == 'PPTX' or anexo.extensao == 'PPT' %}<i class="fas fa-file-powerpoint"></i>
-                        {% elif anexo.extensao == 'MP4' or anexo.extensao == 'AVI' or anexo.extensao == 'MOV' %}<i class="fas fa-file-video"></i>
-                        {% elif anexo.extensao == 'JPG' or anexo.extensao == 'PNG' or anexo.extensao == 'GIF' %}<i class="fas fa-file-image"></i>
-                        {% else %}<i class="fas fa-file"></i>
-                        {% endif %}
-                    </span>
-                    <span class="anexo-info">
-                        <span class="anexo-nome">{{ anexo.nome_exibicao }}</span>
-                        <span class="anexo-meta">{% if anexo.eh_link %}Clique para abrir o link{% else %}Clique para abrir ou baixar{% endif %}</span>
-                    </span>
-                    <span class="anexo-ext ext-{{ anexo.extensao|lower }}">{{ anexo.extensao }}</span>
-                    <span class="anexo-download"><i class="{% if anexo.eh_link %}fas fa-arrow-up-right-from-square{% else %}fas fa-download{% endif %}"></i></span>
-                </a>
-                {% endfor %}
-            </div>
-        </div>
-        {% endif %}
-
-        {% comment %}Anexos de imagem (enviados na categoria) aparecem como galeria
-        visual, lado a lado, em vez de link em "Arquivos para download".{% endcomment %}
-        {% if anexos_imagens %}
-        <div class="anexo-imagens-grid">
-            {% for img in anexos_imagens %}
-            <a href="{{ img.link_href }}" target="_blank" rel="noopener" class="anexo-imagem-item" title="{{ img.nome_exibicao }}">
-                <img src="{{ img.link_href }}" alt="{{ img.nome_exibicao }}">
-            </a>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% comment %}Subbotoes com mostrar_como_card=True aparecem como cards grandes
-        (botoes clicaveis) na grade, alem dos chips no topo. Subareas rapidas (criadas
-        pela funcao "Criar subarea nos botoes marcados") tem mostrar_como_card=False e
-        aparecem SOMENTE como chip no topo, sem duplicar. Nao ha duplicacao de conteudo:
-        a view so traz os conteudos da propria categoria, nao das subcategorias
-        (correcao parte 11).{% endcomment %}
-        {% if subcategorias or conteudos %}
-        <div class="content-grid">
-            {% for sub in subcategorias %}
-            {% if sub.mostrar_como_card %}
-            <a href="{% if sub.link_externo %}{{ sub.link_externo }}{% else %}{% url 'conteudo:categoria' sub.slug %}{% endif %}"
-               class="content-card content-card--subbotao{% if sub.estilo.pulsante %} btn-pulse{% endif %}"
-               {% if sub.link_externo %}target="_blank" rel="noopener"{% endif %}
-               title="{{ sub.nome }}">
-                <div class="card-image card-image-placeholder{% if sub.icone_imagem %} sem-fundo{% endif %}"{% if sub.icone_estilo_inline %} style="{{ sub.icone_estilo_inline }}"{% endif %}>
-                    {% if sub.icone_imagem %}<img src="{{ sub.icone_imagem.url }}" alt="" class="icone-personalizado">
-                    {% else %}<i class="{{ sub.icone_display }}"></i>{% endif %}
-                </div>
-                <div class="card-body">
-                    <h3>{{ sub.nome }}</h3>
-                    {% if sub.descricao %}<p>{{ sub.descricao|striptags|truncatewords:18 }}</p>{% endif %}
-                </div>
-            </a>
-            {% endif %}
-            {% endfor %}
-            {% for item in conteudos %}
-            <a href="{% if item.link_externo %}{{ item.link_externo }}{% else %}{% url 'conteudo:conteudo_detalhe' item.slug %}{% endif %}"
-               class="content-card{% if item.pk in pulsantes %} btn-pulse{% endif %}"
-               {% if item.link_externo %}target="_blank" rel="noopener"{% endif %}
-               title="{{ item.titulo|default:item.get_tipo_display }}">
-                {% if item.imagem_destaque %}
-                <div class="card-image">
-                    <img src="{{ item.imagem_destaque.url }}" alt="{{ item.titulo }}">
-                </div>
-                {% else %}
-                <div class="card-image card-image-placeholder{% if item.icone_imagem %} sem-fundo{% endif %}">
-                    {% if item.icone_imagem %}<img src="{{ item.icone_imagem.url }}" alt="" class="icone-personalizado">
-                    {% else %}<i class="{{ item.icone_criativo }}"></i>{% endif %}
-                </div>
-                {% endif %}
-                <div class="card-body">
-                    <h3{% if item.texto_estilo_inline %} style="{{ item.texto_estilo_inline }}"{% endif %}>{{ item.titulo|default:item.get_tipo_display }}</h3>
-                    {% if item.resumo %}<p>{{ item.resumo|truncatewords:20 }}</p>{% endif %}
-                    <div class="card-footer">
-                        <span class="card-date">{{ item.data_publicacao|date:"d/m/Y" }}</span>
-                        {% if item.extensao_arquivo %}<span class="file-ext">{{ item.extensao_arquivo }}</span>{% endif %}
-                    </div>
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% elif not anexos_imagens %}
-        <div class="empty-state">
-            <i class="fas fa-inbox"></i>
-            <p>Nenhum conteúdo nesta categoria ainda.</p>
-        </div>
-        {% endif %}
-
-    {% endif %}
     </div>
 </section>
 
-<!-- ── Comentários do botão (categoria) — aplica-se a todo botão do site,
-     inclusive os criados depois, pois é resolvido pela própria view ── -->
+<!-- ── Comentários da página livre — mesmo sistema de moderação/respostas/
+     votos usado em Categoria e Conteudo ── -->
 <section class="section section-alt comentarios-section" id="comentarios">
     <div class="container" style="max-width:760px;">
 

@@ -630,6 +630,14 @@ class Anexo(models.Model):
         return ''
 
     @property
+    def eh_imagem(self):
+        """True quando o anexo é um arquivo de imagem enviado (não link nem outro tipo de arquivo)."""
+        if self.eh_link or not self.arquivo:
+            return False
+        ext = self.arquivo.name.rsplit('.', 1)[-1].lower()
+        return ext in ('jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg')
+
+    @property
     def nome_exibicao(self):
         if self.nome:
             return self.nome
@@ -846,6 +854,37 @@ class ConfiguracaoSite(models.Model):
         'Texto da página inicial', blank=True,
         default='<p>Referencial curricular da Educação Básica, elaborado em regime de colaboração entre Estado e municípios.</p>'
     )
+    # Aparência da barra azul do título/texto da home ("home-intro") —
+    # todos opcionais, vazio = aparência automática de sempre.
+    home_intro_titulo_tamanho_fonte = models.PositiveIntegerField(
+        'Tamanho da letra do título (px)', null=True, blank=True,
+        help_text='Vazio = tamanho automático do site.'
+    )
+    home_intro_texto_tamanho_fonte = models.PositiveIntegerField(
+        'Tamanho da letra do texto (px)', null=True, blank=True,
+        help_text='Vazio = tamanho automático do site.'
+    )
+    home_intro_largura = models.PositiveIntegerField(
+        'Largura máxima do conteúdo (px)', null=True, blank=True,
+        help_text='Controla até onde o título/texto podem esticar antes de quebrar '
+                  'linha, dentro da barra (que continua ocupando a largura toda da '
+                  'tela). Vazio = usa o espaço disponível todo, sem quebrar cedo.'
+    )
+    home_intro_altura = models.PositiveIntegerField(
+        'Altura mínima da barra (px)', null=True, blank=True,
+        help_text='Vazio = altura automática, conforme o título/texto.'
+    )
+    home_intro_cor_fundo = models.CharField(
+        'Cor de fundo', max_length=20, blank=True,
+        help_text='Vazio = azul padrão do site (#1e3a5f).'
+    )
+    home_intro_imagem = models.FileField(
+        'Imagem de fundo (opcional)', upload_to='home_intro/', blank=True, null=True,
+        help_text='Aparece como imagem de fundo, atrás do título/texto, com uma '
+                  'camada semi-transparente por cima (na cor de fundo escolhida, ou '
+                  'azul padrão) para manter o texto sempre legível. Aceita qualquer '
+                  'formato de imagem.'
+    )
     email_contato = models.EmailField('E-mail de contato', default='gerenciadecurriculo@sedu.es.gov.br')
     telefone = models.CharField('Telefone', max_length=50, default='(27) 3636-7838 / 7842')
     endereco = models.TextField(
@@ -876,10 +915,34 @@ class ConfiguracaoSite(models.Model):
     # para não atrapalhar a estética do site).
     icone_destaques = models.CharField('Ícone de "Destaques" (padrão do site)', max_length=100, blank=True)
     icone_destaques_imagem = models.FileField('Ícone de "Destaques" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+    icone_destaques_largura = models.PositiveIntegerField(
+        'Largura do ícone de "Destaques" (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_destaques_altura = models.PositiveIntegerField(
+        'Altura do ícone de "Destaques" (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
     icone_recentes = models.CharField('Ícone de "Conteúdos recentes" (padrão do site)', max_length=100, blank=True, default='fas fa-wand-magic-sparkles')
     icone_recentes_imagem = models.FileField('Ícone de "Conteúdos recentes" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+    icone_recentes_largura = models.PositiveIntegerField(
+        'Largura do ícone de "Conteúdos recentes" (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_recentes_altura = models.PositiveIntegerField(
+        'Altura do ícone de "Conteúdos recentes" (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
     icone_areas = models.CharField('Ícone de "Navegue por área" (padrão do site)', max_length=100, blank=True, default='fas fa-compass')
     icone_areas_imagem = models.FileField('Ícone de "Navegue por área" (imagem)', upload_to='icones_secao/', blank=True, null=True)
+    icone_areas_largura = models.PositiveIntegerField(
+        'Largura do ícone de "Navegue por área" (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_areas_altura = models.PositiveIntegerField(
+        'Altura do ícone de "Navegue por área" (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
 
     # Nome do botão "Currículo Atual" (pílula central da home) — editável.
     nome_curriculo_atual = models.CharField(
@@ -928,6 +991,7 @@ class ConfiguracaoSite(models.Model):
             ('pode_acessar_area_do_site', 'Pode acessar: Área do Site'),
             ('pode_acessar_estrutura_arvores', 'Pode acessar: Estrutura de Árvores'),
             ('pode_acessar_lixeira', 'Pode acessar: Lixeira'),
+            ('pode_acessar_paginas_livres', 'Pode acessar: Páginas Livres'),
         ]
 
     def __str__(self):
@@ -941,6 +1005,63 @@ class ConfiguracaoSite(models.Model):
     def get_config(cls):
         config, _ = cls.objects.get_or_create(pk=1)
         return config
+
+    @property
+    def home_intro_estilo_barra(self):
+        """CSS inline (min-height/background) da própria barra .home-intro.
+        Quando há imagem de fundo, a cor vira só a camada semi-transparente
+        por cima dela (ver home_intro_overlay_cor) — não é aplicada aqui."""
+        partes = []
+        if self.home_intro_altura:
+            partes.append(f'min-height:{self.home_intro_altura}px;')
+        if self.home_intro_cor_fundo and not self.home_intro_imagem:
+            partes.append(f'background-color:{self.home_intro_cor_fundo};')
+        return ''.join(partes)
+
+    @property
+    def home_intro_overlay_cor(self):
+        """Cor da camada semi-transparente sobre a imagem de fundo (ou o padrão do site)."""
+        return self.home_intro_cor_fundo or '#1e3a5f'
+
+    @property
+    def home_intro_estilo_conteudo(self):
+        """CSS inline (max-width) do bloco de título/texto dentro da barra."""
+        if not self.home_intro_largura:
+            return ''
+        return f'max-width:{self.home_intro_largura}px;'
+
+    @property
+    def home_intro_estilo_titulo(self):
+        if not self.home_intro_titulo_tamanho_fonte:
+            return ''
+        return f'font-size:{self.home_intro_titulo_tamanho_fonte}px;'
+
+    @property
+    def home_intro_estilo_texto(self):
+        if not self.home_intro_texto_tamanho_fonte:
+            return ''
+        return f'font-size:{self.home_intro_texto_tamanho_fonte}px;'
+
+    def _icone_secao_estilo(self, largura, altura):
+        """CSS inline (width/height/font-size) quando o tamanho do ícone da seção é personalizado."""
+        if not largura and not altura:
+            return ''
+        largura = largura or altura
+        altura = altura or largura
+        fonte = max(10, int(altura * 0.45))
+        return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
+
+    @property
+    def icone_destaques_estilo_inline(self):
+        return self._icone_secao_estilo(self.icone_destaques_largura, self.icone_destaques_altura)
+
+    @property
+    def icone_recentes_estilo_inline(self):
+        return self._icone_secao_estilo(self.icone_recentes_largura, self.icone_recentes_altura)
+
+    @property
+    def icone_areas_estilo_inline(self):
+        return self._icone_secao_estilo(self.icone_areas_largura, self.icone_areas_altura)
 
 
 class RodapeImagem(models.Model):
@@ -1093,6 +1214,112 @@ class ColunaExtraBotao(models.Model):
         return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
 
 
+class PaginaLivre(models.Model):
+    """Página em branco dentro do padrão visual do site (mesmo cabeçalho/
+    rodapé), com URL própria (/pagina/<slug>/) — FORA da árvore de
+    categorias, então não aparece sozinha em nenhum menu (barra superior,
+    Navegue por área, rodapé). É acessível só pelo link direto, que pode
+    ser colocado em qualquer lugar que já aceita link (botão de categoria
+    com URL externa, botão de coluna extra, link no rodapé, etc.) —
+    exatamente como qualquer link externo já funciona hoje.
+
+    Tem texto livre no topo (RichTextWidget), botões no meio (que podem
+    apontar para categorias JÁ EXISTENTES do site, sem tirá-las do lugar
+    onde estão, ou criar botões novos completos), e a mesma seção de
+    comentários no rodapé que Categoria/Conteudo já têm."""
+    titulo = models.CharField('Título', max_length=200)
+    slug = models.SlugField('URL amigável', max_length=200, unique=True, blank=True)
+    conteudo = models.TextField(
+        'Texto da página', blank=True,
+        help_text='Texto livre exibido no topo da página — aceita formatação '
+                  '(negrito, itálico, sublinhado, alinhamento, lista).'
+    )
+    ativa = models.BooleanField(
+        'Ativa', default=True,
+        help_text='Se desmarcada, a página deixa de existir no site (404), mesmo que alguém tenha o link.'
+    )
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+    criado_em = models.DateTimeField('Criada em', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Página livre'
+        verbose_name_plural = 'Páginas livres'
+        ordering = ['ordem', 'titulo']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.titulo)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.titulo
+
+
+class PaginaLivreBotao(models.Model):
+    """Um botão dentro de uma PaginaLivre — aponta para uma Categoria já
+    existente do site (sem mover/reparentar nada, mesmo padrão não-
+    destrutivo de ColunaExtraBotao) OU para um link externo. Também pode
+    ter sido criado como um botão COMPLETO do site (categoria raiz nova),
+    e a partir daí é editável normalmente por qualquer painel (Estrutura
+    de Árvores, Painel Central, Django Admin)."""
+    pagina = models.ForeignKey(
+        PaginaLivre, on_delete=models.CASCADE,
+        related_name='botoes', verbose_name='Página'
+    )
+    nome = models.CharField('Nome do botão', max_length=200)
+    categoria = models.ForeignKey(
+        Categoria, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='+', verbose_name='Categoria (opcional)',
+        help_text='Se escolhida, o botão abre esta categoria do site (sem tirá-la do lugar onde já está).'
+    )
+    link_externo = models.URLField(
+        'Link externo (opcional)', max_length=1000, blank=True,
+        help_text='Se preenchido, tem prioridade sobre a categoria escolhida.'
+    )
+    icone = models.CharField('Ícone Font Awesome', max_length=100, blank=True, default='fas fa-link')
+    icone_imagem = models.FileField(
+        'Ícone personalizado (imagem)', upload_to='icones_pagina_livre/', blank=True, null=True
+    )
+    icone_largura = models.PositiveIntegerField(
+        'Largura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Deixe em branco para usar o tamanho padrão.'
+    )
+    icone_altura = models.PositiveIntegerField(
+        'Altura do ícone (px)', null=True, blank=True,
+        help_text='Opcional. Se vazio e a largura estiver preenchida, usa o mesmo valor (ícone quadrado).'
+    )
+    ordem = models.PositiveIntegerField('Ordem', default=0)
+
+    class Meta:
+        verbose_name = 'Botão da página livre'
+        verbose_name_plural = 'Botões da página livre'
+        ordering = ['ordem', 'pk']
+
+    def __str__(self):
+        return self.nome
+
+    @property
+    def url(self):
+        if self.link_externo:
+            return self.link_externo
+        if self.categoria:
+            return f'/categoria/{self.categoria.slug}/'
+        return '#'
+
+    @property
+    def icone_display(self):
+        return self.icone or 'fas fa-link'
+
+    @property
+    def icone_estilo_inline(self):
+        if not self.icone_largura and not self.icone_altura:
+            return ''
+        largura = self.icone_largura or self.icone_altura
+        altura = self.icone_altura or self.icone_largura
+        fonte = max(10, int(altura * 0.45))
+        return f'width:{largura}px;height:{altura}px;font-size:{fonte}px;'
+
+
 class Comentario(models.Model):
     """Comentários dos usuários, com moderação (pendente → publicado ou recusado)."""
     PENDENTE = 'pendente'
@@ -1114,6 +1341,12 @@ class Comentario(models.Model):
         related_name='comentarios', verbose_name='Botão/categoria',
         null=True, blank=True,
         help_text='Preenchido quando o comentário foi feito na página de um botão (categoria) em vez de num conteúdo específico. Mutuamente exclusivo com Conteúdo.'
+    )
+    pagina_livre = models.ForeignKey(
+        'PaginaLivre', on_delete=models.CASCADE,
+        related_name='comentarios', verbose_name='Página livre',
+        null=True, blank=True,
+        help_text='Preenchido quando o comentário foi feito numa Página Livre. Mutuamente exclusivo com Conteúdo/Categoria.'
     )
     parent = models.ForeignKey(
         'self', null=True, blank=True,
@@ -1174,7 +1407,11 @@ class Comentario(models.Model):
         ordering = ['data_criacao']
 
     def __str__(self):
-        alvo = self.conteudo.titulo if self.conteudo else (self.categoria.nome if self.categoria else '?')
+        alvo = self.conteudo.titulo if self.conteudo else (
+            self.categoria.nome if self.categoria else (
+                self.pagina_livre.titulo if self.pagina_livre else '?'
+            )
+        )
         return f'{self.nome} em "{alvo[:40]}"'
 
     @property
@@ -1183,5 +1420,5 @@ class Comentario(models.Model):
 
     @property
     def origem(self):
-        """Devolve o Conteudo ou a Categoria a que este comentário pertence."""
-        return self.conteudo or self.categoria
+        """Devolve o Conteudo, Categoria ou PaginaLivre a que este comentário pertence."""
+        return self.conteudo or self.categoria or self.pagina_livre

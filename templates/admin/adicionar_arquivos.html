@@ -6,7 +6,6 @@
 {% block extrahead %}
 {{ block.super }}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="{% static 'css/admin_picker.css' %}">
 <style>
 .aa-container { max-width: 960px; margin: 0 auto; }
 
@@ -428,9 +427,14 @@
         <div class="aa-section">
             <h2><span class="aa-step">1</span> Escolha a categoria do site</h2>
             <p class="aa-hint">
-                Clique no botão da categoria onde os itens vão aparecer.
+                Digite para pesquisar e escolha o botão onde os itens vão aparecer.
             </p>
-            {{ picker_html }}
+            <select name="categoria" class="aa-input" required data-pesquisavel="🔍 Pesquisar botão...">
+                <option value="">— Escolha um botão —</option>
+                {% for item in arvore_categorias %}
+                <option value="{{ item.cat.pk }}">{{ item.recuo }}{% if item.nivel > 0 %}└ {% endif %}{{ item.cat.nome }}</option>
+                {% endfor %}
+            </select>
         </div>
 
         <!-- PASSO 2: Escolher ou criar grupo (OPCIONAL) -->
@@ -550,6 +554,7 @@
     </form>
 </div>
 
+<script src="{% static 'js/filtro_select.js' %}"></script>
 <script>
 var rowCount = 3;
 var csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -740,7 +745,7 @@ function duplicateItem(tipoItem, id) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.ok) {
-            if (selectedSubcatId) loadSubcategorias(document.querySelector('[name=categoria]:checked').value);
+            if (selectedSubcatId) loadSubcategorias(document.querySelector('[name=categoria]').value);
             alert('Item duplicado com sucesso!');
         }
     })
@@ -907,8 +912,8 @@ function removeRow(btn) {
 // Validação: exige apenas que uma categoria esteja selecionada.
 // O grupo (passo 2) é opcional — se vazio, anexa direto ao botão do passo 1.
 document.getElementById('mainForm').addEventListener('submit', function(e) {
-    var catRadio = document.querySelector('input[name="categoria"]:checked');
-    if (!catRadio) {
+    var catSelect = document.querySelector('[name="categoria"]');
+    if (!catSelect || !catSelect.value) {
         e.preventDefault();
         alert('Selecione uma categoria (botão) no passo 1.');
     }

@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:16
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=curriculo_sedu
       - POSTGRES_USER=curriculo_sedu
@@ -17,6 +16,7 @@ services:
 
   web:
     build: .
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
@@ -49,6 +49,7 @@ services:
 
   teams_sync:
     build: .
+    restart: unless-stopped
     volumes:
       - .:/app
       - media_data:/app/media

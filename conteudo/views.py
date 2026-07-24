@@ -3,7 +3,7 @@ from django.db.models import Q, Case, When, Value, IntegerField, F, Prefetch
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel, ColunaExtra
+from .models import Categoria, Conteudo, Banner, Comentario, Cartaz, Anexo, Carrossel, ColunaExtra, PaginaLivre
 from .teams_integration import enviar_comentario_para_teams
 
 
@@ -12,10 +12,14 @@ def home(request):
     categorias = Categoria.objects.filter(
         ativa=True, categoria_pai__isnull=True, mostrar_navegue_area=True
     )
+    # Botão "Currículo Atual": pílula fixa, mas sua exibição obedece o
+    # mesmo checkbox "Central?" (mostrar_area_central) do painel "Botões
+    # da Barra Superior" que os demais botões raiz usam.
+    categoria_curriculo_atual = Categoria.objects.filter(slug='curriculo-atual').first()
     # Botões marcados para aparecer na área central, ao lado do "Currículo
     # Atual" (painel "Botões da Barra Superior" — checkbox "Central?").
-    # Currículo Atual já é exibido separadamente (pílula fixa) — excluído
-    # daqui para nunca duplicar, mesmo que o checkbox seja marcado nele.
+    # Currículo Atual já é exibido separadamente (pílula com estilo
+    # próprio) — excluído daqui para nunca duplicar na mesma área.
     botoes_area_central = Categoria.objects.filter(
         ativa=True, categoria_pai__isnull=True, mostrar_area_central=True
     ).exclude(slug='curriculo-atual').order_by('ordem', 'nome')
@@ -62,6 +66,7 @@ def home(request):
 
     return render(request, 'home.html', {
         'categorias': categorias,
+        'categoria_curriculo_atual': categoria_curriculo_atual,
         'botoes_area_central': botoes_area_central,
         'banners': banners,
         'destaques': destaques,
@@ -194,7 +199,12 @@ def categoria_detalhe(request, slug):
     # Banners específicos desta categoria
     banners_cat = Banner.objects.filter(ativo=True, categoria=categoria)
 
-    anexos_categoria = categoria.anexos.all().order_by('ordem', 'nome')
+    # Anexos de imagem viram uma galeria visual (lado a lado) na área de
+    # conteúdo da categoria, em vez de aparecer como link em "Arquivos para
+    # download" — os demais tipos de anexo continuam exatamente como antes.
+    todos_anexos = list(categoria.anexos.all().order_by('ordem', 'nome'))
+    anexos_imagens = [a for a in todos_anexos if a.eh_imagem]
+    anexos_categoria = [a for a in todos_anexos if not a.eh_imagem]
 
     return render(request, 'categoria.html', {
         'categoria': categoria,
@@ -203,7 +213,59 @@ def categoria_detalhe(request, slug):
         'tipo_filtro': tipo,
         'banners': banners_cat,
         'anexos_categoria': anexos_categoria,
+        'anexos_imagens': anexos_imagens,
         'pulsantes': pulsantes,
+        'comentarios': comentarios,
+    })
+
+
+def pagina_livre_detalhe(request, slug):
+    """Página livre: texto solto no topo, botões (existentes ou novos) no
+    meio, e a mesma seção de comentários no rodapé que Categoria/Conteudo
+    já têm. Fica FORA da árvore de categorias — não aparece em nenhum
+    menu automaticamente, só é acessível pelo link direto."""
+    pagina = get_object_or_404(PaginaLivre, slug=slug, ativa=True)
+    botoes = pagina.botoes.all().order_by('ordem', 'nome')
+
+    respostas_qs = Comentario.objects.filter(status='publicado').order_by('data_criacao')
+    comentarios = (
+        pagina.comentarios.filter(status='publicado', parent__isnull=True)
+        .prefetch_related(Prefetch('respostas', queryset=respostas_qs))
+        .order_by('data_criacao')
+    )
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome', '').strip()
+        email = request.POST.get('email', '').strip()
+        texto = request.POST.get('texto', '').strip()
+        parent_id = request.POST.get('parent_id', '').strip()
+        parent = None
+        if parent_id:
+            try:
+                parent = Comentario.objects.get(pk=parent_id, pagina_livre=pagina, status='publicado', parent__isnull=True)
+            except Comentario.DoesNotExist:
+                pass
+        if nome and texto:
+            comentario = Comentario.objects.create(
+                pagina_livre=pagina,
+                nome=nome,
+                email=email,
+                texto=texto,
+                status='pendente',
+                parent=parent,
+            )
+            enviar_comentario_para_teams(comentario, request=request)
+            messages.success(
+                request,
+                'Comentário enviado! Ele será publicado após aprovação.'
+            )
+            return redirect('conteudo:pagina_livre', slug=slug)
+        else:
+            messages.error(request, 'Preencha seu nome e o comentário.')
+
+    return render(request, 'pagina_livre_detalhe.html', {
+        'pagina': pagina,
+        'botoes': botoes,
         'comentarios': comentarios,
     })
 

@@ -47,9 +47,12 @@ def _titulo_e_link(comentario):
     if comentario.conteudo_id:
         titulo = comentario.conteudo.titulo
         caminho = reverse('conteudo:conteudo_detalhe', args=[comentario.conteudo.slug])
-    else:
+    elif comentario.categoria_id:
         titulo = comentario.categoria.nome
         caminho = reverse('conteudo:categoria', args=[comentario.categoria.slug])
+    else:
+        titulo = comentario.pagina_livre.titulo
+        caminho = reverse('conteudo:pagina_livre', args=[comentario.pagina_livre.slug])
     return (titulo, caminho)
 
 

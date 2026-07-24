@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.utils import timezone
 from django.db.models import Q
-from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao, RodapeImagem
+from .models import Categoria, Conteudo, Anexo, Banner, ConfiguracaoSite, ColunaExtra, ColunaExtraBotao, RodapeImagem, PaginaLivre, PaginaLivreBotao
 from .permissoes import exige_permissao_painel
 
 
@@ -500,13 +500,9 @@ def adicionar_arquivos_view(request):
 
         return redirect('/admin/adicionar-arquivos/')
 
-    from .widgets import CategoriaPicker
-    picker = CategoriaPicker(include_home=False)
-    picker_html = picker.render('categoria', None)
-
     context = {
         'title': 'Adicionar Arquivos',
-        'picker_html': picker_html,
+        'arvore_categorias': _arvore_flat_categorias(),
         'has_permission': True,
     }
     return render(request, 'admin/adicionar_arquivos.html', context)
@@ -936,6 +932,236 @@ def area_do_site_view(request):
     })
 
 
+# ── Páginas Livres (páginas em branco, fora da árvore de categorias) ───
+# Cada página tem sua própria URL (/pagina/<slug>/), texto livre no topo,
+# botões (existentes ou novos) no meio, e comentários no rodapé — igual
+# um botão (Categoria) tem, mas não aparece em nenhum menu automaticamente
+# (barra superior, Navegue por área, rodapé). É acessível só pelo link
+# direto, que pode ser colocado em qualquer lugar que já aceita link.
+
+@staff_member_required
+@exige_permissao_painel('conteudo.pode_acessar_paginas_livres')
+def paginas_livres_view(request):
+    from .widgets import RichTextWidget
+
+    if request.method == 'POST':
+        action = request.POST.get('action', '')
+
+        if action == 'criar_pagina':
+            titulo = request.POST.get('pagina_titulo', '').strip()
+            if not titulo:
+                messages.error(request, 'Informe um título para a página.')
+                return redirect('admin_paginas_livres')
+            slug = slugify(titulo)
+            original_slug = slug
+            counter = 1
+            while PaginaLivre.objects.filter(slug=slug).exists():
+                slug = f'{original_slug}-{counter}'
+                counter += 1
+            pagina = PaginaLivre.objects.create(
+                titulo=titulo,
+                slug=slug,
+                conteudo=request.POST.get('pagina_conteudo', ''),
+            )
+            messages.success(
+                request,
+                f'Página "{pagina.titulo}" criada! O link é /pagina/{pagina.slug}/ — '
+                'agora adicione botões dentro dela e coloque o link onde quiser no site.'
+            )
+            return redirect('admin_paginas_livres')
+
+        elif action == 'editar_pagina':
+            pagina_id = request.POST.get('pagina_id')
+            pagina = get_object_or_404(PaginaLivre, pk=pagina_id)
+            pagina.titulo = request.POST.get('pagina_titulo', '').strip() or pagina.titulo
+            pagina.conteudo = request.POST.get('pagina_conteudo', '')
+            pagina.ativa = bool(request.POST.get('pagina_ativa'))
+            try:
+                pagina.ordem = int(request.POST.get('pagina_ordem', pagina.ordem))
+            except (TypeError, ValueError):
+                pass
+            pagina.save()
+            messages.success(request, f'Página "{pagina.titulo}" atualizada.')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'excluir_pagina':
+            pagina_id = request.POST.get('pagina_id')
+            deleted, _ = PaginaLivre.objects.filter(pk=pagina_id).delete()
+            if deleted:
+                messages.success(request, 'Página excluída com sucesso.')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'criar_botao':
+            pagina_id = request.POST.get('pagina_id')
+            pagina = get_object_or_404(PaginaLivre, pk=pagina_id)
+            nome = request.POST.get('botao_nome', '').strip()
+            if not nome:
+                messages.error(request, 'Informe um nome para o botão.')
+                return redirect('admin_paginas_livres')
+            categoria_id = request.POST.get('botao_categoria') or None
+            categoria = Categoria.objects.filter(pk=categoria_id).first() if categoria_id else None
+            criar_botao_completo = bool(request.POST.get('botao_criar_arvore'))
+            link_externo_input = request.POST.get('botao_link', '').strip()
+            icone_texto = request.POST.get('botao_icone', '').strip()
+            icone_img = request.FILES.get('botao_icone_imagem')
+            icone_largura = request.POST.get('botao_icone_largura', '').strip() or None
+            icone_altura = request.POST.get('botao_icone_altura', '').strip() or None
+
+            # Se nada foi escolhido (nem categoria existente, nem link
+            # externo, nem o checkbox "criar como botão completo do site"
+            # marcado), o botão ficaria "morto" — sem destino nenhum e sem
+            # lugar para anexar arquivos/links. Nesse caso, cria a
+            # categoria automaticamente, do mesmo jeito que o checkbox
+            # marcado faria, para o botão sempre ter para onde ir.
+            if not categoria and not link_externo_input:
+                criar_botao_completo = True
+
+            # "Criar um botão completo do site" (mesmo mecanismo da Área do
+            # Site): sem escolher uma categoria já existente, cria uma
+            # categoria RAIZ de verdade — o botão passa a existir em TODAS
+            # as árvores (Estrutura de Árvores, Painel Central, Organizador,
+            # Barra Superior) e aceita tudo que os outros botões aceitam
+            # (conteúdos, subbotões, anexos) a partir de qualquer painel.
+            if not categoria and criar_botao_completo:
+                slug = slugify(nome)
+                original_slug = slug
+                counter = 1
+                while Categoria.objects.filter(slug=slug).exists():
+                    slug = f'{original_slug}-{counter}'
+                    counter += 1
+                categoria = Categoria.objects.create(
+                    nome=nome,
+                    slug=slug,
+                    categoria_pai=None,
+                    icone=icone_texto or 'fas fa-folder-open',
+                    ativa=True,
+                    mostrar_menu_superior=False,
+                    mostrar_navegue_area=False,
+                    icone_largura=icone_largura,
+                    icone_altura=icone_altura,
+                )
+                if icone_img:
+                    icone_img.seek(0)
+                    categoria.icone_imagem.save(icone_img.name, icone_img, save=True)
+
+            botao = PaginaLivreBotao.objects.create(
+                pagina=pagina,
+                nome=nome,
+                categoria=categoria,
+                link_externo=link_externo_input if not categoria else '',
+                icone=icone_texto or 'fas fa-link',
+                icone_largura=icone_largura,
+                icone_altura=icone_altura,
+            )
+            if icone_img:
+                icone_img.seek(0)
+                botao.icone_imagem = icone_img
+                botao.save(update_fields=['icone_imagem'])
+            messages.success(request, f'Botão "{nome}" adicionado à página "{pagina.titulo}".')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'editar_botao':
+            botao_id = request.POST.get('botao_id')
+            botao = get_object_or_404(PaginaLivreBotao, pk=botao_id)
+            botao.nome = request.POST.get('botao_nome', '').strip() or botao.nome
+            categoria_id = request.POST.get('botao_categoria') or None
+            botao.categoria = Categoria.objects.filter(pk=categoria_id).first() if categoria_id else None
+            botao.link_externo = request.POST.get('botao_link', '').strip() if not botao.categoria else ''
+            botao.icone = request.POST.get('botao_icone', '').strip() or 'fas fa-link'
+            botao.icone_largura = request.POST.get('botao_icone_largura', '').strip() or None
+            botao.icone_altura = request.POST.get('botao_icone_altura', '').strip() or None
+            try:
+                botao.ordem = int(request.POST.get('botao_ordem', botao.ordem))
+            except (TypeError, ValueError):
+                pass
+            icone_img = request.FILES.get('botao_icone_imagem')
+            if icone_img:
+                botao.icone_imagem = icone_img
+            elif request.POST.get('limpar_botao_icone_imagem'):
+                botao.icone_imagem = None
+            botao.save()
+            messages.success(request, f'Botão "{botao.nome}" atualizado.')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'excluir_botao':
+            botao_id = request.POST.get('botao_id')
+            deleted, _ = PaginaLivreBotao.objects.filter(pk=botao_id).delete()
+            if deleted:
+                messages.success(request, 'Botão excluído com sucesso.')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'adicionar_conteudo_botao':
+            botao_id = request.POST.get('botao_id')
+            botao = get_object_or_404(PaginaLivreBotao, pk=botao_id)
+            if not botao.categoria:
+                messages.error(
+                    request,
+                    f'"{botao.nome}" aponta para um link externo (sem categoria própria) — '
+                    'não há onde anexar arquivos ou links. Para anexar algo, edite o botão '
+                    'e escolha uma categoria já existente, ou marque "criar como botão '
+                    'completo do site" ao criar um novo.'
+                )
+                return redirect('admin_paginas_livres')
+            categoria = botao.categoria
+            n_arquivos = 0
+            for arq in request.FILES.getlist('botaoconteudo_arquivos'):
+                Anexo.objects.create(categoria=categoria, arquivo=arq, nome=arq.name)
+                n_arquivos += 1
+            n_links = _criar_links_extra(request.POST, 'botaoconteudo', categoria, botao.nome)
+            n_anexolinks = _criar_anexos_link(request.POST, 'botaoconteudo', categoria=categoria)
+            total = n_arquivos + n_links + n_anexolinks
+            if total:
+                messages.success(request, f'{total} item(ns) adicionado(s) a "{botao.nome}".')
+            else:
+                messages.warning(request, 'Nenhum arquivo ou link enviado.')
+            return redirect('admin_paginas_livres')
+
+        elif action == 'excluir_conteudo_botao':
+            tipo_item = request.POST.get('tipo_item')
+            item_id = request.POST.get('item_id')
+            if tipo_item == 'anexo':
+                Anexo.objects.filter(pk=item_id).delete()
+            elif tipo_item == 'conteudo':
+                Conteudo.objects.filter(pk=item_id).delete()
+            messages.success(request, 'Item excluído.')
+            return redirect('admin_paginas_livres')
+
+        return redirect('admin_paginas_livres')
+
+    paginas = list(PaginaLivre.objects.all().prefetch_related('botoes'))
+    arvore_categorias = _arvore_flat_categorias()
+
+    conteudo_widget = RichTextWidget()
+    for pagina in paginas:
+        pagina.conteudo_editor_html = conteudo_widget.render(
+            'pagina_conteudo', pagina.conteudo, attrs={'id': f'id_pagina_conteudo_{pagina.pk}'}
+        )
+        for botao in pagina.botoes.all():
+            if botao.categoria:
+                botao.anexos_existentes = list(
+                    Anexo.objects.filter(categoria=botao.categoria).order_by('ordem', 'nome')
+                )
+                botao.links_existentes = list(
+                    Conteudo.objects.filter(categoria=botao.categoria, tipo='link').order_by('ordem')
+                )
+            else:
+                botao.anexos_existentes = []
+                botao.links_existentes = []
+            botao.total_itens = len(botao.anexos_existentes) + len(botao.links_existentes)
+    conteudo_editor_novo_html = conteudo_widget.render(
+        'pagina_conteudo', '', attrs={'id': 'id_pagina_conteudo_nova'}
+    )
+
+    return render(request, 'admin/paginas_livres.html', {
+        'title': 'Páginas Livres',
+        'paginas': paginas,
+        'arvore_categorias': arvore_categorias,
+        'conteudo_editor_novo_html': conteudo_editor_novo_html,
+        'has_permission': True,
+        'is_app_index': True,
+    })
+
+
 # ── Lixeira (recuperação de exclusões por até 30 dias) ─────────────────
 LIXEIRA_PRAZO_DIAS = 30
 
@@ -991,6 +1217,21 @@ def lixeira_view(request):
             nome = str(cont)
             cont.hard_delete()
             messages.success(request, f'Conteúdo "{nome}" excluído definitivamente (não pode mais ser recuperado).')
+        elif action == 'excluir_definitivo_massa':
+            ids = request.POST.getlist('ids')
+            if not ids:
+                messages.warning(request, 'Nenhum item selecionado.')
+            elif tipo == 'categoria':
+                cats = list(Categoria.todos_objetos.filter(pk__in=ids, excluido_em__isnull=False))
+                n = 0
+                for cat in cats:
+                    if Categoria.todos_objetos.filter(pk=cat.pk, excluido_em__isnull=False).exists():
+                        cat.hard_delete()
+                        n += 1
+                messages.success(request, f'{n} botão(ões) excluído(s) definitivamente (não pode mais ser recuperado).')
+            elif tipo == 'conteudo':
+                n, _ = Conteudo.todos_objetos.filter(pk__in=ids, excluido_em__isnull=False).hard_delete()
+                messages.success(request, f'{n} conteúdo(s) excluído(s) definitivamente (não pode mais ser recuperado).')
 
         return redirect('admin_lixeira')
 
